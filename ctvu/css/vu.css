@@ -1,0 +1,57 @@
+body {
+	color: white;
+	overflow: hidden;
+	background: black;
+	font-family: monospace;
+}
+
+canvas {
+	transition: all 1s;
+}
+
+a {
+	color: green;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: overline;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+.bordered {
+	border: 1px solid gray;
+}
+
+.cp-app {
+    z-index: 9999;
+}
+
+#ctheader {
+	height: auto;
+}
+
+#ctmain {
+	overflow-y: hidden;
+}
+
+#menu {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	bottom: 0px;
+	width: 261px;
+	padding: 4px;
+	padding-top: 0;
+}
+
+#vnode {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	bottom: 0px;
+	left: 261px;
+}

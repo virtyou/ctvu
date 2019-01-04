@@ -1,0 +1,1 @@
+vu.storage = CT.require("vu.storage." + core.config.ctvu.storage.mode, true);
