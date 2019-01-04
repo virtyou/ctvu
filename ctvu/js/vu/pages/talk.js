@@ -9,11 +9,9 @@ CT.require("CT.trans");
 CT.require("core");
 CT.require("user.core");
 CT.require("zero.core");
+CT.require("vu.core");
 CT.require("vu.storage");
 CT.require("vu.builders");
-CT.require("custom.earring");
-CT.require("custom.pony");
-CT.require("templates.torso");
 
 CT.onload(function() {
 	CT.initCore();
