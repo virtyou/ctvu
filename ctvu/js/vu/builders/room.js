@@ -1,18 +1,7 @@
 vu.builders.room = {
 	_: {
-		opts: {
-			environment: "techno",
-			objects: []
-		},
-		furniture: {
-			pool: {
-				name: "pool",
-				thing: "Pool",
-				scale: [1.2, 1.2, 2],
-				position: [0, -35, 0],
-				rotation: [-6.28/4, 0, 0]
-			}
-		},
+		opts: core.config.ctvu.builders.room,
+		furniture: core.config.ctvu.builders.furniture,
 		selectors: {},
 		setup: function() {
 			var cfg = core.config.ctzero, _ = vu.builders.room._,

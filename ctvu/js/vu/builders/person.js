@@ -1,58 +1,7 @@
 vu.builders.person = {
 	_: {
-		opts: {
-			mood: {},
-			colors: {},
-			responses: {
-				"*": {
-					phrase: ["um what?", "i wasn't listening", "this is my default response"],
-					mood: {}
-				},
-				test: {
-					phrase: ["don't test my patience!", "is this a test?", "testing, testing, one, two, three"],
-					mood: {
-						mad: 1
-					}
-				},
-				happy: {
-					phrase: ["i feel great!", "everything's coming up roses!"],
-					mood: {
-						happy: 1,
-						mad: 0
-					}
-				},
-				nervous: {
-					phrase: ["who's nervous?", "i'm really feeling frayed", "i'm at the end of my rope!"],
-					mood: {
-						antsy: 1
-					}
-				},
-				sad: {
-					phrase: ["i'm really down", "i'm bummed out", "everything is butts"],
-					mood: {
-						sad: 1
-					}
-				},
-				calm: {
-					phrase: ["i feel ok", "back to neutral", "i'm fine"],
-					mood: {
-						antsy: 0,
-						happy: 0,
-						mad: 0,
-						sad: 0
-					}
-				}
-			},
-			moody: false,
-			voice: "Joanna",
-			body: {
-				template: "templates.torso.sassy"
-			}
-		},
-		accessories: {
-			sassy: ["earring"],
-			kid: ["hat"]
-		},
+		opts: core.config.ctvu.builders.person,
+		accessories: core.config.ctvu.builders.accessories,
 		selectors: {},
 		joined: function(_person) {
 			var person = vu.builders.current.person = _person,
