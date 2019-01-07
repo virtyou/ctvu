@@ -9,7 +9,7 @@ Connective tissue and basic interfaces for virtual world builders and applicatio
     	"css": ["vu.css"],
     	"html": ["vu"]
     }
-    requires = ["virtyou/ctzero"]
+    requires = ["virtyou/ctone"]
 
 # Front (JS Config)
 
@@ -20,12 +20,28 @@ Connective tissue and basic interfaces for virtual world builders and applicatio
             "mode": "local",
             "apikey": "APIKEY"
         },
-        "customs": [],
-        "templates": [],
+        "loaders": {
+            "customs": ["one.earring", "one.pony"],
+            "templates": ["one.torso"]
+        },
         "builders": {
-            "furniture": {},
-            "room": {},
-            "accessories": {},
+            "furniture": {
+                "pool": {
+                    "name": "pool",
+                    "thing": "Pool",
+                    "scale": [1.2, 1.2, 2],
+                    "position": [0, -35, 0],
+                    "rotation": [-1.57, 0, 0]
+                }
+            },
+            "room": {
+                "environment": "one.techno",
+                "objects": []
+            },
+            "accessories": {
+                "sassy": ["earring"],
+                "kid": ["hat"]
+            },
             "person": {
                 "mood": {},
                 "colors": {},
@@ -37,7 +53,9 @@ Connective tissue and basic interfaces for virtual world builders and applicatio
                 },
                 "moody": false,
                 "voice": "Joanna",
-                "body": {}
+                "body": {
+                    "template": "templates.one.torso.sassy"
+                }
             }
         }
     }
