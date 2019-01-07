@@ -3,12 +3,28 @@
         "mode": "local",
         "apikey": "APIKEY"
     },
-    "customs": [],
-    "templates": [],
+    "loaders": {
+        "customs": ["one.earring", "one.pony"],
+        "templates": ["one.torso"]
+    },
     "builders": {
-        "furniture": {},
-        "room": {},
-        "accessories": {},
+        "furniture": {
+            "pool": {
+                "name": "pool",
+                "thing": "Pool",
+                "scale": [1.2, 1.2, 2],
+                "position": [0, -35, 0],
+                "rotation": [-1.57, 0, 0]
+            }
+        },
+        "room": {
+            "environment": "one.techno",
+            "objects": []
+        },
+        "accessories": {
+            "sassy": ["earring"],
+            "kid": ["hat"]
+        },
         "person": {
             "mood": {},
             "colors": {},
@@ -20,7 +36,9 @@
             },
             "moody": false,
             "voice": "Joanna",
-            "body": {}
+            "body": {
+                "template": "templates.one.torso.sassy"
+            }
         }
     }
 }
