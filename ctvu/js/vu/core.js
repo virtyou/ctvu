@@ -53,7 +53,7 @@ vu.core = {
 		} : null;
 	},
 	init: function() {
-		var cfg = core.config.ctvu;
+		var cfg = core.config.ctvu.loaders;
 		cfg.customs.forEach(function(cus) {
 			CT.require("custom." + cus, true);
 		});
