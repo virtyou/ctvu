@@ -3,4 +3,4 @@ syms = {
 	"css": ["vu.css"],
 	"html": ["vu"]
 }
-requires = ["virtyou/ctzero"]
+requires = ["virtyou/ctone"]
