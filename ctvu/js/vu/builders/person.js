@@ -119,8 +119,8 @@ vu.builders.person = {
 			selz.accessories = accz[template].map(function(acc) {
 				return CT.dom.checkboxAndLabel(acc, true, null, null, null, function(cb) {
 					var head = vu.builders.current.person.head;
-					if (cb.checked)
-						head.attach(templates.torso.accessories[acc]);
+					if (cb.checked) // hard-wiring one.torso for now ... genericize later
+						head.attach(templates.one.torso.accessories[acc]);
 					else
 						head.remove(acc);
 				});
