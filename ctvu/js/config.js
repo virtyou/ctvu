@@ -5,7 +5,8 @@
     },
     "loaders": {
         "customs": ["one.earring", "one.pony"],
-        "templates": ["one.torso"]
+        "templates": ["one.torso"],
+        "environments": ["one.techno", "one.kidroom"]
     },
     "builders": {
         "furniture": {

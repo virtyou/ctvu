@@ -36,9 +36,10 @@ vu.builders.room = {
 				});
 			if (ropts.objects.length)
 				ptoggle._pool = ropts.objects[0];
-			var eselector = _.selectors.environment = CT.dom.select([
-				"techno", "kidroom"
-			], null, null, ropts.environment, null, function() {
+			var enz = core.config.ctvu.loaders.environments;
+			var eselector = _.selectors.environment = CT.dom.select(enz.map(function(item) {
+				return item.slice(item.indexOf(".") + 1);
+			}), enz, null, ropts.environment, null, function() {
 				if (vu.builders.current.person) {
 					ropts.environment = eselector.value;
 					vu.storage.save(ropts, null, "room",
