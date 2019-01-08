@@ -97,9 +97,13 @@ vu.builders.person = {
 			var cselector = selz.color = vu.core.color("Color Selector", scolor, function() {
 				_.setColor(_.target, cselector.value);
 			});
-			var pselector = selz.character = CT.dom.select(["sassy", "kid"], null, null, template, null, function() {
+
+			var avz = core.config.ctvu.loaders.avatars;
+			var pselector = selz.character = CT.dom.select(avz.map(function(item) {
+				return item.split(".").pop();
+			}), avz, null, bt.slice(bt.indexOf(".") + 1), null, function() {
 				if (vu.builders.current.person) {
-					persist({ template: "templates.torso." + pselector.value }, "body");
+					persist({ template: "templates." + pselector.value }, "body");
 					location = location; // hack! do something smarter...
 				}
 			});
