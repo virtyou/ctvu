@@ -18,6 +18,13 @@ vu.core = {
 	udata: function(cb) {
 		if (vu.core._udata)
 			return cb(vu.core._udata);
+		if (!user.core.get()) { // cfg.access.anon must be true
+			var cfg = core.config.ctvu.builders;
+			return cb({
+				people: [cfg.person],
+				rooms: [cfg.room]
+			});
+		}
 		vu.core.z({
 			action: "json",
 			key: user.core.get("key")
