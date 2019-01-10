@@ -22,6 +22,9 @@ CT.onload(function() {
 			raw = zero.core.util.person(vu.core.bgen(P.body), P.name, null, P, P.body);
 		core.config.ctzero.room = CT.merge(data.rooms[0], core.config.ctzero.room);
 		zero.core.util.init();
-		zero.core.util.join(raw, zero.core.camera.unfollow);
+		zero.core.util.join(raw, function(person) {
+			zero.core.camera.unfollow();
+			person.look(zero.core.camera);
+		});
 	});
 });
