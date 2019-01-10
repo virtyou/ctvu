@@ -16,6 +16,9 @@ Connective tissue and basic interfaces for virtual world builders and applicatio
 ## core.config.ctvu
 ### Import line: 'CT.require("core.config");'
     {
+        "access" : {
+            "anon": true
+        },
         "storage": {
             "mode": "local",
             "apikey": "APIKEY"
@@ -23,7 +26,8 @@ Connective tissue and basic interfaces for virtual world builders and applicatio
         "loaders": {
             "customs": ["one.earring", "one.pony"],
             "templates": ["one.torso"],
-            "environments": ["one.techno", "one.kidroom"]
+            "environments": ["one.techno", "one.kidroom"],
+            "avatars": ["one.torso.sassy", "one.torso.kid"]
         },
         "builders": {
             "furniture": {
