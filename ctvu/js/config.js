@@ -1,4 +1,7 @@
 {
+    "access" : {
+        "anon": true
+    },
     "storage": {
         "mode": "local",
         "apikey": "APIKEY"
