@@ -12,7 +12,7 @@ CT.require("zero.core");
 CT.require("vu.core");
 CT.require("vu.storage");
 
-if (!user.core.get())
+if (!(core.config.ctvu.access.anon || user.core.get()))
 	location = "/user/login.html";
 
 CT.onload(function() {
