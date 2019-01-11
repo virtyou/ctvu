@@ -19,7 +19,7 @@ CT.onload(function() {
 	CT.initCore();
 	vu.core.udata(function(data) {
 		var P = data.people[0],
-			raw = zero.core.util.person(vu.core.bgen(P.body), P.name, null, P, P.body);
+			raw = zero.core.util.person(vu.core.bgen(P.body), P.name || "you", null, P, P.body);
 		core.config.ctzero.room = CT.merge(data.rooms[0], core.config.ctzero.room);
 		zero.core.util.init();
 		zero.core.util.join(raw, function(person) {
