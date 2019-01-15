@@ -66,10 +66,7 @@ vu.builders.person = {
 				registerHair(); // local disabled for now (must add hair alternatives 1st)
 			zero.core.camera.unfollow();
 
-			// this shouldn't really be necessary, right?
-			CT.log("same responses: " + (person.opts.responses == popts.responses));
-			popts.responses = person.opts.responses;
-			_.setTriggers(popts.responses);
+			_.setTriggers(person.opts.responses);
 		},
 		setColor: function(target, color) {
 			target.material.color = vu.core.hex2rgb(color);
@@ -144,7 +141,8 @@ vu.builders.person = {
 				_ = vu.builders.person._, selz = _.selectors,
 				popts = _.opts = vu.storage.get("person") || _.opts,
 				rz = selz.responses, dz = selz.disable, rzt = rz.trigger,
-				persist = vu.builders.person.persist;
+				persist = vu.builders.person.persist,
+				cur = vu.builders.current;
 
 			rzt.innerHTML = trigz[0];
 			var justlow = function(f) {
@@ -186,7 +184,7 @@ vu.builders.person = {
 			]);
 			rz.update = function() {
 				responses[rzt.innerHTML].phrase = rz.fields.value();
-				persist({ responses: popts.responses });
+				persist({ responses: cur.person.opts.responses });
 			};
 			rz.refresh = function() {
 				var rez = responses[rzt.innerHTML];
@@ -208,7 +206,7 @@ vu.builders.person = {
 			};
 			dz.update = function() {
 				responses[rzt.innerHTML].disable = dz.fields.value();
-				persist({ responses: popts.responses });
+				persist({ responses: cur.person.opts.responses });
 			};
 			dz.refresh = function() {
 				dz.fields = CT.dom.fieldList(responses[rzt.innerHTML].disable, function(v) {
