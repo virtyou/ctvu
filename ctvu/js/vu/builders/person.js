@@ -65,6 +65,11 @@ vu.builders.person = {
 			if (core.config.ctvu.storage.mode == "remote")
 				registerHair(); // local disabled for now (must add hair alternatives 1st)
 			zero.core.camera.unfollow();
+
+			// this shouldn't really be necessary, right?
+			CT.log("same responses: " + (person.opts.responses == popts.responses));
+			popts.responses = person.opts.responses;
+			_.setTriggers(popts.responses);
 		},
 		setColor: function(target, color) {
 			target.material.color = vu.core.hex2rgb(color);
@@ -87,6 +92,14 @@ vu.builders.person = {
 			var cfg = core.config.ctzero, _ = vu.builders.person._, selz = _.selectors,
 				popts = _.opts = vu.storage.get("person") || _.opts, accz = _.accessories,
 				persist = vu.builders.person.persist;
+
+			selz.responses = CT.dom.div();
+			selz.responses.trigger = CT.dom.div(null, "bold");
+			selz.disable = CT.dom.div();
+			selz.mood = CT.dom.div();
+			selz.bread = CT.dom.div(null, "right");
+			selz.crumbz = CT.dom.div();
+			selz.triggers = CT.dom.div();
 
 			var bt = popts.body.template, template = bt ? bt.split(".").pop() : popts.name,
 				rawp = _.raw = zero.core.util.person(vu.core.bgen(popts.body),
@@ -125,20 +138,14 @@ vu.builders.person = {
 						head.remove(acc);
 				});
 			});
-			_.setTriggers(popts.responses);
 		},
 		setTriggers: function(responses, path) {
 			var trigz = Object.keys(responses),
 				_ = vu.builders.person._, selz = _.selectors,
-				popts = _.opts = vu.storage.get("person") || _.opts
-				rz = selz.responses = selz.responses || CT.dom.div(),
-				dz = selz.disable = selz.disable || CT.dom.div(),
-				mz = selz.mood = selz.mood || CT.dom.div(),
-				rzt = rz.trigger = rz.trigger || CT.dom.div(null, "bold"),
-				bread = selz.bread = selz.bread || CT.dom.div(null, "right"),
-				crumbz = selz.crumbz = selz.crumbz || CT.dom.div(),
-				strigz = selz.triggers = selz.triggers || CT.dom.div(),
+				popts = _.opts = vu.storage.get("person") || _.opts,
+				rz = selz.responses, dz = selz.disable, rzt = rz.trigger,
 				persist = vu.builders.person.persist;
+
 			rzt.innerHTML = trigz[0];
 			var justlow = function(f) {
 				f.value = f.value.replace(/[^a-z]/g, '');
@@ -172,7 +179,7 @@ vu.builders.person = {
 					iput.focus();
 				});
 			});
-			CT.dom.setContent(strigz, [
+			CT.dom.setContent(selz.triggers, [
 				tfl.empty,
 				tfl.addButton,
 				tfl
@@ -187,7 +194,8 @@ vu.builders.person = {
 					rez.phrase = [rez.phrase];
 				rz.fields = CT.dom.fieldList(rez.phrase, function(v) {
 					var f = CT.dom.field(null, v);
-					f.onkeyup = rz.update;
+					if (v)
+						f.onkeyup = rz.update;
 					return f;
 				}, null, rz.update, rz.update);
 				CT.dom.setContent(rz, [
@@ -205,7 +213,8 @@ vu.builders.person = {
 			dz.refresh = function() {
 				dz.fields = CT.dom.fieldList(responses[rzt.innerHTML].disable, function(v) {
 					var f = CT.dom.field(null, v);
-					f.onkeyup = dz.update;
+					if (v)
+						f.onkeyup = dz.update;
 					return f;
 				}, null, dz.update, dz.update);
 				CT.dom.setContent(dz, [
@@ -214,7 +223,7 @@ vu.builders.person = {
 					dz.fields
 				]);
 			};
-			mz.refresh = function() {
+			selz.mood.refresh = function() {
 				CT.dom.setContent(selz.mood, ["mad", "happy", "sad", "antsy"].map(function(sel) {
 					var rez = responses[rzt.innerHTML],
 						moodz = rez.mood = rez.mood || {};
@@ -234,7 +243,7 @@ vu.builders.person = {
 				}));
 			};
 			path = path || ["base"];
-			CT.dom.setContent(crumbz, (path.length == 1) ? "" : path.map(function(pname, i) {
+			CT.dom.setContent(selz.crumbz, (path.length == 1) ? "" : path.map(function(pname, i) {
 				return CT.dom.span([
 					CT.dom.span(i ? "->" : "path:"),
 					CT.dom.pad(),
@@ -253,7 +262,7 @@ vu.builders.person = {
 					CT.dom.pad()
 				]);
 			}));
-			CT.dom.setContent(bread, CT.dom.link("view branches", function() {
+			CT.dom.setContent(selz.bread, CT.dom.link("view branches", function() {
 				path.push(rzt.innerHTML);
 				var resps = responses[rzt.innerHTML];
 				if (!resps.branches) {
