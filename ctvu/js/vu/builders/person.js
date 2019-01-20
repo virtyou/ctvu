@@ -285,7 +285,8 @@ vu.builders.person = {
 		vu.storage.save(popts, null, "person", updates, sub);
 	},
 	menu: function() {
-		var cur = vu.builders.current, _ = vu.builders.person._, selz = _.selectors;
+		var cur = vu.builders.current, _ = vu.builders.person._, selz = _.selectors,
+			blurs = core.config.ctvu.blurs;
 		_.setup();
 		var popts = _.opts, items = [
 			CT.dom.div("your virtYou", "bigger centered pb10")
@@ -307,7 +308,7 @@ vu.builders.person = {
 					CT.dom.span("Voice"),
 					CT.dom.pad(),
 					selz.voice,
-					CT.dom.smartField(respond, "w1 block mt5", null, null, null, ["say something", "test voice", "type something"])
+					CT.dom.smartField(respond, "w1 block mt5", null, null, null, blurs.talk)
 				], "padded bordered round mb5"),
 				CT.dom.div([
 					"Triggers",
@@ -357,7 +358,7 @@ vu.builders.person = {
 					CT.dom.smartField(function(val) {
 						cur.person.say(val);
 						return "clear";
-					}, "w1 block mt5", null, null, null, ["say something", "test voice", "type something"])
+					}, "w1 block mt5", null, null, null, blurs.talk)
 				], "padded bordered round mb5"),
 				CT.dom.div([
 					CT.dom.checkboxAndLabel("moody", null, null, null, null, function(cbox) {
