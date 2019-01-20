@@ -139,9 +139,9 @@ vu.builders.talk = {
 				// viewer (img/audio)
 				var viewer = CT.dom.div();
 				var setViewer = function() {
-					var v = CT.dom[(sel == "audio") ? "audio" : "img"](opts.item);
-					v.className = "w1";
-					CT.dom.setContent(viewer, v);
+					CT.dom.setContent(viewer, (sel == "audio")
+						? CT.dom.audio(opts.item, true, null, null, null, null, "w1")
+						: CT.dom.img(opts.item, "w1"));
 				};
 				if (opts.item)
 					setViewer();
