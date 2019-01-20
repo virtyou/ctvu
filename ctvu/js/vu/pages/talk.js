@@ -1,6 +1,7 @@
 CT.require("CT.align");
 CT.require("CT.data");
 CT.require("CT.dom");
+CT.require("CT.file");
 CT.require("CT.layout");
 CT.require("CT.modal");
 CT.require("CT.parse");
