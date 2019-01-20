@@ -43,9 +43,10 @@ a:hover {
 	top: 0px;
 	left: 0px;
 	bottom: 0px;
-	width: 261px;
+	width: 275px;
 	padding: 4px;
 	padding-top: 0;
+	overflow-y: scroll;
 }
 
 #vnode {

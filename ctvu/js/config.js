@@ -6,6 +6,9 @@
         "mode": "local",
         "apikey": "APIKEY"
     },
+    "blurs": {
+        "talk": ["say something", "test voice", "type something"]
+    },
     "loaders": {
         "customs": ["one.earring", "one.pony"],
         "templates": ["one.torso"],

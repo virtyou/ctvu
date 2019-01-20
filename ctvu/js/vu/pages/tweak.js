@@ -11,7 +11,9 @@ CT.require("user.core");
 CT.require("zero.core");
 CT.require("vu.core");
 CT.require("vu.storage");
-CT.require("vu.builders");
+CT.require("vu.builders.core");
+CT.require("vu.builders.tweak");
+CT.require("vu.builders.room");
 CT.scriptImport("vu.lib.colorPicker");
 
 CT.onload(function() {
@@ -19,10 +21,10 @@ CT.onload(function() {
 	vu.storage.init(function() {
 		// menu
 		CT.dom.setContent("menu", [
-			vu.builders.person.menu(),
+			vu.builders.tweak.menu(),
 			vu.builders.room.menu()
 		]);
 		// virtual world
-		vu.builders.init();
+		vu.builders.core.init();
 	});
 });
