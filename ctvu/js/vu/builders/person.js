@@ -222,7 +222,7 @@ vu.builders.person = {
 				]);
 			};
 			selz.mood.refresh = function() {
-				CT.dom.setContent(selz.mood, ["mad", "happy", "sad", "antsy"].map(function(sel) {
+				CT.dom.setContent(selz.mood, zero.core.Mood.vectors.map(function(sel) {
 					var rez = responses[rzt.innerHTML],
 						moodz = rez.mood = rez.mood || {};
 					var range = CT.dom.range(function(val) {
@@ -363,7 +363,7 @@ vu.builders.person = {
 					CT.dom.checkboxAndLabel("moody", null, null, null, null, function(cbox) {
 						cur.person.opts.moody = cbox.checked;
 					}),
-					["mad", "happy", "sad", "antsy"].map(function(sel) {
+					zero.core.Mood.vectors.map(function(sel) {
 						return [
 							sel,
 							CT.dom.range(function(val) {
