@@ -139,13 +139,15 @@ vu.builders.talk = {
 				// viewer (img/audio)
 				var viewer = CT.dom.div();
 				var setViewer = function() {
-					CT.dom.setContent(viewer, CT.dom[(sel == "audio") ? "audio" : "img"](opts.item));
+					var v = CT.dom[(sel == "audio") ? "audio" : "img"](opts.item);
+					v.className = "w1";
+					CT.dom.setContent(viewer, v);
 				};
 				if (opts.item)
 					setViewer();
 
 				// item (drag drop)
-				var dragdrop = CT.file.dragdrop(function(ctfile) {
+				var dragdrop = CT.dom.div(CT.file.dragdrop(function(ctfile) {
 					ctfile.upload("/_db", function(url) {
 						opts.item = url;
 						setViewer();
@@ -155,7 +157,7 @@ vu.builders.talk = {
 						key: opts.key,
 						property: "item"
 					});
-				}, !("item" in opts) && "hidden");
+				}), !("item" in opts) && "hidden");
 
 				// name (required)
 				var name = CT.dom.smartField(function(val) {
