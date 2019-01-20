@@ -171,7 +171,7 @@ vu.builders.talk = {
 							data: opts
 						},
 						cb: function(resource) {
-							if (!sel in rez)
+							if (!(sel in rez))
 								rez[sel] = opts;
 							opts.key = resource.key;
 							persist({ responses: popts.responses });
