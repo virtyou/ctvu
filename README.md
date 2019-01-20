@@ -9,6 +9,9 @@ Connective tissue and basic interfaces for virtual world builders and applicatio
     	"css": ["vu.css"],
     	"html": ["vu"]
     }
+    model = {
+    	"ctvu.model": ["*"]
+    }
     requires = ["virtyou/ctone"]
 
 # Front (JS Config)
@@ -22,6 +25,9 @@ Connective tissue and basic interfaces for virtual world builders and applicatio
         "storage": {
             "mode": "local",
             "apikey": "APIKEY"
+        },
+        "blurs": {
+            "talk": ["say something", "test voice", "type something"]
         },
         "loaders": {
             "customs": ["one.earring", "one.pony"],
