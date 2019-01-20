@@ -16,6 +16,7 @@ vu.builders.talk = {
 			selz.responses.trigger = CT.dom.div(null, "bold");
 			selz.disable = CT.dom.div();
 			selz.mood = CT.dom.div();
+			selz.media = CT.dom.div();
 			selz.bread = CT.dom.div(null, "right");
 			selz.crumbz = CT.dom.div();
 			selz.triggers = CT.dom.div();
@@ -89,6 +90,7 @@ vu.builders.talk = {
 				]);
 				selz.disable.refresh();
 				selz.mood.refresh();
+				selz.media.refresh();
 			};
 			dz.update = function() {
 				responses[rzt.innerHTML].disable = dz.fields.value();
@@ -107,6 +109,13 @@ vu.builders.talk = {
 					dz.fields
 				]);
 			};
+			var checkBoxGate = function(obj, sel, node) {
+				return CT.dom.checkboxAndLabel(sel, sel in obj, null, null, null, function(cbox) {
+					CT.dom.showHide(node, cbox.checked, !cbox.checked);
+					if (!cbox.checked)
+						delete obj[sel];
+				});
+			};
 			selz.mood.refresh = function() {
 				CT.dom.setContent(selz.mood, zero.core.Mood.vectors.map(function(sel) {
 					var rez = responses[rzt.innerHTML],
@@ -117,12 +126,19 @@ vu.builders.talk = {
 						persist({ responses: popts.responses });
 					}, 0, 100, 100 * (moodz[sel] || 0), 1, "w1" + ((sel in moodz) ? "" : " hidden"));
 					return [
-						CT.dom.checkboxAndLabel(sel, sel in moodz, null, null, null, function(cbox) {
-							CT.dom.showHide(range, cbox.checked, !cbox.checked);
-							if (!cbox.checked)
-								delete moodz[sel];
-						}),
+						checkBoxGate(moodz, sel, range),
 						range
+					];
+				}));
+			};
+			selz.media.refresh = function() {
+				CT.dom.setContent(selz.media, ["image", "background", "audio"].map(function(sel) {
+					var rez = responses[rzt.innerHTML],
+						tmp_node = CT.dom.div(sel, !(sel in rez) && "hidden");
+
+					return [
+						checkBoxGate(rez, sel, tmp_node),
+						tmp_node
 					];
 				}));
 			};
@@ -213,6 +229,10 @@ vu.builders.talk = {
 			CT.dom.div([
 				"Mood",
 				selz.mood
+			], "padded bordered round mb5"),
+			CT.dom.div([
+				"Media",
+				selz.media
 			], "padded bordered round")
 		];
 	}
