@@ -5,7 +5,7 @@ vu.builders.tweak = {
 		selectors: {},
 		joined: function(_person) {
 			var person = vu.builders.current.person = _person,
-				_ = vu.builders.person._, popts = _.opts,
+				_ = vu.builders.tweak._, popts = _.opts,
 				has_menu = false;
 			for (var c in popts.colors) {
 				var comps = c.split(".");
@@ -66,8 +66,8 @@ vu.builders.tweak = {
 		setColor: function(target, color) {
 			target.material.color = vu.core.hex2rgb(color);
 			if (core.config.ctvu.storage.mode == "local") {
-				vu.builders.person._.opts.colors[target.path] = color;
-				vu.builders.person.persist();
+				vu.builders.tweak._.opts.colors[target.path] = color;
+				vu.builders.tweak.persist();
 			} else { // remote
 				color = parseInt(color.slice(1), 16);
 				var bod = vu.builders.current.person.body;
@@ -81,9 +81,9 @@ vu.builders.tweak = {
 			}
 		},
 		setup: function() {
-			var cfg = core.config.ctzero, _ = vu.builders.person._, selz = _.selectors,
+			var cfg = core.config.ctzero, _ = vu.builders.tweak._, selz = _.selectors,
 				popts = _.opts = vu.storage.get("person") || _.opts, accz = _.accessories,
-				persist = vu.builders.person.persist;
+				persist = vu.builders.tweak.persist;
 
 			var bt = popts.body.template, template = bt ? bt.split(".").pop() : popts.name,
 				rawp = _.raw = zero.core.util.person(vu.core.bgen(popts.body),
@@ -125,7 +125,7 @@ vu.builders.tweak = {
 		}
 	},
 	persist: function(updates, sub) {
-		var popts = vu.builders.person._.opts;
+		var popts = vu.builders.tweak._.opts;
 		if (sub)
 			popts[sub] = CT.merge(updates, popts[sub]);
 		else
@@ -133,7 +133,7 @@ vu.builders.tweak = {
 		vu.storage.save(popts, null, "person", updates, sub);
 	},
 	menu: function() {
-		var cur = vu.builders.current, _ = vu.builders.person._, selz = _.selectors,
+		var cur = vu.builders.current, _ = vu.builders.tweak._, selz = _.selectors,
 			blurs = core.config.ctvu.blurs, popts = _.opts;
 		_.setup();
 		return [
@@ -176,7 +176,7 @@ vu.builders.tweak = {
 							var mod = {};
 							mod[sel] = popts.mood[sel] = val / 100;
 							cur.person.mood.update(mod);
-							vu.builders.person.persist({ mood: popts.mood });
+							vu.builders.tweak.persist({ mood: popts.mood });
 						}, 0, 100, 100 * (popts.mood[sel] || 0), 1, "w1")
 					];
 				}),

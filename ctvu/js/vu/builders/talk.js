@@ -6,12 +6,12 @@ vu.builders.talk = {
 			var person = vu.builders.current.person = _person;
 			person.opts.moody = true;
 			zero.core.camera.unfollow();
-			vu.builders.person._.setTriggers(person.opts.responses);
+			vu.builders.talk._.setTriggers(person.opts.responses);
 		},
 		setup: function() {
-			var cfg = core.config.ctzero, _ = vu.builders.person._, selz = _.selectors,
+			var cfg = core.config.ctzero, _ = vu.builders.talk._, selz = _.selectors,
 				popts = _.opts = vu.storage.get("person") || _.opts,
-				persist = vu.builders.person.persist;
+				persist = vu.builders.talk.persist;
 			selz.responses = CT.dom.div();
 			selz.responses.trigger = CT.dom.div(null, "bold");
 			selz.disable = CT.dom.div();
@@ -19,13 +19,15 @@ vu.builders.talk = {
 			selz.bread = CT.dom.div(null, "right");
 			selz.crumbz = CT.dom.div();
 			selz.triggers = CT.dom.div();
+			_.raw = zero.core.util.person(vu.core.bgen(popts.body),
+				popts.name || "you", null, popts, popts.body);
 		},
 		setTriggers: function(responses, path) {
 			var trigz = Object.keys(responses),
-				_ = vu.builders.person._, selz = _.selectors,
+				_ = vu.builders.talk._, selz = _.selectors,
 				popts = _.opts = vu.storage.get("person") || _.opts,
 				rz = selz.responses, dz = selz.disable, rzt = rz.trigger,
-				persist = vu.builders.person.persist,
+				persist = vu.builders.talk.persist,
 				cur = vu.builders.current;
 
 			rzt.innerHTML = trigz[0];
@@ -139,7 +141,7 @@ vu.builders.talk = {
 								resps = resps[pn].branches;
 							}
 						}
-						vu.builders.person._.setTriggers(resps, npath);
+						vu.builders.talk._.setTriggers(resps, npath);
 					}),
 					CT.dom.pad()
 				]);
@@ -155,13 +157,13 @@ vu.builders.talk = {
 						}
 					};
 				}
-				vu.builders.person._.setTriggers(resps.branches, path);
+				vu.builders.talk._.setTriggers(resps.branches, path);
 			}));
 			rz.refresh();
 		}
 	},
 	persist: function(updates, sub) {
-		var popts = vu.builders.person._.opts;
+		var popts = vu.builders.talk._.opts;
 		if (sub)
 			popts[sub] = CT.merge(updates, popts[sub]);
 		else
@@ -169,7 +171,7 @@ vu.builders.talk = {
 		vu.storage.save(popts, null, "person", updates, sub);
 	},
 	menu: function() {
-		var cur = vu.builders.current, _ = vu.builders.person._, selz = _.selectors,
+		var cur = vu.builders.current, _ = vu.builders.talk._, selz = _.selectors,
 			blurs = core.config.ctvu.blurs;
 		_.setup();
 		var respond = function(val) {
