@@ -131,14 +131,61 @@ vu.builders.talk = {
 					];
 				}));
 			};
+			var mediaSelector = function(rez, sel) {
+				var opts = rez[sel] || {
+					modelName: "resource"
+				};
+
+				// viewer (img/audio)
+				var viewer = CT.dom.div();
+				var setViewer = function() {
+					CT.dom.setContent(viewer, CT.dom[(sel == "audio") ? "audio" : "img"](opts.item));
+				};
+				if (opts.item)
+					setViewer();
+
+				// item (drag drop)
+				var dragdrop = CT.file.dragdrop(function(ctfile) {
+					ctfile.upload("/_db", function(url) {
+						opts.item = url;
+						setViewer();
+						persist({ responses: popts.responses });
+					}, {
+						action: "blob",
+						key: opts.key,
+						property: "item"
+					});
+				}, !("item" in opts) && "hidden");
+
+				// name (required)
+				var name = CT.dom.smartField(function(val) {
+					if (!val) return name.blur();
+					opts.name = val;
+					CT.net.post({
+						path: "/_db",
+						params: {
+							action: "edit",
+							pw: core.config.ctvu.storage.apikey,
+							data: opts
+						},
+						cb: function(resource) {
+							if (!sel in rez)
+								rez[sel] = opts;
+							opts.key = resource.key;
+							persist({ responses: popts.responses });
+							CT.dom.show(dragdrop);
+						}
+					});
+				}, null, null, opts.name, null, ["what's the name?", "name this resource", "what's it called?"]);
+
+				return CT.dom.div([name, dragdrop, viewer], !(sel in rez) && "hidden");
+			};
 			selz.media.refresh = function() {
 				CT.dom.setContent(selz.media, ["image", "background", "audio"].map(function(sel) {
-					var rez = responses[rzt.innerHTML],
-						tmp_node = CT.dom.div(sel, !(sel in rez) && "hidden");
-
+					var rez = responses[rzt.innerHTML], node = mediaSelector(rez, sel);
 					return [
-						checkBoxGate(rez, sel, tmp_node),
-						tmp_node
+						checkBoxGate(rez, sel, node),
+						node
 					];
 				}));
 			};
