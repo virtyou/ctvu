@@ -151,7 +151,7 @@ vu.builders.talk = {
 					ctfile.upload("/_db", function(url) {
 						opts.item = url;
 						setViewer();
-						persist({ responses: popts.responses });
+						persist({ responses: cur.person.opts.responses });
 					}, {
 						action: "blob",
 						key: opts.key,
@@ -174,7 +174,7 @@ vu.builders.talk = {
 							if (!(sel in rez))
 								rez[sel] = opts;
 							opts.key = resource.key;
-							persist({ responses: popts.responses });
+							persist({ responses: cur.person.opts.responses });
 							CT.dom.show(dragdrop);
 						}
 					});
