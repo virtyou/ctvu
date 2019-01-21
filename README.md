@@ -27,7 +27,8 @@ Connective tissue and basic interfaces for virtual world builders and applicatio
             "apikey": "APIKEY"
         },
         "blurs": {
-            "talk": ["say something", "test voice", "type something"]
+            "talk": ["say something", "test voice", "type something"],
+            "resource": ["what's the name?", "name this resource", "what's it called?"]
         },
         "loaders": {
             "customs": ["one.earring", "one.pony"],
