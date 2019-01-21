@@ -178,7 +178,7 @@ vu.builders.talk = {
 							CT.dom.show(dragdrop);
 						}
 					});
-				}, null, null, opts.name, null, ["what's the name?", "name this resource", "what's it called?"]);
+				}, null, null, opts.name, null, core.config.ctvu.blurs.resource);
 
 				return CT.dom.div([name, dragdrop, viewer], !(sel in rez) && "hidden");
 			};
