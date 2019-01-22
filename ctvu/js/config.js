@@ -8,7 +8,8 @@
     },
     "blurs": {
         "talk": ["say something", "test voice", "type something"],
-        "resource": ["what's the name?", "name this resource", "what's it called?"]
+        "resource": ["what's the name?", "name this resource", "what's it called?"],
+        "chain": ["enter name of chained trigger", "what happens next?", "next trigger"]
     },
     "loaders": {
         "customs": ["one.earring", "one.pony"],
