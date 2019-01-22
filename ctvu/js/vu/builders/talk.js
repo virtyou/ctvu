@@ -9,12 +9,13 @@ vu.builders.talk = {
 			vu.builders.talk._.setTriggers(person.opts.responses);
 		},
 		setup: function() {
-			var cfg = core.config.ctzero, _ = vu.builders.talk._, selz = _.selectors,
+			var _ = vu.builders.talk._, selz = _.selectors,
 				popts = _.opts = vu.storage.get("person") || _.opts,
 				persist = vu.builders.talk.persist;
 			selz.responses = CT.dom.div();
 			selz.responses.trigger = CT.dom.div(null, "bold");
 			selz.disable = CT.dom.div();
+			selz.chain = CT.dom.div();
 			selz.mood = CT.dom.div();
 			selz.media = CT.dom.div();
 			selz.bread = CT.dom.div(null, "right");
@@ -24,7 +25,7 @@ vu.builders.talk = {
 				popts.name || "you", null, popts, popts.body);
 		},
 		setTriggers: function(responses, path) {
-			var trigz = Object.keys(responses),
+			var trigz = Object.keys(responses), cfg = core.config.ctvu,
 				_ = vu.builders.talk._, selz = _.selectors,
 				popts = _.opts = vu.storage.get("person") || _.opts,
 				rz = selz.responses, dz = selz.disable, rzt = rz.trigger,
@@ -91,6 +92,7 @@ vu.builders.talk = {
 				selz.disable.refresh();
 				selz.mood.refresh();
 				selz.media.refresh();
+				selz.chain.refresh();
 			};
 			dz.update = function() {
 				responses[rzt.innerHTML].disable = dz.fields.value();
@@ -108,6 +110,12 @@ vu.builders.talk = {
 					dz.fields.addButton,
 					dz.fields
 				]);
+			};
+			selz.chain.refresh = function() {
+				CT.dom.setContent(selz.chain, CT.dom.smartField(function(val) {
+					responses[rzt.innerHTML].chain = val;
+					persist({ responses: cur.person.opts.responses });
+				}, "w1 block mt5", null, responses[rzt.innerHTML].chain, null, cfg.blurs.chain));
 			};
 			var checkBoxGate = function(obj, sel, node) {
 				return CT.dom.checkboxAndLabel(sel, sel in obj, null, null, null, function(cbox) {
@@ -167,7 +175,7 @@ vu.builders.talk = {
 						path: "/_db",
 						params: {
 							action: "edit",
-							pw: core.config.ctvu.storage.apikey,
+							pw: cfg.storage.apikey,
 							data: opts
 						},
 						cb: function(resource) {
@@ -178,7 +186,7 @@ vu.builders.talk = {
 							CT.dom.show(dragdrop);
 						}
 					});
-				}, null, null, opts.name, null, core.config.ctvu.blurs.resource);
+				}, null, null, opts.name, null, cfg.blurs.resource);
 
 				return CT.dom.div([name, dragdrop, viewer], !(sel in rez) && "hidden");
 			};
@@ -274,6 +282,10 @@ vu.builders.talk = {
 			CT.dom.div([
 				"Disable",
 				selz.disable
+			], "padded bordered round mb5"),
+			CT.dom.div([
+				"Chain",
+				selz.chain
 			], "padded bordered round mb5"),
 			CT.dom.div([
 				"Mood",
