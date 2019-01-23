@@ -2,6 +2,10 @@ vu.builders.talk = {
 	_: {
 		opts: core.config.ctvu.builders.person,
 		selectors: {},
+		media: {
+			image: "img",
+			background: "img"
+		},
 		joined: function(person) {
 			vu.builders.current.person = person;
 			person.opts.moody = true;
@@ -141,15 +145,18 @@ vu.builders.talk = {
 			};
 			var mediaSelector = function(rez, sel) {
 				var opts = rez[sel] || {
+					variety: sel,
 					modelName: "resource"
 				};
 
 				// viewer (img/audio)
 				var viewer = CT.dom.div();
 				var setViewer = function() {
-					CT.dom.setContent(viewer, (sel == "audio")
-						? CT.dom.audio(opts.item, true, null, null, null, null, "w1")
-						: CT.dom.img(opts.item, "w1"));
+					CT.dom.setContent(viewer, CT.dom[_.media[sel] || sel]({
+						src: opts.item,
+						controls: true,
+						className: "w1"
+					}));
 				};
 				if (opts.item)
 					setViewer();
@@ -191,7 +198,7 @@ vu.builders.talk = {
 				return CT.dom.div([name, dragdrop, viewer], !(sel in rez) && "hidden");
 			};
 			selz.media.refresh = function() {
-				CT.dom.setContent(selz.media, ["image", "background", "audio"].map(function(sel) {
+				CT.dom.setContent(selz.media, ["image", "background", "audio", "video"].map(function(sel) {
 					var rez = responses[rzt.innerHTML], node = mediaSelector(rez, sel);
 					return [
 						checkBoxGate(rez, sel, node),
