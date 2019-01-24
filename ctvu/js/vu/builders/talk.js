@@ -37,8 +37,11 @@ vu.builders.talk = {
 				cur = vu.builders.current;
 
 			rzt.innerHTML = trigz[0];
+			var jlo = function(v) {
+				return v.replace(/[^a-z]/g, '');
+			};
 			var justlow = function(f) {
-				f.value = f.value.replace(/[^a-z]/g, '');
+				f.value = jlo(f.value);
 			};
 			var tfl = CT.dom.fieldList(trigz, function(v) {
 				var f = CT.dom.field(null, v);
@@ -229,15 +232,25 @@ vu.builders.talk = {
 			CT.dom.setContent(selz.bread, CT.dom.link("view branches", function() {
 				path.push(rzt.innerHTML);
 				var resps = responses[rzt.innerHTML];
-				if (!resps.branches) {
-					resps.branches = {
-						"*": {
-							"phrase": "fallback response",
-							"mood": {}
+				if (resps.branches)
+					vu.builders.talk._.setTriggers(resps.branches, path);
+				else {
+					(new CT.modal.Prompt({
+						prompt: "what's the new trigger?",
+						transition: "slide",
+						cb: function(val) {
+							val = jlo(val);
+							if (!val) return;
+							resps.branches = {};
+							resps.branches[val] = {
+								"phrase": "you said " + val,
+								"mood": {}
+							};
+							persist({ responses: cur.person.opts.responses });
+							vu.builders.talk._.setTriggers(resps.branches, path);
 						}
-					};
+					})).show();
 				}
-				vu.builders.talk._.setTriggers(resps.branches, path);
 			}));
 			rz.refresh();
 		}
