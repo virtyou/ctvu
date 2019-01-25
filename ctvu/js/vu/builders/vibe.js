@@ -18,7 +18,7 @@ vu.builders.vibe = {
 				if (v) {
 					f._trigger = v;
 					f.onfocus = function() {
-						person.vibe.current = f.value;
+						person.vibe.update(f.value);
 						_.setVibe(person.vibe.current);
 					};
 					f.onkeyup = function() {
