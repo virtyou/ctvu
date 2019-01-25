@@ -15,13 +15,14 @@ vu.core = {
 			cb: cb
 		});
 	},
-	fieldList: function(node, values) {
-		node.fields = CT.dom.fieldList(values, function(v) {
+	fieldList: function(node, values, cb, generator, onadd, onremove) {
+		cb = cb || node.update;
+		node.fields = CT.dom.fieldList(values, generator || function(v) {
 			var f = CT.dom.field(null, v);
 			if (v)
-				f.onkeyup = node.update;
+				f.onkeyup = cb;
 			return f;
-		}, null, node.update, node.update);
+		}, null, onadd || cb, onremove || cb);
 		CT.dom.setContent(node, [
 			node.fields.empty,
 			node.fields.addButton,
