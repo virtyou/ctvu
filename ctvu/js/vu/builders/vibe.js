@@ -26,7 +26,7 @@ vu.builders.vibe = {
 							vopts[f.value] = vopts[f._trigger];
 							delete vopts[f._trigger];
 							person.vibe.current = f._trigger = f.value;
-							persist({ vibe: vopts });
+							vu.builders.vibe.persist({ vibe: vopts });
 						} else
 							f.value = f._trigger; // meh
 					};
@@ -43,7 +43,7 @@ vu.builders.vibe = {
 			}, function(val) {
 				// onremove
 				delete vopts[val];
-				persist({ vibe: vopts });
+				vu.builders.vibe.persist({ vibe: vopts });
 			});
 			_.setVibe(person.vibe.current);
 		},
