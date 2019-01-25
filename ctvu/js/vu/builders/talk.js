@@ -19,6 +19,7 @@ vu.builders.talk = {
 			selz.responses.trigger = CT.dom.div(null, "bold");
 			selz.disable = CT.dom.div();
 			selz.chain = CT.dom.div();
+			selz.vibe = CT.dom.div();
 			selz.mood = CT.dom.div();
 			selz.media = CT.dom.div();
 			selz.bread = CT.dom.div(null, "right");
@@ -87,6 +88,7 @@ vu.builders.talk = {
 				selz.mood.refresh();
 				selz.media.refresh();
 				selz.chain.refresh();
+				selz.vibe.refresh();
 			};
 			dz.update = function() {
 				responses[rzt.innerHTML].disable = dz.fields.value();
@@ -100,6 +102,12 @@ vu.builders.talk = {
 					responses[rzt.innerHTML].chain = val;
 					persist({ responses: cur.person.opts.responses });
 				}, "w1 block mt5", null, responses[rzt.innerHTML].chain, null, cfg.blurs.chain));
+			};
+			selz.vibe.refresh = function() {
+				CT.dom.setContent(selz.vibe, CT.dom.smartField(function(val) {
+					responses[rzt.innerHTML].vibe = val;
+					persist({ responses: cur.person.opts.responses });
+				}, "w1 block mt5", null, responses[rzt.innerHTML].vibe, null, cfg.blurs.vibe));
 			};
 			var checkBoxGate = function(obj, sel, node) {
 				return CT.dom.checkboxAndLabel(sel, sel in obj, null, null, null, function(cbox) {
@@ -283,6 +291,10 @@ vu.builders.talk = {
 			CT.dom.div([
 				"Chain",
 				selz.chain
+			], "padded bordered round mb5"),
+			CT.dom.div([
+				"Vibe",
+				selz.vibe
 			], "padded bordered round mb5"),
 			CT.dom.div([
 				"Mood",
