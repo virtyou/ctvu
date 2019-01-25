@@ -44,7 +44,6 @@
                     "mood": {}
                 }
             },
-            "moody": false,
             "voice": "Joanna",
             "body": {
                 "template": "templates.one.torso.sassy"
