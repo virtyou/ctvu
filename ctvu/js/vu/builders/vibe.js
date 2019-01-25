@@ -5,20 +5,27 @@ vu.builders.vibe = {
 		selectors: {},
 		joined: function(person) {
 			vu.builders.current.person = person;
-			CT.dom.setContent(vu.builders.vibe._.selectors.mood, zero.core.Mood.vectors.map(function(sel) {
-				return [
-					sel,
-					CT.dom.range(function(val) {
-						CT.log(sel + ": " + val);
-						var mod = {},
-							mood_opts = person.mood.snapshot();
-						mod[sel] = mood_opts[sel] = val / 100;
-						person.mood.update(mod);
-						vu.builders.vibe.persist({ mood: mood_opts });
-					}, 0, 100, 100 * (person.mood.opts[sel] || 0), 1, "w1")
-				];
-			}));
 			zero.core.camera.unfollow();
+			vu.builders.vibe._.setVibe(person.vibe.current);
+		},
+		setVibe: function(vibe) {
+			var person = vu.builders.current.person;
+			CT.dom.setContent(vu.builders.vibe._.selectors.mood, [
+				CT.dom.div(vibe, "big"),
+				zero.core.Mood.vectors.map(function(sel) {
+					return [
+						sel,
+						CT.dom.range(function(val) {
+							CT.log(sel + ": " + val);
+							var mod = {},
+								mood_opts = person.mood.snapshot();
+							mod[sel] = mood_opts[sel] = val / 100;
+							person.mood.update(mod);
+							vu.builders.vibe.persist({ mood: mood_opts });
+						}, 0, 100, 100 * (person.mood.opts[sel] || 0), 1, "w1")
+					];
+				})
+			]);
 		},
 		setup: function() {
 			var _ = vu.builders.vibe._,
@@ -42,9 +49,6 @@ vu.builders.vibe = {
 		return [
 			CT.dom.div("your virtYou", "bigger centered pb10"),
 			CT.dom.div([
-				CT.dom.checkboxAndLabel("moody", null, null, null, null, function(cbox) {
-					cur.person.opts.moody = cbox.checked;
-				}),
 				selz.mood
 			], "padded bordered round centered")
 		];
