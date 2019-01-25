@@ -28,12 +28,14 @@ Connective tissue and basic interfaces for virtual world builders and applicatio
         },
         "blurs": {
             "talk": ["say something", "test voice", "type something"],
-            "resource": ["what's the name?", "name this resource", "what's it called?"]
+            "resource": ["what's the name?", "name this resource", "what's it called?"],
+            "chain": ["enter name of chained trigger", "what happens next?", "next trigger"],
+            "vibe": ["name that vibe", "what's the vibe?", "enter the name of your vibe"]
         },
         "loaders": {
             "customs": ["one.earring", "one.pony"],
             "templates": ["one.torso"],
-            "environments": ["one.techno", "one.kidroom"],
+            "environments": ["one.techno", "one.scrolly", "one.kidroom"],
             "avatars": ["one.torso.sassy", "one.torso.kid"]
         },
         "builders": {
@@ -63,7 +65,6 @@ Connective tissue and basic interfaces for virtual world builders and applicatio
                         "mood": {}
                     }
                 },
-                "moody": false,
                 "voice": "Joanna",
                 "body": {
                     "template": "templates.one.torso.sassy"
