@@ -42,7 +42,7 @@ vu.builders.talk = {
 			var justlow = function(f) {
 				f.value = jlo(f.value);
 			};
-			var tfl = CT.dom.fieldList(trigz, function(v) {
+			vu.core.fieldList(selz.triggers, trigz, null, function(v) {
 				var f = CT.dom.field(null, v);
 				if (v) {
 					f._trigger = v;
@@ -56,26 +56,24 @@ vu.builders.talk = {
 							responses[f.value] = responses[f._trigger];
 							delete responses[f._trigger];
 							rzt.innerHTML = f._trigger = f.value;
-							persist({ responses: popts.responses });
+							persist({ responses: cur.person.opts.responses });
 						} else
 							f.value = f._trigger; // meh
 					};
 				} else
 					f.onkeyup = function() { justlow(f); };
 				return f;
-			}, null, function(iput) {
+			}, function(iput) {
 				var key = iput.value;
 				if (key in responses) return; // already exists...
 				responses[key] = { mood: {}, phrase: [] };
 				setTimeout(function() {
 					iput.focus();
 				});
+			}, function(val) {
+				delete responses[val];
+				persist({ responses: cur.person.opts.responses });
 			});
-			CT.dom.setContent(selz.triggers, [
-				tfl.empty,
-				tfl.addButton,
-				tfl
-			]);
 			rz.update = function() {
 				responses[rzt.innerHTML].phrase = rz.fields.value();
 				persist({ responses: cur.person.opts.responses });
