@@ -36,7 +36,7 @@ vu.builders.vibe = {
 				// onadd
 				var key = iput.value;
 				if (key in vopts) return; // already exists...
-				vopts[key] = CT.merge(vopts.default);
+				vopts[key] = CT.merge(vopts["default"]);
 				setTimeout(function() {
 					iput.focus();
 				});
