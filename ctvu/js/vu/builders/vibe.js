@@ -57,11 +57,13 @@ vu.builders.vibe = {
 						sel,
 						CT.dom.range(function(val) {
 							CT.log(sel + ": " + val);
-							var mod = {},
-								mood_opts = vopts[vibe] = person.mood.snapshot();
+							var mood_opts = vopts[vibe] = person.mood.snapshot(),
+								mod = {}, popts = { vibe: vopts };
 							mod[sel] = mood_opts[sel] = val / 100;
 							person.mood.update(mod);
-							vu.builders.vibe.persist({ mood: mood_opts, vibe: vopts });
+							if (vibe == "default")
+								popts.mood = mood_opts;
+							vu.builders.vibe.persist(popts);
 						}, 0, 100, 100 * (vopts[vibe][sel] || 0), 1, "w1")
 					];
 				})
