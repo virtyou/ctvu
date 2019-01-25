@@ -15,6 +15,19 @@ vu.core = {
 			cb: cb
 		});
 	},
+	fieldList: function(node, values) {
+		node.fields = CT.dom.fieldList(values, function(v) {
+			var f = CT.dom.field(null, v);
+			if (v)
+				f.onkeyup = node.update;
+			return f;
+		}, null, node.update, node.update);
+		CT.dom.setContent(node, [
+			node.fields.empty,
+			node.fields.addButton,
+			node.fields
+		]);
+	},
 	udata: function(cb) {
 		if (vu.core._udata)
 			return cb(vu.core._udata);
