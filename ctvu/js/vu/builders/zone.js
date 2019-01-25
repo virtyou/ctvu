@@ -1,10 +1,10 @@
-vu.builders.room = {
+vu.builders.zone = {
 	_: {
 		opts: core.config.ctvu.builders.room,
 		furniture: core.config.ctvu.builders.furniture,
 		selectors: {},
 		setup: function() {
-			var cfg = core.config.ctzero, _ = vu.builders.room._,
+			var cfg = core.config.ctzero, _ = vu.builders.zone._,
 				ropts = _.opts = vu.storage.get("room") || _.opts,
 				fz = _.furniture = vu.storage.get("furnishing") || _.furniture,
 				pool = _.furniture.pool;
@@ -50,7 +50,7 @@ vu.builders.room = {
 		}
 	},
 	menu: function() {
-		var _ = vu.builders.room._, selz = _.selectors;
+		var _ = vu.builders.zone._, selz = _.selectors;
 		_.setup();
 		return [
 			CT.dom.div("your vRoom", "bigger centered pv10"),

@@ -12,14 +12,14 @@ CT.require("zero.core");
 CT.require("vu.core");
 CT.require("vu.storage");
 CT.require("vu.builders.core");
-CT.require("vu.builders.tweak");
+CT.require("vu.builders.vibe");
 CT.scriptImport("vu.lib.colorPicker");
 
 CT.onload(function() {
 	CT.initCore();
 	vu.storage.init(function() {
 		// menu
-		CT.dom.setContent("menu", vu.builders.tweak.menu());
+		CT.dom.setContent("menu", vu.builders.vibe.menu());
 		// virtual world
 		vu.builders.core.init();
 	});

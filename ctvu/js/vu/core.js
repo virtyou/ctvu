@@ -15,14 +15,28 @@ vu.core = {
 			cb: cb
 		});
 	},
+	fieldList: function(node, values, cb, generator, onadd, onremove) {
+		cb = cb || node.update;
+		node.fields = CT.dom.fieldList(values, generator || function(v) {
+			var f = CT.dom.field(null, v);
+			if (v)
+				f.onkeyup = cb;
+			return f;
+		}, null, onadd || cb, onremove || cb);
+		CT.dom.setContent(node, [
+			node.fields.empty,
+			node.fields.addButton,
+			node.fields
+		]);
+	},
 	udata: function(cb) {
 		if (vu.core._udata)
 			return cb(vu.core._udata);
 		if (!user.core.get()) { // cfg.access.anon must be true
 			var cfg = core.config.ctvu.builders;
 			return cb({
-				people: [cfg.person],
-				rooms: [cfg.room]
+				people: [vu.storage.get("person") || cfg.person],
+				rooms: [vu.storage.get("room") || cfg.room]
 			});
 		}
 		vu.core.z({
