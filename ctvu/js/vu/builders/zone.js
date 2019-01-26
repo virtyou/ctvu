@@ -40,7 +40,7 @@ vu.builders.zone = {
 			var eselector = _.selectors.environment = CT.dom.select(enz.map(function(item) {
 				return item.slice(item.indexOf(".") + 1);
 			}), enz, null, ropts.environment, null, function() {
-				if (vu.builders.current.person) {
+				if (ropts.environment != eselector.value) {
 					ropts.environment = eselector.value;
 					vu.storage.save(ropts, null, "room",
 						{ opts: { environment: eselector.value } });
