@@ -4,11 +4,10 @@ vu.builders.zone = {
 		furniture: core.config.ctvu.builders.furniture,
 		selectors: {},
 		setup: function() {
-			var cfg = core.config.ctzero, _ = vu.builders.zone._,
+			var _ = vu.builders.zone._,
 				ropts = _.opts = vu.storage.get("room") || _.opts,
 				fz = _.furniture = vu.storage.get("furnishing") || _.furniture,
 				pool = _.furniture.pool;
-			cfg.room = CT.merge(ropts, cfg.room);
 
 			// TODO: handle furniture properly ... just pool for now
 			var ptoggle = _.selectors.pool = CT.dom.checkboxAndLabel(null,
