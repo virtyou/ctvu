@@ -160,7 +160,7 @@ vu.builders.talk = {
 						key: opts.key,
 						property: "item"
 					});
-				}), !("item" in opts) && "hidden");
+				}), ((sel == "iframe") || !("item" in opts)) && "hidden");
 
 				// name (required)
 				var name = CT.dom.smartField(function(val) {
