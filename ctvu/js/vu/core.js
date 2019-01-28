@@ -29,14 +29,17 @@ vu.core = {
 			node.fields
 		]);
 	},
+	room: function() {
+		return CT.merge(vu.storage.get("room"), core.config.ctvu.builders.room, core.config.ctzero.room);
+	},
 	udata: function(cb) {
 		if (vu.core._udata)
 			return cb(vu.core._udata);
 		if (!user.core.get()) { // cfg.access.anon must be true
 			var cfg = core.config.ctvu.builders;
 			return cb({
-				people: [vu.storage.get("person") || cfg.person],
-				rooms: [vu.storage.get("room") || cfg.room]
+				people: [CT.merge(vu.storage.get("person"), cfg.person)],
+				rooms: [vu.core.room()]
 			});
 		}
 		vu.core.z({
