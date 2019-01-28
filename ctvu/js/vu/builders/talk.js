@@ -165,7 +165,22 @@ vu.builders.talk = {
 				// name (required)
 				var name = CT.dom.smartField(function(val) {
 					if (!val) return name.blur();
+					var isIframe = sel == "iframe";
 					opts.name = val;
+					var medUp = function(resource) {
+						if (!(sel in rez))
+							rez[sel] = opts;
+						if (resource && resource.key)
+							opts.key = resource.key;
+						persist({ responses: cur.person.opts.responses });
+						if (isIframe) {
+							opts.item = val;
+							setViewer();
+						} else
+							CT.dom.show(dragdrop);
+					};
+					if (isIframe)
+						return medUp();
 					CT.net.post({
 						path: "/_db",
 						params: {
@@ -173,20 +188,14 @@ vu.builders.talk = {
 							pw: cfg.storage.apikey,
 							data: opts
 						},
-						cb: function(resource) {
-							if (!(sel in rez))
-								rez[sel] = opts;
-							opts.key = resource.key;
-							persist({ responses: cur.person.opts.responses });
-							CT.dom.show(dragdrop);
-						}
+						cb: medUp
 					});
 				}, null, null, opts.name, null, cfg.blurs.resource);
 
 				return CT.dom.div([name, dragdrop, viewer], !(sel in rez) && "hidden");
 			};
 			selz.media.refresh = function() {
-				CT.dom.setContent(selz.media, ["image", "background", "audio", "video"].map(function(sel) {
+				CT.dom.setContent(selz.media, ["image", "background", "audio", "video", "iframe"].map(function(sel) {
 					var rez = responses[rzt.innerHTML], node = mediaSelector(rez, sel);
 					return [
 						checkBoxGate(rez, sel, node),
