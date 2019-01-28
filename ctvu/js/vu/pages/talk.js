@@ -21,6 +21,6 @@ CT.onload(function() {
 		// menu
 		CT.dom.setContent("menu", vu.builders.talk.menu());
 		// virtual world
-		vu.builders.core.init();
+		vu.builders.core.init(true);
 	});
 });
