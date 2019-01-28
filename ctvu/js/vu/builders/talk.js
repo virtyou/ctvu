@@ -172,12 +172,12 @@ vu.builders.talk = {
 							rez[sel] = opts;
 						if (resource && resource.key)
 							opts.key = resource.key;
-						persist({ responses: cur.person.opts.responses });
 						if (isIframe) {
 							opts.item = val;
 							setViewer();
 						} else
 							CT.dom.show(dragdrop);
+						persist({ responses: cur.person.opts.responses });
 					};
 					if (isIframe)
 						return medUp();
