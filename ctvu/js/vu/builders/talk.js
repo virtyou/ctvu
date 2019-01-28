@@ -109,8 +109,17 @@ vu.builders.talk = {
 					persist({ responses: cur.person.opts.responses });
 				}, "w1 block mt5", null, responses[rzt.innerHTML].vibe, null, cfg.blurs.vibe));
 			};
+			var bgz = ["background", "video", "iframe"];
 			var checkBoxGate = function(obj, sel, node) {
 				return CT.dom.checkboxAndLabel(sel, sel in obj, null, null, null, function(cbox) {
+					if (cbox.checked && (bgz.indexOf(sel) != -1)) {
+						for (var i = 0; i < bgz.length; i++) {
+							if (obj[bgz[i]]) {
+								cbox.checked = false;
+								return;
+							}
+						}
+					}
 					CT.dom.showHide(node, cbox.checked, !cbox.checked);
 					if (!cbox.checked)
 						delete obj[sel];
@@ -195,7 +204,7 @@ vu.builders.talk = {
 				return CT.dom.div([name, dragdrop, viewer], !(sel in rez) && "hidden");
 			};
 			selz.media.refresh = function() {
-				CT.dom.setContent(selz.media, ["image", "background", "audio", "video", "iframe"].map(function(sel) {
+				CT.dom.setContent(selz.media, ["image", "audio", "background", "video", "iframe"].map(function(sel) {
 					var rez = responses[rzt.innerHTML], node = mediaSelector(rez, sel);
 					return [
 						checkBoxGate(rez, sel, node),
