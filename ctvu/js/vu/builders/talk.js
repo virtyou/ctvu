@@ -287,8 +287,8 @@ vu.builders.talk = {
 		vu.storage.save(popts, null, "person", updates, sub);
 	},
 	menu: function() {
-		var cur = vu.builders.current, _ = vu.builders.talk._, selz = _.selectors,
-			blurs = core.config.ctvu.blurs;
+		var cur = vu.builders.current, _ = vu.builders.talk._,
+			selz = _.selectors, blurs = core.config.ctvu.blurs;
 		_.setup();
 		var respond = function(val) {
 			cur.person.respond(val);
@@ -304,9 +304,7 @@ vu.builders.talk = {
 			CT.dom.div("your virtYou", "bigger centered pb10"),
 			CT.dom.div([
 				listButt,
-				CT.dom.span("Voice"),
-				CT.dom.pad(),
-				selz.voice,
+				"Voice",
 				CT.dom.smartField(respond, "w1 block mt5", null, null, null, blurs.talk)
 			], "padded bordered round mb5"),
 			CT.dom.div([

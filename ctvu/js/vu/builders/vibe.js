@@ -70,12 +70,22 @@ vu.builders.vibe = {
 			]);
 		},
 		setup: function() {
-			var _ = vu.builders.vibe._,
+			var _ = vu.builders.vibe._, selz = _.selectors,
 				popts = _.opts = vu.storage.get("person") || _.opts;
 			_.raw = zero.core.util.person(vu.core.bgen(popts.body),
 				popts.name || "you", null, popts, popts.body);
-			_.selectors.mood = CT.dom.div();
-			_.selectors.vibes = CT.dom.div();
+			selz.mood = CT.dom.div();
+			selz.vibes = CT.dom.div();
+			selz.voice = CT.dom.select(["Joanna", "Justin", "Ivy",
+				"Joey", "Kendra", "Matthew", "Kimberly", "Salli"],
+				null, null, popts.voice, null, function() {
+					var person = vu.builders.current.person;
+					if (person) {
+						person.voice = selz.voice.value;
+						persist({ voice: person.voice });
+					}
+				});
+
 		}
 	},
 	persist: function(updates, sub) {
@@ -87,10 +97,20 @@ vu.builders.vibe = {
 		vu.storage.save(popts, null, "person", updates, sub);
 	},
 	menu: function() {
-		var cur = vu.builders.current, _ = vu.builders.vibe._, selz = _.selectors;
+		var cur = vu.builders.current, _ = vu.builders.vibe._,
+			selz = _.selectors, blurs = core.config.ctvu.blurs;
 		_.setup();
 		return [
 			CT.dom.div("your virtYou", "bigger centered pb10"),
+			CT.dom.div([
+				CT.dom.span("Voice"),
+				CT.dom.pad(),
+				selz.voice,
+				CT.dom.smartField(function(val) {
+					cur.person.say(val);
+					return "clear";
+				}, "w1 block mt5", null, null, null, blurs.talk)
+			], "padded bordered round mb5"),
 			CT.dom.div([
 				"Vibes",
 				selz.vibes

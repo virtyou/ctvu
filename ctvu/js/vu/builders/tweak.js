@@ -104,15 +104,6 @@ vu.builders.tweak = {
 					location = location; // hack! do something smarter...
 				}
 			});
-			var vselector = selz.voice = CT.dom.select(["Joanna", "Justin", "Ivy",
-				"Joey", "Kendra", "Matthew", "Kimberly", "Salli"],
-				null, null, popts.voice, null, function() {
-					var person = vu.builders.current.person;
-					if (person) {
-						person.voice = vselector.value;
-						persist({ voice: person.voice });
-					}
-				});
 			selz.accessories = accz[template].map(function(acc) {
 				return CT.dom.checkboxAndLabel(acc, true, null, null, null, function(cb) {
 					var head = vu.builders.current.person.head;
@@ -154,15 +145,6 @@ vu.builders.tweak = {
 					selz.colorLabel
 				],
 				selz.color
-			], "padded bordered round mb5"),
-			CT.dom.div([
-				CT.dom.span("Voice"),
-				CT.dom.pad(),
-				selz.voice,
-				CT.dom.smartField(function(val) {
-					cur.person.say(val);
-					return "clear";
-				}, "w1 block mt5", null, null, null, blurs.talk)
 			], "padded bordered round mb5"),
 			"[custom parts; spring tuning]"
 		];
