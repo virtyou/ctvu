@@ -149,10 +149,12 @@ vu.builders.talk = {
 					}, item;
 
 				// viewer (img/audio)
-				var viewer = CT.dom.div(null, isMap && "h100p");
+				var viewer = CT.dom.div(null, "mt5");
 				var setViewer = function() {
-					if (isMap)
+					if (isMap) {
+						viewer.classList.add("h100p");
 						return zero.core.util[sel](opts.item, viewer);
+					}
 					CT.dom.setContent(viewer, CT.dom[_.media[sel] || sel]({
 						src: opts.item,
 						controls: true,
@@ -164,16 +166,18 @@ vu.builders.talk = {
 
 				// item
 				if (isMap) {
-					item = CT.dom.div(["lat", "lng"].map(function(axis) {
+					var oi = opts.item = opts.item || {};
+					item = CT.dom.div(["lat", "lng"].map(function(axis, i) {
 						return CT.dom.smartField(function(val) {
-							var oi = opts.item = opts.item || {};
 							oi[axis] = parseFloat(val);
+							item.lastElementChild.style.display = "block";
 							if (oi.lat && oi.lng) {
 								setViewer();
 								persist({ responses: cur.person.opts.responses });
 							}
-						}, "w1 block mt5", null, null, null, blurs[axis]);
-					}), !("item" in opts) && "hidden");
+						}, "w1 block mt5" + ((i && !oi[axis]) ? " hidden" : ""),
+							null, oi[axis], null, blurs[axis]);
+					}), !opts.item.lat && "hidden");
 				} else if (!isIframe) { // standard -- drag drop
 					item = CT.dom.div(CT.file.dragdrop(function(ctfile) {
 						ctfile.upload("/_db", function(url) {
@@ -185,7 +189,7 @@ vu.builders.talk = {
 							key: opts.key,
 							property: "item"
 						});
-					}), !("item" in opts) && "hidden");
+					}), !opts.item && "hidden");
 				}
 
 				// name (required)
