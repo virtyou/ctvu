@@ -141,14 +141,18 @@ vu.builders.talk = {
 				}));
 			};
 			var mediaSelector = function(rez, sel) {
-				var opts = rez[sel] || {
-					variety: sel,
-					modelName: "resource"
-				}, item, isIframe = sel == "iframe";
+				var isIframe = sel == "iframe",
+					isMap = ["map", "panorama"].indexOf(sel) != -1,
+					opts = rez[sel] || {
+						variety: sel,
+						modelName: "resource"
+					}, item;
 
 				// viewer (img/audio)
 				var viewer = CT.dom.div();
 				var setViewer = function() {
+					if (isMap)
+						return zero.core.util[sel](opts.item, viewer);
 					CT.dom.setContent(viewer, CT.dom[_.media[sel] || sel]({
 						src: opts.item,
 						controls: true,
@@ -158,18 +162,31 @@ vu.builders.talk = {
 				if (opts.item)
 					setViewer();
 
-				// item (drag drop)
-				item = CT.dom.div(CT.file.dragdrop(function(ctfile) {
-					ctfile.upload("/_db", function(url) {
-						opts.item = url;
-						setViewer();
-						persist({ responses: cur.person.opts.responses });
-					}, {
-						action: "blob",
-						key: opts.key,
-						property: "item"
-					});
-				}), (isIframe || !("item" in opts)) && "hidden");
+				// item
+				if (isMap) {
+					item = CT.dom.div(["lat", "lng"].map(function(axis) {
+						return CT.dom.smartField(function(val) {
+							var oi = opts.item = opts.item || {};
+							oi[axis] = parseFloat(val);
+							if (oi.lat && oi.lng) {
+								setViewer();
+								persist({ responses: cur.person.opts.responses });
+							}
+						}, "w1 block mt5", null, null, null, blurs[axis]);
+					}), !("item" in opts) && "hidden");
+				} else if (!isIframe) { // standard -- drag drop
+					item = CT.dom.div(CT.file.dragdrop(function(ctfile) {
+						ctfile.upload("/_db", function(url) {
+							opts.item = url;
+							setViewer();
+							persist({ responses: cur.person.opts.responses });
+						}, {
+							action: "blob",
+							key: opts.key,
+							property: "item"
+						});
+					}), !("item" in opts) && "hidden");
+				}
 
 				// name (required)
 				var name = CT.dom.smartField(function(val) {
@@ -187,7 +204,7 @@ vu.builders.talk = {
 							CT.dom.show(item);
 						persist({ responses: cur.person.opts.responses });
 					};
-					if (isIframe)
+					if (isIframe || isMap)
 						return medUp();
 					CT.net.post({
 						path: "/_db",
