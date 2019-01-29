@@ -33,7 +33,7 @@ vu.builders.talk = {
 				_ = vu.builders.talk._, selz = _.selectors,
 				popts = _.opts = vu.storage.get("person") || _.opts,
 				rz = selz.responses, dz = selz.disable, rzt = rz.trigger,
-				persist = vu.builders.talk.persist,
+				persist = vu.builders.talk.persist, blurs = cfg.blurs,
 				cur = vu.builders.current;
 
 			rzt.innerHTML = trigz[0];
@@ -101,15 +101,15 @@ vu.builders.talk = {
 				CT.dom.setContent(selz.chain, CT.dom.smartField(function(val) {
 					responses[rzt.innerHTML].chain = val;
 					persist({ responses: cur.person.opts.responses });
-				}, "w1 block mt5", null, responses[rzt.innerHTML].chain, null, cfg.blurs.chain));
+				}, "w1 block mt5", null, responses[rzt.innerHTML].chain, null, blurs.chain));
 			};
 			selz.vibe.refresh = function() {
 				CT.dom.setContent(selz.vibe, CT.dom.smartField(function(val) {
 					responses[rzt.innerHTML].vibe = val;
 					persist({ responses: cur.person.opts.responses });
-				}, "w1 block mt5", null, responses[rzt.innerHTML].vibe, null, cfg.blurs.vibe));
+				}, "w1 block mt5", null, responses[rzt.innerHTML].vibe, null, blurs.vibe));
 			};
-			var bgz = ["background", "video", "iframe"];
+			var bgz = ["background", "video", "iframe", "map", "panorama"];
 			var checkBoxGate = function(obj, sel, node) {
 				return CT.dom.checkboxAndLabel(sel, sel in obj, null, null, null, function(cbox) {
 					if (cbox.checked && (bgz.indexOf(sel) != -1)) {
@@ -144,7 +144,7 @@ vu.builders.talk = {
 				var opts = rez[sel] || {
 					variety: sel,
 					modelName: "resource"
-				};
+				}, item, isIframe = sel == "iframe";
 
 				// viewer (img/audio)
 				var viewer = CT.dom.div();
@@ -159,7 +159,7 @@ vu.builders.talk = {
 					setViewer();
 
 				// item (drag drop)
-				var dragdrop = CT.dom.div(CT.file.dragdrop(function(ctfile) {
+				item = CT.dom.div(CT.file.dragdrop(function(ctfile) {
 					ctfile.upload("/_db", function(url) {
 						opts.item = url;
 						setViewer();
@@ -169,12 +169,11 @@ vu.builders.talk = {
 						key: opts.key,
 						property: "item"
 					});
-				}), ((sel == "iframe") || !("item" in opts)) && "hidden");
+				}), (isIframe || !("item" in opts)) && "hidden");
 
 				// name (required)
 				var name = CT.dom.smartField(function(val) {
 					if (!val) return name.blur();
-					var isIframe = sel == "iframe";
 					opts.name = val;
 					var medUp = function(resource) {
 						if (!(sel in rez))
@@ -185,7 +184,7 @@ vu.builders.talk = {
 							opts.item = val;
 							setViewer();
 						} else
-							CT.dom.show(dragdrop);
+							CT.dom.show(item);
 						persist({ responses: cur.person.opts.responses });
 					};
 					if (isIframe)
@@ -199,12 +198,12 @@ vu.builders.talk = {
 						},
 						cb: medUp
 					});
-				}, null, null, opts.name, null, cfg.blurs.resource);
+				}, null, null, opts.name, null, blurs[sel] || blurs.resource);
 
-				return CT.dom.div([name, dragdrop, viewer], !(sel in rez) && "hidden");
+				return CT.dom.div([name, item, viewer], !(sel in rez) && "hidden");
 			};
 			selz.media.refresh = function() {
-				CT.dom.setContent(selz.media, ["image", "audio", "background", "video", "iframe"].map(function(sel) {
+				CT.dom.setContent(selz.media, ["image", "audio", "background", "video", "iframe", "map", "panorama"].map(function(sel) {
 					var rez = responses[rzt.innerHTML], node = mediaSelector(rez, sel);
 					return [
 						checkBoxGate(rez, sel, node),
