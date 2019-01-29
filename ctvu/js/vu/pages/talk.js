@@ -14,6 +14,8 @@ CT.require("vu.core");
 CT.require("vu.storage");
 CT.require("vu.builders.core");
 CT.require("vu.builders.talk");
+CT.setVal("mapkey", CT.data.choice(core.config.geo.keys));
+CT.require("CT.map", true);
 
 CT.onload(function() {
 	CT.initCore();
