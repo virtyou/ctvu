@@ -10,7 +10,8 @@
         "talk": ["say something", "test voice", "type something"],
         "resource": ["what's the name?", "name this resource", "what's it called?"],
         "chain": ["enter name of chained trigger", "what happens next?", "next trigger"],
-        "vibe": ["name that vibe", "what's the vibe?", "enter the name of your vibe"]
+        "vibe": ["name that vibe", "what's the vibe?", "enter the name of your vibe"],
+        "iframe": ["please type in the url", "what's the web address?", "enter website"]
     },
     "loaders": {
         "customs": ["one.earring", "one.pony"],
