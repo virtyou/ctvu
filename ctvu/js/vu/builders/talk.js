@@ -149,7 +149,7 @@ vu.builders.talk = {
 					}, item;
 
 				// viewer (img/audio)
-				var viewer = CT.dom.div();
+				var viewer = CT.dom.div(null, isMap && "h100p");
 				var setViewer = function() {
 					if (isMap)
 						return zero.core.util[sel](opts.item, viewer);
