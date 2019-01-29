@@ -9,6 +9,7 @@ vu.builders.talk = {
 		joined: function(person) {
 			vu.builders.current.person = person;
 			zero.core.camera.unfollow();
+			vu.builders.talk._.tree();
 			vu.builders.talk._.setTriggers(person.opts.responses);
 		},
 		setup: function() {
@@ -27,6 +28,12 @@ vu.builders.talk = {
 			selz.triggers = CT.dom.div();
 			_.raw = zero.core.util.person(vu.core.bgen(popts.body),
 				popts.name || "you", null, popts, popts.body);
+		},
+		tree: function() {
+			CT.dom.setContent("tree", CT.layout.tree({
+				name: "root",
+				branches: vu.builders.current.person.opts.responses
+			}));
 		},
 		setTriggers: function(responses, path) {
 			var trigz = Object.keys(responses), cfg = core.config.ctvu,
