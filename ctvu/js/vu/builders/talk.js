@@ -33,7 +33,7 @@ vu.builders.talk = {
 				_ = vu.builders.talk._, selz = _.selectors,
 				popts = _.opts = vu.storage.get("person") || _.opts,
 				rz = selz.responses, dz = selz.disable, rzt = rz.trigger,
-				persist = vu.builders.talk.persist,
+				persist = vu.builders.talk.persist, blurs = cfg.blurs,
 				cur = vu.builders.current;
 
 			rzt.innerHTML = trigz[0];
@@ -101,15 +101,15 @@ vu.builders.talk = {
 				CT.dom.setContent(selz.chain, CT.dom.smartField(function(val) {
 					responses[rzt.innerHTML].chain = val;
 					persist({ responses: cur.person.opts.responses });
-				}, "w1 block mt5", null, responses[rzt.innerHTML].chain, null, cfg.blurs.chain));
+				}, "w1 block mt5", null, responses[rzt.innerHTML].chain, null, blurs.chain));
 			};
 			selz.vibe.refresh = function() {
 				CT.dom.setContent(selz.vibe, CT.dom.smartField(function(val) {
 					responses[rzt.innerHTML].vibe = val;
 					persist({ responses: cur.person.opts.responses });
-				}, "w1 block mt5", null, responses[rzt.innerHTML].vibe, null, cfg.blurs.vibe));
+				}, "w1 block mt5", null, responses[rzt.innerHTML].vibe, null, blurs.vibe));
 			};
-			var bgz = ["background", "video", "iframe"];
+			var bgz = ["background", "video", "iframe", "map", "panorama"];
 			var checkBoxGate = function(obj, sel, node) {
 				return CT.dom.checkboxAndLabel(sel, sel in obj, null, null, null, function(cbox) {
 					if (cbox.checked && (bgz.indexOf(sel) != -1)) {
@@ -141,14 +141,20 @@ vu.builders.talk = {
 				}));
 			};
 			var mediaSelector = function(rez, sel) {
-				var opts = rez[sel] || {
-					variety: sel,
-					modelName: "resource"
-				};
+				var isIframe = sel == "iframe",
+					isMap = ["map", "panorama"].indexOf(sel) != -1,
+					opts = rez[sel] || {
+						variety: sel,
+						modelName: "resource"
+					}, item;
 
 				// viewer (img/audio)
-				var viewer = CT.dom.div();
+				var viewer = CT.dom.div(null, "mt5");
 				var setViewer = function() {
+					if (isMap) {
+						viewer.classList.add("h100p");
+						return zero.core.util[sel](opts.item, viewer);
+					}
 					CT.dom.setContent(viewer, CT.dom[_.media[sel] || sel]({
 						src: opts.item,
 						controls: true,
@@ -158,23 +164,37 @@ vu.builders.talk = {
 				if (opts.item)
 					setViewer();
 
-				// item (drag drop)
-				var dragdrop = CT.dom.div(CT.file.dragdrop(function(ctfile) {
-					ctfile.upload("/_db", function(url) {
-						opts.item = url;
-						setViewer();
-						persist({ responses: cur.person.opts.responses });
-					}, {
-						action: "blob",
-						key: opts.key,
-						property: "item"
-					});
-				}), ((sel == "iframe") || !("item" in opts)) && "hidden");
+				// item
+				if (isMap) {
+					var oi = opts.item = opts.item || {};
+					item = CT.dom.div(["lat", "lng"].map(function(axis, i) {
+						return CT.dom.smartField(function(val) {
+							oi[axis] = parseFloat(val);
+							item.lastElementChild.style.display = "block";
+							if (oi.lat && oi.lng) {
+								setViewer();
+								persist({ responses: cur.person.opts.responses });
+							}
+						}, "w1 block mt5" + ((i && !oi[axis]) ? " hidden" : ""),
+							null, oi[axis], null, blurs[axis]);
+					}), !opts.item.lat && "hidden");
+				} else if (!isIframe) { // standard -- drag drop
+					item = CT.dom.div(CT.file.dragdrop(function(ctfile) {
+						ctfile.upload("/_db", function(url) {
+							opts.item = url;
+							setViewer();
+							persist({ responses: cur.person.opts.responses });
+						}, {
+							action: "blob",
+							key: opts.key,
+							property: "item"
+						});
+					}), !opts.item && "hidden");
+				}
 
 				// name (required)
 				var name = CT.dom.smartField(function(val) {
 					if (!val) return name.blur();
-					var isIframe = sel == "iframe";
 					opts.name = val;
 					var medUp = function(resource) {
 						if (!(sel in rez))
@@ -185,10 +205,10 @@ vu.builders.talk = {
 							opts.item = val;
 							setViewer();
 						} else
-							CT.dom.show(dragdrop);
+							CT.dom.show(item);
 						persist({ responses: cur.person.opts.responses });
 					};
-					if (isIframe)
+					if (isIframe || isMap)
 						return medUp();
 					CT.net.post({
 						path: "/_db",
@@ -199,12 +219,12 @@ vu.builders.talk = {
 						},
 						cb: medUp
 					});
-				}, null, null, opts.name, null, cfg.blurs.resource);
+				}, null, null, opts.name, null, blurs[sel] || blurs.resource);
 
-				return CT.dom.div([name, dragdrop, viewer], !(sel in rez) && "hidden");
+				return CT.dom.div([name, item, viewer], !(sel in rez) && "hidden");
 			};
 			selz.media.refresh = function() {
-				CT.dom.setContent(selz.media, ["image", "audio", "background", "video", "iframe"].map(function(sel) {
+				CT.dom.setContent(selz.media, ["image", "audio", "background", "video", "iframe", "map", "panorama"].map(function(sel) {
 					var rez = responses[rzt.innerHTML], node = mediaSelector(rez, sel);
 					return [
 						checkBoxGate(rez, sel, node),
@@ -297,31 +317,13 @@ vu.builders.talk = {
 				selz.bread,
 				selz.responses.trigger,
 				selz.crumbz
-			], "padded bordered round mb5"),
-			CT.dom.div([
-				"Responses",
-				selz.responses
-			], "padded bordered round mb5"),
-			CT.dom.div([
-				"Disable",
-				selz.disable
-			], "padded bordered round mb5"),
-			CT.dom.div([
-				"Chain",
-				selz.chain
-			], "padded bordered round mb5"),
-			CT.dom.div([
-				"Vibe",
-				selz.vibe
-			], "padded bordered round mb5"),
-			CT.dom.div([
-				"Mood",
-				selz.mood
-			], "padded bordered round mb5"),
-			CT.dom.div([
-				"Media",
-				selz.media
-			], "padded bordered round")
+			], "padded bordered round"),
+			["Responses", "Disable", "Chain", "Vibe", "Mood", "Media"].map(function(item) {
+				return CT.dom.div([
+					item,
+					selz[item.toLowerCase()]
+				], "padded bordered round mt5");
+			})
 		];
 	}
 };
