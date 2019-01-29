@@ -297,31 +297,13 @@ vu.builders.talk = {
 				selz.bread,
 				selz.responses.trigger,
 				selz.crumbz
-			], "padded bordered round mb5"),
-			CT.dom.div([
-				"Responses",
-				selz.responses
-			], "padded bordered round mb5"),
-			CT.dom.div([
-				"Disable",
-				selz.disable
-			], "padded bordered round mb5"),
-			CT.dom.div([
-				"Chain",
-				selz.chain
-			], "padded bordered round mb5"),
-			CT.dom.div([
-				"Vibe",
-				selz.vibe
-			], "padded bordered round mb5"),
-			CT.dom.div([
-				"Mood",
-				selz.mood
-			], "padded bordered round mb5"),
-			CT.dom.div([
-				"Media",
-				selz.media
-			], "padded bordered round")
+			], "padded bordered round"),
+			["Responses", "Disable", "Chain", "Vibe", "Mood", "Media"].map(function(item) {
+				return CT.dom.div([
+					item,
+					selz[item.toLowerCase()]
+				], "padded bordered round mt5");
+			})
 		];
 	}
 };
