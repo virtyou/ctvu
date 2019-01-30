@@ -9,7 +9,6 @@ vu.builders.talk = {
 		joined: function(person) {
 			vu.builders.current.person = person;
 			zero.core.camera.unfollow();
-			vu.builders.talk._.tree();
 			vu.builders.talk._.setTriggers(person.opts.responses);
 		},
 		setup: function() {
@@ -29,11 +28,12 @@ vu.builders.talk = {
 			_.raw = zero.core.util.person(vu.core.bgen(popts.body),
 				popts.name || "you", null, popts, popts.body);
 		},
-		tree: function() {
+		tree: function(path) {
 			CT.dom.setContent("tree", CT.layout.tree({
 				name: "root",
 				branches: vu.builders.current.person.opts.responses
 			}));
+			CT.dom.id("ctl_" + path).style.background = "gray";
 		},
 		setTriggers: function(responses, path) {
 			var trigz = Object.keys(responses), cfg = core.config.ctvu,
@@ -43,6 +43,7 @@ vu.builders.talk = {
 				persist = vu.builders.talk.persist, blurs = cfg.blurs,
 				cur = vu.builders.current;
 
+			path = path || ["root"];
 			rzt.innerHTML = trigz[0];
 			var jlo = function(v) {
 				return v.replace(/[^a-z]/g, '');
@@ -96,6 +97,7 @@ vu.builders.talk = {
 				selz.media.refresh();
 				selz.chain.refresh();
 				selz.vibe.refresh();
+				_.tree(path.join("") + rzt.innerHTML);
 			};
 			dz.update = function() {
 				responses[rzt.innerHTML].disable = dz.fields.value();
@@ -239,22 +241,21 @@ vu.builders.talk = {
 					];
 				}));
 			};
-			path = path || ["base"];
 			CT.dom.setContent(selz.crumbz, (path.length == 1) ? "" : path.map(function(pname, i) {
 				return CT.dom.span([
 					CT.dom.span(i ? "->" : "path:"),
 					CT.dom.pad(),
 					CT.dom.link(pname, function() {
 						var resps = popts.responses,
-							npath = ["base"];
-						if (pname != "base") {
+							npath = ["root"];
+						if (pname != "root") {
 							for (var j = 1; j <= i; j++) {
 								var pn = path[j];
 								npath.push(pn);
 								resps = resps[pn].branches;
 							}
 						}
-						vu.builders.talk._.setTriggers(resps, npath);
+						_.setTriggers(resps, npath);
 					}),
 					CT.dom.pad()
 				]);
@@ -263,7 +264,7 @@ vu.builders.talk = {
 				path.push(rzt.innerHTML);
 				var resps = responses[rzt.innerHTML];
 				if (resps.branches)
-					vu.builders.talk._.setTriggers(resps.branches, path);
+					_.setTriggers(resps.branches, path);
 				else {
 					(new CT.modal.Prompt({
 						prompt: "what's the new trigger?",
@@ -277,7 +278,7 @@ vu.builders.talk = {
 								"mood": {}
 							};
 							persist({ responses: cur.person.opts.responses });
-							vu.builders.talk._.setTriggers(resps.branches, path);
+							_.setTriggers(resps.branches, path);
 						}
 					})).show();
 				}
