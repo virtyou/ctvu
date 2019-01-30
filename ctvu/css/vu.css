@@ -58,9 +58,11 @@ iframe {
 	z-index: 1;
 	right: 0px;
 	bottom: 0px;
+	font-size: 120%;
 }
 
 #tree div {
+	opacity: 0.95;
 	background: black;
 	border: 1px solid gray;
 }
