@@ -38,30 +38,61 @@ vu.builders.talk = {
 				vu.builders.talk._.setTriggers(r.branches, path);
 		},
 		tree: function(path) {
-			var opts = vu.builders.current.person.opts;
+			var person = vu.builders.current.person,
+				_ = vu.builders.talk._;
 			CT.dom.setContent("tree", CT.layout.tree({
-				branches: opts.responses,
+				branches: person.opts.responses,
+				nameCb: function(opts) {
+					if (opts.name == "root")
+						return opts.name;
+					var resp, path, chain;
+					[resp, path] = _.getCluster(opts.id);
+					chain = CT.dom.span(resp.chain);
+					return [
+						CT.dom.span(opts.name),
+						CT.dom.pad(),
+						CT.dom.link("->", function() {
+							vu.core.prompt({
+								prompt: "chain to what?",
+								cb: function(val) {
+									val = _.jlo(val);
+									if (!val) return;
+									resp.chain = val;
+									CT.dom.setContent(chain, val);
+									vu.builders.talk.persist({
+										responses: person.opts.responses
+									});
+									_.setTriggers(resp.branches, path);
+								}
+							});
+						}),
+						CT.dom.pad(),
+						chain
+					];
+				},
 				cb: function(node) {
-					var i, r = {
-						branches: {
-							root: {
-								branches: opts.responses
-							}
-						}
-					}, path = node.id.slice(4).split("_");
-					for (i = 0; i < path.length; i++)
-						r = r.branches[path[i]];
-					vu.builders.talk._.loadTriggers(r, path);
+					_.loadTriggers.apply(null, _.getCluster(node.id));
 				}
 			}));
 			CT.dom.id("ctl_" + path).classList.add("selbranch");
 		},
+		getCluster: function(id) {
+			var i, r = {
+				branches: {
+					root: {
+						branches: vu.builders.current.person.opts.responses
+					}
+				}
+			}, path = id.slice(4).split("_");
+			for (i = 0; i < path.length; i++)
+				r = r.branches[path[i]];
+			return [r, path];
+		},
 		initCluster: function(resps, path) {
 			var _ = vu.builders.talk._,
 				cur = vu.builders.current;
-			(new CT.modal.Prompt({
+			vu.core.prompt({
 				prompt: "what's the new trigger?",
-				transition: "slide",
 				cb: function(val) {
 					val = _.jlo(val);
 					if (!val) return;
@@ -75,7 +106,7 @@ vu.builders.talk = {
 					vu.builders.talk.persist({ responses: cur.person.opts.responses });
 					_.setTriggers(resps.branches, path);
 				}
-			})).show();
+			});
 		},
 		jlo: function(v) {
 			return v.replace(/[^a-z]/g, '');
