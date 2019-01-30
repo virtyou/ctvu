@@ -15,6 +15,11 @@ vu.core = {
 			cb: cb
 		});
 	},
+	prompt: function(opts) {
+		(new CT.modal.Prompt(CT.merge(opts, {
+			transition: "slide"
+		}))).show();
+	},
 	fieldList: function(node, values, cb, generator, onadd, onremove) {
 		cb = cb || node.update;
 		node.fields = CT.dom.fieldList(values, generator || function(v) {
