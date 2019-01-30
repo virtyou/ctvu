@@ -28,18 +28,60 @@ vu.builders.talk = {
 			_.raw = zero.core.util.person(vu.core.bgen(popts.body),
 				popts.name || "you", null, popts, popts.body);
 		},
+		tree: function(path) {
+			var opts = vu.builders.current.person.opts;
+			CT.dom.setContent("tree", CT.layout.tree({
+				branches: opts.responses,
+				cb: function(node) {
+					var i, r = {
+						branches: {
+							root: {
+								branches: opts.responses
+							}
+						}
+					}, path = node.id.slice(4).split("_");
+					for (i = 0; i < path.length; i++)
+						r = r.branches[path[i]];
+					if (!r.branches)
+						vu.builders.talk._.initCluster(r, path);
+					else
+						vu.builders.talk._.setTriggers(r.branches, path);
+				}
+			}));
+			CT.dom.id("ctl_" + path).classList.add("selbranch");
+		},
+		initCluster: function(resps, path) {
+			var _ = vu.builders.talk._,
+				cur = vu.builders.current;
+			(new CT.modal.Prompt({
+				prompt: "what's the new trigger?",
+				transition: "slide",
+				cb: function(val) {
+					val = _.jlo(val);
+					if (!val) return;
+					resps.branches = {};
+					resps.branches[val] = {
+						"phrase": "you said " + val,
+						"mood": {}
+					};
+					vu.builders.talk.persist({ responses: cur.person.opts.responses });
+					_.setTriggers(resps.branches, path);
+				}
+			})).show();
+		},
+		jlo: function(v) {
+			return v.replace(/[^a-z]/g, '');
+		},
 		setTriggers: function(responses, path) {
 			var trigz = Object.keys(responses), cfg = core.config.ctvu,
 				_ = vu.builders.talk._, selz = _.selectors,
 				popts = _.opts = vu.storage.get("person") || _.opts,
 				rz = selz.responses, dz = selz.disable, rzt = rz.trigger,
 				persist = vu.builders.talk.persist, blurs = cfg.blurs,
-				cur = vu.builders.current;
+				cur = vu.builders.current, jlo = _.jlo;
 
+			path = path || ["root"];
 			rzt.innerHTML = trigz[0];
-			var jlo = function(v) {
-				return v.replace(/[^a-z]/g, '');
-			};
 			var justlow = function(f) {
 				f.value = jlo(f.value);
 			};
@@ -89,6 +131,7 @@ vu.builders.talk = {
 				selz.media.refresh();
 				selz.chain.refresh();
 				selz.vibe.refresh();
+				_.tree(path.join("_") + "_" + rzt.innerHTML);
 			};
 			dz.update = function() {
 				responses[rzt.innerHTML].disable = dz.fields.value();
@@ -111,7 +154,7 @@ vu.builders.talk = {
 			};
 			var bgz = ["background", "video", "iframe", "map", "panorama"];
 			var checkBoxGate = function(obj, sel, node) {
-				return CT.dom.checkboxAndLabel(sel, sel in obj, null, null, null, function(cbox) {
+				return CT.dom.checkboxAndLabel(sel, !!obj[sel], null, null, null, function(cbox) {
 					if (cbox.checked && (bgz.indexOf(sel) != -1)) {
 						for (var i = 0; i < bgz.length; i++) {
 							if (obj[bgz[i]]) {
@@ -221,7 +264,7 @@ vu.builders.talk = {
 					});
 				}, null, null, opts.name, null, blurs[sel] || blurs.resource);
 
-				return CT.dom.div([name, item, viewer], !(sel in rez) && "hidden");
+				return CT.dom.div([name, item, viewer], !rez[sel] && "hidden");
 			};
 			selz.media.refresh = function() {
 				CT.dom.setContent(selz.media, ["image", "audio", "background", "video", "iframe", "map", "panorama"].map(function(sel) {
@@ -232,22 +275,21 @@ vu.builders.talk = {
 					];
 				}));
 			};
-			path = path || ["base"];
 			CT.dom.setContent(selz.crumbz, (path.length == 1) ? "" : path.map(function(pname, i) {
 				return CT.dom.span([
 					CT.dom.span(i ? "->" : "path:"),
 					CT.dom.pad(),
 					CT.dom.link(pname, function() {
 						var resps = popts.responses,
-							npath = ["base"];
-						if (pname != "base") {
+							npath = ["root"];
+						if (pname != "root") {
 							for (var j = 1; j <= i; j++) {
 								var pn = path[j];
 								npath.push(pn);
 								resps = resps[pn].branches;
 							}
 						}
-						vu.builders.talk._.setTriggers(resps, npath);
+						_.setTriggers(resps, npath);
 					}),
 					CT.dom.pad()
 				]);
@@ -256,24 +298,9 @@ vu.builders.talk = {
 				path.push(rzt.innerHTML);
 				var resps = responses[rzt.innerHTML];
 				if (resps.branches)
-					vu.builders.talk._.setTriggers(resps.branches, path);
-				else {
-					(new CT.modal.Prompt({
-						prompt: "what's the new trigger?",
-						transition: "slide",
-						cb: function(val) {
-							val = jlo(val);
-							if (!val) return;
-							resps.branches = {};
-							resps.branches[val] = {
-								"phrase": "you said " + val,
-								"mood": {}
-							};
-							persist({ responses: cur.person.opts.responses });
-							vu.builders.talk._.setTriggers(resps.branches, path);
-						}
-					})).show();
-				}
+					_.setTriggers(resps.branches, path);
+				else
+					_.initCluster(resps, path);
 			}));
 			rz.refresh();
 		}

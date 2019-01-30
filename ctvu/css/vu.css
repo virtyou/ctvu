@@ -31,7 +31,7 @@ iframe {
 }
 
 .cp-app {
-    z-index: 9999;
+	z-index: 9999;
 }
 
 #ctheader {
@@ -53,12 +53,31 @@ iframe {
 	overflow-y: scroll;
 }
 
+#tree {
+	position: absolute;
+	z-index: 1;
+	right: 0px;
+	bottom: 0px;
+	font-size: 120%;
+}
+
+#tree div {
+	opacity: 0.9;
+	background: black;
+	border: 1px solid gray;
+}
+
+#tree div:hover, #tree div.selbranch {
+	background: gray;
+	border: 1px solid white;
+}
+
 #vnode {
 	position: absolute;
 	top: 0px;
 	right: 0px;
 	bottom: 0px;
-	left: 261px;
+	left: 275px;
 }
 
 .dropper {
