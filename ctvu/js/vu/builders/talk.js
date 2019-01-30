@@ -30,8 +30,10 @@ vu.builders.talk = {
 		},
 		tree: function(path) {
 			CT.dom.setContent("tree", CT.layout.tree({
-				name: "root",
-				branches: vu.builders.current.person.opts.responses
+				branches: vu.builders.current.person.opts.responses,
+				cb: function(node) {
+					CT.log(node.id);
+				}
 			}));
 			CT.dom.id("ctl_" + path).classList.add("selbranch");
 		},
