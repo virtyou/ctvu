@@ -33,7 +33,7 @@ vu.builders.talk = {
 				name: "root",
 				branches: vu.builders.current.person.opts.responses
 			}));
-			CT.dom.id("ctl_" + path).style.background = "gray";
+			CT.dom.id("ctl_" + path).classList.add("selbranch");
 		},
 		setTriggers: function(responses, path) {
 			var trigz = Object.keys(responses), cfg = core.config.ctvu,
