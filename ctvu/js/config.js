@@ -42,12 +42,7 @@
         "person": {
             "mood": {},
             "colors": {},
-            "responses": {
-                "*": {
-                    "phrase": ["um what?", "i wasn't listening", "this is my default response"],
-                    "mood": {}
-                }
-            },
+            "responses": {},
             "voice": "Joanna",
             "body": {
                 "template": "templates.one.torso.sassy"
