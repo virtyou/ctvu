@@ -18,7 +18,7 @@
     "loaders": {
         "customs": ["one.earring", "one.pony"],
         "templates": ["one.torso"],
-        "environments": ["one.techno", "one.scrolly", "one.kidroom"],
+        "environments": ["one.scrolly", "one.techno", "one.kidroom"],
         "avatars": ["one.torso.sassy", "one.torso.kid"]
     },
     "builders": {
@@ -32,7 +32,7 @@
             }
         },
         "room": {
-            "environment": "one.techno",
+            "environment": "one.scrolly",
             "objects": []
         },
         "accessories": {
