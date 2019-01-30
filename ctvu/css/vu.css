@@ -67,7 +67,7 @@ iframe {
 	border: 1px solid gray;
 }
 
-#tree div:hover {
+#tree div:hover, #tree div.selbranch {
 	background: gray;
 	border: 1px solid white;
 }
