@@ -9,7 +9,9 @@ vu.builders.talk = {
 		joined: function(person) {
 			vu.builders.current.person = person;
 			zero.core.camera.unfollow();
-			vu.builders.talk._.setTriggers(person.opts.responses);
+			vu.builders.talk._.loadTriggers({
+				branches: person.opts.responses
+			});
 		},
 		setup: function() {
 			var _ = vu.builders.talk._, selz = _.selectors,
@@ -28,6 +30,13 @@ vu.builders.talk = {
 			_.raw = zero.core.util.person(vu.core.bgen(popts.body),
 				popts.name || "you", null, popts, popts.body);
 		},
+		loadTriggers: function(r, path) {
+			path = path || ["root"];
+			if (!r.branches || !Object.keys(r.branches).length)
+				vu.builders.talk._.initCluster(r, path);
+			else
+				vu.builders.talk._.setTriggers(r.branches, path);
+		},
 		tree: function(path) {
 			var opts = vu.builders.current.person.opts;
 			CT.dom.setContent("tree", CT.layout.tree({
@@ -42,10 +51,7 @@ vu.builders.talk = {
 					}, path = node.id.slice(4).split("_");
 					for (i = 0; i < path.length; i++)
 						r = r.branches[path[i]];
-					if (!r.branches)
-						vu.builders.talk._.initCluster(r, path);
-					else
-						vu.builders.talk._.setTriggers(r.branches, path);
+					vu.builders.talk._.loadTriggers(r, path);
 				}
 			}));
 			CT.dom.id("ctl_" + path).classList.add("selbranch");
@@ -64,6 +70,8 @@ vu.builders.talk = {
 						"phrase": "you said " + val,
 						"mood": {}
 					};
+					if (!Object.keys(cur.person.opts.responses).length)
+						cur.person.opts.responses = resps.branches;
 					vu.builders.talk.persist({ responses: cur.person.opts.responses });
 					_.setTriggers(resps.branches, path);
 				}
@@ -80,7 +88,6 @@ vu.builders.talk = {
 				persist = vu.builders.talk.persist, blurs = cfg.blurs,
 				cur = vu.builders.current, jlo = _.jlo;
 
-			path = path || ["root"];
 			rzt.innerHTML = trigz[0];
 			var justlow = function(f) {
 				f.value = jlo(f.value);
@@ -296,11 +303,7 @@ vu.builders.talk = {
 			}));
 			CT.dom.setContent(selz.bread, CT.dom.link("view branches", function() {
 				path.push(rzt.innerHTML);
-				var resps = responses[rzt.innerHTML];
-				if (resps.branches)
-					_.setTriggers(resps.branches, path);
-				else
-					_.initCluster(resps, path);
+				_.loadTriggers(responses[rzt.innerHTML], path);
 			}));
 			rz.refresh();
 		}
