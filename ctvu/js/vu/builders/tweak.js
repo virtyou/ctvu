@@ -65,7 +65,34 @@ vu.builders.tweak = {
 			zero.core.camera.unfollow();
 		},
 		setMorphs: function(person) {
-			
+			var _ = vu.builders.tweak._, bod = person.body;
+
+			bod.staticMorphs.forEach(function(m) {
+				bod.springs[m] = zero.core.springController.add({
+					k: 20,
+					damp: 10,
+					target: bod.opts.morphs[m] || 0
+				}, m, bod);
+				var aspringz = {};
+				aspringz[m] = 1;
+				bod.aspects[m] = zero.core.aspectController.add({
+					springs: aspringz
+				}, m, bod);
+				zero.core.morphs.delta(bod, m);
+			});
+
+			CT.dom.setContent(_.selectors.morphs, bod.staticMorphs.map(function(sel) {
+				return [
+					sel,
+					CT.dom.range(function(val) {
+						CT.log(sel + ": " + val);
+						bod.springs[sel].target = bod.opts.morphs[sel] = val / 100;
+						vu.builders.tweak.persist({
+							morphs: bod.opts.morphs
+						}, "body");
+					}, 0, 100, 100 * (bod.opts.morphs[sel] || 0), 1, "w1")
+				];
+			}));
 		},
 		setColor: function(target, color) {
 			target.material.color = vu.core.hex2rgb(color);
@@ -98,6 +125,8 @@ vu.builders.tweak = {
 			var cselector = selz.color = vu.core.color("Color Selector", scolor, function() {
 				_.setColor(_.target, cselector.value);
 			});
+
+			rawp.body.skipPrecompile = true;
 
 			var avz = core.config.ctvu.loaders.avatars;
 			var pselector = selz.character = CT.dom.select(avz.map(function(item) {
