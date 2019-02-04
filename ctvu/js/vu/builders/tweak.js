@@ -65,14 +65,13 @@ vu.builders.tweak = {
 			zero.core.camera.unfollow();
 		},
 		setMorphs: function(person) {
-			var _ = vu.builders.tweak._, bod = person.body;
+			var _ = vu.builders.tweak._, bod = person.body,
+				spropts = core.config.ctvu.builders.tweak.staticSpring;
 
 			bod.staticMorphs.forEach(function(m) {
-				bod.springs[m] = zero.core.springController.add({
-					k: 20,
-					damp: 10,
+				bod.springs[m] = zero.core.springController.add(CT.merge({
 					target: bod.opts.morphs[m] || 0
-				}, m, bod);
+				}, spropts), m, bod);
 				var aspringz = {};
 				aspringz[m] = 1;
 				bod.aspects[m] = zero.core.aspectController.add({

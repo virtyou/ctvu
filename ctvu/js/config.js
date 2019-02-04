@@ -22,6 +22,12 @@
         "avatars": ["one.torso.sassy", "one.torso.kid"]
     },
     "builders": {
+        "tweak": {
+            "staticSpring": {
+                "k": 20,
+                "damp": 10
+            }
+        },
         "furniture": {
             "pool": {
                 "name": "pool",
