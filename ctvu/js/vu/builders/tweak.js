@@ -61,7 +61,11 @@ vu.builders.tweak = {
 			};
 			if (core.config.ctvu.storage.mode == "remote")
 				registerHair(); // local disabled for now (must add hair alternatives 1st)
+			_.setMorphs(person);
 			zero.core.camera.unfollow();
+		},
+		setMorphs: function(person) {
+			
 		},
 		setColor: function(target, color) {
 			target.material.color = vu.core.hex2rgb(color);
@@ -113,6 +117,7 @@ vu.builders.tweak = {
 						head.remove(acc);
 				});
 			});
+			selz.morphs = CT.dom.div();
 		}
 	},
 	persist: function(updates, sub) {
@@ -145,6 +150,10 @@ vu.builders.tweak = {
 					selz.colorLabel
 				],
 				selz.color
+			], "padded bordered round mb5"),
+			CT.dom.div([
+				"morphs",
+				selz.morphs
 			], "padded bordered round mb5"),
 			"[custom parts; spring tuning]"
 		];
