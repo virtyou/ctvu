@@ -180,7 +180,7 @@ vu.builders.tweak = {
 				selz.color
 			], "padded bordered round mb5"),
 			CT.dom.div([
-				"morphs",
+				CT.dom.div("morphs", "centered"),
 				selz.morphs
 			], "padded bordered round mb5"),
 			"[custom parts; spring tuning]"
