@@ -24,8 +24,8 @@
     "builders": {
         "tweak": {
             "staticSpring": {
-                "k": 20,
-                "damp": 10
+                "k": 200,
+                "damp": 100
             }
         },
         "furniture": {
