@@ -8,8 +8,8 @@ vu.builders.tweak = {
 				_ = vu.builders.tweak._, popts = _.opts,
 				has_menu = false;
 			for (var c in popts.colors) {
-				var comps = c.split(".");
-				_.target = person;
+				var comps = c.split(".").slice(1);
+				_.target = person.body;
 				comps.forEach(function(comp) {
 					_.target = _.target[comp];
 				});
