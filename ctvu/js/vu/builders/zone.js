@@ -12,7 +12,7 @@ vu.builders.zone = {
 			// TODO: handle furniture properly ... just pool for now
 			var ptoggle = _.selectors.pool = CT.dom.checkboxAndLabel(null,
 				!!ropts.objects.length, "Pool", null, null, function() {
-					if (vu.builders.current.person) {
+					if (ptoggle.isChecked() != !!ropts.objects.length) {
 						ropts.objects = ptoggle.isChecked() ? [pool] : [];
 						if (pool.key) { // remote mode!!
 							if (ptoggle.isChecked()) {
