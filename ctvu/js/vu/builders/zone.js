@@ -28,9 +28,9 @@ vu.builders.zone = {
 						} else
 							vu.storage.save(ropts, null, "room", { objects: ropts.objects });
 						if (ptoggle.isChecked())
-							zero.core.util.room.addObject(pool);
+							zero.core.current.room.addObject(pool);
 						else
-							zero.core.util.room.removeObject(pool);
+							zero.core.current.room.removeObject(pool);
 					}
 				});
 			if (ropts.objects.length)
@@ -43,7 +43,7 @@ vu.builders.zone = {
 					ropts.environment = eselector.value;
 					vu.storage.save(ropts, null, "room",
 						{ opts: { environment: eselector.value } });
-					location = location; // hack! do something smarter...
+					zero.core.util.room(ropts);
 				}
 			});
 		}
