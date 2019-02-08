@@ -147,7 +147,7 @@ vu.builders.talk = {
 			}, function(iput) {
 				var key = iput.value;
 				if (key in responses) return; // already exists...
-				responses[key] = { mood: {}, phrase: [] };
+				responses[key] = { mood: {}, phrase: ["you said " + key] };
 				setTimeout(function() {
 					iput.focus();
 				});
@@ -190,7 +190,7 @@ vu.builders.talk = {
 					persist({ responses: cur.person.opts.responses });
 				}, "w1 block mt5", null, responses[rzt.innerHTML].vibe, null, blurs.vibe));
 			};
-			var bgz = ["background", "video", "iframe", "map", "panorama"];
+			var bgz = ["background", "video", "iframe", "map", "panorama", "environment"];
 			var checkBoxGate = function(obj, sel, node) {
 				return CT.dom.checkboxAndLabel(sel, !!obj[sel], null, null, null, function(cbox) {
 					if (cbox.checked && (bgz.indexOf(sel) != -1)) {
@@ -232,6 +232,7 @@ vu.builders.talk = {
 				// viewer (img/audio)
 				var viewer = CT.dom.div(null, "mt5");
 				var setViewer = function() {
+					if (sel == "environment") return;
 					if (isMap) {
 						viewer.classList.add("h100p");
 						return zero.core.util[sel](opts.item, viewer);
@@ -246,7 +247,18 @@ vu.builders.talk = {
 					setViewer();
 
 				// item
-				if (isMap) {
+				if (sel == "environment") {
+					item = CT.dom.select(core.config.ctvu.loaders.environments,
+						null, null, opts.item && opts.item.environment, null, function(val) {
+							opts.item = {
+								environment: val,
+								lights: core.config.ctzero.room.lights
+							};
+							persist({ responses: cur.person.opts.responses });
+						});
+					if (!opts.item)
+						item.className = "hidden";
+				} else if (isMap) {
 					var oi = opts.item = opts.item || {};
 					item = CT.dom.div(["lat", "lng"].map(function(axis, i) {
 						return CT.dom.smartField(function(val) {
@@ -289,7 +301,7 @@ vu.builders.talk = {
 							CT.dom.show(item);
 						persist({ responses: cur.person.opts.responses });
 					};
-					if (isIframe || isMap)
+					if (isIframe || isMap || sel == "environment")
 						return medUp();
 					CT.net.post({
 						path: "/_db",
@@ -305,7 +317,7 @@ vu.builders.talk = {
 				return CT.dom.div([name, item, viewer], !rez[sel] && "hidden");
 			};
 			selz.media.refresh = function() {
-				CT.dom.setContent(selz.media, ["image", "audio", "background", "video", "iframe", "map", "panorama"].map(function(sel) {
+				CT.dom.setContent(selz.media, ["image", "audio", "background", "video", "iframe", "map", "panorama", "environment"].map(function(sel) {
 					var rez = responses[rzt.innerHTML], node = mediaSelector(rez, sel);
 					return [
 						checkBoxGate(rez, sel, node),

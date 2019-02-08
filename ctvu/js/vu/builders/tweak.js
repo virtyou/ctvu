@@ -8,8 +8,8 @@ vu.builders.tweak = {
 				_ = vu.builders.tweak._, popts = _.opts,
 				has_menu = false;
 			for (var c in popts.colors) {
-				var comps = c.split(".");
-				_.target = person;
+				var comps = c.split(".").slice(1);
+				_.target = person.body;
 				comps.forEach(function(comp) {
 					_.target = _.target[comp];
 				});
@@ -61,7 +61,37 @@ vu.builders.tweak = {
 			};
 			if (core.config.ctvu.storage.mode == "remote")
 				registerHair(); // local disabled for now (must add hair alternatives 1st)
+			_.setMorphs(person);
 			zero.core.camera.unfollow();
+		},
+		setMorphs: function(person) {
+			var _ = vu.builders.tweak._, bod = person.body,
+				spropts = core.config.ctvu.builders.tweak.staticSpring;
+
+			bod.staticMorphs.forEach(function(m) {
+				bod.springs[m] = zero.core.springController.add(CT.merge({
+					target: bod.opts.morphs[m] || 0
+				}, spropts), m, bod);
+				var aspringz = {};
+				aspringz[m] = 1;
+				bod.aspects[m] = zero.core.aspectController.add({
+					springs: aspringz
+				}, m, bod);
+				zero.core.morphs.delta(bod, m);
+			});
+
+			CT.dom.setContent(_.selectors.morphs, bod.staticMorphs.map(function(sel) {
+				return [
+					sel,
+					CT.dom.range(function(val) {
+						CT.log(sel + ": " + val);
+						bod.springs[sel].target = bod.opts.morphs[sel] = val / 100;
+						vu.builders.tweak.persist({
+							morphs: bod.opts.morphs
+						}, "body");
+					}, 0, 100, 100 * (bod.opts.morphs[sel] || 0), 1, "w1")
+				];
+			}));
 		},
 		setColor: function(target, color) {
 			target.material.color = vu.core.hex2rgb(color);
@@ -95,6 +125,8 @@ vu.builders.tweak = {
 				_.setColor(_.target, cselector.value);
 			});
 
+			rawp.body.skipPrecompile = true;
+
 			var avz = core.config.ctvu.loaders.avatars;
 			var pselector = selz.character = CT.dom.select(avz.map(function(item) {
 				return item.split(".").pop();
@@ -113,6 +145,7 @@ vu.builders.tweak = {
 						head.remove(acc);
 				});
 			});
+			selz.morphs = CT.dom.div();
 		}
 	},
 	persist: function(updates, sub) {
@@ -145,6 +178,10 @@ vu.builders.tweak = {
 					selz.colorLabel
 				],
 				selz.color
+			], "padded bordered round mb5"),
+			CT.dom.div([
+				CT.dom.div("morphs", "centered"),
+				selz.morphs
 			], "padded bordered round mb5"),
 			"[custom parts; spring tuning]"
 		];

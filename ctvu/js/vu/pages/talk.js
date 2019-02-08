@@ -23,6 +23,6 @@ CT.onload(function() {
 		// menu
 		CT.dom.setContent("menu", vu.builders.talk.menu());
 		// virtual world
-		vu.builders.core.init(true);
+		vu.builders.core.init();
 	});
 });

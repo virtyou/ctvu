@@ -13,7 +13,8 @@
         "vibe": ["name that vibe", "what's the vibe?", "enter the name of your vibe"],
         "iframe": ["please type in the url", "what's the web address?", "enter website"],
         "lat": ["what's the latitude?", "enter latitude", "latitude please"],
-        "lng": ["what's the longitude?", "enter longitude", "longitude please"]
+        "lng": ["what's the longitude?", "enter longitude", "longitude please"],
+        "environment": ["what's the environment?", "which environment?", "environment"]
     },
     "loaders": {
         "customs": ["one.earring", "one.pony"],
@@ -22,6 +23,12 @@
         "avatars": ["one.torso.sassy", "one.torso.kid"]
     },
     "builders": {
+        "tweak": {
+            "staticSpring": {
+                "k": 200,
+                "damp": 100
+            }
+        },
         "furniture": {
             "pool": {
                 "name": "pool",
