@@ -100,7 +100,7 @@ iframe {
 	bottom: calc(60% + 24px);
 }
 
-.gmenu.rightArm, .gmenu.leftArm {
+.gmenu.leftArm, .gmenu.rightArm {
 	top: 40% !important;
 	bottom: 50px;
 }
