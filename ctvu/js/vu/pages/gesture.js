@@ -13,7 +13,6 @@ CT.require("vu.core");
 CT.require("vu.storage");
 CT.require("vu.builders.core");
 CT.require("vu.builders.gesture");
-CT.scriptImport("vu.lib.colorPicker");
 
 CT.onload(function() {
 	CT.initCore();
