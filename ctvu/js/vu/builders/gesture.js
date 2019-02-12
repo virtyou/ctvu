@@ -2,10 +2,20 @@ vu.builders.gesture = {
 	_: {
 		opts: core.config.ctvu.builders.person,
 		selectors: {},
+		menus: {
+			yours: "topleft",
+			globals: "topright",
+			leftArm: "left",
+			rightArm: "right",
+			leftHand: "bottomleft",
+			rightHand: "bottomright"
+		},
 		joined: function(person) {
 			vu.builders.current.person = person;
 			zero.core.camera.unfollow();
-			vu.builders.gesture._.loadGestures();
+
+//			vu.builders.gesture._.loadGestures();
+
 		},
 		loadGestures: function() {
 			var _ = vu.builders.gesture._,
@@ -74,8 +84,12 @@ vu.builders.gesture = {
 				popts = _.opts = vu.storage.get("person") || _.opts;
 			_.raw = zero.core.util.person(vu.core.bgen(popts.body),
 				popts.name || "you", null, popts, popts.body);
-			selz.gestures = CT.dom.div();
-			selz.joints = CT.dom.div();
+			selz.yours = CT.dom.div();
+			selz.globals = CT.dom.div();
+			selz.leftArm = CT.dom.div();
+			selz.rightArm = CT.dom.div();
+			selz.leftHand = CT.dom.div();
+			selz.rightHand = CT.dom.div();
 		}
 	},
 	persist: function(updates, sub) {
@@ -86,19 +100,22 @@ vu.builders.gesture = {
 			popts = CT.merge(updates, popts);
 		vu.storage.save(popts, null, "person", updates, sub);
 	},
-	menu: function() {
+	menus: function() {
 		var cur = vu.builders.current, _ = vu.builders.gesture._,
 			selz = _.selectors, blurs = core.config.ctvu.blurs;
 		_.setup();
-		return [
-			CT.dom.div("your virtYou", "bigger centered pb10"),
-			CT.dom.div([
-				"Gestures",
-				selz.gestures
-			], "padded bordered round mb5"),
-			CT.dom.div([
-				selz.joints
-			], "padded bordered round centered")
-		];
+
+		var main = CT.dom.id("ctmain");
+
+		for (var section in _.menus) {
+			(new CT.modal.Modal({
+				center: false,
+				noClose: true,
+				content: section,
+				transition:"slide",
+				className: "abs above padded bordered round gmenu " + section,
+				slide: { origin: _.menus[section] }
+			})).show(main);
+		}
 	}
 };
