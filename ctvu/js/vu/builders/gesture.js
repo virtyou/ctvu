@@ -73,14 +73,13 @@ vu.builders.gesture = {
 				}, 0, 100, 100 * (val || 0), axis ? "w1" : "inline w1-5")
 			];
 		},
-		setJoints: function(gesture, section) {
+		setJoints: function(gesture, side, sub) {
 			var _ = vu.builders.gesture._, selz = _.selectors,
 				person = vu.builders.current.person,
 				gopts = person.opts.gestures,
 				gesture_opts = gopts[gesture],
-				val, jointRange = _.jointRange,
-				side, sub, modpart;
-			[side, sub] = section.split("_");
+				jointRange = _.jointRange,
+				val, modpart;
 			if (!gesture_opts)
 				gesture_opts = gopts[gesture] = {};
 			if (!gesture_opts[side])
@@ -88,7 +87,7 @@ vu.builders.gesture = {
 			if (!gesture_opts[side][sub])
 				gesture_opts[side][sub] = {};
 			modpart = gesture_opts[side][sub];
-			CT.dom.setContent(selz[section], Object.keys(modpart).map(function(part) {
+			CT.dom.setContent(selz[side + "_" + sub], Object.keys(modpart).map(function(part) {
 				val = modpart[part];
 				if (typeof val == "number")
 					return jointRange(gesture, val, side, sub, part, modpart);
@@ -98,10 +97,11 @@ vu.builders.gesture = {
 			}));
 		},
 		setGesture: function(gesture) {
-			var person = vu.builders.current.person,
-				gopts = person.opts.gestures;
-
-			vu.builders.gesture._.setJoints(gesture, "left_arm");
+			["left", "right"].forEach(function(side) {
+				["arm", "hand"].forEach(function(sub) {
+					vu.builders.gesture._.setJoints(gesture, side, sub);
+				});
+			});
 		},
 		setup: function() {
 			var _ = vu.builders.gesture._, selz = _.selectors,
