@@ -5,23 +5,21 @@ vu.builders.gesture = {
 		menus: {
 			yours: "topleft",
 			globals: "topright",
-			leftArm: "left",
-			rightArm: "right",
-			leftHand: "bottomleft",
-			rightHand: "bottomright"
+			left_arm: "left",
+			right_arm: "right",
+			left_hand: "bottomleft",
+			right_hand: "bottomright"
 		},
 		joined: function(person) {
 			vu.builders.current.person = person;
 			zero.core.camera.unfollow();
-
-//			vu.builders.gesture._.loadGestures();
-
+			vu.builders.gesture._.loadGestures();
 		},
 		loadGestures: function() {
 			var _ = vu.builders.gesture._,
 				person = vu.builders.current.person,
 				gopts = person.opts.gestures;
-			vu.core.fieldList(_.selectors.gestures, Object.keys(gopts), null, function(v) {
+			vu.core.fieldList(_.selectors.yours, Object.keys(gopts), null, function(v) {
 				// generator
 				var f = CT.dom.field(null, v);
 				if (v) {
@@ -56,10 +54,51 @@ vu.builders.gesture = {
 			});
 			_.setGesture(person.activeGesture);
 		},
+		jointRange: function(gesture, val, section, part, axis) {
+			var person = vu.builders.current.person,
+				gopts = person.opts.gestures,
+				gesture_opts = gopts[gesture],
+				popts = { gestures: gopts },
+				side, sub, modpart;
+			[side, sub] = section.split("_");
+			if (!gesture_opts[side])
+				gesture_opts[side] = {};
+			if (!gesture_opts[side][sub])
+				gesture_opts[side][sub] = {};
+			modpart = gesture_opts[side][sub];
+			return [
+				CT.parse.toCaps([part, axis]).join(" "),
+				CT.dom.range(function(val) {
+					CT.log(section + " " + part + " " + axis + ": " + val);
+					val = val / 100;
+					if (axis)
+						modpart[part][axis] = val;
+					else
+						modpart[part] = val;
+					person.gesture(gesture);
+					vu.builders.gesture.persist(popts);
+				}, 0, 100, 100 * (val || 0), "inline w1-5")
+			];
+		},
+		setJoints: function(gesture, section, opts) {
+			var _ = vu.builders.gesture._, selz = _.selectors,
+				person = vu.builders.current.person,
+				gopts = person.opts.gestures,
+				val, jointRange = _.jointRange;
+			CT.dom.setContent(selz[section], Object.keys(opts).map(function(part) {
+				val = opts[part];
+				if (typeof val  == "number")
+					return jointRange(gesture, val, section, part);
+				return Object.keys(val).map(function(axis) {
+					return jointRange(gesture, val[axis], section, part, axis);
+				});
+			}));
+		},
 		setGesture: function(gesture) {
 			var person = vu.builders.current.person,
 				gopts = person.opts.gestures;
 
+			vu.builders.gesture._.setJoints(gesture, "left_arm", {});
 			/*
 			CT.dom.setContent(vu.builders.gesture._.selectors.mood, [
 				CT.dom.div(gesture, "big"),
@@ -86,10 +125,10 @@ vu.builders.gesture = {
 				popts.name || "you", null, popts, popts.body);
 			selz.yours = CT.dom.div();
 			selz.globals = CT.dom.div();
-			selz.leftArm = CT.dom.div();
-			selz.rightArm = CT.dom.div();
-			selz.leftHand = CT.dom.div();
-			selz.rightHand = CT.dom.div();
+			selz.left_arm = CT.dom.div();
+			selz.right_arm = CT.dom.div();
+			selz.left_hand = CT.dom.div();
+			selz.right_hand = CT.dom.div();
 		}
 	},
 	persist: function(updates, sub) {
@@ -102,19 +141,21 @@ vu.builders.gesture = {
 	},
 	menus: function() {
 		var cur = vu.builders.current, _ = vu.builders.gesture._,
-			selz = _.selectors, blurs = core.config.ctvu.blurs;
+			selz = _.selectors, blurs = core.config.ctvu.blurs,
+			main = CT.dom.id("ctmain");
 		_.setup();
-
-		var main = CT.dom.id("ctmain");
 
 		for (var section in _.menus) {
 			(new CT.modal.Modal({
 				center: false,
 				noClose: true,
-				content: section,
-				transition:"slide",
-				className: "abs above padded bordered round gmenu " + section,
-				slide: { origin: _.menus[section] }
+				transition: "slide",
+				slide: { origin: _.menus[section] },
+				content: [
+					CT.parse.key2title(section),
+					selz[section]
+				],
+				className: "abs above padded bordered round gmenu " + section
 			})).show(main);
 		}
 	}
