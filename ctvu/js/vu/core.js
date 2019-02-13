@@ -15,6 +15,9 @@ vu.core = {
 			cb: cb
 		});
 	},
+	jlo: function(v) {
+		return v.replace(/[^a-z]/g, '');
+	},
 	prompt: function(opts) {
 		(new CT.modal.Prompt(CT.merge(opts, {
 			transition: "slide"
