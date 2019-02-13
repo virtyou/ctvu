@@ -59,10 +59,10 @@ vu.builders.gesture = {
 				gopts = person.opts.gestures,
 				gesture_opts = gopts[gesture],
 				popts = { gestures: gopts };
-			return [
-				CT.parse.toCaps([part, axis]).join(" "),
+			return CT.dom.div([
+				axis ? CT.parse.toCaps([part, axis]).join(" ") : CT.parse.capitalize(part),
 				CT.dom.range(function(val) {
-					CT.log("".join(side, sub, part, axis, ":", val));
+					CT.log([side, sub, part, axis, ":", val].join(" "));
 					val = val / 100;
 					if (axis)
 						modpart[part][axis] = val;
@@ -70,8 +70,8 @@ vu.builders.gesture = {
 						modpart[part] = val;
 					person.gesture(gesture);
 					vu.builders.gesture.persist(popts);
-				}, 0, 100, 100 * (val || 0), axis ? "w1" : "inline w1-5")
-			];
+				}, 0, 100, 100 * (val || 0), 1, "w1")
+			], axis ? "w1" : "inline-block w1-5 pr10");
 		},
 		setJoints: function(gesture, side, sub) {
 			var _ = vu.builders.gesture._, selz = _.selectors,
@@ -79,21 +79,35 @@ vu.builders.gesture = {
 				gopts = person.opts.gestures,
 				gesture_opts = gopts[gesture],
 				jointRange = _.jointRange,
-				val, modpart;
+				jmap = _.jmap, val, modpart, partnames;
 			if (!gesture_opts)
 				gesture_opts = gopts[gesture] = {};
 			if (!gesture_opts[side])
 				gesture_opts[side] = {};
 			if (!gesture_opts[side][sub])
 				gesture_opts[side][sub] = {};
-			modpart = gesture_opts[side][sub];
-			CT.dom.setContent(selz[side + "_" + sub], Object.keys(modpart).map(function(part) {
+			modpart = gesture_opts[side][sub]; // such as hand or arm
+			partnames = Object.keys(modpart);
+			CT.dom.setContent(selz[side + "_" + sub], partnames.length ? partnames.map(function(part) {
 				val = modpart[part];
-				if (typeof val == "number")
+				if (typeof val == "number") // digits
 					return jointRange(gesture, val, side, sub, part, modpart);
 				return Object.keys(val).map(function(axis) {
 					return jointRange(gesture, val[axis], side, sub, part, modpart, axis);
 				});
+			}) : CT.dom.button("add", function() {
+				zero.core[CT.parse.capitalize(sub)].parts.forEach(function(part) {
+					if (sub == "hand")
+						modpart[part] = 0;
+					else {
+						modpart[part] = {
+							x: 0,
+							y: 0,
+							z: 0
+						};
+					}
+				});
+				_.setJoints(gesture, side, sub);
 			}));
 		},
 		setGesture: function(gesture) {
