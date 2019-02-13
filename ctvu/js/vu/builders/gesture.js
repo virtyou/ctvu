@@ -58,7 +58,8 @@ vu.builders.gesture = {
 			var person = vu.builders.current.person,
 				gopts = person.opts.gestures,
 				gesture_opts = gopts[gesture],
-				popts = { gestures: gopts };
+				popts = { gestures: gopts }, // no axis means digit (update to support x too)
+				constraints = zero.base.aspects[sub][part][axis || "z"];
 			return CT.dom.div([
 				axis ? CT.parse.toCaps([part, axis]).join(" ") : CT.parse.capitalize(part),
 				CT.dom.range(function(val) {
@@ -70,8 +71,8 @@ vu.builders.gesture = {
 						modpart[part] = val;
 					person.gesture(gesture);
 					vu.builders.gesture.persist(popts);
-				}, 0, 100, 100 * (val || 0), 1, "w1")
-			], axis ? "w1" : "inline-block w1-5 pr10");
+				}, constraints.min * 100, constraints.max * 100, 100 * (val || 0), 1, "w1")
+			], axis ? "w1 pr10" : "inline-block w1-5 pr10");
 		},
 		setJoints: function(gesture, side, sub) {
 			var _ = vu.builders.gesture._, selz = _.selectors,
@@ -100,11 +101,10 @@ vu.builders.gesture = {
 					if (sub == "hand")
 						modpart[part] = 0;
 					else {
-						modpart[part] = {
-							x: 0,
-							y: 0,
-							z: 0
-						};
+						modpart[part] = {};
+						Object.keys(zero.base.aspects[sub][part]).forEach(function(dim) {
+							modpart[part][dim] = 0;
+						});
 					}
 				});
 				_.setJoints(gesture, side, sub);
