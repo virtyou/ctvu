@@ -58,21 +58,17 @@ vu.builders.gesture = {
 			var person = vu.builders.current.person,
 				gopts = person.opts.gestures,
 				gesture_opts = gopts[gesture],
-				popts = { gestures: gopts }, // no axis means digit (update to support x too)
-				constraints = zero.base.aspects[sub][part][axis || "z"];
+				popts = { gestures: gopts },
+				constraints = zero.base.aspects[sub][part][axis];
 			return CT.dom.div([
 				axis ? CT.parse.toCaps([part, axis]).join(" ") : CT.parse.capitalize(part),
 				CT.dom.range(function(val) {
 					CT.log([side, sub, part, axis, ":", val].join(" "));
-					val = val / 100;
-					if (axis)
-						modpart[part][axis] = val;
-					else
-						modpart[part] = val;
+					modpart[part][axis] = val / 100;
 					person.gesture(gesture);
 					vu.builders.gesture.persist(popts);
 				}, constraints.min * 100, constraints.max * 100, 100 * (val || 0), 1, "w1")
-			], axis ? "w1 pr10" : "inline-block w1-5 pr10");
+			], "w1 pr10");
 		},
 		setJoints: function(gesture, side, sub) {
 			var _ = vu.builders.gesture._, selz = _.selectors,
@@ -91,21 +87,17 @@ vu.builders.gesture = {
 			partnames = Object.keys(modpart);
 			CT.dom.setContent(selz[side + "_" + sub], partnames.length ? partnames.map(function(part) {
 				val = modpart[part];
-				if (typeof val == "number") // digits
-					return jointRange(gesture, val, side, sub, part, modpart);
-				return Object.keys(val).map(function(axis) {
-					return jointRange(gesture, val[axis], side, sub, part, modpart, axis);
-				});
+				return CT.dom.div([
+					Object.keys(val).map(function(axis) {
+						return jointRange(gesture, val[axis], side, sub, part, modpart, axis);
+					})
+				], "jblock pr10");
 			}) : CT.dom.button("add", function() {
 				zero.core[CT.parse.capitalize(sub)].parts.forEach(function(part) {
-					if (sub == "hand")
-						modpart[part] = 0;
-					else {
-						modpart[part] = {};
-						Object.keys(zero.base.aspects[sub][part]).forEach(function(dim) {
-							modpart[part][dim] = 0;
-						});
-					}
+					modpart[part] = {};
+					Object.keys(zero.base.aspects[sub][part]).forEach(function(dim) {
+						modpart[part][dim] = 0;
+					});
 				});
 				_.setJoints(gesture, side, sub);
 			}));
