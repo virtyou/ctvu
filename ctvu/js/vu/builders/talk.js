@@ -56,7 +56,7 @@ vu.builders.talk = {
 							vu.core.prompt({
 								prompt: "chain to what?",
 								cb: function(val) {
-									val = _.jlo(val);
+									val = vu.core.jlo(val);
 									if (!val) return;
 									resp.chain = val;
 									CT.dom.setContent(chain, val);
@@ -95,7 +95,7 @@ vu.builders.talk = {
 			vu.core.prompt({
 				prompt: "what's the new trigger?",
 				cb: function(val) {
-					val = _.jlo(val);
+					val = vu.core.jlo(val);
 					if (!val) return;
 					resps.branches = {};
 					resps.branches[val] = {
@@ -109,20 +109,17 @@ vu.builders.talk = {
 				}
 			});
 		},
-		jlo: function(v) {
-			return v.replace(/[^a-z]/g, '');
-		},
 		setTriggers: function(responses, path) {
 			var trigz = Object.keys(responses), cfg = core.config.ctvu,
 				_ = vu.builders.talk._, selz = _.selectors,
 				popts = _.opts = vu.storage.get("person") || _.opts,
 				rz = selz.responses, dz = selz.disable, rzt = rz.trigger,
 				persist = vu.builders.talk.persist, blurs = cfg.blurs,
-				cur = vu.builders.current, jlo = _.jlo;
+				cur = vu.builders.current;
 
 			rzt.innerHTML = trigz[0];
 			var justlow = function(f) {
-				f.value = jlo(f.value);
+				f.value = vu.core.jlo(f.value);
 			};
 			vu.core.fieldList(selz.triggers, trigz, null, function(v) {
 				var f = CT.dom.field(null, v);
