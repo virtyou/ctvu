@@ -62,7 +62,7 @@ vu.builders.gesture = {
 			return [
 				CT.parse.toCaps([part, axis]).join(" "),
 				CT.dom.range(function(val) {
-					CT.log("".join(side, sub, part, axis, ":", val]));
+					CT.log("".join(side, sub, part, axis, ":", val));
 					val = val / 100;
 					if (axis)
 						modpart[part][axis] = val;
@@ -81,6 +81,8 @@ vu.builders.gesture = {
 				val, jointRange = _.jointRange,
 				side, sub, modpart;
 			[side, sub] = section.split("_");
+			if (!gesture_opts)
+				gesture_opts = gopts[gesture] = {};
 			if (!gesture_opts[side])
 				gesture_opts[side] = {};
 			if (!gesture_opts[side][sub])
