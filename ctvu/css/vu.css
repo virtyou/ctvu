@@ -102,9 +102,15 @@ iframe {
 
 .gmenu.left_arm, .gmenu.right_arm {
 	top: 30% !important;
-	bottom: 64px;
+	bottom: 128px;
 }
 
 .gmenu.left_hand, .gmenu.right_hand {
 	width: 50%;
+	height: 120px;
+}
+
+.gmenu.left_hand .jblock, .gmenu.right_hand .jblock {
+	width: 20%;
+	display: inline-block;
 }
