@@ -97,12 +97,12 @@ iframe {
 }
 
 .gmenu.yours, .gmenu.globals {
-	bottom: calc(60% + 24px);
+	bottom: calc(70% + 16px);
 }
 
 .gmenu.left_arm, .gmenu.right_arm {
-	top: 40% !important;
-	bottom: 50px;
+	top: 30% !important;
+	bottom: 64px;
 }
 
 .gmenu.left_hand, .gmenu.right_hand {
