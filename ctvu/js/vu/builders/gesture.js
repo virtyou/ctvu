@@ -158,7 +158,7 @@ vu.builders.gesture = {
 					CT.parse.key2title(section),
 					selz[section]
 				],
-				className: "abs above padded bordered round gmenu " + section
+				className: "abs above padded bordered round pointer gmenu " + section
 			})).show(main);
 		}
 	}
