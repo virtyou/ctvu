@@ -54,22 +54,15 @@ vu.builders.gesture = {
 			});
 			_.setGesture(person.activeGesture);
 		},
-		jointRange: function(gesture, val, section, part, axis) {
+		jointRange: function(gesture, val, side, sub, part, modpart, axis) {
 			var person = vu.builders.current.person,
 				gopts = person.opts.gestures,
 				gesture_opts = gopts[gesture],
-				popts = { gestures: gopts },
-				side, sub, modpart;
-			[side, sub] = section.split("_");
-			if (!gesture_opts[side])
-				gesture_opts[side] = {};
-			if (!gesture_opts[side][sub])
-				gesture_opts[side][sub] = {};
-			modpart = gesture_opts[side][sub];
+				popts = { gestures: gopts };
 			return [
 				CT.parse.toCaps([part, axis]).join(" "),
 				CT.dom.range(function(val) {
-					CT.log(section + " " + part + " " + axis + ": " + val);
+					CT.log("".join(side, sub, part, axis, ":", val]));
 					val = val / 100;
 					if (axis)
 						modpart[part][axis] = val;
@@ -80,17 +73,25 @@ vu.builders.gesture = {
 				}, 0, 100, 100 * (val || 0), "inline w1-5")
 			];
 		},
-		setJoints: function(gesture, section, opts) {
+		setJoints: function(gesture, section) {
 			var _ = vu.builders.gesture._, selz = _.selectors,
 				person = vu.builders.current.person,
 				gopts = person.opts.gestures,
-				val, jointRange = _.jointRange;
-			CT.dom.setContent(selz[section], Object.keys(opts).map(function(part) {
-				val = opts[part];
-				if (typeof val  == "number")
-					return jointRange(gesture, val, section, part);
+				gesture_opts = gopts[gesture],
+				val, jointRange = _.jointRange,
+				side, sub, modpart;
+			[side, sub] = section.split("_");
+			if (!gesture_opts[side])
+				gesture_opts[side] = {};
+			if (!gesture_opts[side][sub])
+				gesture_opts[side][sub] = {};
+			modpart = gesture_opts[side][sub];
+			CT.dom.setContent(selz[section], Object.keys(modpart).map(function(part) {
+				val = modpart[part];
+				if (typeof val == "number")
+					return jointRange(gesture, val, side, sub, part, modpart);
 				return Object.keys(val).map(function(axis) {
-					return jointRange(gesture, val[axis], section, part, axis);
+					return jointRange(gesture, val[axis], side, sub, part, modpart, axis);
 				});
 			}));
 		},
@@ -98,7 +99,7 @@ vu.builders.gesture = {
 			var person = vu.builders.current.person,
 				gopts = person.opts.gestures;
 
-			vu.builders.gesture._.setJoints(gesture, "left_arm", {});
+			vu.builders.gesture._.setJoints(gesture, "left_arm");
 			/*
 			CT.dom.setContent(vu.builders.gesture._.selectors.mood, [
 				CT.dom.div(gesture, "big"),
