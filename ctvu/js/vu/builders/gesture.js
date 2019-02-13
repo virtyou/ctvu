@@ -70,7 +70,7 @@ vu.builders.gesture = {
 						modpart[part] = val;
 					person.gesture(gesture);
 					vu.builders.gesture.persist(popts);
-				}, 0, 100, 100 * (val || 0), "inline w1-5")
+				}, 0, 100, 100 * (val || 0), axis ? "w1" : "inline w1-5")
 			];
 		},
 		setJoints: function(gesture, section) {
@@ -102,24 +102,6 @@ vu.builders.gesture = {
 				gopts = person.opts.gestures;
 
 			vu.builders.gesture._.setJoints(gesture, "left_arm");
-			/*
-			CT.dom.setContent(vu.builders.gesture._.selectors.mood, [
-				CT.dom.div(gesture, "big"),
-				zero.core.Mood.vectors.map(function(sel) {
-					return [
-						sel,
-						CT.dom.range(function(val) {
-							CT.log(sel + ": " + val);
-							var mood_opts = gopts[gesture] = person.mood.snapshot(),
-								mod = {}, popts = { gestures: gopts };
-							mod[sel] = mood_opts[sel] = val / 100;
-							person.mood.update(mod);
-							vu.builders.gesture.persist(popts);
-						}, 0, 100, 100 * (gopts[gesture][sel] || 0), 1, "w1")
-					];
-				})
-			]);
-			*/
 		},
 		setup: function() {
 			var _ = vu.builders.gesture._, selz = _.selectors,
