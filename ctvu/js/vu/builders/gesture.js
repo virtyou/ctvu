@@ -13,7 +13,24 @@ vu.builders.gesture = {
 		joined: function(person) {
 			vu.builders.current.person = person;
 			zero.core.camera.unfollow();
-			vu.builders.gesture._.loadGestures();
+			if (!Object.keys(person.opts.gestures).length)
+				vu.builders.gesture._.initGesture();
+			else
+				vu.builders.gesture._.loadGestures();
+		},
+		initGesture: function() {
+			var _ = vu.builders.gesture._,
+				cur = vu.builders.current;
+			vu.core.prompt({
+				prompt: "what's the new gesture?",
+				cb: function(val) {
+					val = vu.core.jlo(val);
+					cur.person.opts.gestures[val] = {};
+					cur.person.activeGesture = val;
+					vu.builders.gesture.persist({ gestures: cur.person.opts.gestures });
+					_.loadGestures();
+				}
+			});
 		},
 		loadGestures: function() {
 			var _ = vu.builders.gesture._,
