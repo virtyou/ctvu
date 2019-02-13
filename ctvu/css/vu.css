@@ -100,11 +100,11 @@ iframe {
 	bottom: calc(60% + 24px);
 }
 
-.gmenu.leftArm, .gmenu.rightArm {
+.gmenu.left_arm, .gmenu.right_arm {
 	top: 40% !important;
 	bottom: 50px;
 }
 
-.gmenu.leftHand, .gmenu.rightHand {
+.gmenu.left_hand, .gmenu.right_hand {
 	width: 50%;
 }
