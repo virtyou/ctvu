@@ -35,7 +35,7 @@ iframe {
 }
 
 #ctheader {
-	height: auto;
+	height: 100px;
 }
 
 #ctmain {
@@ -97,12 +97,12 @@ iframe {
 	border: 1px solid green;
 }
 
-.gmenu:not(.yours) button {
+.gmenu .right button {
 	height: 18px;
 	margin-top: -3px;
 }
 
-.gmenu.yours, .gmenu.globals {
+.gmenu.gestures, .gmenu.dances {
 	bottom: calc(70% + 16px);
 }
 
