@@ -88,3 +88,30 @@ iframe {
 .basicpopup {
 	color: black;
 }
+
+.gmenu {
+	margin: -5px;
+	opacity: 0.5;
+	background: black;
+	border: 1px solid green;
+}
+
+.gmenu.yours, .gmenu.globals {
+	bottom: calc(70% + 16px);
+}
+
+.gmenu.left_arm, .gmenu.right_arm {
+	top: 30% !important;
+	bottom: 128px;
+	width: 136px;
+}
+
+.gmenu.left_hand, .gmenu.right_hand {
+	width: 50%;
+	height: 120px;
+}
+
+.gmenu.left_hand .jblock, .gmenu.right_hand .jblock {
+	width: 20%;
+	display: inline-block;
+}

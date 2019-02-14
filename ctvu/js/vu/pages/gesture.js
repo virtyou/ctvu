@@ -12,14 +12,14 @@ CT.require("zero.core");
 CT.require("vu.core");
 CT.require("vu.storage");
 CT.require("vu.builders.core");
-CT.require("vu.builders.zone");
+CT.require("vu.builders.gesture");
 
 CT.onload(function() {
 	CT.initCore();
 	vu.storage.init(function() {
 		// menu
-		CT.dom.setContent("menu", vu.builders.zone.menu());
+		vu.builders.gesture.menus();
 		// virtual world
-		vu.builders.core.init(true);
+		vu.builders.core.init();
 	});
 });
