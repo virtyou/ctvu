@@ -72,12 +72,12 @@ vu.builders.gesture = {
 			});
 			_.setGesture(person.activeGesture);
 		},
-		jointRange: function(gesture, val, side, sub, part, modpart, axis) {
+		jointRange: function(gesture, val, side, sub, part, axis, modpart) {
 			var person = vu.builders.current.person,
 				gopts = person.opts.gestures,
 				gesture_opts = gopts[gesture],
 				popts = { gestures: gopts },
-				constraints = zero.base.aspects[sub][part][axis];
+				constraints = person.body.chest[sub + "s"][side].aspects[part + "_" + axis].opts;
 			return CT.dom.div([
 				axis ? CT.parse.toCaps([part, axis]).join(" ") : CT.parse.capitalize(part),
 				CT.dom.range(function(val) {
@@ -93,8 +93,7 @@ vu.builders.gesture = {
 				person = vu.builders.current.person,
 				gopts = person.opts.gestures,
 				gesture_opts = gopts[gesture],
-				jointRange = _.jointRange,
-				jmap = _.jmap, val, modpart, partnames;
+				val, modpart, partnames;
 			if (!gesture_opts)
 				gesture_opts = gopts[gesture] = {};
 			if (!gesture_opts[side])
@@ -107,7 +106,7 @@ vu.builders.gesture = {
 				val = modpart[part];
 				return CT.dom.div([
 					Object.keys(val).map(function(axis) {
-						return jointRange(gesture, val[axis], side, sub, part, modpart, axis);
+						return _.jointRange(gesture, val[axis], side, sub, part, axis, modpart);
 					})
 				], "jblock pr10");
 			}) : "");
