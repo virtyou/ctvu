@@ -16,18 +16,14 @@ vu.builders.talk = {
 		setup: function() {
 			var _ = vu.builders.talk._, selz = _.selectors,
 				popts = _.opts = vu.storage.get("person") || _.opts,
-				persist = vu.builders.talk.persist;
-			selz.responses = CT.dom.div();
+				persist = vu.builders.talk.persist,
+				trigz = ["responses", "disable", "chain", "vibe", "mood",
+					"media", "crumbz", "gesture", "dance", "triggers"];
+			trigz.forEach(function(trig) {
+				selz[trig] = CT.dom.div();
+			});
 			selz.responses.trigger = CT.dom.div(null, "bold");
-			selz.disable = CT.dom.div();
-			selz.chain = CT.dom.div();
-			selz.vibe = CT.dom.div();
-			selz.mood = CT.dom.div();
-			selz.media = CT.dom.div();
 			selz.bread = CT.dom.div(null, "right");
-			selz.crumbz = CT.dom.div();
-			selz.gesture = CT.dom.div();
-			selz.triggers = CT.dom.div();
 			_.raw = zero.core.util.person(vu.core.bgen(popts.body),
 				popts.name || "you", null, popts, popts.body);
 		},
@@ -162,12 +158,9 @@ vu.builders.talk = {
 				if (!Array.isArray(rez.phrase))
 					rez.phrase = [rez.phrase];
 				vu.core.fieldList(rz, rez.phrase);
-				selz.disable.refresh();
-				selz.mood.refresh();
-				selz.vibe.refresh();
-				selz.media.refresh();
-				selz.chain.refresh();
-				selz.gesture.refresh();
+				["disable", "mood", "vibe", "media", "chain", "gesture", "dance"].forEach(function(trig) {
+					selz[trig].refresh();
+				});
 				_.tree(path.join("_") + "_" + rzt.innerHTML);
 			};
 			dz.update = function() {
@@ -177,7 +170,7 @@ vu.builders.talk = {
 			dz.refresh = function() {
 				vu.core.fieldList(dz, responses[rzt.innerHTML].disable);
 			};
-			["chain", "vibe", "gesture"].forEach(function(reaction) {
+			["chain", "vibe", "gesture", "dance"].forEach(function(reaction) {
 				selz[reaction].refresh = function() {
 					CT.dom.setContent(selz[reaction], CT.dom.smartField(function(val) {
 						responses[rzt.innerHTML][reaction] = val;
@@ -384,7 +377,7 @@ vu.builders.talk = {
 				selz.responses.trigger,
 				selz.crumbz
 			], "padded bordered round"),
-			["Responses", "Disable", "Chain", "Gesture", "Vibe", "Mood", "Media"].map(function(item) {
+			["Responses", "Disable", "Chain", "Gesture", "Dance", "Vibe", "Mood", "Media"].map(function(item) {
 				return CT.dom.div([
 					item,
 					selz[item.toLowerCase()]
