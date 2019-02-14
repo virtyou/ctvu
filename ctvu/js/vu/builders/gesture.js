@@ -3,8 +3,8 @@ vu.builders.gesture = {
 		opts: core.config.ctvu.builders.person,
 		selectors: {},
 		menus: {
-			yours: "topleft",
-			globals: "topright",
+			gestures: "topleft",
+			dances: "topright",
 			left_arm: "right",
 			right_arm: "left",
 			left_hand: "bottomright",
@@ -32,11 +32,70 @@ vu.builders.gesture = {
 				}
 			});
 		},
+		setDance: function(dname) {
+			var _ = vu.builders.gesture._, selz = _.selectors,
+				person = vu.builders.current.person,
+				dopts = person.opts.dances;
+
+			selz.steps.update = function() {
+				dopts[dname].steps = selz.steps.fields.value();
+				vu.builders.gesture.persist({ dances: dopts });
+			};
+			vu.core.fieldList(selz.steps, dopts[dname].steps);
+			CT.dom.setContent(selz.step, dname);
+		},
 		loadGestures: function() {
 			var _ = vu.builders.gesture._,
 				person = vu.builders.current.person,
-				gopts = person.opts.gestures;
-			vu.core.fieldList(_.selectors.yours, Object.keys(gopts), null, function(v, i) {
+				gopts = person.opts.gestures,
+				dopts = person.opts.dances,
+				curDance, dbutt = CT.dom.button("dance", function() {
+					if (person.activeDance)
+						person.undance();
+					else
+						person.dance(curDance);
+					dbutt.innerHTML = person.activeDance ? "undance" : "dance";
+				});
+			CT.dom.setContent(_.selectors.dances_button, dbutt);
+			vu.core.fieldList(_.selectors.dances, Object.keys(dopts), null, function(v, i) {
+				// generator
+				var f = CT.dom.field(null, v);
+				if (v) {
+					f._trigger = v;
+					f.onfocus = function() {
+						if (person.activeDance)
+							person.undance();
+//						dopts[f.value].steps && person.dance(f.value);
+						curDance = f.value;
+						_.setDance(f.value);
+					};
+					f.onkeyup = function() {
+						if (f.value) {
+							dopts[f.value] = dopts[f._trigger];
+							delete dopts[f._trigger];
+							person.activeDance = f._trigger = f.value;
+							vu.builders.gesture.persist({ dances: dopts });
+						} else
+							f.value = f._trigger; // meh
+					};
+					!i && setTimeout(f.onfocus); // select 1st
+				}
+				return f;
+			}, function(iput) {
+				// onadd
+				var key = iput.value;
+				if (key in dopts) return; // already exists...
+				dopts[key] = {};
+				setTimeout(function() {
+					iput.focus();
+				});
+			}, function(val) {
+				// onremove
+				delete dopts[val];
+				vu.builders.gesture.persist({ dances: dopts });
+			});
+			CT.dom.addContent(_.selectors.dances, [_.selectors.step, "Steps", _.selectors.steps]);
+			vu.core.fieldList(_.selectors.gestures, Object.keys(gopts), null, function(v, i) {
 				// generator
 				var f = CT.dom.field(null, v);
 				if (v) {
@@ -135,16 +194,19 @@ vu.builders.gesture = {
 					vu.builders.gesture._.setJoints(gesture, side, sub);
 				});
 			});
-			CT.dom.setContent(vu.builders.gesture._.selectors.yours_button, gesture);
+			CT.dom.setContent(vu.builders.gesture._.selectors.gestures_button, gesture);
 		},
 		setup: function() {
 			var _ = vu.builders.gesture._, selz = _.selectors,
 				popts = _.opts = vu.storage.get("person") || _.opts;
 			_.raw = zero.core.util.person(vu.core.bgen(popts.body),
 				popts.name || "you", null, popts, popts.body);
-			selz.globals = CT.dom.div();
-			selz.yours = CT.dom.div();
-			selz.yours_button = CT.dom.div(null, "right"); // active gesture label
+			selz.steps = CT.dom.div();
+			selz.dances = CT.dom.div();
+			selz.gestures = CT.dom.div();
+			selz.step = CT.dom.div(null, "right");
+			selz.dances_button = CT.dom.div(null, "right");
+			selz.gestures_button = CT.dom.div(null, "right"); // active gesture label
 			["left", "right"].forEach(function(side) {
 				["arm", "hand"].forEach(function(sub) {
 					selz[side + "_" + sub] = CT.dom.div();
