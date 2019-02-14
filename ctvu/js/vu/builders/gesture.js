@@ -5,10 +5,10 @@ vu.builders.gesture = {
 		menus: {
 			yours: "topleft",
 			globals: "topright",
-			left_arm: "left",
-			right_arm: "right",
-			left_hand: "bottomleft",
-			right_hand: "bottomright"
+			left_arm: "right",
+			right_arm: "left",
+			left_hand: "bottomright",
+			right_hand: "bottomleft"
 		},
 		joined: function(person) {
 			vu.builders.current.person = person;
@@ -42,6 +42,7 @@ vu.builders.gesture = {
 				if (v) {
 					f._trigger = v;
 					f.onfocus = function() {
+						person.ungesture();
 						person.gesture(f.value);
 						_.setGesture(f.value);
 					};
@@ -109,6 +110,15 @@ vu.builders.gesture = {
 						return jointRange(gesture, val[axis], side, sub, part, modpart, axis);
 					})
 				], "jblock pr10");
+			}) : "");
+			CT.dom.setContent(selz[side + "_" + sub + "_button"], partnames.length ? CT.dom.button("clear", function() {
+				if (!confirm("really?"))
+					return;
+				person.ungesture(null, side, sub);
+				delete gesture_opts[side][sub];
+				if (!Object.keys(gesture_opts[side]).length)
+					delete gesture_opts[side];
+				_.setJoints(gesture, side, sub);
 			}) : CT.dom.button("add", function() {
 				zero.core[CT.parse.capitalize(sub)].parts.forEach(function(part) {
 					modpart[part] = {};
@@ -133,10 +143,12 @@ vu.builders.gesture = {
 				popts.name || "you", null, popts, popts.body);
 			selz.yours = CT.dom.div();
 			selz.globals = CT.dom.div();
-			selz.left_arm = CT.dom.div();
-			selz.right_arm = CT.dom.div();
-			selz.left_hand = CT.dom.div();
-			selz.right_hand = CT.dom.div();
+			["left", "right"].forEach(function(side) {
+				["arm", "hand"].forEach(function(sub) {
+					selz[side + "_" + sub] = CT.dom.div();
+					selz[side + "_" + sub + "_button"] = CT.dom.div(null, "right");
+				});
+			});
 		}
 	},
 	persist: function(updates, sub) {
@@ -160,6 +172,7 @@ vu.builders.gesture = {
 				transition: "slide",
 				slide: { origin: _.menus[section] },
 				content: [
+					selz[section + "_button"],
 					CT.parse.key2title(section),
 					selz[section]
 				],
