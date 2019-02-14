@@ -36,13 +36,14 @@ vu.builders.gesture = {
 			var _ = vu.builders.gesture._,
 				person = vu.builders.current.person,
 				gopts = person.opts.gestures;
-			vu.core.fieldList(_.selectors.yours, Object.keys(gopts), null, function(v) {
+			vu.core.fieldList(_.selectors.yours, Object.keys(gopts), null, function(v, i) {
 				// generator
 				var f = CT.dom.field(null, v);
 				if (v) {
 					f._trigger = v;
 					f.onfocus = function() {
-						person.ungesture();
+						if (person.activeGesture)
+							person.ungesture();
 						person.gesture(f.value);
 						_.setGesture(f.value);
 					};
@@ -55,6 +56,7 @@ vu.builders.gesture = {
 						} else
 							f.value = f._trigger; // meh
 					};
+					!i && setTimeout(f.onfocus); // select 1st
 				}
 				return f;
 			}, function(iput) {
@@ -70,7 +72,6 @@ vu.builders.gesture = {
 				delete gopts[val];
 				vu.builders.gesture.persist({ gestures: gopts });
 			});
-			_.setGesture(person.activeGesture);
 		},
 		jointRange: function(gesture, val, side, sub, part, axis, modpart) {
 			var person = vu.builders.current.person,
