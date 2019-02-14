@@ -134,14 +134,16 @@ vu.builders.gesture = {
 					vu.builders.gesture._.setJoints(gesture, side, sub);
 				});
 			});
+			CT.dom.setContent(vu.builders.gesture._.selectors.yours_button, gesture);
 		},
 		setup: function() {
 			var _ = vu.builders.gesture._, selz = _.selectors,
 				popts = _.opts = vu.storage.get("person") || _.opts;
 			_.raw = zero.core.util.person(vu.core.bgen(popts.body),
 				popts.name || "you", null, popts, popts.body);
-			selz.yours = CT.dom.div();
 			selz.globals = CT.dom.div();
+			selz.yours = CT.dom.div();
+			selz.yours_button = CT.dom.div(null, "right"); // active gesture label
 			["left", "right"].forEach(function(side) {
 				["arm", "hand"].forEach(function(sub) {
 					selz[side + "_" + sub] = CT.dom.div();
