@@ -3,6 +3,7 @@ vu.builders.gesture = {
 		opts: core.config.ctvu.builders.person,
 		selectors: {},
 		menus: {
+			camera: "top",
 			gestures: "topleft",
 			dances: "topright",
 			left_arm: "right",
@@ -12,11 +13,24 @@ vu.builders.gesture = {
 		},
 		joined: function(person) {
 			vu.builders.current.person = person;
-			zero.core.camera.unfollow();
+			vu.builders.gesture._.initCamera();
 			if (!Object.keys(person.opts.gestures).length)
 				vu.builders.gesture._.initGesture();
 			else
 				vu.builders.gesture._.loadGestures();
+		},
+		initCamera: function() {
+			zero.core.camera.unfollow();
+			var butt = CT.dom.button("far", function() {
+				if (butt.innerHTML == "far") {
+					butt.innerHTML = "near";
+					zero.core.camera.move({ z: 280 });
+				} else {
+					butt.innerHTML = "far";
+					zero.core.camera.move({ z: 120 });
+				}
+			});
+			CT.dom.setContent(vu.builders.gesture._.selectors.camera, butt);
 		},
 		initGesture: function() {
 			var _ = vu.builders.gesture._,
@@ -205,6 +219,7 @@ vu.builders.gesture = {
 			selz.dances = CT.dom.div();
 			selz.gestures = CT.dom.div();
 			selz.step = CT.dom.div(null, "right");
+			selz.camera = CT.dom.div(null, "centered");
 			selz.dances_button = CT.dom.div(null, "right");
 			selz.gestures_button = CT.dom.div(null, "right"); // active gesture label
 			["left", "right"].forEach(function(side) {
