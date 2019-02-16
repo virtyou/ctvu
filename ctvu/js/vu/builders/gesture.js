@@ -166,7 +166,7 @@ vu.builders.gesture = {
 				gopts = person.opts.gestures,
 				gesture_opts = gopts[gesture],
 				popts = { gestures: gopts },
-				constraints = person.body.chest[sub + "s"][side].aspects[part + "_" + axis].opts;
+				constraints = person.body.torso[sub + "s"][side].aspects[part + "_" + axis].opts;
 			return CT.dom.div([
 				axis ? CT.parse.toCaps([part, axis]).join(" ") : CT.parse.capitalize(part),
 				CT.dom.range(function(val) {
