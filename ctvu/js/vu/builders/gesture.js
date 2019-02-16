@@ -2,10 +2,14 @@ vu.builders.gesture = {
 	_: {
 		opts: core.config.ctvu.builders.person,
 		selectors: {},
+		arms: [],
+		legs: [],
 		menus: {
 			camera: "top",
 			gestures: "topleft",
 			dances: "topright",
+			left_leg: "right",
+			right_leg: "left",
 			left_arm: "right",
 			right_arm: "left",
 			left_hand: "bottomright",
@@ -19,18 +23,29 @@ vu.builders.gesture = {
 			else
 				vu.builders.gesture._.loadGestures();
 		},
+		swapLimbs: function(ons, offs) {
+			var _ = vu.builders.gesture._;
+			_[ons].forEach(function(modal) {
+				modal.show("ctmain");
+			});
+			_[offs].forEach(function(modal) {
+				modal.hide();
+			});
+		},
 		initCamera: function() {
 			zero.core.camera.unfollow();
-			var butt = CT.dom.button("far", function() {
+			var _ = vu.builders.gesture._, butt = CT.dom.button("far", function() {
 				if (butt.innerHTML == "far") {
 					butt.innerHTML = "near";
 					zero.core.camera.move({ z: 280 });
+					_.swapLimbs("legs", "arms");
 				} else {
 					butt.innerHTML = "far";
 					zero.core.camera.move({ z: 120 });
+					_.swapLimbs("arms", "legs");
 				}
 			});
-			CT.dom.setContent(vu.builders.gesture._.selectors.camera, butt);
+			CT.dom.setContent(_.selectors.camera, butt);
 		},
 		initGesture: function() {
 			var _ = vu.builders.gesture._,
@@ -204,7 +219,7 @@ vu.builders.gesture = {
 		},
 		setGesture: function(gesture) {
 			["left", "right"].forEach(function(side) {
-				["arm", "hand"].forEach(function(sub) {
+				["leg", "arm", "hand"].forEach(function(sub) {
 					vu.builders.gesture._.setJoints(gesture, side, sub);
 				});
 			});
@@ -223,7 +238,7 @@ vu.builders.gesture = {
 			selz.dances_button = CT.dom.div(null, "right");
 			selz.gestures_button = CT.dom.div(null, "right"); // active gesture label
 			["left", "right"].forEach(function(side) {
-				["arm", "hand"].forEach(function(sub) {
+				["leg", "arm", "hand"].forEach(function(sub) {
 					selz[side + "_" + sub] = CT.dom.div();
 					selz[side + "_" + sub + "_button"] = CT.dom.div(null, "right");
 				});
@@ -238,25 +253,32 @@ vu.builders.gesture = {
 			popts = CT.merge(updates, popts);
 		vu.storage.save(popts, null, "person", updates, sub);
 	},
+	modal: function(section) {
+		var _ = vu.builders.gesture._, selz = _.selectors;
+		return new CT.modal.Modal({
+			center: false,
+			noClose: true,
+			transition: "slide",
+			slide: { origin: _.menus[section] },
+			content: [
+				selz[section + "_button"],
+				CT.parse.key2title(section),
+				selz[section]
+			],
+			className: "abs above padded bordered round pointer gmenu " + section
+		});
+	},
 	menus: function() {
-		var cur = vu.builders.current, _ = vu.builders.gesture._,
-			selz = _.selectors, blurs = core.config.ctvu.blurs,
-			main = CT.dom.id("ctmain");
+		var modal, section, _ = vu.builders.gesture._;
 		_.setup();
-
-		for (var section in _.menus) {
-			(new CT.modal.Modal({
-				center: false,
-				noClose: true,
-				transition: "slide",
-				slide: { origin: _.menus[section] },
-				content: [
-					selz[section + "_button"],
-					CT.parse.key2title(section),
-					selz[section]
-				],
-				className: "abs above padded bordered round pointer gmenu " + section
-			})).show(main);
+		for (section in _.menus) {
+			modal = this.modal(section);
+			if (section.endsWith("arm"))
+				_.arms.push(modal);
+			if (section.endsWith("leg"))
+				_.legs.push(modal);
+			else
+				modal.show("ctmain");
 		}
 	}
 };
