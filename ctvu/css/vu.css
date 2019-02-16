@@ -106,6 +106,7 @@ iframe {
 	bottom: calc(70% + 16px);
 }
 
+.gmenu.left_leg, .gmenu.right_leg,
 .gmenu.left_arm, .gmenu.right_arm {
 	top: 30% !important;
 	bottom: 128px;
