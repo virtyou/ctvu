@@ -23,6 +23,12 @@ vu.core = {
 			transition: "slide"
 		}))).show();
 	},
+	choice: function(opts) {
+		vu.core.prompt(CT.merge(opts, {
+			noClose: true,
+			style: "single-choice"
+		}));
+	},
 	fieldList: function(node, values, cb, generator, onadd, onremove) {
 		cb = cb || node.update;
 		node.fields = CT.dom.fieldList(values, generator || function(v) {
