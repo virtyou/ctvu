@@ -19,9 +19,9 @@
     },
     "loaders": {
         "customs": ["one.earring", "one.pony"],
-        "templates": ["one.torso"],
+        "templates": ["one.body"],
         "environments": ["one.scrolly", "one.techno", "one.kidroom"],
-        "avatars": ["one.torso.sassy", "one.torso.kid"]
+        "avatars": ["one.body.sassy", "one.body.kid"]
     },
     "builders": {
         "tweak": {
@@ -53,7 +53,7 @@
             "responses": {},
             "voice": "Joanna",
             "body": {
-                "template": "templates.one.torso.sassy"
+                "template": "templates.one.body.sassy"
             }
         }
     }
