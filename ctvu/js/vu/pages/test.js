@@ -17,6 +17,7 @@ if (!(core.config.ctvu.access.anon || user.core.get()))
 
 CT.onload(function() {
 	CT.initCore();
+	vu.core.init();
 	vu.core.udata(function(data) {
 		var P = data.people[0],
 			raw = zero.core.util.person(vu.core.bgen(P.body), P.name || "you", null, P, P.body);

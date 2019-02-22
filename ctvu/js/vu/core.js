@@ -100,5 +100,3 @@ vu.core = {
 		});
 	}
 };
-
-vu.core.init();

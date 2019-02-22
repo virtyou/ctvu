@@ -17,6 +17,7 @@ CT.scriptImport("vu.lib.colorPicker");
 
 CT.onload(function() {
 	CT.initCore();
+	vu.core.init();
 	vu.storage.init(function() {
 		// menu
 		CT.dom.setContent("menu", vu.builders.tweak.menu());

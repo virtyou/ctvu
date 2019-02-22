@@ -16,6 +16,7 @@ CT.require("vu.builders.gesture");
 
 CT.onload(function() {
 	CT.initCore();
+	vu.core.init();
 	vu.storage.init(function() {
 		// menu
 		vu.builders.gesture.menus();

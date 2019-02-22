@@ -19,6 +19,7 @@ CT.require("CT.map", true);
 
 CT.onload(function() {
 	CT.initCore();
+	vu.core.init();
 	vu.storage.init(function() {
 		// menu
 		CT.dom.setContent("menu", vu.builders.talk.menu());
