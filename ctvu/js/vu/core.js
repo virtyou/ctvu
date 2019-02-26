@@ -49,7 +49,8 @@ vu.core = {
 	udata: function(cb) {
 		if (vu.core._udata)
 			return cb(vu.core._udata);
-		if (!user.core.get()) { // cfg.access.anon must be true
+		if (core.config.ctvu.storage.mode == "local" || !user.core.get()) {
+			 // cfg.access.anon must be true
 			var cfg = core.config.ctvu.builders;
 			return cb({
 				people: [CT.merge(vu.storage.get("person"), cfg.person)],
