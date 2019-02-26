@@ -44,7 +44,7 @@ vu.builders.tweak = {
 				});
 			});
 			var registerHair = function() {
-				zero.core.click.register(person.head.hair, function() {
+				zero.core.click.register(Object.values(person.head.hair)[0], function() {
 					if (has_menu) return true;
 					has_menu = true;
 					var m = new zero.core.Menu({
@@ -52,7 +52,7 @@ vu.builders.tweak = {
 						onselect: function(hopts) {
 							CT.log(hopts.name);
 							m.close();
-							person.head.remove("hair");
+							person.head.detach("hair");
 							person.head.attach(hopts, registerHair, true);
 							has_menu = false;
 						}
@@ -130,7 +130,7 @@ vu.builders.tweak = {
 			var avz = core.config.ctvu.loaders.avatars;
 			var pselector = selz.character = CT.dom.select(avz.map(function(item) {
 				return item.split(".").pop();
-			}), avz, null, bt.slice(bt.indexOf(".") + 1), null, function() {
+			}), avz, null, bt && bt.slice(bt.indexOf(".") + 1), null, function() {
 				if (vu.builders.current.person) {
 					persist({ template: "templates." + pselector.value }, "body");
 					location = location; // hack! do something smarter...
@@ -139,10 +139,10 @@ vu.builders.tweak = {
 			selz.accessories = accz[template].map(function(acc) {
 				return CT.dom.checkboxAndLabel(acc, true, null, null, null, function(cb) {
 					var head = vu.builders.current.person.head;
-					if (cb.checked) // hard-wiring one.torso for now ... genericize later
-						head.attach(templates.one.torso.accessories[acc]);
+					if (cb.checked) // hard-wiring one.body for now ... genericize later
+						head.attach(templates.one.body.accessories[acc]);
 					else
-						head.remove(acc);
+						head.detach(acc);
 				});
 			});
 			selz.morphs = CT.dom.div();
