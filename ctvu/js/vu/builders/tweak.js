@@ -158,7 +158,9 @@ vu.builders.tweak = {
 	},
 	menu: function() {
 		var cur = vu.builders.current, _ = vu.builders.tweak._, selz = _.selectors,
-			blurs = core.config.ctvu.blurs, popts = _.opts;
+			blurs = core.config.ctvu.blurs, popts = _.opts,
+			mode = core.config.ctvu.storage.mode,
+			baseClass = "padded bordered round mb5" + (mode == "remote" ? " hidden" : "");
 		_.setup();
 		return [
 			CT.dom.div("your virtYou", "bigger centered pb10"),
@@ -166,7 +168,7 @@ vu.builders.tweak = {
 				CT.dom.span("Base"),
 				CT.dom.pad(),
 				selz.character
-			], "padded bordered round mb5"),
+			], baseClass),
 			CT.dom.div([
 				CT.dom.div("accessories", "centered"),
 				selz.accessories
@@ -182,8 +184,7 @@ vu.builders.tweak = {
 			CT.dom.div([
 				CT.dom.div("morphs", "centered"),
 				selz.morphs
-			], "padded bordered round mb5"),
-			"[custom parts; spring tuning]"
+			], "padded bordered round")
 		];
 	}
 };
