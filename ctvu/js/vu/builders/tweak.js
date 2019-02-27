@@ -94,7 +94,6 @@ vu.builders.tweak = {
 			}));
 		},
 		setColor: function(target, color, prop) {
-			prop = prop || "color";
 			target.material.color = vu.core.hex2rgb(color);
 			if (core.config.ctvu.storage.mode == "local") {
 				vu.builders.tweak._.opts[prop][target.path] = color;
@@ -113,6 +112,14 @@ vu.builders.tweak = {
 				}
 			}
 		},
+		colorSelector: function(rawp, prop) {
+			var _ = vu.builders.tweak._, selz = _.selectors,
+				bcolor = rawp.body.material[prop] || "#111111",
+				scolor = (typeof bcolor == "string") ? bcolor : ("#" + bcolor.toString(16));
+			selz[prop] = vu.core.color(prop + " selector", scolor, function() {
+				_.setColor(_.target, selz[prop].value, prop);
+			});
+		},
 		setup: function() {
 			var cfg = core.config.ctzero, _ = vu.builders.tweak._, selz = _.selectors,
 				popts = _.opts = vu.storage.get("person") || _.opts, accz = _.accessories,
@@ -120,18 +127,17 @@ vu.builders.tweak = {
 
 			var bt = popts.body.template, template = bt ? bt.split(".").pop() : popts.name,
 				rawp = _.raw = zero.core.util.person(vu.core.bgen(popts.body),
-					popts.name || "you", null, popts, popts.body),
-				cindicator = selz.partLabel = CT.dom.span("Skin", "bold"),
-				bcolor = rawp.body.material.color,
-				scolor = (typeof bcolor == "string") ? bcolor : ("#" + bcolor.toString(16)),
-				bspec = rawp.body.material.specular || "#111111",
-				sspec = (typeof bspec == "string") ? bspec : ("#" + bspec.toString(16));
-			var cselector = selz.color = vu.core.color("Color Selector", scolor, function() {
-				_.setColor(_.target, cselector.value);
-			});
-			var sselector = selz.specular = vu.core.color("Specular Selector", sspec, function() {
-				_.setColor(_.target, sselector.value, "specular");
-			});
+					popts.name || "you", null, popts, popts.body);
+
+			_.colorSelector(rawp, "color");
+			_.colorSelector(rawp, "specular");
+			
+			selz.partLabel = CT.dom.span("Skin", "bold"),
+			selz.shininess = CT.dom.range(function(val) {
+				CT.log("shininess: " + val);
+				_.target.material.shininess = val;
+				vu.storage.setMaterial(_.target.opts.key, { shininess: val });
+			}, 0, 150, rawp.body.material.shininess || 30, 1, "w1");
 
 			rawp.body.skipPrecompile = true;
 
@@ -189,6 +195,10 @@ vu.builders.tweak = {
 			CT.dom.div([
 				"Specular",
 				selz.specular
+			], "padded bordered round mb5"),
+			CT.dom.div([
+				"Shininess",
+				selz.shininess
 			], "padded bordered round mb5"),
 			CT.dom.div([
 				CT.dom.div("morphs", "centered"),
