@@ -21,7 +21,7 @@ vu.builders.tweak = {
 				if (has_menu) return true;
 				person.say("skin");
 				_.target = person.body;
-				CT.dom.setContent(_.selectors.colorLabel, "skin");
+				CT.dom.setContent(_.selectors.partLabel, "skin");
 			});
 			["teeth", "tongue", "teeth_top"].map(function(p) {
 				var pthing = person.head[p],
@@ -30,7 +30,7 @@ vu.builders.tweak = {
 					if (has_menu) return true;
 					person.say(part);
 					_.target = pthing;
-					CT.dom.setContent(_.selectors.colorLabel, part);
+					CT.dom.setContent(_.selectors.partLabel, part);
 				});
 			});
 			["L", "R"].map(function(part) {
@@ -40,7 +40,7 @@ vu.builders.tweak = {
 					if (has_menu) return true;
 					person.say(pname);
 					_.target = pthing;
-					CT.dom.setContent(_.selectors.colorLabel, pname);
+					CT.dom.setContent(_.selectors.partLabel, pname);
 				});
 			});
 			var registerHair = function() {
@@ -93,19 +93,22 @@ vu.builders.tweak = {
 				];
 			}));
 		},
-		setColor: function(target, color) {
+		setColor: function(target, color, prop) {
+			prop = prop || "color";
 			target.material.color = vu.core.hex2rgb(color);
 			if (core.config.ctvu.storage.mode == "local") {
-				vu.builders.tweak._.opts.colors[target.path] = color;
+				vu.builders.tweak._.opts[prop][target.path] = color;
 				vu.builders.tweak.persist();
 			} else { // remote
 				color = parseInt(color.slice(1), 16);
 				var bod = vu.builders.current.person.body;
-				if (bod.head.opts.key) // parts tree
-					vu.storage.setMaterial(target.opts.key, { color: color });
-				else { // template
+				if (bod.head.opts.key) { // parts tree
+					var copts = {};
+					copts[prop] = color;
+					vu.storage.setMaterial(target.opts.key, copts);
+				} else { // template
 					var opts = {}, tn = target.name;
-					opts[(tn == "body") ? "color" : (tn + "_color")] = color;
+					opts[(tn == "body") ? prop : (tn + "_" + prop)] = color;
 					vu.storage.setOpts(bod.opts.key, opts);
 				}
 			}
@@ -118,11 +121,16 @@ vu.builders.tweak = {
 			var bt = popts.body.template, template = bt ? bt.split(".").pop() : popts.name,
 				rawp = _.raw = zero.core.util.person(vu.core.bgen(popts.body),
 					popts.name || "you", null, popts, popts.body),
-				cindicator = selz.colorLabel = CT.dom.span("Skin", "bold"),
+				cindicator = selz.partLabel = CT.dom.span("Skin", "bold"),
 				bcolor = rawp.body.material.color,
-				scolor = (typeof bcolor == "string") ? bcolor : "#" + bcolor.toString(16);
+				scolor = (typeof bcolor == "string") ? bcolor : ("#" + bcolor.toString(16)),
+				bspec = rawp.body.material.specular || "#111111",
+				sspec = (typeof bspec == "string") ? bspec : ("#" + bspec.toString(16));
 			var cselector = selz.color = vu.core.color("Color Selector", scolor, function() {
 				_.setColor(_.target, cselector.value);
+			});
+			var sselector = selz.specular = vu.core.color("Specular Selector", sspec, function() {
+				_.setColor(_.target, sselector.value, "specular");
 			});
 
 			rawp.body.skipPrecompile = true;
@@ -173,13 +181,14 @@ vu.builders.tweak = {
 				CT.dom.div("accessories", "centered"),
 				selz.accessories
 			], "padded bordered round mb5"),
+			CT.dom.div(selz.partLabel, "padded bordered round mb5"),
 			CT.dom.div([
-				[
-					CT.dom.span("Color:"),
-					CT.dom.pad(),
-					selz.colorLabel
-				],
+				"Color",
 				selz.color
+			], "padded bordered round mb5"),
+			CT.dom.div([
+				"Specular",
+				selz.specular
 			], "padded bordered round mb5"),
 			CT.dom.div([
 				CT.dom.div("morphs", "centered"),
