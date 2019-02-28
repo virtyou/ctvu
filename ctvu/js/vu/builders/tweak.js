@@ -150,7 +150,7 @@ vu.builders.tweak = {
 					location = location; // hack! do something smarter...
 				}
 			});
-			selz.accessories = accz[template].map(function(acc) {
+			selz.accessories = (accz[template] || accz.sassy).map(function(acc) {
 				return CT.dom.checkboxAndLabel(acc, true, null, null, null, function(cb) {
 					var head = vu.builders.current.person.head;
 					if (cb.checked) // hard-wiring one.body for now ... genericize later
