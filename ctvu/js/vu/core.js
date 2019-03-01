@@ -26,6 +26,7 @@ vu.core = {
 	choice: function(opts) {
 		vu.core.prompt(CT.merge(opts, {
 			noClose: true,
+			defaultIndex: 0,
 			style: "single-choice"
 		}));
 	},
