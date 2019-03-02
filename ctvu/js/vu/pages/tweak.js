@@ -13,7 +13,7 @@ CT.require("vu.core");
 CT.require("vu.storage");
 CT.require("vu.builders.core");
 CT.require("vu.builders.tweak");
-CT.scriptImport("vu.lib.colorPicker");
+CT.scriptImport("CT.lib.colorPicker");
 
 CT.onload(function() {
 	CT.initCore();
