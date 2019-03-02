@@ -11,21 +11,16 @@ CT.require("user.core");
 CT.require("zero.core");
 CT.require("vu.core");
 CT.require("vu.storage");
-
-if (!(core.config.ctvu.access.anon || user.core.get()))
-	location = "/user/login.html";
+CT.require("vu.builders.core");
+CT.require("vu.builders.test");
 
 CT.onload(function() {
 	CT.initCore();
 	vu.core.init();
-	vu.core.udata(function(data) {
-		var P = data.people[0],
-			raw = zero.core.util.person(vu.core.bgen(P.body), P.name || "you", null, P, P.body);
-		core.config.ctzero.room = data.rooms[0];
-		zero.core.util.init();
-		zero.core.util.join(raw, function(person) {
-			zero.core.camera.unfollow();
-			person.look(zero.core.camera);
-		});
+	vu.storage.init(function() {
+		// menu
+		vu.builders.test.menus();
+		// virtual world
+		vu.builders.core.init();
 	});
 });
