@@ -44,14 +44,25 @@ vu.builders.test = {
 		setGestures: function() {
 			var _ = vu.builders.test._,
 				person = vu.builders.current.person,
-				gestz = person.opts.gestures;
-			CT.dom.setContent(_.selectors.gestures, Object.keys(gestz).map(function(gest) {
-				return CT.dom.div(gest, "bordered padded margined inline-block hoverglow", null, {
-					onclick: function() {
-						person.gesture(gest);
-					}
-				});
-			}));
+				gestz = person.opts.gestures,
+				dances = person.opts.dances;
+			CT.dom.setContent(_.selectors.gestures, [
+				["ungesture"].concat(Object.keys(gestz)).map(function(gest, i) {
+					return CT.dom.div(gest, "bordered padded margined inline-block hoverglow", null, {
+						onclick: function() {
+							i ? person.gesture(gest) : person.ungesture();
+						}
+					});
+				}),
+				"Dances",
+				["undance"].concat(Object.keys(dances)).map(function(dance, i) {
+					return CT.dom.div(dance, "bordered padded margined inline-block hoverglow", null, {
+						onclick: function() {
+							i ? person.dance(dance) : person.undance();
+						}
+					});
+				})
+			]);
 		},
 		setup: function() {
 			var _ = vu.builders.test._, selz = _.selectors,
