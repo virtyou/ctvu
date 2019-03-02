@@ -85,6 +85,42 @@ vu.core = {
 			}
 		});
 	},
+	charlinx: function() {
+		var data = vu.core._udata, person = data.person, nodes = [
+			CT.dom.link("swap", function() {
+				vu.core.charselect(function() {
+					window.location = location; // cheaterly!!!
+				});
+			})
+		];
+		if (data.people.length > 1) {
+			nodes = nodes.concat([
+				CT.dom.pad(),
+				CT.dom.link("import", function() {
+					vu.core.choice({
+						prompt: "import configuration (morphs, vibe, gestures, dances, responses) from whom?",
+						data: data.people.filter(function(peep) {
+							return peep.name != person.name;
+						}),
+						cb: function(whom) {
+							vu.core.v({
+								action: "import",
+								from: whom.key,
+								to: person.key
+							}, function() {
+								window.location = location; // oh my, what a hack!
+							});
+						}
+					});
+				})
+			]);
+		}
+		return CT.dom.div([[
+			CT.dom.span("hello,"),
+			CT.dom.pad(),
+			CT.dom.span(person.name, "bold")
+		], nodes], "left");
+	},
 	udata: function(cb) {
 		if (vu.core._udata)
 			return cb(vu.core._udata);
