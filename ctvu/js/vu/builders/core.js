@@ -6,7 +6,13 @@ vu.builders.core = {
 		if (!noRoom)
 			core.config.ctzero.room = vu.core.room();
 		zero.core.util.init();
-		if (!noPerson)
+		if (!noPerson) {
 			zero.core.util.join(_.raw, _.joined);
+			CT.dom.addContent("ctheader", CT.dom.link("character swap", function() {
+				vu.core.charselect(function() {
+					window.location = location; // cheaterly!!!
+				});
+			}, null, "left"));
+		}
 	}
 };
