@@ -8,11 +8,7 @@ vu.builders.core = {
 		zero.core.util.init();
 		if (!noPerson) {
 			zero.core.util.join(_.raw, _.joined);
-			CT.dom.addContent("ctheader", CT.dom.link("character swap", function() {
-				vu.core.charselect(function() {
-					window.location = location; // cheaterly!!!
-				});
-			}, null, "left"));
+			CT.dom.addContent("ctheader", vu.core.charlinx());
 		}
 	}
 };
