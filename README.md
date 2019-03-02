@@ -5,12 +5,16 @@ Connective tissue and basic interfaces for virtual world builders and applicatio
 # Back (Init Config)
 
     syms = {
+    	".": ["_vu.py"],
     	"js": ["vu"],
     	"css": ["vu.css"],
     	"html": ["vu"]
     }
     model = {
     	"ctvu.model": ["*"]
+    }
+    routes = {
+    	"/_vu": "_vu.py"
     }
     requires = ["virtyou/ctone"]
 
@@ -30,15 +34,27 @@ Connective tissue and basic interfaces for virtual world builders and applicatio
             "talk": ["say something", "test voice", "type something"],
             "resource": ["what's the name?", "name this resource", "what's it called?"],
             "chain": ["enter name of chained trigger", "what happens next?", "next trigger"],
-            "vibe": ["name that vibe", "what's the vibe?", "enter the name of your vibe"]
+            "vibe": ["name that vibe", "what's the vibe?", "enter the name of your vibe"],
+            "iframe": ["please type in the url", "what's the web address?", "enter website"],
+            "lat": ["what's the latitude?", "enter latitude", "latitude please"],
+            "lng": ["what's the longitude?", "enter longitude", "longitude please"],
+            "environment": ["what's the environment?", "which environment?", "environment"],
+            "gesture": ["what's the gesture?", "gesture, please", "any gesture?"],
+            "dance": ["got a dance in mind?", "how about a dance?", "would you like to dance?"]
         },
         "loaders": {
             "customs": ["one.earring", "one.pony"],
-            "templates": ["one.torso"],
-            "environments": ["one.techno", "one.scrolly", "one.kidroom"],
-            "avatars": ["one.torso.sassy", "one.torso.kid"]
+            "templates": ["one.body"],
+            "environments": ["one.scrolly", "one.techno", "one.kidroom"],
+            "avatars": ["one.body.sassy", "one.body.kid"]
         },
         "builders": {
+            "tweak": {
+                "staticSpring": {
+                    "k": 200,
+                    "damp": 100
+                }
+            },
             "furniture": {
                 "pool": {
                     "name": "pool",
@@ -49,7 +65,7 @@ Connective tissue and basic interfaces for virtual world builders and applicatio
                 }
             },
             "room": {
-                "environment": "one.techno",
+                "environment": "one.scrolly",
                 "objects": []
             },
             "accessories": {
@@ -59,15 +75,10 @@ Connective tissue and basic interfaces for virtual world builders and applicatio
             "person": {
                 "mood": {},
                 "colors": {},
-                "responses": {
-                    "*": {
-                        "phrase": ["um what?", "i wasn't listening", "this is my default response"],
-                        "mood": {}
-                    }
-                },
+                "responses": {},
                 "voice": "Joanna",
                 "body": {
-                    "template": "templates.one.torso.sassy"
+                    "template": "templates.one.body.sassy"
                 }
             }
         }
