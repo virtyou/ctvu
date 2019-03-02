@@ -15,6 +15,13 @@ vu.core = {
 			cb: cb
 		});
 	},
+	v: function(params, cb) {
+		CT.net.post({
+			path: "/_vu",
+			params: params,
+			cb: cb
+		});
+	},
 	jlo: function(v) {
 		return v.replace(/[^a-z]/g, '');
 	},
@@ -47,6 +54,37 @@ vu.core = {
 	room: function() {
 		return CT.merge(vu.storage.get("room"), core.config.ctvu.builders.room, core.config.ctzero.room);
 	},
+	setchar: function(person, cb) {
+		vu.core._udata.person = person;
+		CT.storage.set("person", person.key);
+		cb();
+	},
+	birth: function(cb) {
+		vu.core.prompt({
+			prompt: "what's the new character's name?",
+			cb: function(name) {
+				vu.core.v({
+					action: "person",
+					name: name,
+					owner: user.core.get("key")
+				}, function(person) {
+					vu.core._udata.people.push(person);
+					vu.core.setchar(person, cb);
+				});
+			}
+		});
+	},
+	charselect: function(cb) {
+		vu.core.choice({
+			prompt: "select character",
+			data: [{ name: "new character" }].concat(vu.core._udata.people),
+			cb: function(person) {
+				if (person.name == "new character")
+					return vu.core.birth(cb);
+				vu.core.setchar(person, cb);
+			}
+		});
+	},
 	udata: function(cb) {
 		if (vu.core._udata)
 			return cb(vu.core._udata);
@@ -65,6 +103,10 @@ vu.core = {
 			for (var k in data)
 				CT.data.addSet(data[k]);
 			vu.core._udata = data;
+			data.person = CT.storage.get("person");
+			if (!data.person)
+				return vu.core.charselect(function() { cb(data); });
+			data.person = CT.data.get(data.person);
 			cb(data);
 		});
 	},
