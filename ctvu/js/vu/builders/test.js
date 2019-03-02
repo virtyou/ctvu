@@ -27,24 +27,19 @@ vu.builders.test = {
 			CT.dom.setContent(_.selectors.camera, butt);
 		},
 		setTriggers: function() {
-			var _ = vu.builders.test._, btrigz = {},
+			var _ = vu.builders.test._,
 				person = vu.builders.current.person,
-				brain = person.brain,
-				trigz = person.opts.responses,
-				tnode = function(trig) {
-					return CT.dom.div(trig, "bordered padded margined inline-block hoverglow", null, {
-						onclick: function() {
-							person.respond(trig);
-							Object.keys(brain.triggers).forEach(function(t) {
-								if (!(t in trigz) && !(t in btrigz)) {
-									btrigz[t] = true;
-									container.appendChild(tnode(t));
-								}
-							});
-						}
-					});
-				}, container = CT.dom.div(Object.keys(trigz).map(tnode));
-			CT.dom.setContent(_.selectors.triggers, container);
+				responses = person.opts.responses,
+				triggers = person.brain.triggers,
+				trigz = CT.data.uniquify(Object.keys(responses).concat(Object.keys(triggers)));
+			CT.dom.setContent(_.selectors.triggers, trigz.map(function(trig) {
+				return CT.dom.div(trig, "bordered padded margined inline-block hoverglow", null, {
+					onclick: function() {
+						person.respond(trig);
+						_.setTriggers();
+					}
+				});
+			}));
 		},
 		setGestures: function() {
 			var _ = vu.builders.test._,
