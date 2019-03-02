@@ -122,3 +122,8 @@ iframe {
 	width: 20%;
 	display: inline-block;
 }
+
+.gmenu.triggers, .gmenu.gestures {
+	max-width: 50%;
+	white-space: normal;
+}
