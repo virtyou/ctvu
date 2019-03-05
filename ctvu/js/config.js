@@ -26,6 +26,19 @@
         "avatars": ["one.body.sassy", "one.body.kid"]
     },
     "builders": {
+        "talk": {
+            "help": {
+                "responses": "Your character will say one of these in response to this trigger.",
+                "disable": "Disable any triggers that should no longer apply at this point in the conversation. Use 'untrigger' to clear all.",
+                "chain": "Chain together triggers to define complex responses.",
+                "vibe": "Vibes are configured on the vibe page.",
+                "mood": "Fine-tune your character's emotional response to this trigger.",
+                "media": "Various immersive effects.",
+                "gesture": "Gestures are configured on the gesture page. Use 'ungesture' to stop gesturing.",
+                "dance": "Dances are configured on the gesture page. Use 'undance' to stop dancing.",
+                "triggers": "These are the trigger words for the current branch. Use '*' for your fallback response."
+            }
+        },
         "tweak": {
             "staticSpring": {
                 "k": 200,
