@@ -337,6 +337,14 @@ vu.builders.talk = {
 				_.loadTriggers(responses[rzt.innerHTML], path);
 			}));
 			rz.refresh();
+		},
+		helno: function(variety) {
+			return CT.dom.link("help", function() {
+				(new CT.modal.Modal({
+					transition: "slide",
+					content: core.config.ctvu.builders.talk.help[variety]
+				})).show();
+			}, null, "right italic small");
 		}
 	},
 	persist: function(updates, sub) {
@@ -369,6 +377,7 @@ vu.builders.talk = {
 				CT.dom.smartField(respond, "w1 block mt5", null, null, null, blurs.talk)
 			], "padded bordered round mb5"),
 			CT.dom.div([
+				_.helno("triggers"),
 				"Triggers",
 				selz.triggers
 			], "padded bordered round mb5"),
@@ -378,9 +387,11 @@ vu.builders.talk = {
 				selz.crumbz
 			], "padded bordered round"),
 			["Responses", "Disable", "Chain", "Gesture", "Dance", "Vibe", "Mood", "Media"].map(function(item) {
+				var lowi = item.toLowerCase();
 				return CT.dom.div([
+					_.helno(lowi),
 					item,
-					selz[item.toLowerCase()]
+					selz[lowi]
 				], "padded bordered round mt5");
 			})
 		];
