@@ -59,6 +59,7 @@ iframe {
 	right: 0px;
 	bottom: 0px;
 	font-size: 120%;
+	max-width: calc(100% - 275px);
 }
 
 #tree div {
