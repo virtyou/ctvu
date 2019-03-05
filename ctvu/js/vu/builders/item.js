@@ -27,11 +27,24 @@ vu.builders.item = {
 				thopts.kind = val;
 			});
 			selz.format = CT.dom.select(["JSON"].concat(_.loaders), null, null, "JSON");
+			selz.texture_name = CT.dom.div(null, "small right italic");
+			selz.stripset_name = CT.dom.div(null, "small right italic");
 			selz.texture = CT.file.dragdrop(function(ctfile) {
 				thopts.texture = ctfile.url;
+				CT.dom.setContent(selz.texture_name, CT.dom.link(ctfile.name(), function() {
+					(new CT.modal.Modal({
+						transition: "slide",
+						content: [
+							CT.dom.div("Texture: " + ctfile.name(), "big centered"),
+							CT.dom.img(ctfile.url, "w200p block"),
+							ctfile.download()
+						]
+					})).show();
+				}));
 			});
 			selz.stripset = CT.file.dragdrop(function(ctfile) {
 				thopts.stripset = _.formatted(ctfile).url;
+				CT.dom.setContent(selz.stripset_name, ctfile.download(null, ctfile.name()));
 			});
 		}
 	},
@@ -52,11 +65,13 @@ vu.builders.item = {
 				selz.kind
 			], "padded bordered round mb5"),
 			CT.dom.div([
+				selz.texture_name,
 				"Texture",
 				selz.texture
 			], "padded bordered round mb5"),
 			CT.dom.div([
-				CT.dom.div(selz.format, "right"),
+//				CT.dom.div(selz.format, "right"),
+				selz.stripset_name,
 				"Stripset",
 				selz.stripset
 			], "padded bordered round mb5"),
