@@ -16,7 +16,8 @@
         "lng": ["what's the longitude?", "enter longitude", "longitude please"],
         "environment": ["what's the environment?", "which environment?", "environment"],
         "gesture": ["what's the gesture?", "gesture, please", "any gesture?"],
-        "dance": ["got a dance in mind?", "how about a dance?", "would you like to dance?"]
+        "dance": ["got a dance in mind?", "how about a dance?", "would you like to dance?"],
+        "name": ["what's the name?", "name, please", "name?"]
     },
     "loaders": {
         "customs": ["one.earring", "one.pony"],
