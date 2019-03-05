@@ -35,7 +35,7 @@
                 "media": "Various immersive effects.",
                 "gesture": "Gestures are configured on the gesture page. Use 'ungesture' to stop gesturing.",
                 "dance": "Dances are configured on the gesture page. Use 'undance' to stop dancing.",
-                "triggers": "These are the trigger words for the current branch"
+                "triggers": "These are the trigger words for the current branch. Use '*' for your fallback response."
             }
         },
         "tweak": {
