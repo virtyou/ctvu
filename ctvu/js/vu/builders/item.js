@@ -4,6 +4,7 @@ vu.builders.item = {
 			"Binary", "BVH", "Collada", "DDS", "FBX", "GLTF", "HDRCubeTexture",
 			"KMZ", "MD2", "MMD", "MTL", "NRRD", "OBJ", "PCD", "PDB", "PlayCanvas",
 			"PLY", "PVR", "RGBE", "STL", "SVG", "TGA", "TTF", "UTF8", "VRML", "VTK"],
+		things: ["desk", "chair", "plant", "hair"],
 		selectors: {},
 		formatted: function(ctfile) {
 			var _ = vu.builders.item._, selz = _.selectors;
@@ -17,25 +18,51 @@ vu.builders.item = {
 			return CT.file.make(JSON.stringify(three_json));
 		},
 		setup: function() {
-			var _ = vu.builders.item._, selz = _.selectors;
+			var _ = vu.builders.item._, selz = _.selectors,
+				thopts = this.thopts = {}; // lol update!
+			selz.name = CT.dom.smartField(function(val) {
+				thopts.name = val;
+			}, "w1", null, null, null, core.config.ctvu.blurs.name);
+			selz.kind = CT.dom.select(_.things, null, null, null, null, function(val) {
+				thopts.kind = val;
+			});
 			selz.format = CT.dom.select(["JSON"].concat(_.loaders), null, null, "JSON");
-			selz.dd = CT.file.dragdrop(function(ctfile) {
-				var loader = ((selz.format.value == "JSON") ? "JSON" : "Object") + "Loader",
-					thing = new zero.core.Thing({
-						loader: loader,
-						stripset: _.formatted(ctfile).url,
-						frustumCulled: false
-					});
+			selz.texture = CT.file.dragdrop(function(ctfile) {
+				thopts.texture = ctfile.url;
+			});
+			selz.stripset = CT.file.dragdrop(function(ctfile) {
+				thopts.stripset = _.formatted(ctfile).url;
 			});
 		}
+	},
+	update: function() {
+		thing = new zero.core.Thing(this.thopts);
 	},
 	menu: function() {
 		var _ = vu.builders.item._, selz = _.selectors;
 		_.setup();
 		return [
 			CT.dom.div("Item Builder", "bigger centered pv10"),
-			CT.dom.div(selz.format, "padded bordered round mb5"),
-			CT.dom.div(selz.dd, "padded bordered round")
+			CT.dom.div([
+				"Name",
+				selz.name
+			], "padded bordered round mb5"),
+			CT.dom.div([
+				"Kind",
+				selz.kind
+			], "padded bordered round mb5"),
+			CT.dom.div([
+				"Texture",
+				selz.texture
+			], "padded bordered round mb5"),
+			CT.dom.div([
+				CT.dom.div(selz.format, "right"),
+				"Stripset",
+				selz.stripset
+			], "padded bordered round mb5"),
+			CT.dom.div([
+				CT.dom.button("Try it!", vu.builders.item.update)
+			], "padded bordered round")
 		];
 	}
 };
