@@ -57,12 +57,13 @@ vu.builders.item = {
 		return [
 			CT.dom.div("Item Builder", "bigger centered pv10"),
 			CT.dom.div([
+				CT.dom.div([
+					CT.dom.span("Kind"),
+					CT.dom.pad(),
+					selz.kind
+				], "right"),
 				"Name",
 				selz.name
-			], "padded bordered round mb5"),
-			CT.dom.div([
-				"Kind",
-				selz.kind
 			], "padded bordered round mb5"),
 			CT.dom.div([
 				selz.texture_name,
