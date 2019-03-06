@@ -19,7 +19,7 @@ vu.builders.item = {
 		},
 		setup: function() {
 			var _ = vu.builders.item._, selz = _.selectors,
-				thopts = this.thopts = {}; // lol update!
+				thopts = _.thopts = {}; // lol update!
 			selz.name = CT.dom.smartField(function(val) {
 				thopts.name = val;
 			}, "w1", null, null, null, core.config.ctvu.blurs.name);
@@ -49,7 +49,7 @@ vu.builders.item = {
 		}
 	},
 	update: function() {
-		thing = new zero.core.Thing(this.thopts);
+		thing = new zero.core.Thing(vu.builders.item._.thopts);
 	},
 	menu: function() {
 		var _ = vu.builders.item._, selz = _.selectors;
