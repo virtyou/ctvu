@@ -38,7 +38,7 @@ vu.builders.item = {
 				thopts = _.thopts = {}; // lol update!
 			selz.name = CT.dom.smartField(function(val) {
 				thopts.name = val;
-				if (_.item.name != val) {
+				if (_.item && (_.item.name != val)) {
 					vu.builders.item.persist({
 						name: val
 					});
@@ -47,7 +47,7 @@ vu.builders.item = {
 			}, "w1", null, null, null, core.config.ctvu.blurs.name);
 			selz.kind = CT.dom.select(_.kinds, null, null, null, null, function(val) {
 				thopts.kind = val;
-				if (_.item.kind != val) {
+				if (_.item && (_.item.kind != val)) {
 					vu.builders.item.persist({
 						kind: val
 					});
