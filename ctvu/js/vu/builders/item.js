@@ -38,9 +38,21 @@ vu.builders.item = {
 				thopts = _.thopts = {}; // lol update!
 			selz.name = CT.dom.smartField(function(val) {
 				thopts.name = val;
+				if (_.item.name != val) {
+					vu.builders.item.persist({
+						name: val
+					});
+					_.item.name = val;
+				}
 			}, "w1", null, null, null, core.config.ctvu.blurs.name);
 			selz.kind = CT.dom.select(_.kinds, null, null, null, null, function(val) {
 				thopts.kind = val;
+				if (_.item.kind != val) {
+					vu.builders.item.persist({
+						kind: val
+					});
+					_.item.kind = val;
+				}
 			});
 			selz.format = CT.dom.select(["JSON"].concat(_.loaders), null, null, "JSON");
 			selz.texture_name = CT.dom.div(null, "small right italic");
