@@ -196,9 +196,6 @@ vu.builders.item = {
 				selz.stripset_name,
 				"Stripset",
 				selz.stripset
-			], "padded bordered round mb5"),
-			CT.dom.div([
-				CT.dom.button("Try it!", vu.builders.item.update)
 			], "padded bordered round")
 		];
 	}
