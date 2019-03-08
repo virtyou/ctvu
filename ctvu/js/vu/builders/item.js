@@ -99,7 +99,7 @@ vu.builders.item = {
 					_.setItem(items[0]);
 				else
 					_.forge();
-			}, null, null, null, {
+			}, 1000, null, null, {
 				owner: user.core.get("key")
 			});
 		},
@@ -117,8 +117,8 @@ vu.builders.item = {
 			CT.db.multi(assets, function(data) {
 				selz.stripset.update(CT.data.get(item.stripset));
 				selz.texture.update(CT.data.get(item.texture));
+				vu.builders.item.update();
 			});
-			vu.builders.item.update();
 		},
 		itemSelect: function() {
 			var _ = vu.builders.item._;
