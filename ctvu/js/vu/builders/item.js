@@ -63,8 +63,8 @@ vu.builders.item = {
 			var _ = vu.builders.item._, selz = _.selectors;
 			_.item = item;
 			CT.dom.setContent(_.curname, item.name);
-			selz.name.value = item.name;
-			selz.kind.value = item.kind;
+			selz.name.value = _.thopts.name = item.name;
+			selz.kind.value = _.thopts.kind = item.kind;
 			// TODO: texture, stripset
 			vu.builders.item.update();
 		},
