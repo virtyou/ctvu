@@ -25,14 +25,16 @@ vu.storage.remote = {
 			cb: cb
 		});
 	},
-	save: function(full, cb, ent_type, obj, sub) {
-		var udata = vu.core._udata, ent;
-		if (ent_type == "person")
-			ent = udata.people[0];
-		else if (ent_type == "room")
-			ent = udata.rooms[0];
-		if (sub)
-			ent = ent[sub];
+	save: function(full, cb, ent_type, obj, sub, ent) {
+		var udata = vu.core._udata;
+		if (!ent) {
+			if (ent_type == "person")
+				ent = udata.person;
+			else if (ent_type == "room")
+				ent = udata.rooms[0];
+			if (sub)
+				ent = ent[sub];
+		}
 		obj.key = ent.key;
 		vu.storage.edit(obj, cb);
 	},

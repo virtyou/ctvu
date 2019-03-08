@@ -1,9 +1,16 @@
-from cantools.web import respond, succeed, cgi_get
-from ctone.spawners import person
+from cantools.web import respond, succeed, cgi_get, read_file
+from ctone.spawners import person, thing, asset
 from model import db
 
 def response():
-	action = cgi_get("action", choices=["person", "import"])
+	action = cgi_get("action", choices=["person", "import", "thing", "asset"])
+	if action == "asset":
+		succeed(asset(cgi_get("name"),
+			variety=cgi_get("variety"),
+			owner=cgi_get("owner"),
+			data=read_file(cgi_get("data"))).get().data())
+	if action == "thing":
+		succeed(thing(cgi_get("data"), cgi_get("owner")).data())
 	if action == "person":
 		succeed(person(cgi_get("name"), cgi_get("owner")).data())
 	if action == "import":

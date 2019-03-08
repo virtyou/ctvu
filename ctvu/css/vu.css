@@ -38,6 +38,10 @@ iframe {
 	height: 100px;
 }
 
+#ctll {
+	margin-top: -20px;
+}
+
 #ctmain {
 	overflow-y: hidden;
 }
@@ -88,6 +92,7 @@ iframe {
 
 .basicpopup {
 	color: black;
+	overflow-y: auto;
 }
 
 .gmenu {
