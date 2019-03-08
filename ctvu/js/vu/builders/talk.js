@@ -115,7 +115,8 @@ vu.builders.talk = {
 
 			rzt.innerHTML = trigz[0];
 			var justlow = function(f) {
-				f.value = vu.core.jlo(f.value);
+				if (f.value != "*")
+					f.value = vu.core.jlo(f.value);
 			};
 			vu.core.fieldList(selz.triggers, trigz, null, function(v) {
 				var f = CT.dom.field(null, v);
