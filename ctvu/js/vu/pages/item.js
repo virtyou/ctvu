@@ -1,5 +1,6 @@
 CT.require("CT.align");
 CT.require("CT.data");
+CT.require("CT.db");
 CT.require("CT.dom");
 CT.require("CT.file");
 CT.require("CT.layout");
@@ -22,6 +23,6 @@ CT.onload(function() {
 		// menu
 		CT.dom.setContent("menu", vu.builders.item.menu());
 		// virtual world
-		vu.builders.core.init(true);
+		vu.builders.core.init();
 	});
 });
