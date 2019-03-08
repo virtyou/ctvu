@@ -92,6 +92,7 @@ iframe {
 
 .basicpopup {
 	color: black;
+	overflow-y: auto;
 }
 
 .gmenu {
