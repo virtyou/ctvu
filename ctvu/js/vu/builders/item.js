@@ -4,7 +4,7 @@ vu.builders.item = {
 			"Binary", "BVH", "Collada", "DDS", "FBX", "GLTF", "HDRCubeTexture",
 			"KMZ", "MD2", "MMD", "MTL", "NRRD", "OBJ", "PCD", "PDB", "PlayCanvas",
 			"PLY", "PVR", "RGBE", "STL", "SVG", "TGA", "TTF", "UTF8", "VRML", "VTK"],
-		things: ["desk", "chair", "plant", "hair"],
+		kinds: ["desk", "chair", "plant", "hair"],
 		selectors: {},
 		formatted: function(ctfile) {
 			var _ = vu.builders.item._, selz = _.selectors;
@@ -23,7 +23,7 @@ vu.builders.item = {
 			selz.name = CT.dom.smartField(function(val) {
 				thopts.name = val;
 			}, "w1", null, null, null, core.config.ctvu.blurs.name);
-			selz.kind = CT.dom.select(_.things, null, null, null, null, function(val) {
+			selz.kind = CT.dom.select(_.kinds, null, null, null, null, function(val) {
 				thopts.kind = val;
 			});
 			selz.format = CT.dom.select(["JSON"].concat(_.loaders), null, null, "JSON");
@@ -46,10 +46,72 @@ vu.builders.item = {
 				thopts.stripset = _.formatted(ctfile).url;
 				CT.dom.setContent(selz.stripset_name, ctfile.download(null, ctfile.name()));
 			});
+		},
+		getThings: function() {
+			var _ = vu.builders.item._;
+			CT.db.get("thing", function(items) {
+				_.items = items;
+				if (items.length)
+					_.setItem(items[0]);
+				else
+					_.forge();
+			}, null, null, null, {
+				owner: user.core.get("key")
+			});
+		},
+		setItem: function(item) {
+			var _ = vu.builders.item._, selz = _.selectors;
+			_.item = item;
+			CT.dom.setContent(_.curname, item.name);
+			selz.name.value = item.name;
+			selz.kind.value = item.kind;
+			// TODO: texture, stripset
+			vu.builders.item.update();
+		},
+		itemSelect: function() {
+			var _ = vu.builders.item._;
+			vu.core.choice({
+				prompt: "select item",
+				data: [{ name: "new item" }].concat(_.items),
+				cb: function(item) {
+					if (item.name == "new item")
+						return _.forge();
+					_.setItem(item);
+				}
+			});
+		},
+		forge: function() {
+			var _ = vu.builders.item._;
+			vu.core.prompt({
+				prompt: "what's the new item's name?",
+				cb: function(name) {
+					vu.core.v({
+						action: "thing",
+						name: name,
+						owner: user.core.get("key")
+					}, function(item) {
+						_.items.push(item);
+						_.setItem(item);
+					});
+				}
+			});
+		},
+		linx: function() {
+			var _ = vu.builders.item._;
+			_.curname = CT.dom.span(null, "bold"),
+			_.getThings();
+			return CT.dom.div([[
+				CT.dom.span("viewing:"),
+				CT.dom.pad(),
+				_.curname
+			], CT.dom.link("swap", _.itemSelect)], "left");
 		}
 	},
 	update: function() {
-		thing = new zero.core.Thing(vu.builders.item._.thopts);
+		var _ = vu.builders.item._;
+		if (_.thing)
+			_.thing.remove();
+		_.thing = new zero.core.Thing(vu.builders.item._.thopts);
 	},
 	menu: function() {
 		var _ = vu.builders.item._, selz = _.selectors;
