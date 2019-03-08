@@ -30,6 +30,14 @@ vu.builders.item = {
 			selz.texture_name = CT.dom.div(null, "small right italic");
 			selz.stripset_name = CT.dom.div(null, "small right italic");
 			selz.texture = CT.file.dragdrop(function(ctfile) {
+
+/*
+				vu.core.v({
+					action: "asset",
+
+				}, function() {  });
+*/
+
 				thopts.texture = ctfile.url;
 				CT.dom.setContent(selz.texture_name, CT.dom.link(ctfile.name(), function() {
 					(new CT.modal.Modal({
@@ -107,6 +115,16 @@ vu.builders.item = {
 			], CT.dom.link("swap", _.itemSelect)], "left");
 		}
 	},
+	/*
+	persist: function(updates, sub) { // TODO: fix this!
+		var popts = vu.builders.tweak._.opts;
+		if (sub)
+			popts[sub] = CT.merge(updates, popts[sub]);
+		else
+			popts = CT.merge(updates, popts);
+		vu.storage.save(popts, null, "person", updates, sub);
+	},
+	*/
 	update: function() {
 		var _ = vu.builders.item._;
 		if (_.thing)
