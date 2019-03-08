@@ -52,8 +52,13 @@ vu.builders.item = {
 				_.asset(ctfile, "stripset");
 			});
 			selz.texture.update = function(asset) {
-				thopts.texture = asset.item;
-				CT.dom.setContent(selz.texture_name, CT.dom.link(asset.name, function() {
+				thopts.texture = asset && asset.item;
+				if (asset && (_.item.texture != asset.key)) {
+					vu.builders.item.persist({ texture: asset.key });
+					vu.builders.item.update();
+				}
+				_.item.texture = asset && asset.key;
+				CT.dom.setContent(selz.texture_name, asset && CT.dom.link(asset.name, function() {
 					(new CT.modal.Modal({
 						transition: "slide",
 						content: [
@@ -65,8 +70,13 @@ vu.builders.item = {
 				}));
 			};
 			selz.stripset.update = function(asset) {
-				thopts.stripset = asset.item;
-				CT.dom.setContent(selz.stripset_name, _.download(asset.item, asset.name, asset.name));
+				thopts.stripset = asset && asset.item;
+				if (asset && (_.item.stripset != asset.key)) {
+					vu.builders.item.persist({ stripset: asset.key });
+					vu.builders.item.update();
+				}
+				_.item.stripset = asset && asset.key;
+				CT.dom.setContent(selz.stripset_name, asset && _.download(asset.item, asset.name, asset.name));
 			};
 		},
 		getThings: function() {
@@ -93,12 +103,9 @@ vu.builders.item = {
 			if (item.texture)
 				assets.push(item.texture);
 			CT.db.multi(assets, function(data) {
-				if (item.stripset)
-					selz.stripset.update(CT.data.get(item.stripset));
-				if (item.texture)
-					selz.texture.update(CT.data.get(item.texture));
+				selz.stripset.update(CT.data.get(item.stripset));
+				selz.texture.update(CT.data.get(item.texture));
 			});
-			// TODO: texture, stripset
 			vu.builders.item.update();
 		},
 		itemSelect: function() {
@@ -142,16 +149,11 @@ vu.builders.item = {
 			], CT.dom.link("swap", _.itemSelect)], "left");
 		}
 	},
-	/*
-	persist: function(updates, sub) { // TODO: fix this!
-		var popts = vu.builders.tweak._.opts;
-		if (sub)
-			popts[sub] = CT.merge(updates, popts[sub]);
-		else
-			popts = CT.merge(updates, popts);
-		vu.storage.save(popts, null, "person", updates, sub);
+	persist: function(updates) { // NB: this only works in remote mode, screw it ;)
+		vu.storage.edit(CT.merge(updates, {
+			key: vu.builders.item._.item.key
+		}));
 	},
-	*/
 	update: function() {
 		var _ = vu.builders.item._;
 		if (_.thing)
