@@ -17,6 +17,22 @@ vu.builders.item = {
 				three_json = loader.parse(obj_data).toJSON();
 			return CT.file.make(JSON.stringify(three_json));
 		},
+		asset: function(ctfile, variety) {
+			var _ = vu.builders.item._, selz = _.selectors;
+			ctfile.upload("/_vu", selz[variety].update, {
+				action: "asset",
+				name: ctfile.name(),
+				variety: variety,
+				owner: user.core.get("key")
+			});
+		},
+		download: function(url, dname, lname, dclass) {
+			lname = lname || "download";
+			var l = CT.dom.link(lname, null,
+				url, dclass, null, null, true);
+			l.download = dname || lname;
+			return l;
+		},
 		setup: function() {
 			var _ = vu.builders.item._, selz = _.selectors,
 				thopts = _.thopts = {}; // lol update!
@@ -30,30 +46,28 @@ vu.builders.item = {
 			selz.texture_name = CT.dom.div(null, "small right italic");
 			selz.stripset_name = CT.dom.div(null, "small right italic");
 			selz.texture = CT.file.dragdrop(function(ctfile) {
-
-/*
-				vu.core.v({
-					action: "asset",
-
-				}, function() {  });
-*/
-
-				thopts.texture = ctfile.url;
-				CT.dom.setContent(selz.texture_name, CT.dom.link(ctfile.name(), function() {
+				_.asset(ctfile, "texture");
+			});
+			selz.stripset = CT.file.dragdrop(function(ctfile) {
+				_.asset(ctfile, "stripset");
+			});
+			selz.texture.update = function(asset) {
+				thopts.texture = asset.item;
+				CT.dom.setContent(selz.texture_name, CT.dom.link(asset.name, function() {
 					(new CT.modal.Modal({
 						transition: "slide",
 						content: [
-							CT.dom.div("Texture: " + ctfile.name(), "big centered"),
-							CT.dom.img(ctfile.url, "w200p block"),
-							ctfile.download()
+							CT.dom.div("Texture: " + asset.name, "big centered"),
+							CT.dom.img(asset.item, "w200p block"),
+							_.download(asset.item, asset.name)
 						]
 					})).show();
 				}));
-			});
-			selz.stripset = CT.file.dragdrop(function(ctfile) {
-				thopts.stripset = _.formatted(ctfile).url;
-				CT.dom.setContent(selz.stripset_name, ctfile.download(null, ctfile.name()));
-			});
+			};
+			selz.stripset.update = function(asset) {
+				thopts.stripset = asset.item;
+				CT.dom.setContent(selz.stripset_name, _.download(asset.item, asset.name, asset.name));
+			};
 		},
 		getThings: function() {
 			var _ = vu.builders.item._;
@@ -68,11 +82,22 @@ vu.builders.item = {
 			});
 		},
 		setItem: function(item) {
-			var _ = vu.builders.item._, selz = _.selectors;
+			var _ = vu.builders.item._, selz = _.selectors, s, t;
 			_.item = item;
 			CT.dom.setContent(_.curname, item.name);
 			selz.name.value = _.thopts.name = item.name;
 			selz.kind.value = _.thopts.kind = item.kind;
+			var assets = [];
+			if (item.stripset)
+				assets.push(item.stripset);
+			if (item.texture)
+				assets.push(item.texture);
+			CT.db.multi(assets, function(data) {
+				if (item.stripset)
+					selz.stripset.update(CT.data.get(item.stripset));
+				if (item.texture)
+					selz.texture.update(CT.data.get(item.texture));
+			});
 			// TODO: texture, stripset
 			vu.builders.item.update();
 		},
@@ -95,8 +120,10 @@ vu.builders.item = {
 				cb: function(name) {
 					vu.core.v({
 						action: "thing",
-						name: name,
-						owner: user.core.get("key")
+						owner: user.core.get("key"),
+						data: {
+							name: name
+						}
 					}, function(item) {
 						_.items.push(item);
 						_.setItem(item);
@@ -129,7 +156,7 @@ vu.builders.item = {
 		var _ = vu.builders.item._;
 		if (_.thing)
 			_.thing.remove();
-		_.thing = new zero.core.Thing(vu.builders.item._.thopts);
+		_.thing = new zero.core.Thing(_.thopts);
 	},
 	menu: function() {
 		var _ = vu.builders.item._, selz = _.selectors;
