@@ -152,7 +152,7 @@ vu.builders.item = {
 		},
 		linx: function() {
 			var _ = vu.builders.item._;
-			_.curname = CT.dom.span(null, "bold"),
+			_.curname = CT.dom.span(null, "bold");
 			_.getThings();
 			return CT.dom.div([[
 				CT.dom.span("viewing:"),
