@@ -31,7 +31,7 @@ vu.storage.remote = {
 			if (ent_type == "person")
 				ent = udata.person;
 			else if (ent_type == "room")
-				ent = udata.rooms[0];
+				ent = udata.room;
 			if (sub)
 				ent = ent[sub];
 		}
@@ -42,7 +42,7 @@ vu.storage.remote = {
 		if (ent_type == "person")
 			return vu.core._udata.person;
 		else if (ent_type == "room")
-			return vu.core._udata.rooms[0];
+			return vu.core._udata.room;
 		else if (ent_type in vu.storage._extras)
 			return vu.storage._extras[ent_type];
 		return CT.db.get(key);
