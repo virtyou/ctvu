@@ -43,6 +43,8 @@ vu.storage.remote = {
 			return vu.core._udata.person;
 		else if (ent_type == "room")
 			return vu.core._udata.room;
+		else if (ent_type == "rooms")
+			return vu.core._udata.rooms;
 		else if (ent_type in vu.storage._extras)
 			return vu.storage._extras[ent_type];
 		return CT.db.get(key);
