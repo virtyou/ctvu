@@ -35,7 +35,7 @@ iframe {
 }
 
 #ctheader {
-	height: 100px;
+	height: 110px;
 }
 
 #ctll {
@@ -43,6 +43,7 @@ iframe {
 }
 
 #ctmain {
+	top: 110px;
 	overflow-y: hidden;
 }
 

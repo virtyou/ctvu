@@ -158,7 +158,7 @@ vu.builders.item = {
 				CT.dom.span("viewing:"),
 				CT.dom.pad(),
 				_.curname
-			], CT.dom.link("swap", _.itemSelect)], "left");
+			], CT.dom.link("swap", _.itemSelect)], "left shiftall");
 		}
 	},
 	persist: function(updates) { // NB: this only works in remote mode, screw it ;)

@@ -119,7 +119,7 @@ vu.core = {
 			CT.dom.span("hello,"),
 			CT.dom.pad(),
 			CT.dom.span(person.name, "bold")
-		], nodes], "left");
+		], nodes], "left shiftall");
 	},
 	udata: function(cb) {
 		if (vu.core._udata)
