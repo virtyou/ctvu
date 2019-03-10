@@ -47,13 +47,21 @@ vu.storage.remote = {
 			return vu.storage._extras[ent_type];
 		return CT.db.get(key);
 	},
+	_ready: function(cb) {
+		return function() {
+			if (vu.storage._readyOne)
+				cb(vu.core._udata);
+			vu.storage._readyOne = true;
+		};
+	},
 	init: function(cb) {
 		vu.core.z({ action: "things" }, function(extras) {
 			for (var k in extras)
 				for (var j in extras[k])
 					CT.data.add(extras[k][j]);
 			vu.storage._extras = extras;
+			vu.storage._ready(cb)();
 		});
-		vu.core.udata(cb);
+		vu.core.udata(vu.storage._ready(cb));
 	}
 };
