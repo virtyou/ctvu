@@ -55,8 +55,11 @@ vu.builders.zone = {
 			}), enz, null, _.opts.environment, null, function() {
 				if (_.opts.environment != eselector.value) {
 					_.opts.environment = eselector.value;
-					vu.storage.save(ropts, null, "room",
-						{ opts: { environment: eselector.value } });
+					vu.builders.zone.persist({
+						environment: eselector.value
+					});
+//					vu.storage.save(ropts, null, "room",
+//						{ opts: { environment: eselector.value } });
 					zero.core.util.room(_.opts);
 				}
 			});
