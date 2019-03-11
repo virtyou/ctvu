@@ -126,8 +126,7 @@ vu.builders.tweak = {
 				persist = vu.builders.tweak.persist;
 
 			var bt = popts.body.template, template = bt ? bt.split(".").pop() : popts.name,
-				rawp = _.raw = zero.core.util.person(vu.core.bgen(popts.body),
-					popts.name || "you", null, popts, popts.body);
+				rawp = _.raw = vu.core.person(popts);
 
 			_.colorSelector(rawp, "color");
 			_.colorSelector(rawp, "specular");

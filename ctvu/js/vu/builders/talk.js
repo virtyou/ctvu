@@ -24,8 +24,7 @@ vu.builders.talk = {
 			});
 			selz.responses.trigger = CT.dom.div(null, "bold");
 			selz.bread = CT.dom.div(null, "right");
-			_.raw = zero.core.util.person(vu.core.bgen(popts.body),
-				popts.name || "you", null, popts, popts.body);
+			_.raw = vu.core.person(popts);
 		},
 		loadTriggers: function(r, path) {
 			path = path || ["root"];

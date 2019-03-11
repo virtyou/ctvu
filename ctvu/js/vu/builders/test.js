@@ -67,8 +67,7 @@ vu.builders.test = {
 		setup: function() {
 			var _ = vu.builders.test._, selz = _.selectors,
 				popts = _.opts = vu.storage.get("person") || _.opts;
-			_.raw = zero.core.util.person(vu.core.bgen(popts.body),
-				popts.name || "you", null, popts, popts.body);
+			_.raw = vu.core.person(popts);
 			selz.camera = CT.dom.div(null, "centered");
 			selz.triggers = CT.dom.div();
 			selz.gestures = CT.dom.div();
