@@ -4,21 +4,19 @@ vu.builders.zone = {
 		furniture: core.config.ctvu.builders.furniture,
 		selectors: {},
 		furnishings: function() {
-			var _ = vu.builders.zone._,
-				ropts = _.opts = vu.storage.get("room") || _.opts,
-				fz = _.furniture = vu.storage.get("furnishing") || _.furniture,
-				pool = _.furniture.pool;
+			var _ = vu.builders.zone._, pool = _.furniture.pool,
+				fz = _.furniture = vu.storage.get("furnishing") || _.furniture;
 
 			// TODO: handle furniture properly ... just pool for now
 			var ptoggle = _.selectors.pool = CT.dom.checkboxAndLabel(null,
-				!!ropts.objects.length, "Pool", null, null, function() {
-					if (ptoggle.isChecked() != !!ropts.objects.length) {
-						ropts.objects = ptoggle.isChecked() ? [pool] : [];
+				!!_.opts.objects.length, "Pool", null, null, function() {
+					if (ptoggle.isChecked() != !!_.opts.objects.length) {
+						_.opts.objects = ptoggle.isChecked() ? [pool] : [];
 						if (pool.key) { // remote mode!!
 							if (ptoggle.isChecked()) {
 								vu.storage.edit({
 									base: pool.key,
-									parent: ropts.key,
+									parent: _.opts.key,
 									modelName: "furnishing"
 								}, function(furn) {
 									ptoggle._pool = furn;
@@ -26,19 +24,19 @@ vu.builders.zone = {
 							} else
 								vu.storage.edit(ptoggle._pool.key, null, "delete", "key");
 						} else
-							vu.storage.save(ropts, null, "room", { objects: ropts.objects });
+							vu.storage.save(_.opts, null, "room", { objects: _.opts.objects });
 						if (ptoggle.isChecked())
 							zero.core.current.room.addObject(pool);
 						else
 							zero.core.current.room.removeObject(pool);
 					}
 				});
-			if (ropts.objects.length)
-				ptoggle._pool = ropts.objects[0];
+			if (_.opts.objects.length)
+				ptoggle._pool = _.opts.objects[0];
 		},
 		setup: function() {
-			var _ = vu.builders.zone._, selz = _.selectors,
-				ropts = _.opts = vu.storage.get("room") || _.opts;
+			var _ = vu.builders.zone._, selz = _.selectors;
+			_.opts = vu.storage.get("room") || _.opts;
 
 			selz.name = CT.dom.smartField(function(val) {
 				if (_.opts && (_.opts.name != val)) {
@@ -54,12 +52,12 @@ vu.builders.zone = {
 			var enz = core.config.ctvu.loaders.environments;
 			var eselector = selz.environment = CT.dom.select(enz.map(function(item) {
 				return item.slice(item.indexOf(".") + 1);
-			}), enz, null, ropts.environment, null, function() {
-				if (ropts.environment != eselector.value) {
-					ropts.environment = eselector.value;
+			}), enz, null, _.opts.environment, null, function() {
+				if (_.opts.environment != eselector.value) {
+					_.opts.environment = eselector.value;
 					vu.storage.save(ropts, null, "room",
 						{ opts: { environment: eselector.value } });
-					zero.core.util.room(ropts);
+					zero.core.util.room(_.opts);
 				}
 			});
 		},
