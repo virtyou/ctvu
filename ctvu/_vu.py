@@ -11,7 +11,9 @@ def response():
 			data=read_file(cgi_get("data"))).get().data())
 	if action == "room":
 		succeed(room(cgi_get("name"), cgi_get("owner"),
-			cgi_get("environment", required=False)).data())
+			cgi_get("environment", required=False),
+			cgi_get("cameras", default=[]),
+			cgi_get("opts", default={})).data())
 	if action == "thing":
 		succeed(thing(cgi_get("data"), cgi_get("owner")).data())
 	if action == "person":
