@@ -107,7 +107,8 @@ vu.builders.zone = {
 		linx: function() {
 			var _ = vu.builders.zone._;
 			_.curname = CT.dom.span(null, "bold");
-			_.set(vu.storage.get("room"));
+			setTimeout(_.set, 1000, vu.storage.get("room")); // eh, kinda tacky...
+			//_.set(vu.storage.get("room"));
 			return CT.dom.div([[
 				CT.dom.span("viewing:"),
 				CT.dom.pad(),
