@@ -3,6 +3,16 @@ vu.builders.zone = {
 		opts: core.config.ctvu.builders.room,
 		furniture: core.config.ctvu.builders.furniture,
 		selectors: {},
+		starter: {
+			environment: "one.box",
+			cameras: [
+				[0, 32, 120],
+				[256, 256, 256],
+				[256, -256, 256],
+				[-256, 256, 256],
+				[-256, -256, 256]
+			]
+		},
 		furnishings: function() {
 			var _ = vu.builders.zone._, pool = _.furniture.pool,
 				fz = _.furniture = vu.storage.get("furnishing") || _.furniture;
@@ -78,17 +88,14 @@ vu.builders.zone = {
 			vu.core.prompt({
 				prompt: "what's the new zone's name?",
 				cb: function(name) {
-					vu.core.v({
+					vu.core.v(CT.merge({
 						action: "room",
 						name: name,
-						environment: "one.box",
 						owner: user.core.get("key")
-					}, function(room) {
-						var ropts = room.opts;
-						ropts.key = room.key;
-						ropts.name = room.name;
-						CT.data.add(ropts);
+					}, _.starter), function(room) {
+						var ropts = CT.merge(room, room.opts);
 						vu.storage.get("rooms").push(ropts);
+						CT.data.add(ropts);
 						_.set(ropts);
 					});
 				}
