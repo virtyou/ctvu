@@ -64,14 +64,14 @@ vu.builders.zone = {
 				}
 			});
 		},
-		set: function(room) {
+		set: function(room, noUpdate) {
 			var _ = vu.builders.zone._, selz = _.selectors,
 				name = room.name || room.environment;
 			_.opts = room;
 			CT.dom.setContent(_.curname, name);
 			selz.name.value = name;
 			selz.environment.value = room.environment;
-			vu.builders.zone.update();
+			noUpdate || vu.builders.zone.update();
 		},
 		build: function() {
 			var _ = vu.builders.zone._;
@@ -112,7 +112,7 @@ vu.builders.zone = {
 			_.curname = CT.dom.span(null, "bold");
 			// add person for scale
 			zero.core.util.join(vu.core.person(vu.storage.get("person")), function() {
-				vu.builders.zone._.set(vu.storage.get("room"));
+				vu.builders.zone._.set(vu.storage.get("room"), true);
 			});
 			return CT.dom.div([[
 				CT.dom.span("viewing:"),
