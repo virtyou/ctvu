@@ -19,8 +19,8 @@ CT.onload(function() {
 	CT.initCore();
 	vu.core.init();
 	vu.storage.init(function() {
-		// menu
-		CT.dom.setContent("menu", vu.builders.zone.menu());
+		// menus
+		vu.builders.zone.menus();
 		// virtual world
 		vu.builders.core.init();
 	});
