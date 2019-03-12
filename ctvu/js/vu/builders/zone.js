@@ -138,10 +138,20 @@ vu.builders.zone = {
 			};
 		},
 		cameras: function() {
-			var _ = vu.builders.zone._, selz = _.selectors;
+			var _ = vu.builders.zone._, selz = _.selectors,
+				cycbutt = CT.dom.button("cycle cameras", function() {
+					if (cycbutt._cycler) {
+						clearInterval(cycbutt._cycler);
+						delete cycbutt._cycler;
+						cycbutt.innerHTML = "cycle cameras";
+					} else {
+						cycbutt._cyclear = setInterval(zero.core.current.room.cut, 1000);
+						cycbutt.innerHTML = "stop cycling";
+					}
+				});
 			selz.cameras = CT.dom.div();
 			selz.cameras.update = function() {
-
+				CT.dom.setContent(selz.cameras, cycbutt);
 			};
 		},
 		set: function(room, noUpdate) {
