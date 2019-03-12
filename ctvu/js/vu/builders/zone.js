@@ -62,6 +62,8 @@ vu.builders.zone = {
 			}, "w1", null, null, null, core.config.ctvu.blurs.name);
 
 			_.furnishings();
+			_.lights();
+			_.cameras();
 
 			var enz = core.config.ctvu.loaders.environments;
 			var eselector = selz.environment = CT.dom.select(enz.map(function(item) {
@@ -78,6 +80,70 @@ vu.builders.zone = {
 				}
 			});
 		},
+		setColor: function(target, color, prop) {
+			var copts = {};
+			if (target.material) { // object
+				target.material.color = vu.core.hex2rgb(color);
+				color = parseInt(color.slice(1), 16);
+				copts[prop] = color;
+				vu.storage.setMaterial(target.opts.key, copts);
+			} else // light
+				target.setColor(color);
+		},
+		colorSelector: function(target, prop, lnum) {
+
+			// TODO: fix color selection!!!!
+
+			var _ = vu.builders.zone._, selz = _.selectors,
+				bcolor, scolor, room = zero.core.current.room;
+			if (target.material) { // object
+				bcolor = target.thring.material[prop] || "#111111",
+				scolor = (typeof bcolor == "string") ? bcolor : ("#" + bcolor.toString(16));
+			} else // light
+				scolor = target.opts.color;
+			if (!prop)
+				prop = "light " + lnum;
+			return vu.core.color(prop + " selector", scolor, function() {
+				_.setColor(target, selz[prop].value, prop);
+			});
+		},
+		lights: function() {
+			var _ = vu.builders.zone._, selz = _.selectors,
+				room, color, intensity, direction;
+			selz.lights = CT.dom.div();
+			selz.lights.update = function() {
+				room = zero.core.current.room;
+				CT.dom.setContent(selz.lights, room.lights.map(function(light, i) {
+					color = _.colorSelector(light, null, i);
+					intensity = CT.dom.range(function(val) {
+						light.setIntensity(val);
+					}, null, null, light.opts.intensity, "w1");
+					direction = CT.dom.div(); // finish
+					return CT.dom.div([
+						light.opts.variety,
+						CT.dom.div([
+							"Color",
+							color
+						], "topbordered padded margined"),
+						CT.dom.div([
+							"Intensity",
+							intensity
+						], "topbordered padded margined"),
+						CT.dom.div([
+							"Direction",
+							direction
+						], "topbordered padded margined")
+					], "margined padded bordered round");
+				}));
+			};
+		},
+		cameras: function() {
+			var _ = vu.builders.zone._, selz = _.selectors;
+			selz.cameras = CT.dom.div();
+			selz.cameras.update = function() {
+
+			};
+		},
 		set: function(room, noUpdate) {
 			var _ = vu.builders.zone._, selz = _.selectors,
 				name = room.name || room.environment;
@@ -86,6 +152,8 @@ vu.builders.zone = {
 			selz.name.value = name;
 			selz.environment.value = room.environment;
 			noUpdate || vu.builders.zone.update();
+			selz.lights.update();
+			selz.cameras.update();
 		},
 		build: function() {
 			var _ = vu.builders.zone._;
@@ -153,6 +221,14 @@ vu.builders.zone = {
 				CT.dom.span("Environment"),
 				CT.dom.pad(),
 				selz.environment,
+			], "padded bordered round mb5"),
+			CT.dom.div([
+				"Lights",
+				selz.lights
+			], "padded bordered round mb5"),
+			CT.dom.div([
+				"Cameras",
+				selz.cameras
 			], "padded bordered round mb5"),
 			CT.dom.div(selz.pool, "padded bordered round mb5")
 		];
