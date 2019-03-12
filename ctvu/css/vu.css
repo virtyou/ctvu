@@ -110,6 +110,16 @@ iframe {
 	border: 1px solid green;
 }
 
+.gmenu.cameras {
+    left: 221px !important;
+    right: 276px;
+    white-space: initial;
+}
+
+.gmenu.cameras button:not(.right) {
+	margin: 10px 10px 10px 0;
+}
+
 .gmenu .right button {
 	height: 18px;
 	margin-top: -3px;
