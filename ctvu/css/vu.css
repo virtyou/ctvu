@@ -30,6 +30,10 @@ iframe {
 	border: 1px solid gray;
 }
 
+.topbordered {
+	border-top: 1px solid gray;
+}
+
 .cp-app {
 	z-index: 9999;
 }
