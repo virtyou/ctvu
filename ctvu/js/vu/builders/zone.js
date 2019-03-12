@@ -3,6 +3,11 @@ vu.builders.zone = {
 		opts: core.config.ctvu.builders.room,
 		furniture: core.config.ctvu.builders.furniture,
 		selectors: {},
+		menus: {
+			cameras: "top",
+			basic: "topleft",
+			lights: "topright"
+		},
 		starter: {
 			environment: "one.box",
 			cameras: [
@@ -79,6 +84,19 @@ vu.builders.zone = {
 					zero.core.util.room(_.opts);
 				}
 			});
+
+			selz.basic = [
+				CT.dom.div([
+					"Name",
+					selz.name
+				], "padded bordered round mb5"),
+				CT.dom.div([
+					CT.dom.span("Environment"),
+					CT.dom.pad(),
+					selz.environment,
+				], "padded bordered round mb5"),
+				CT.dom.div(selz.pool, "padded bordered round")
+			];
 		},
 		setColor: function(target, color, prop) {
 			var copts = {};
@@ -155,15 +173,15 @@ vu.builders.zone = {
 			};
 		},
 		set: function(room, noUpdate) {
-			var _ = vu.builders.zone._, selz = _.selectors,
-				name = room.name || room.environment;
+			var _ = vu.builders.zone._, selz = _.selectors, upmenus = function() {
+				selz.lights.update();
+				selz.cameras.update();
+			}, name = room.name || room.environment;
 			_.opts = room;
 			CT.dom.setContent(_.curname, name);
 			selz.name.value = name;
 			selz.environment.value = room.environment;
-			noUpdate || vu.builders.zone.update();
-			selz.lights.update();
-			selz.cameras.update();
+			noUpdate ? upmenus() : vu.builders.zone.update(upmenus);
 		},
 		build: function() {
 			var _ = vu.builders.zone._;
@@ -215,32 +233,29 @@ vu.builders.zone = {
 			key: vu.builders.zone._.opts.key
 		}));
 	},
-	update: function() {
-		zero.core.util.room(vu.builders.zone._.opts);
+	update: function(cb) {
+		zero.core.util.room(CT.merge({
+			onbuild: cb
+		}, vu.builders.zone._.opts));
 	},
-	menu: function() {
+	modal: function(section) {
 		var _ = vu.builders.zone._, selz = _.selectors;
+		return new CT.modal.Modal({
+			center: false,
+			noClose: true,
+			transition: "slide",
+			slide: { origin: _.menus[section] },
+			content: [
+				CT.parse.capitalize(section),
+				selz[section]
+			],
+			className: "abs above padded bordered round pointer gmenu " + section
+		});
+	},
+	menus: function() {
+		var section, _ = vu.builders.zone._;
 		_.setup();
-		return [
-			CT.dom.div("your vRoom", "bigger centered pv10"),
-			CT.dom.div([
-				"Name",
-				selz.name
-			], "padded bordered round mb5"),
-			CT.dom.div([
-				CT.dom.span("Environment"),
-				CT.dom.pad(),
-				selz.environment,
-			], "padded bordered round mb5"),
-			CT.dom.div([
-				"Lights",
-				selz.lights
-			], "padded bordered round mb5"),
-			CT.dom.div([
-				"Cameras",
-				selz.cameras
-			], "padded bordered round mb5"),
-			CT.dom.div(selz.pool, "padded bordered round mb5")
-		];
+		for (section in _.menus)
+			this.modal(section).show("ctmain");
 	}
 };
