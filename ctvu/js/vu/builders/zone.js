@@ -131,28 +131,45 @@ vu.builders.zone = {
 			selz.lights = CT.dom.div();
 			selz.lights.update = function() {
 				room = zero.core.current.room;
-				CT.dom.setContent(selz.lights, room.lights.map(function(light, i) {
-					color = _.colorSelector(light, null, i);
-					intensity = CT.dom.range(function(val) {
-						light.setIntensity(val);
-					}, null, null, light.opts.intensity, "w1");
-					direction = CT.dom.div(); // finish
-					return CT.dom.div([
-						light.opts.variety,
-						CT.dom.div([
-							"Color",
-							color
-						], "topbordered padded margined"),
-						CT.dom.div([
-							"Intensity",
-							intensity
-						], "topbordered padded margined"),
-						CT.dom.div([
-							"Direction",
-							direction
-						], "topbordered padded margined")
-					], "margined padded bordered round");
-				}));
+				CT.dom.setContent(selz.lights, [
+					CT.dom.button("add", function() {
+						vu.core.choice({
+							data: ["ambient", "directional", "point"],
+							cb: function(variety) {
+								room.addLight({
+									variety: variety
+								});
+								selz.lights.update();
+							}
+						});
+					}, "vcrunch right"),
+					room.lights.map(function(light, i) {
+						color = _.colorSelector(light, null, i);
+						intensity = CT.dom.range(function(val) {
+							light.setIntensity(val);
+						}, 0, 1, light.opts.intensity, 0.01, "w1");
+						direction = CT.dom.div(); // finish
+						return CT.dom.div([
+							CT.dom.button("remove", function() {
+								room.removeLight(light);
+								selz.lights.update();
+							}, "up5 right"),
+							light.opts.variety,
+							CT.dom.div([
+								"Color",
+								color
+							], "topbordered padded margined"),
+							CT.dom.div([
+								"Intensity",
+								intensity
+							], "topbordered padded margined"),
+							CT.dom.div([
+								"Direction",
+								direction
+							], "topbordered padded margined")
+						], "margined padded bordered round");
+					})
+				]);
 			};
 		},
 		cameras: function() {
