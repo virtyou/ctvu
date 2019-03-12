@@ -145,7 +145,7 @@ vu.builders.zone = {
 						delete cycbutt._cycler;
 						cycbutt.innerHTML = "cycle cameras";
 					} else {
-						cycbutt._cyclear = setInterval(zero.core.current.room.cut, 1000);
+						cycbutt._cycler = setInterval(zero.core.current.room.cut, 1000);
 						cycbutt.innerHTML = "stop cycling";
 					}
 				});
