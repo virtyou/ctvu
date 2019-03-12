@@ -103,6 +103,8 @@ iframe {
 .gmenu {
 	margin: -5px;
 	opacity: 0.5;
+	max-height: 100%;
+	overflow-y: auto;
 	background: black;
 	white-space: nowrap;
 	border: 1px solid green;
