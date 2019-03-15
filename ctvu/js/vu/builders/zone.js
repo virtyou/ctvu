@@ -85,6 +85,39 @@ vu.builders.zone = {
 				}
 			});
 
+			selz.base = CT.dom.div();
+			selz.base.update = function() {
+				var content = [
+					CT.dom.button("swap", function() {
+						vu.core.choice({
+							data: ["wallpaper", "shell"],
+							cb: function(variety) {
+								vu.core.choice({
+									data: Object.values(vu.storage.get(variety)),
+									cb: function(base) {
+										_.opts.thing_key = base.key;
+										if (base.texture)
+											_.opts.texture = base.texture;
+										if (base.stripset)
+											_.opts.stripset = base.stripset;
+										selz.base.update();
+										vu.builders.zone.update();
+										vu.builders.zone.persist({
+											base: base.key
+										});
+									}
+								});
+							}
+						});
+					}, "up20 right")
+				];
+				if (_.opts.thing_key) {
+					var thing = CT.data.get(_.opts.thing_key);
+					content.push(thing.name + " (" + thing.kind + ")");
+				}
+				CT.dom.setContent(selz.base, content);
+			};
+
 			selz.basic = [
 				CT.dom.div([
 					"Name",
@@ -93,7 +126,11 @@ vu.builders.zone = {
 				CT.dom.div([
 					CT.dom.span("Environment"),
 					CT.dom.pad(),
-					selz.environment,
+					selz.environment
+				], "padded bordered round mb5"),
+				CT.dom.div([
+					"Base",
+					selz.base
 				], "padded bordered round mb5"),
 				CT.dom.div(selz.pool, "padded bordered round")
 			];
@@ -198,6 +235,7 @@ vu.builders.zone = {
 		},
 		set: function(room, noUpdate) {
 			var _ = vu.builders.zone._, selz = _.selectors, upmenus = function() {
+				selz.base.update();
 				selz.lights.update();
 				selz.cameras.update();
 			}, name = room.name || room.environment;
