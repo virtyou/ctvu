@@ -118,6 +118,21 @@ vu.builders.zone = {
 				CT.dom.setContent(selz.base, content);
 			};
 
+			selz.scale = CT.dom.div();
+			selz.scale.update = function() {
+				var room = zero.core.current.room,
+					scale = room.scale();
+				CT.dom.setContent(selz.scale, ["x", "y", "z"].map(function(dim) {
+					return [
+						dim,
+						CT.dom.range(function(val) {
+							room.adjust("scale", dim, val);
+
+						}, 0.3, 3, scale[dim], 0.01, "w1")
+					];
+				}));
+			};
+
 			selz.basic = [
 				CT.dom.div([
 					"Name",
@@ -132,6 +147,10 @@ vu.builders.zone = {
 					"Base",
 					selz.base
 				], "padded bordered round mb5"),
+				CT.dom.div([
+					"Scale",
+					selz.scale
+				], "padded bordered round mb5 nonowrap"),
 				CT.dom.div(selz.pool, "padded bordered round")
 			];
 		},
@@ -236,6 +255,7 @@ vu.builders.zone = {
 		set: function(room, noUpdate) {
 			var _ = vu.builders.zone._, selz = _.selectors, upmenus = function() {
 				selz.base.update();
+				selz.scale.update();
 				selz.lights.update();
 				selz.cameras.update();
 			}, name = room.name || room.environment;
