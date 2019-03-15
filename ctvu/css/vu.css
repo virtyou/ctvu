@@ -110,6 +110,10 @@ iframe {
 	border: 1px solid green;
 }
 
+.gmenu.basic {
+	width: 217px;
+}
+
 .gmenu.cameras {
     left: 221px !important;
     right: 276px;
