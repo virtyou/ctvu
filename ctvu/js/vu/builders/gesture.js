@@ -252,26 +252,14 @@ vu.builders.gesture = {
 			popts = CT.merge(updates, popts);
 		vu.storage.save(popts, null, "person", updates, sub);
 	},
-	modal: function(section) {
-		var _ = vu.builders.gesture._, selz = _.selectors;
-		return new CT.modal.Modal({
-			center: false,
-			noClose: true,
-			transition: "slide",
-			slide: { origin: _.menus[section] },
-			content: [
-				selz[section + "_button"],
-				CT.parse.key2title(section),
-				selz[section]
-			],
-			className: "abs above padded bordered round pointer gmenu " + section
-		});
-	},
 	menus: function() {
-		var modal, section, _ = vu.builders.gesture._;
+		var modal, section, _ = vu.builders.gesture._, selz = _.selectors;
 		_.setup();
 		for (section in _.menus) {
-			modal = this.modal(section);
+			modal = vu.core.menu(section, _.menus[section], selz[section], [
+				selz[section + "_button"],
+				CT.parse.key2title(section)
+			]);
 			if (section.endsWith("arm"))
 				_.arms.push(modal);
 			if (section.endsWith("leg"))

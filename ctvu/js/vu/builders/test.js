@@ -73,24 +73,10 @@ vu.builders.test = {
 			selz.gestures = CT.dom.div();
 		}
 	},
-	modal: function(section) {
-		var _ = vu.builders.test._, selz = _.selectors;
-		return new CT.modal.Modal({
-			center: false,
-			noClose: true,
-			transition: "slide",
-			slide: { origin: _.menus[section] },
-			content: [
-				CT.parse.capitalize(section),
-				selz[section]
-			],
-			className: "abs above padded bordered round pointer gmenu " + section
-		});
-	},
 	menus: function() {
-		var section, _ = vu.builders.test._;
+		var section, _ = vu.builders.test._, selz = _.selectors;
 		_.setup();
 		for (section in _.menus)
-			this.modal(section).show("ctmain");
+			vu.core.menu(section, _.menus[section], selz[section]).show("ctmain");
 	}
 };
