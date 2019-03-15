@@ -185,9 +185,10 @@ vu.builders.zone = {
 			scolor = (typeof bcolor == "string") ? bcolor : ("#" + bcolor.toString(16));
 			if (!prop)
 				prop = "light " + lnum;
-			return vu.core.color(prop + " selector", scolor, function() {
-				_.setColor(target, selz[prop].value, prop);
+			var cnode = vu.core.color(prop + " selector", scolor, function() {
+				_.setColor(target, cnode.value, prop);
 			});
+			return cnode;
 		},
 		lights: function() {
 			var _ = vu.builders.zone._, selz = _.selectors,
