@@ -121,13 +121,17 @@ vu.builders.zone = {
 			selz.scale = CT.dom.div();
 			selz.scale.update = function() {
 				var room = zero.core.current.room,
-					scale = room.scale();
-				CT.dom.setContent(selz.scale, ["x", "y", "z"].map(function(dim) {
+					scale = room.scale(),
+					scopts = [scale.x, scale.y, scale.z];
+				CT.dom.setContent(selz.scale, ["x", "y", "z"].map(function(dim, i) {
 					return [
 						dim,
 						CT.dom.range(function(val) {
+							scopts[i] = val;
 							room.adjust("scale", dim, val);
-
+							vu.storage.setOpts(_.opts.key, {
+								scale: scopts
+							});
 						}, 0.3, 3, scale[dim], 0.01, "w1")
 					];
 				}));
