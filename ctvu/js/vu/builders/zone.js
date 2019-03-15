@@ -166,7 +166,7 @@ vu.builders.zone = {
 				copts[prop] = color;
 				vu.storage.setMaterial(target.opts.key, copts);
 			} else // light
-				target.setColor(color);
+				target.setColor(vu.core.hex2rgb(color));
 		},
 		colorSelector: function(target, prop, lnum) {
 
@@ -174,11 +174,11 @@ vu.builders.zone = {
 
 			var _ = vu.builders.zone._, selz = _.selectors,
 				bcolor, scolor, room = zero.core.current.room;
-			if (target.material) { // object
-				bcolor = target.thring.material[prop] || "#111111",
-				scolor = (typeof bcolor == "string") ? bcolor : ("#" + bcolor.toString(16));
-			} else // light
-				scolor = target.opts.color;
+			if (target.material) // object
+				bcolor = target.thring.material[prop] || "#111111";
+			else // light
+				bcolor = target.opts.color || "#111111";
+			scolor = (typeof bcolor == "string") ? bcolor : ("#" + bcolor.toString(16));
 			if (!prop)
 				prop = "light " + lnum;
 			return vu.core.color(prop + " selector", scolor, function() {
