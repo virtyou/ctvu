@@ -8,6 +8,10 @@ vu.builders.zone = {
 			basic: "topleft",
 			lights: "topright"
 		},
+		lightdirs: {
+			point: "Position",
+			directional: "Direction"
+		},
 		starter: {
 			environment: "one.box",
 			cameras: [
@@ -187,7 +191,7 @@ vu.builders.zone = {
 		},
 		lights: function() {
 			var _ = vu.builders.zone._, selz = _.selectors,
-				room, color, intensity, direction;
+				room, color, intensity, content;
 			selz.lights = CT.dom.div();
 			selz.lights.update = function() {
 				room = zero.core.current.room;
@@ -208,8 +212,7 @@ vu.builders.zone = {
 						intensity = CT.dom.range(function(val) {
 							light.setIntensity(val);
 						}, 0, 1, light.opts.intensity, 0.01, "w1");
-						direction = CT.dom.div(); // finish
-						return CT.dom.div([
+						content = [
 							CT.dom.button("remove", function() {
 								room.removeLight(light);
 								selz.lights.update();
@@ -222,12 +225,24 @@ vu.builders.zone = {
 							CT.dom.div([
 								"Intensity",
 								intensity
-							], "topbordered padded margined"),
-							CT.dom.div([
-								"Direction",
-								direction
 							], "topbordered padded margined")
-						], "margined padded bordered round");
+						];
+						if (light.opts.variety != "ambient") {
+							var pos = light.position();
+							content.push(CT.dom.div([
+								_.lightdirs[light.opts.variety],
+								CT.dom.div(["x", "y", "z"].map(function(dim, i) {
+									return [
+										dim,
+										CT.dom.range(function(val) {
+											light.thring.position[dim] = val;
+											// TODO: persist
+										}, -256, 256, pos[dim], 0.1, "w1")
+									];
+								}))
+							], "topbordered padded margined"));
+						}
+						return CT.dom.div(content, "margined padded bordered round");
 					})
 				]);
 			};
