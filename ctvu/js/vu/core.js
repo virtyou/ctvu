@@ -30,6 +30,19 @@ vu.core = {
 			transition: "slide"
 		}))).show();
 	},
+	menu: function(section, origin, selector, header) {
+		return new CT.modal.Modal({
+			center: false,
+			noClose: true,
+			transition: "slide",
+			slide: { origin: origin },
+			content: [
+				header || CT.parse.capitalize(section),
+				selector
+			],
+			className: "abs above padded bordered round pointer gmenu " + section
+		});
+	},
 	choice: function(opts) {
 		vu.core.prompt(CT.merge(opts, {
 			noClose: true,
