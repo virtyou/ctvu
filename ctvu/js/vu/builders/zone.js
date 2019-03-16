@@ -250,11 +250,11 @@ vu.builders.zone = {
 			};
 		},
 		cameras: function() {
-			var _ = vu.builders.zone._, cycbutt = CT.dom.button("cycle cameras", function() {
+			var _ = vu.builders.zone._, cycbutt = CT.dom.button("cycle", function() {
 				if (cycbutt._cycler) {
 					clearInterval(cycbutt._cycler);
 					delete cycbutt._cycler;
-					cycbutt.innerHTML = "cycle cameras";
+					cycbutt.innerHTML = "cycle";
 				} else {
 					cycbutt._cycler = setInterval(zero.core.current.room.cut, 3000);
 					cycbutt.innerHTML = "stop cycling";
@@ -266,9 +266,12 @@ vu.builders.zone = {
 				CT.dom.setContent(selz.cameras, [
 					CT.dom.div([
 						cycbutt,
-						CT.dom.button("refresh cameras", function() {
+						CT.dom.button("refresh", function() {
 							room.updateCameras();
 							selz.cameras.update();
+							vu.builders.zone.persist({
+								cameras: room.cameras
+							});
 						})
 					], "right up20"),
 					CT.dom.div(room.cameras.map(function(cam, i) {
