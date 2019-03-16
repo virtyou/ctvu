@@ -132,6 +132,7 @@ vu.builders.zone = {
 						dim,
 						CT.dom.range(function(val) {
 							scopts[i] = val;
+							room.updateCams = true;
 							room.adjust("scale", dim, val);
 							vu.storage.setOpts(_.opts.key, {
 								scale: scopts
@@ -255,15 +256,21 @@ vu.builders.zone = {
 					delete cycbutt._cycler;
 					cycbutt.innerHTML = "cycle cameras";
 				} else {
-					cycbutt._cycler = setInterval(zero.core.current.room.cut, 1000);
+					cycbutt._cycler = setInterval(zero.core.current.room.cut, 3000);
 					cycbutt.innerHTML = "stop cycling";
 				}
-			}, "right up20"), selz = _.selectors, room;
+			}), selz = _.selectors, room;
 			selz.cameras = CT.dom.div();
 			selz.cameras.update = function() {
 				room = zero.core.current.room;
 				CT.dom.setContent(selz.cameras, [
-					cycbutt,
+					CT.dom.div([
+						cycbutt,
+						CT.dom.button("refresh cameras", function() {
+							room.updateCameras();
+							selz.cameras.update();
+						})
+					], "right up20"),
 					CT.dom.div(room.cameras.map(function(cam, i) {
 						return CT.dom.button("cam " + i, function() {
 							room.cut(i);
