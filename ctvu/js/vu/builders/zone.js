@@ -7,6 +7,7 @@ vu.builders.zone = {
 			cameras: "top",
 			basic: "topleft",
 			lights: "bottomleft",
+			controls: "bottomright",
 			furnishings: "topright"
 		},
 		lightdirs: {
@@ -116,6 +117,15 @@ vu.builders.zone = {
 				]);
 			};
 		},
+		controls: function() {
+			var _ = vu.builders.zone._, selz = _.selectors;
+			_.controls = new zero.core.Controls();
+			selz.controls = CT.dom.div();
+			selz.controls.update = function(target) {
+				_.controls.setTarget(target || vu.builders.current.person);
+				CT.dom.setContent(selz.controls, _.controls.target.name);
+			};
+		},
 		setup: function() {
 			var _ = vu.builders.zone._, selz = _.selectors;
 			_.opts = vu.storage.get("room") || _.opts;
@@ -132,6 +142,7 @@ vu.builders.zone = {
 			_.furnishings();
 			_.lights();
 			_.cameras();
+			_.controls();
 
 			var enz = core.config.ctvu.loaders.environments;
 			var eselector = selz.environment = CT.dom.select(enz.map(function(item) {
@@ -346,6 +357,7 @@ vu.builders.zone = {
 				selz.scale.update();
 				selz.lights.update();
 				selz.cameras.update();
+				selz.controls.update();
 				selz.furnishings.update();
 			}, name = room.name || room.environment;
 			_.opts = room;
@@ -386,10 +398,14 @@ vu.builders.zone = {
 			});
 		},
 		linx: function() {
-			var _ = vu.builders.zone._;
+			var _ = vu.builders.zone._, popts = vu.storage.get("person");
 			_.curname = CT.dom.span(null, "bold");
 			// add person for scale
-			zero.core.util.join(vu.core.person(vu.storage.get("person")), function() {
+			popts.body.onclick = function() {
+				_.selectors.controls.update();
+			};
+			zero.core.util.join(vu.core.person(popts), function(person) {
+				vu.builders.current.person = person;
 				vu.builders.zone._.set(vu.storage.get("room"), true);
 			});
 			return CT.dom.div([[
@@ -406,7 +422,14 @@ vu.builders.zone = {
 	},
 	update: function(cb) {
 		zero.core.util.room(CT.merge({
-			onbuild: cb
+			onbuild: function(room) {
+				room.objects.forEach(function(furn) {
+					zero.core.click.register(furn, function() {
+						vu.builders.zone._.selectors.controls.update(furn);
+					});
+				});
+				cb && cb();
+			}
 		}, vu.builders.zone._.opts));
 	},
 	menus: function() {
