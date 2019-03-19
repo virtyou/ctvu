@@ -59,7 +59,7 @@ vu.builders.zone = {
 				ptoggle._pool = _.opts.objects[0];
 		},
 		furnishings: function() {
-			var _ = vu.builders.zone._, selz = _.selectors, room, scale,
+			var _ = vu.builders.zone._, selz = _.selectors, room, scale, rotation,
 				fz = _.furniture = vu.storage.get("furnishing") || _.furniture;
 			selz.furnishings = CT.dom.div();
 			selz.furnishings.update = function() {
@@ -88,6 +88,13 @@ vu.builders.zone = {
 								scale: [fval, fval, fval]
 							});
 						}, 0, 1, furn.scale().x, 0.01, "w1");
+						rotation = CT.dom.range(function(val) {
+							var rot = [0, parseFloat(val), 0];
+							furn.rotation(rot);
+							vu.storage.setOpts(furn.opts.key, {
+								rotation: rot
+							});
+						}, 0, 6, furn.rotation().y, 0.01, "w1");
 						content = [
 							CT.dom.button("remove", function() {
 								room.removeObject(furn);
@@ -98,6 +105,10 @@ vu.builders.zone = {
 							CT.dom.div([
 								"Scale",
 								scale
+							], "topbordered padded margined"),
+							CT.dom.div([
+								"Rotation",
+								rotation
 							], "topbordered padded margined")
 						];
 						return CT.dom.div(content, "margined padded bordered round");
