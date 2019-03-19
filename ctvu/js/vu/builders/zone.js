@@ -99,7 +99,7 @@ vu.builders.zone = {
 							CT.dom.button("remove", function() {
 								room.removeObject(furn);
 								selz.furnishings.update();
-								vu.storage.edit(furn.key, null, "delete", "key");
+								vu.storage.edit(furn.opts.key, null, "delete", "key");
 							}, "up5 right"),
 							furn.name,
 							CT.dom.div([
