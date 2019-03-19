@@ -87,7 +87,7 @@ vu.builders.zone = {
 							vu.storage.setOpts(furn.opts.key, {
 								scale: [fval, fval, fval]
 							});
-						}, 0, 1, furn.scale().x, 0.01, "w1");
+						}, 0, 5, furn.scale().x, 0.01, "w1");
 						rotation = CT.dom.range(function(val) {
 							var rot = [0, parseFloat(val), 0];
 							furn.rotation(rot);
