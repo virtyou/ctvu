@@ -124,6 +124,11 @@ iframe {
 	margin: 10px 10px 0 0;
 }
 
+.gmenu.furnishings {
+	width: 217px;
+	height: calc(100% - 357px);
+}
+
 .gmenu .right button {
 	height: 18px;
 	margin-top: -3px;
