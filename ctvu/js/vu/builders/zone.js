@@ -82,7 +82,11 @@ vu.builders.zone = {
 					}, "up20 right"),
 					room.objects.map(function(furn, i) {
 						scale = CT.dom.range(function(val) {
-							furn.scale(val);
+							var fval = parseFloat(val);
+							furn.scale(fval);
+							vu.storage.setOpts(furn.opts.key, {
+								scale: [fval, fval, fval]
+							});
 						}, 0, 1, furn.scale().x, 0.01, "w1");
 						content = [
 							CT.dom.button("remove", function() {
