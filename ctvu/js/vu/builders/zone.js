@@ -6,8 +6,8 @@ vu.builders.zone = {
 		menus: {
 			cameras: "top",
 			basic: "topleft",
-			lights: "topright",
-			furnishings: "bottomleft"
+			lights: "bottomleft",
+			furnishings: "topright"
 		},
 		lightdirs: {
 			point: "Position",
@@ -214,7 +214,7 @@ vu.builders.zone = {
 				CT.dom.div([
 					"Base",
 					selz.base
-				], "padded bordered round mb5"),
+				], "padded bordered round mb5 base"),
 				CT.dom.div([
 					"Scale",
 					selz.scale

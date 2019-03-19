@@ -114,9 +114,13 @@ iframe {
 	width: 217px;
 }
 
+.gmenu.basic .base {
+	height: 52px;
+}
+
 .gmenu.cameras {
     left: 221px !important;
-    right: 276px;
+    right: 220px;
     white-space: initial;
 }
 
@@ -126,6 +130,9 @@ iframe {
 
 .gmenu.furnishings {
 	width: 217px;
+}
+
+.gmenu.lights {
 	height: calc(100% - 357px);
 }
 
