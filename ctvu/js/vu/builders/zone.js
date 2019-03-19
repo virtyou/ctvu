@@ -6,7 +6,8 @@ vu.builders.zone = {
 		menus: {
 			cameras: "top",
 			basic: "topleft",
-			lights: "topright"
+			lights: "topright",
+			furnishings: "bottomleft"
 		},
 		lightdirs: {
 			point: "Position",
@@ -26,7 +27,7 @@ vu.builders.zone = {
 				[-256, -256, -256]
 			]
 		},
-		furnishings: function() {
+		furnishings_depped: function() {
 			var _ = vu.builders.zone._, pool = _.furniture.pool,
 				fz = _.furniture = vu.storage.get("furnishing") || _.furniture;
 
@@ -56,6 +57,49 @@ vu.builders.zone = {
 				});
 			if (_.opts.objects.length)
 				ptoggle._pool = _.opts.objects[0];
+		},
+		furnishings: function() {
+			var _ = vu.builders.zone._, selz = _.selectors, room, scale,
+				fz = _.furniture = vu.storage.get("furnishing") || _.furniture;
+			selz.furnishings = CT.dom.div();
+			selz.furnishings.update = function() {
+				room = zero.core.current.room;
+				CT.dom.setContent(selz.furnishings, [
+					CT.dom.button("add", function() {
+						vu.core.choice({
+							data: Object.values(fz),
+							cb: function(thing) {
+								vu.storage.edit({
+									base: thing.key,
+									parent: _.opts.key,
+									modelName: "furnishing"
+								}, function(furn) {
+									room.addObject(furn);
+									selz.furnishings.update();
+								});
+							}
+						});
+					}, "up20 right"),
+					room.objects.map(function(furn, i) {
+						scale = CT.dom.range(function(val) {
+							furn.scale(val);
+						}, 0, 1, furn.scale().x, 0.01, "w1");
+						content = [
+							CT.dom.button("remove", function() {
+								room.removeObject(furn);
+								selz.furnishings.update();
+								vu.storage.edit(furn.key, null, "delete", "key");
+							}, "up5 right"),
+							furn.name,
+							CT.dom.div([
+								"Scale",
+								scale
+							], "topbordered padded margined")
+						];
+						return CT.dom.div(content, "margined padded bordered round");
+					})
+				]);
+			};
 		},
 		setup: function() {
 			var _ = vu.builders.zone._, selz = _.selectors;
@@ -159,8 +203,7 @@ vu.builders.zone = {
 				CT.dom.div([
 					"Scale",
 					selz.scale
-				], "padded bordered round mb5 nonowrap"),
-				CT.dom.div(selz.pool, "padded bordered round")
+				], "padded bordered round nonowrap")
 			];
 		},
 		setColor: function(target, color, prop) {
@@ -288,6 +331,7 @@ vu.builders.zone = {
 				selz.scale.update();
 				selz.lights.update();
 				selz.cameras.update();
+				selz.furnishings.update();
 			}, name = room.name || room.environment;
 			_.opts = room;
 			CT.dom.setContent(_.curname, name);
