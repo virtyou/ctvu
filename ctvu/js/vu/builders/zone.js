@@ -249,12 +249,12 @@ vu.builders.zone = {
 		setColor: function(target, color, prop) {
 			var copts = {};
 			if (target.material) { // object
-				target.material.color = vu.core.hex2rgb(color);
+				target.material.color = vu.color.hex2rgb(color);
 				color = parseInt(color.slice(1), 16);
 				copts[prop] = color;
 				vu.storage.setMaterial(target.opts.key, copts);
 			} else // light
-				target.setColor(vu.core.hex2rgb(color));
+				target.setColor(vu.color.hex2rgb(color));
 		},
 		colorSelector: function(target, prop, lnum) {
 
@@ -269,7 +269,7 @@ vu.builders.zone = {
 			scolor = (typeof bcolor == "string") ? bcolor : ("#" + bcolor.toString(16));
 			if (!prop)
 				prop = "light " + lnum;
-			var cnode = vu.core.color(prop + " selector", scolor, function() {
+			var cnode = vu.color.picker(prop + " selector", scolor, function() {
 				_.setColor(target, cnode.value, prop);
 			});
 			return cnode;
