@@ -117,13 +117,27 @@ vu.builders.zone = {
 				]);
 			};
 		},
+		posup: function() {
+			var _ = vu.builders.zone._, target = _.controls.target,
+				pos = target.position();
+			vu.storage.setOpts(target.opts.key, {
+				position: [pos.x, pos.y, pos.z]
+			});
+			_.selectors.controls.update();
+		},
 		controls: function() {
 			var _ = vu.builders.zone._, selz = _.selectors;
-			_.controls = new zero.core.Controls();
+			_.controls = new zero.core.Controls({
+				cb: _.posup
+			});
 			selz.controls = CT.dom.div();
 			selz.controls.update = function(target) {
-				_.controls.setTarget(target || vu.builders.current.person);
-				CT.dom.setContent(selz.controls, _.controls.target.name);
+				target = target || vu.builders.current.person;
+				_.controls.setTarget(target);
+				CT.dom.setContent(selz.controls, [
+					CT.dom.div(target.name, "bigger"),
+					target.body ? "(for scale)" : "(press ENTER to save position)"
+				]);
 			};
 		},
 		setup: function() {
