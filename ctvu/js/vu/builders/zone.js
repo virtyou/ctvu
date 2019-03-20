@@ -59,61 +59,76 @@ vu.builders.zone = {
 			if (_.opts.objects.length)
 				ptoggle._pool = _.opts.objects[0];
 		},
+		poster: function(poster) {
+			/* TODO!!
+			 * - create plane
+			 * - position
+			 *   - select wall
+			 *   - key controls
+			 */
+		},
+		furnishing: function(furn) {
+			var _ = vu.builders.zone._, selz = _.selectors, scale, rotation;
+			scale = CT.dom.range(function(val) {
+				var fval = parseFloat(val);
+				furn.scale(fval);
+				vu.storage.setOpts(furn.opts.key, {
+					scale: [fval, fval, fval]
+				});
+			}, 0, 5, furn.scale().x, 0.01, "w1");
+			rotation = CT.dom.range(function(val) {
+				var rot = [0, parseFloat(val), 0];
+				furn.rotation(rot);
+				vu.storage.setOpts(furn.opts.key, {
+					rotation: rot
+				});
+			}, 0, 6, furn.rotation().y, 0.01, "w1");
+			return CT.dom.div([
+				CT.dom.button("remove", function() {
+					zero.core.current.room.removeObject(furn);
+					selz.furnishings.update();
+					vu.storage.edit(furn.opts.key, null, "delete", "key");
+				}, "up5 right"),
+				furn.name,
+				CT.dom.div([
+					"Scale",
+					scale
+				], "topbordered padded margined"),
+				CT.dom.div([
+					"Rotation",
+					rotation
+				], "topbordered padded margined")
+			], "margined padded bordered round");
+		},
+		furn: function(furn) {
+			return vu.builders.zone._[furn.opts.kind](furn);
+		},
 		furnishings: function() {
-			var _ = vu.builders.zone._, selz = _.selectors, room, scale, rotation,
-				fz = _.furniture = vu.storage.get("furnishing") || _.furniture;
+			var _ = vu.builders.zone._, selz = _.selectors;
 			selz.furnishings = CT.dom.div();
 			selz.furnishings.update = function() {
-				room = zero.core.current.room;
 				CT.dom.setContent(selz.furnishings, [
 					CT.dom.button("add", function() {
 						vu.core.choice({
-							data: Object.values(fz),
-							cb: function(thing) {
-								vu.storage.edit({
-									base: thing.key,
-									parent: _.opts.key,
-									modelName: "furnishing"
-								}, function(furn) {
-									room.addObject(furn);
-									selz.furnishings.update();
+							data: ["furnishing", "poster"],
+							cb: function(kind) {
+								vu.core.choice({
+									data: Object.values(vu.storage.get(kind)),
+									cb: function(thing) {
+										vu.storage.edit({
+											base: thing.key,
+											parent: _.opts.key,
+											modelName: "furnishing"
+										}, function(furn) {
+											zero.core.current.room.addObject(furn);
+											selz.furnishings.update();
+										});
+									}
 								});
 							}
 						});
 					}, "up20 right"),
-					room.objects.map(function(furn, i) {
-						scale = CT.dom.range(function(val) {
-							var fval = parseFloat(val);
-							furn.scale(fval);
-							vu.storage.setOpts(furn.opts.key, {
-								scale: [fval, fval, fval]
-							});
-						}, 0, 5, furn.scale().x, 0.01, "w1");
-						rotation = CT.dom.range(function(val) {
-							var rot = [0, parseFloat(val), 0];
-							furn.rotation(rot);
-							vu.storage.setOpts(furn.opts.key, {
-								rotation: rot
-							});
-						}, 0, 6, furn.rotation().y, 0.01, "w1");
-						content = [
-							CT.dom.button("remove", function() {
-								room.removeObject(furn);
-								selz.furnishings.update();
-								vu.storage.edit(furn.opts.key, null, "delete", "key");
-							}, "up5 right"),
-							furn.name,
-							CT.dom.div([
-								"Scale",
-								scale
-							], "topbordered padded margined"),
-							CT.dom.div([
-								"Rotation",
-								rotation
-							], "topbordered padded margined")
-						];
-						return CT.dom.div(content, "margined padded bordered round");
-					})
+					zero.core.current.room.objects.map(_.furn)
 				]);
 			};
 		},
