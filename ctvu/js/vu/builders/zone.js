@@ -59,15 +59,26 @@ vu.builders.zone = {
 			if (_.opts.objects.length)
 				ptoggle._pool = _.opts.objects[0];
 		},
+		unfurn: function(furn) {
+			return CT.dom.button("remove", function() {
+				zero.core.current.room.removeObject(furn);
+				vu.builders.zone._.selectors.furnishings.update();
+				vu.storage.edit(furn.opts.key, null, "delete", "key");
+			}, "up5 right");
+		},
 		poster: function(poster) {
 			/* TODO!!
-			 * - create plane
 			 * - position
 			 *   - select wall -> bounds, rotation
 			 *   - key controls
 			 * - scale
 			 * - rotate
 			 */
+			 var _ = vu.builders.zone._;
+			 return [
+			 	_.unfurn(poster),
+			 	poster.name
+			 ];
 		},
 		furnishing: function(furn) {
 			var _ = vu.builders.zone._, selz = _.selectors, scale, rotation;
@@ -86,12 +97,8 @@ vu.builders.zone = {
 					rotation: rot
 				});
 			}, 0, 6, furn.rotation().y, 0.01, "w1");
-			return CT.dom.div([
-				CT.dom.button("remove", function() {
-					zero.core.current.room.removeObject(furn);
-					selz.furnishings.update();
-					vu.storage.edit(furn.opts.key, null, "delete", "key");
-				}, "up5 right"),
+			return [
+				_.unfurn(furn),
 				furn.name,
 				CT.dom.div([
 					"Scale",
@@ -101,10 +108,10 @@ vu.builders.zone = {
 					"Rotation",
 					rotation
 				], "topbordered padded margined")
-			], "margined padded bordered round");
+			];
 		},
 		furn: function(furn) {
-			return vu.builders.zone._[furn.opts.kind](furn);
+			return CT.dom.div(vu.builders.zone._[furn.opts.kind](furn), "margined padded bordered round");
 		},
 		furnishings: function() {
 			var _ = vu.builders.zone._, selz = _.selectors;
@@ -128,10 +135,6 @@ vu.builders.zone = {
 										vu.storage.edit(eopts, function(furn) {
 											var f = zero.core.current.room.addObject(CT.merge(furn, furn.opts, thing), function() {
 												f.setBounds(); // TODO: this should probably be in zero.core.Room
-												if (kind == "poster") { // make this work on any wall!
-													f.springs.z.bounds.min += 1;
-													f.springs.z.bounds.max = f.springs.z.bounds.min;
-												}
 												selz.controls.update(f);
 												selz.furnishings.update();
 											});
