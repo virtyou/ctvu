@@ -74,6 +74,7 @@ vu.builders.zone = {
 			scale = CT.dom.range(function(val) {
 				var fval = parseFloat(val);
 				furn.scale(fval);
+				furn.setBounds(true); // TODO: maybe move to zero.core.Thing.scale()?
 				vu.storage.setOpts(furn.opts.key, {
 					scale: [fval, fval, fval]
 				});
