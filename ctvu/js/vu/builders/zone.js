@@ -402,6 +402,7 @@ vu.builders.zone = {
 			_.curname = CT.dom.span(null, "bold");
 			// add person for scale
 			popts.body.onclick = function() {
+				zero.core.camera.follow(vu.builders.current.person.body.looker);
 				_.selectors.controls.update();
 			};
 			zero.core.util.join(vu.core.person(popts), function(person) {
@@ -425,6 +426,7 @@ vu.builders.zone = {
 			onbuild: function(room) {
 				room.objects.forEach(function(furn) {
 					zero.core.click.register(furn, function() {
+						zero.core.camera.follow(furn);
 						vu.builders.zone._.selectors.controls.update(furn);
 					});
 				});
