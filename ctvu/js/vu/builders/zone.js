@@ -63,8 +63,10 @@ vu.builders.zone = {
 			/* TODO!!
 			 * - create plane
 			 * - position
-			 *   - select wall
+			 *   - select wall -> bounds, rotation
 			 *   - key controls
+			 * - scale
+			 * - rotate
 			 */
 		},
 		furnishing: function(furn) {
@@ -120,8 +122,11 @@ vu.builders.zone = {
 											parent: _.opts.key,
 											modelName: "furnishing"
 										}, function(furn) {
-											zero.core.current.room.addObject(furn);
-											selz.furnishings.update();
+											var f = zero.core.current.room.addObject(CT.merge(furn, thing), function() {
+												f.setBounds(); // TODO: this should probably be in zero.core.Room
+												selz.controls.update(f);
+												selz.furnishings.update();
+											});
 										});
 									}
 								});
@@ -147,7 +152,11 @@ vu.builders.zone = {
 			});
 			selz.controls = CT.dom.div();
 			selz.controls.update = function(target) {
-				target = target || vu.builders.current.person;
+				if (!target) {
+					target = vu.builders.current.person;
+					zero.core.camera.follow(target.body.looker);
+				} else
+					zero.core.camera.follow(target);
 				_.controls.setTarget(target);
 				CT.dom.setContent(selz.controls, [
 					CT.dom.div(target.name, "bigger"),
@@ -431,7 +440,6 @@ vu.builders.zone = {
 			_.curname = CT.dom.span(null, "bold");
 			// add person for scale
 			popts.body.onclick = function() {
-				zero.core.camera.follow(vu.builders.current.person.body.looker);
 				_.selectors.controls.update();
 			};
 			zero.core.util.join(vu.core.person(popts), function(person) {
@@ -455,7 +463,6 @@ vu.builders.zone = {
 			onbuild: function(room) {
 				room.objects.forEach(function(furn) {
 					zero.core.click.register(furn, function() {
-						zero.core.camera.follow(furn);
 						vu.builders.zone._.selectors.controls.update(furn);
 					});
 				});
