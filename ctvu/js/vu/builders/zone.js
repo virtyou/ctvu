@@ -118,13 +118,20 @@ vu.builders.zone = {
 								vu.core.choice({
 									data: Object.values(vu.storage.get(kind)),
 									cb: function(thing) {
-										vu.storage.edit({
+										var eopts = {
 											base: thing.key,
 											parent: _.opts.key,
 											modelName: "furnishing"
-										}, function(furn) {
-											var f = zero.core.current.room.addObject(CT.merge(furn, thing), function() {
+										};
+										if (kind == "poster") // TODO: probs do this elsewhere/better!
+											eopts.opts = { planeGeometry: [100, 100] };
+										vu.storage.edit(eopts, function(furn) {
+											var f = zero.core.current.room.addObject(CT.merge(furn, furn.opts, thing), function() {
 												f.setBounds(); // TODO: this should probably be in zero.core.Room
+												if (kind == "poster") { // make this work on any wall!
+													f.springs.z.bounds.min += 1;
+													f.springs.z.bounds.max = f.springs.z.bounds.min;
+												}
 												selz.controls.update(f);
 												selz.furnishings.update();
 											});
