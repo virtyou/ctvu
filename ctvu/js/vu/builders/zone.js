@@ -130,8 +130,12 @@ vu.builders.zone = {
 											parent: _.opts.key,
 											modelName: "furnishing"
 										};
-										if (kind == "poster") // TODO: probs do this elsewhere/better!
-											eopts.opts = { planeGeometry: [100, 100] };
+										if (kind == "poster") { // TODO: probs do this elsewhere/better!
+											eopts.opts = {
+												wall: 0,
+												planeGeometry: [100, 100]
+											};
+										}
 										vu.storage.edit(eopts, function(furn) {
 											var f = zero.core.current.room.addObject(CT.merge(furn, furn.opts, thing), function() {
 												f.setBounds(); // TODO: this should probably be in zero.core.Room
