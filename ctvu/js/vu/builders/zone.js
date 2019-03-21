@@ -60,7 +60,7 @@ vu.builders.zone = {
 				ptoggle._pool = _.opts.objects[0];
 		},
 		unfurn: function(furn) {
-			return CT.dom.button("remove", function() {
+			return CT.dom.button("remove " + furn.opts.kind, function() {
 				zero.core.current.room.removeObject(furn);
 				vu.builders.zone._.selectors.furnishings.update();
 				vu.storage.edit(furn.opts.key, null, "delete", "key");
@@ -90,7 +90,7 @@ vu.builders.zone = {
 		portal: function(portal) {
 			 var _ = vu.builders.zone._;
 			 return [
-			 	_.unfurn([portal]),
+			 	_.unfurn(portal),
 			 	portal.name,
 			 	_.fscale(portal)
 			 ];
