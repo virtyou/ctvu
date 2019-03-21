@@ -66,47 +66,50 @@ vu.builders.zone = {
 				vu.storage.edit(furn.opts.key, null, "delete", "key");
 			}, "up5 right");
 		},
+		fscale: function(furn) {
+			return CT.dom.div([
+				"Scale",
+				CT.dom.range(function(val) {
+					var fval = parseFloat(val);
+					furn.scale(fval);
+					furn.setBounds(true); // TODO: maybe move to zero.core.Thing.scale()?
+					vu.storage.setOpts(furn.opts.key, {
+						scale: [fval, fval, fval]
+					});
+				}, 0, 10, furn.scale().x, 0.01, "w1")
+			], "topbordered padded margined");
+		},
 		poster: function(poster) {
-			/* TODO!!
-			 * - position
-			 *   - select wall -> bounds, rotation
-			 *   - key controls
-			 * - scale
-			 * - rotate
-			 */
 			 var _ = vu.builders.zone._;
 			 return [
 			 	_.unfurn(poster),
-			 	poster.name
+			 	poster.name,
+			 	_.fscale(poster)
+			 ];
+		},
+		portal: function(portal) {
+			 var _ = vu.builders.zone._;
+			 return [
+			 	_.unfurn([portal]),
+			 	portal.name,
+			 	_.fscale(portal)
 			 ];
 		},
 		furnishing: function(furn) {
-			var _ = vu.builders.zone._, selz = _.selectors, scale, rotation;
-			scale = CT.dom.range(function(val) {
-				var fval = parseFloat(val);
-				furn.scale(fval);
-				furn.setBounds(true); // TODO: maybe move to zero.core.Thing.scale()?
-				vu.storage.setOpts(furn.opts.key, {
-					scale: [fval, fval, fval]
-				});
-			}, 0, 5, furn.scale().x, 0.01, "w1");
-			rotation = CT.dom.range(function(val) {
-				var rot = [0, parseFloat(val), 0];
-				furn.rotation(rot);
-				vu.storage.setOpts(furn.opts.key, {
-					rotation: rot
-				});
-			}, 0, 6, furn.rotation().y, 0.01, "w1");
+			var _ = vu.builders.zone._;
 			return [
 				_.unfurn(furn),
 				furn.name,
-				CT.dom.div([
-					"Scale",
-					scale
-				], "topbordered padded margined"),
+				_.fscale(furn),
 				CT.dom.div([
 					"Rotation",
-					rotation
+					CT.dom.range(function(val) {
+						var rot = [0, parseFloat(val), 0];
+						furn.rotation(rot);
+						vu.storage.setOpts(furn.opts.key, {
+							rotation: rot
+						});
+					}, 0, 6, furn.rotation().y, 0.01, "w1")
 				], "topbordered padded margined")
 			];
 		},
@@ -120,7 +123,7 @@ vu.builders.zone = {
 				CT.dom.setContent(selz.furnishings, [
 					CT.dom.button("add", function() {
 						vu.core.choice({
-							data: ["furnishing", "poster"],
+							data: ["furnishing", "poster", "portal"],
 							cb: function(kind) {
 								vu.core.choice({
 									data: Object.values(vu.storage.get(kind)),
@@ -135,7 +138,8 @@ vu.builders.zone = {
 												wall: 0,
 												planeGeometry: [100, 100]
 											};
-										}
+										} else if (kind == "portal")
+											eopts.opts = { wall: 0 };
 										vu.storage.edit(eopts, function(furn) {
 											var f = zero.core.current.room.addObject(CT.merge(furn, furn.opts, thing), function() {
 												f.setBounds(); // TODO: this should probably be in zero.core.Room
@@ -154,10 +158,12 @@ vu.builders.zone = {
 		},
 		posup: function() {
 			var _ = vu.builders.zone._, target = _.controls.target,
-				pos = target.position();
-			vu.storage.setOpts(target.opts.key, {
-				position: [pos.x, pos.y, pos.z]
-			});
+				pos = target.position(), opts = {
+					position: [pos.x, pos.y, pos.z]
+				};
+			if ("wall" in target.opts)
+				opts.wall = target.opts.wall;
+			vu.storage.setOpts(target.opts.key, opts);
 			_.selectors.controls.update();
 		},
 		controls: function() {
