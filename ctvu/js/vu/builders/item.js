@@ -4,7 +4,7 @@ vu.builders.item = {
 			"Binary", "BVH", "Collada", "DDS", "FBX", "GLTF", "HDRCubeTexture",
 			"KMZ", "MD2", "MMD", "MTL", "NRRD", "OBJ", "PCD", "PDB", "PlayCanvas",
 			"PLY", "PVR", "RGBE", "STL", "SVG", "TGA", "TTF", "UTF8", "VRML", "VTK"],
-		kinds: ["furnishing", "clothing", "hair", "accessory"],
+		kinds: ["furnishing", "shell", "wallpaper", "poster", "portal", "clothing", "hair", "accessory"],
 		selectors: {},
 		formatted: function(ctfile) {
 			var _ = vu.builders.item._, selz = _.selectors;
@@ -152,7 +152,7 @@ vu.builders.item = {
 		},
 		linx: function() {
 			var _ = vu.builders.item._;
-			_.curname = CT.dom.span(null, "bold"),
+			_.curname = CT.dom.span(null, "bold");
 			_.getThings();
 			return CT.dom.div([[
 				CT.dom.span("viewing:"),

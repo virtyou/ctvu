@@ -22,7 +22,7 @@
     "loaders": {
         "customs": ["one.earring", "one.pony"],
         "templates": ["one.body"],
-        "environments": ["one.scrolly", "one.techno", "one.kidroom"],
+        "environments": ["one.scrolly", "one.techno", "one.box", "one.kidroom"],
         "avatars": ["one.body.sassy", "one.body.kid"]
     },
     "builders": {

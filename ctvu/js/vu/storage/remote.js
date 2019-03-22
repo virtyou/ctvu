@@ -31,7 +31,7 @@ vu.storage.remote = {
 			if (ent_type == "person")
 				ent = udata.person;
 			else if (ent_type == "room")
-				ent = udata.rooms[0];
+				ent = udata.room;
 			if (sub)
 				ent = ent[sub];
 		}
@@ -42,10 +42,19 @@ vu.storage.remote = {
 		if (ent_type == "person")
 			return vu.core._udata.person;
 		else if (ent_type == "room")
-			return vu.core._udata.rooms[0];
+			return vu.core._udata.room;
+		else if (ent_type == "rooms")
+			return vu.core._udata.rooms;
 		else if (ent_type in vu.storage._extras)
 			return vu.storage._extras[ent_type];
 		return CT.db.get(key);
+	},
+	_ready: function(cb) {
+		return function() {
+			if (vu.storage._readyOne)
+				cb(vu.core._udata);
+			vu.storage._readyOne = true;
+		};
 	},
 	init: function(cb) {
 		vu.core.z({ action: "things" }, function(extras) {
@@ -53,7 +62,8 @@ vu.storage.remote = {
 				for (var j in extras[k])
 					CT.data.add(extras[k][j]);
 			vu.storage._extras = extras;
+			vu.storage._ready(cb)();
 		});
-		vu.core.udata(cb);
+		vu.core.udata(vu.storage._ready(cb));
 	}
 };

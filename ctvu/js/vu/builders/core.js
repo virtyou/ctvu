@@ -6,9 +6,7 @@ vu.builders.core = {
 			_ = vu.builders[pname]._;
 		core.config.ctzero.room = vu.core.room();
 		zero.core.util.init();
-		if (pname == "zone") {
-			// load up zone selector!!!!
-		} else if (pname == "item")
+		if (["zone", "item"].indexOf(pname) != -1)
 			CT.dom.addContent("ctheader", _.linx());
 		else {
 			zero.core.util.join(_.raw, _.joined);

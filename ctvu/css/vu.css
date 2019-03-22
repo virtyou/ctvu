@@ -30,6 +30,10 @@ iframe {
 	border: 1px solid gray;
 }
 
+.topbordered {
+	border-top: 1px solid gray;
+}
+
 .cp-app {
 	z-index: 9999;
 }
@@ -99,9 +103,42 @@ iframe {
 .gmenu {
 	margin: -5px;
 	opacity: 0.5;
+	max-height: 100%;
+	overflow-y: auto;
 	background: black;
 	white-space: nowrap;
 	border: 1px solid green;
+}
+
+.gmenu.basic {
+	width: 217px;
+}
+
+.gmenu.basic .base {
+	height: 52px;
+}
+
+.gmenu.cameras {
+    left: 221px !important;
+    right: 262px;
+    white-space: initial;
+}
+
+.gmenu.cameras button:not(.right) {
+	margin: 10px 10px 0 0;
+}
+
+.gmenu.furnishings {
+	width: 258px;
+	max-height: calc(100% - 112px);
+}
+
+.gmenu.controls {
+	height: 118px;
+}
+
+.gmenu.lights {
+	height: calc(100% - 357px);
 }
 
 .gmenu .right button {

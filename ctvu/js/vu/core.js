@@ -30,6 +30,19 @@ vu.core = {
 			transition: "slide"
 		}))).show();
 	},
+	menu: function(section, origin, selector, header) {
+		return new CT.modal.Modal({
+			center: false,
+			noClose: true,
+			transition: "slide",
+			slide: { origin: origin },
+			content: [
+				header || CT.parse.capitalize(section),
+				selector
+			],
+			className: "abs above padded bordered round pointer gmenu " + section
+		});
+	},
 	choice: function(opts) {
 		vu.core.prompt(CT.merge(opts, {
 			noClose: true,
@@ -51,13 +64,16 @@ vu.core = {
 			node.fields
 		]);
 	},
+	person: function(popts) {
+		return zero.core.util.person(vu.core.bgen(popts.body),
+			popts.name || "you", null, popts, popts.body);
+	},
 	room: function() {
 		return CT.merge(vu.storage.get("room"), core.config.ctvu.builders.room, core.config.ctzero.room);
 	},
-	setchar: function(person, cb) {
+	setchar: function(person) {
 		vu.core._udata.person = person;
 		CT.storage.set("person", person.key);
-		cb();
 	},
 	birth: function(cb) {
 		vu.core.prompt({
@@ -69,7 +85,8 @@ vu.core = {
 					owner: user.core.get("key")
 				}, function(person) {
 					vu.core._udata.people.push(person);
-					vu.core.setchar(person, cb);
+					vu.core.setchar(person);
+					cb();
 				});
 			}
 		});
@@ -81,7 +98,8 @@ vu.core = {
 			cb: function(person) {
 				if (person.name == "new character")
 					return vu.core.birth(cb);
-				vu.core.setchar(person, cb);
+				vu.core.setchar(person);
+				cb();
 			}
 		});
 	},
@@ -121,6 +139,22 @@ vu.core = {
 			CT.dom.span(person.name, "bold")
 		], nodes], "left shiftall");
 	},
+	seta: function(cb) {
+		var data = vu.core._udata;
+		data.person = CT.storage.get("person");
+		if (!data.person)
+			return vu.core.charselect(function() { cb(); });
+		data.person = CT.data.get(data.person);
+		cb();
+	},
+	setz: function() {
+		var data = vu.core._udata;
+		data.room = CT.storage.get("room");
+		if (data.room)
+			data.room = CT.data.get(data.room);
+		else
+			data.room = data.rooms[0];
+	},
 	udata: function(cb) {
 		if (vu.core._udata)
 			return cb(vu.core._udata);
@@ -139,36 +173,11 @@ vu.core = {
 			for (var k in data)
 				CT.data.addSet(data[k]);
 			vu.core._udata = data;
-			data.person = CT.storage.get("person");
-			if (!data.person)
-				return vu.core.charselect(function() { cb(data); });
-			data.person = CT.data.get(data.person);
-			cb(data);
-		});
-	},
-	color: function(key, val, cb) {
-		var id = key.replace(/ /g, ""),
-			n = CT.dom.field(id, val, "block", null, null, {
-				color: "gray",
-				background: val
-			});
-		CT.dom.doWhenNodeExists(id, function() { // wait a tick
-			n.picker = jsColorPicker("input#" + id, {
-				color: val,
-				readOnly: true,
-				actionCallback: cb
+			vu.core.seta(function() {
+				vu.core.setz();
+				cb(data);
 			});
 		});
-		return n;
-	},
-	// https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb#5624139
-	hex2rgb: function(hex) {
-		var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-		return result ? {
-			r: parseInt(result[1], 16) / 255,
-			g: parseInt(result[2], 16) / 255,
-			b: parseInt(result[3], 16) / 255
-		} : null;
 	},
 	init: function() {
 		var cfg = core.config.ctvu.loaders;

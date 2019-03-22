@@ -94,7 +94,7 @@ vu.builders.tweak = {
 			}));
 		},
 		setColor: function(target, color, prop) {
-			target.material.color = vu.core.hex2rgb(color);
+			target.material.color = vu.color.hex2rgb(color);
 			if (core.config.ctvu.storage.mode == "local") {
 				vu.builders.tweak._.opts[prop][target.path] = color;
 				vu.builders.tweak.persist();
@@ -116,7 +116,7 @@ vu.builders.tweak = {
 			var _ = vu.builders.tweak._, selz = _.selectors,
 				bcolor = rawp.body.material[prop] || "#111111",
 				scolor = (typeof bcolor == "string") ? bcolor : ("#" + bcolor.toString(16));
-			selz[prop] = vu.core.color(prop + " selector", scolor, function() {
+			selz[prop] = vu.color.picker(prop + " selector", scolor, function() {
 				_.setColor(_.target, selz[prop].value, prop);
 			});
 		},
@@ -126,8 +126,7 @@ vu.builders.tweak = {
 				persist = vu.builders.tweak.persist;
 
 			var bt = popts.body.template, template = bt ? bt.split(".").pop() : popts.name,
-				rawp = _.raw = zero.core.util.person(vu.core.bgen(popts.body),
-					popts.name || "you", null, popts, popts.body);
+				rawp = _.raw = vu.core.person(popts);
 
 			_.colorSelector(rawp, "color");
 			_.colorSelector(rawp, "specular");
