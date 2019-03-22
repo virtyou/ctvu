@@ -189,8 +189,6 @@ vu.builders.zone = {
 					vu.builders.zone.persist({
 						environment: eselector.value
 					});
-//					vu.storage.save(ropts, null, "room",
-//						{ opts: { environment: eselector.value } });
 					zero.core.util.room(_.opts);
 				}
 			});
