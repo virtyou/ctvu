@@ -120,7 +120,7 @@ iframe {
 
 .gmenu.cameras {
     left: 221px !important;
-    right: 220px;
+    right: 262px;
     white-space: initial;
 }
 
@@ -129,7 +129,12 @@ iframe {
 }
 
 .gmenu.furnishings {
-	width: 217px;
+	width: 258px;
+	max-height: calc(100% - 112px);
+}
+
+.gmenu.controls {
+	height: 118px;
 }
 
 .gmenu.lights {
