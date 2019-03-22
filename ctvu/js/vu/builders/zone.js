@@ -28,37 +28,6 @@ vu.builders.zone = {
 				[-256, -256, -256]
 			]
 		},
-		furnishings_depped: function() {
-			var _ = vu.builders.zone._, pool = _.furniture.pool,
-				fz = _.furniture = vu.storage.get("furnishing") || _.furniture;
-
-			// TODO: handle furniture properly ... just pool for now
-			var ptoggle = _.selectors.pool = CT.dom.checkboxAndLabel(null,
-				!!_.opts.objects.length, "Pool", null, null, function() {
-					if (ptoggle.isChecked() != !!_.opts.objects.length) {
-						_.opts.objects = ptoggle.isChecked() ? [pool] : [];
-						if (pool.key) { // remote mode!!
-							if (ptoggle.isChecked()) {
-								vu.storage.edit({
-									base: pool.key,
-									parent: _.opts.key,
-									modelName: "furnishing"
-								}, function(furn) {
-									ptoggle._pool = furn;
-								});
-							} else
-								vu.storage.edit(ptoggle._pool.key, null, "delete", "key");
-						} else
-							vu.storage.save(_.opts, null, "room", { objects: _.opts.objects });
-						if (ptoggle.isChecked())
-							zero.core.current.room.addObject(pool);
-						else
-							zero.core.current.room.removeObject(pool);
-					}
-				});
-			if (_.opts.objects.length)
-				ptoggle._pool = _.opts.objects[0];
-		},
 		unfurn: function(furn) {
 			return CT.dom.button("remove " + furn.opts.kind, function() {
 				zero.core.current.room.removeObject(furn);
