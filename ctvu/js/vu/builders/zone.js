@@ -181,7 +181,15 @@ vu.builders.zone = {
 				_.controls.setTarget(target);
 				CT.dom.setContent(selz.controls, [
 					CT.dom.div(target.name, "bigger"),
-					target.body ? "(for scale)" : "(press ENTER to save position)"
+					target.body ? [
+						"(for scale)",
+						"move around with arrow keys",
+						"1-9 for gestures (0 to ungesture)",
+						"1-9 + SHIFT for dances (0 to undance)"
+					] : [
+						"move around with arrow keys",
+						"press ENTER to save position"
+					]
 				]);
 			};
 		},
