@@ -45,25 +45,36 @@ vu.storage.remote = {
 			return vu.core._udata.room;
 		else if (ent_type == "rooms")
 			return vu.core._udata.rooms;
+		else if (ent_type == "allrooms")
+			return vu.storage._allrooms;
 		else if (ent_type in vu.storage._extras)
 			return vu.storage._extras[ent_type];
 		return CT.db.get(key);
 	},
-	_ready: function(cb) {
+	_readys: 0,
+	_ready: function(cb, rcount) {
 		return function() {
-			if (vu.storage._readyOne)
+			vu.storage._readys += 1;
+			if (vu.storage._readys == rcount)
 				cb(vu.core._udata);
-			vu.storage._readyOne = true;
 		};
 	},
-	init: function(cb) {
+	init: function(cb, allrooms) {
+		var rcount = 2;
+		if (allrooms) {
+			rcount = 3;
+			CT.db.get("room", function(roomz) {
+				vu.storage._allrooms = roomz;
+				vu.storage._ready(cb, rcount)();
+			});
+		}
 		vu.core.z({ action: "things" }, function(extras) {
 			for (var k in extras)
 				for (var j in extras[k])
 					CT.data.add(extras[k][j]);
 			vu.storage._extras = extras;
-			vu.storage._ready(cb)();
+			vu.storage._ready(cb, rcount)();
 		});
-		vu.core.udata(vu.storage._ready(cb));
+		vu.core.udata(vu.storage._ready(cb, rcount));
 	}
 };
