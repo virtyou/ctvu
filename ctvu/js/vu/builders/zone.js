@@ -8,7 +8,8 @@ vu.builders.zone = {
 			basic: "topleft",
 			lights: "bottomleft",
 			controls: "bottomright",
-			furnishings: "topright"
+			furnishings: "topright",
+			portal_requests: "bottom"
 		},
 		lightdirs: {
 			point: "Position",
@@ -49,13 +50,14 @@ vu.builders.zone = {
 			], "topbordered padded margined");
 		},
 		portin: function(door) {
-			var _ = vu.builders.zone._, source, snode,
+			var _ = vu.builders.zone._, source, rsource, snode,
 				n = CT.dom.div(), pz = door.opts.portals.incoming;
 			CT.db.multi(pz.map(function(p) {
 				return p.source;
 			}), function() {
 				CT.dom.setContent(n, pz.map(function(p) {
 					source = CT.data.get(p.source);
+					rsource = CT.data.get(source.parent);
 					snode = CT.dom.div([
 						CT.dom.link("unlink", function() {
 							if (!confirm("really unlink?")) return;
@@ -63,11 +65,14 @@ vu.builders.zone = {
 								key: p.key,
 								target: _.opts.key // demoted to room incoming
 							}, function() {
-								CT.data.remove(pz, p);
 								snode.remove();
-								// TODO: add to Room-level incoming!
+								CT.data.remove(pz, p);
+								p.target = _.opts.key;
+								_.opts.portals.append(pz);
+								_.selectors.portal_requests.update();
 							});
-						}, "right")
+						}, "right"),
+						rsource.name + " (" + source.name + ")"
 					]);
 					return snode;
 				}));
@@ -76,25 +81,23 @@ vu.builders.zone = {
 		},
 		portout: function(door) {
 			var n = CT.dom.div(), og, out, name, sel = function() {
-				CT.db.get("room", function(rooms) {
-					vu.core.choice({
-						data: rooms,
-						cb: function(room) {
-							og = door.opts.portals.outgoing;
-							out = {};
-							if (og)
-								out.key = og.key;
-							else {
-								out.modelName = "portal";
-								out.source = door.key;
-							}
-							out.target = room.key;
-							vu.storage.edit(out, function(pdata) {
-								door.opts.portals.outgoing = pdata;
-								setP();
-							});
+				vu.core.choice({
+					data: vu.storage.get("allrooms"),
+					cb: function(room) {
+						og = door.opts.portals.outgoing;
+						out = {};
+						if (og)
+							out.key = og.key;
+						else {
+							out.modelName = "portal";
+							out.source = door.key;
 						}
-					});
+						out.target = room.key;
+						vu.storage.edit(out, function(pdata) {
+							door.opts.portals.outgoing = pdata;
+							setP();
+						});
+					}
 				});
 			}, setP = function() {
 				if (door.opts.portals.outgoing) {
@@ -125,6 +128,34 @@ vu.builders.zone = {
 					_.portin(portal)
 				], "topbordered padded margined")
 			];
+		},
+		preqs: function() {
+			var _ = vu.builders.zone._, selz = _.selectors;
+			selz.portal_requests = CT.dom.div();
+			selz.portal_requests.update = function() {
+				CT.db.multi(_.opts.portals.map(function(p) {
+					return p.source;
+				}), function() {
+					CT.dom.setContent(selz.portal_requests, _.opts.portals.map(function(p) {
+						var source = CT.data.get(p.source),
+							rsource = CT.data.get(source.parent),
+							n = CT.dom.div([
+								rsource.name + " (" + source.name + ")",
+								CT.dom.link("ACCEPT", function() {
+									
+								}),
+								CT.dom.pad(),
+								CT.dom.link("REJECT", function() {
+									if (!confirm("really reject?")) return;
+									n.remove();
+									CT.data.remove(_.opts.portals, p);
+									vu.storage.edit(p.key, null, "delete", "key");
+								})
+							]);
+						return n;
+					}));
+				});
+			};
 		},
 		portal: function(portal) {
 			 var _ = vu.builders.zone._;
@@ -258,6 +289,7 @@ vu.builders.zone = {
 			_.lights();
 			_.cameras();
 			_.controls();
+			_.preqs();
 
 			var enz = core.config.ctvu.loaders.environments;
 			var eselector = selz.environment = CT.dom.select(enz.map(function(item) {
@@ -479,6 +511,7 @@ vu.builders.zone = {
 				selz.cameras.update();
 				selz.controls.update();
 				selz.furnishings.update();
+				selz.portal_requests.update();
 			}, name = room.name || room.environment;
 			_.opts = room;
 			CT.dom.setContent(_.curname, name);
