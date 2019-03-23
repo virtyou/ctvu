@@ -13,8 +13,8 @@ def response():
 		succeed(room(cgi_get("name"), cgi_get("owner"),
 			cgi_get("environment", required=False),
 			cgi_get("cameras", default=[]),
-			cgi_get("opts", default={})).data())
-	if action == "thing":
+			cgi_get("opts", default={})).json())
+	if action == "thing": # should thing/person return json() as well?
 		succeed(thing(cgi_get("data"), cgi_get("owner")).data())
 	if action == "person":
 		succeed(person(cgi_get("name"), cgi_get("owner")).data())

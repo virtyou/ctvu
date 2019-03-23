@@ -37,7 +37,7 @@ vu.core = {
 			transition: "slide",
 			slide: { origin: origin },
 			content: [
-				header || CT.parse.capitalize(section),
+				header || CT.parse.key2title(section),
 				selector
 			],
 			className: "abs above padded bordered round pointer gmenu " + section
@@ -155,7 +155,7 @@ vu.core = {
 		else
 			data.room = data.rooms[0];
 	},
-	udata: function(cb) {
+	udata: function(cb, allrooms) {
 		if (vu.core._udata)
 			return cb(vu.core._udata);
 		if (core.config.ctvu.storage.mode == "local" || !user.core.get()) {
@@ -166,12 +166,20 @@ vu.core = {
 				rooms: [vu.core.room()]
 			});
 		}
+		var ukey = user.core.get("key");
 		vu.core.z({
 			action: "json",
-			key: user.core.get("key")
+			key: ukey,
+			allrooms: allrooms
 		}, function(data) {
 			for (var k in data)
 				CT.data.addSet(data[k]);
+			if (allrooms) {
+				vu.core._allrooms = data.rooms;
+				data.rooms = data.rooms.filter(function(r) {
+					return r.owner == ukey;
+				});
+			}
 			vu.core._udata = data;
 			vu.core.seta(function() {
 				vu.core.setz();

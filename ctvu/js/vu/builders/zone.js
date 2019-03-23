@@ -8,7 +8,8 @@ vu.builders.zone = {
 			basic: "topleft",
 			lights: "bottomleft",
 			controls: "bottomright",
-			furnishings: "topright"
+			furnishings: "topright",
+			portal_requests: "bottom"
 		},
 		lightdirs: {
 			point: "Position",
@@ -29,7 +30,12 @@ vu.builders.zone = {
 			]
 		},
 		unfurn: function(furn) {
+			var msg = "really remove this " + furn.opts.kind;
+			if (furn.opts.kind == "portal")
+				msg += " and all incoming/outgoing linkages";
+			msg += "?";
 			return CT.dom.button("remove " + furn.opts.kind, function() {
+				if (!confirm(msg)) return;
 				zero.core.current.room.removeObject(furn);
 				vu.builders.zone._.selectors.furnishings.update();
 				vu.storage.edit(furn.opts.key, null, "delete", "key");
@@ -48,20 +54,151 @@ vu.builders.zone = {
 				}, 0, 10, furn.scale().x, 0.01, "w1")
 			], "topbordered padded margined");
 		},
-		poster: function(poster) {
-			 var _ = vu.builders.zone._;
-			 return [
-			 	_.unfurn(poster),
-			 	poster.name,
-			 	_.fscale(poster)
-			 ];
+		portin: function(door) {
+			var _ = vu.builders.zone._, source, rsource, snode,
+				n = CT.dom.div(), pz = door.opts.portals.incoming;
+			CT.db.multi(pz.map(function(p) {
+				return p.source;
+			}), function() {
+				CT.dom.setContent(n, pz.map(function(p) {
+					source = CT.data.get(p.source);
+					rsource = CT.data.get(source.parent);
+					snode = CT.dom.div([
+						CT.dom.link("X", function() {
+							if (!confirm("really unlink?")) return;
+							vu.storage.edit({
+								key: p.key,
+								target: _.opts.key // demoted to room incoming
+							}, function() {
+								snode.remove();
+								CT.data.remove(pz, p);
+								p.target = _.opts.key;
+								_.opts.portals.push(p);
+								_.selectors.portal_requests.update();
+							});
+						}, null, "right red"),
+						rsource.name + " (" + source.name + ")"
+					]);
+					return snode;
+				}));
+			}, "json");
+			return n;
+		},
+		portout: function(door) {
+			var n = CT.dom.div(), og, out, name, sel = function() {
+				vu.core.choice({
+					data: vu.storage.get("allrooms"),
+					cb: function(room) {
+						og = door.opts.portals.outgoing;
+						out = {};
+						if (og)
+							out.key = og.key;
+						else {
+							out.modelName = "portal";
+							out.source = door.opts.key;
+						}
+						out.target = room.key;
+						vu.storage.edit(out, function(pdata) {
+							door.opts.portals.outgoing = pdata;
+							room.portals.push(pdata);
+							setP();
+						});
+					}
+				});
+			}, setP = function() {
+				if (door.opts.portals.outgoing) {
+					CT.db.one(door.opts.portals.outgoing.target, function(target) {
+						if (target.owner) // room
+							name = target.name + " (pending)";
+						else
+							name = CT.data.get(target.parent).name + " (" + target.name + ")";
+						CT.dom.setContent(n, CT.dom.link(name, sel));
+					}, "json");
+				} else
+					CT.dom.setContent(n, CT.dom.link("select", sel));
+			};
+			setP();
+			return n;
+		},
+		plinx: function(portal) {
+			var _ = vu.builders.zone._;
+			return [
+				CT.dom.div([
+					"Outgoing",
+					_.portout(portal)
+				], "topbordered padded margined"),
+				CT.dom.div([
+					"Incoming",
+					_.portin(portal)
+				], "topbordered padded margined")
+			];
+		},
+		preqs: function() { // incoming portal requests
+			var _ = vu.builders.zone._, selz = _.selectors;
+			selz.portal_requests = CT.dom.div();
+			selz.portal_requests.update = function() {
+				CT.db.multi(_.opts.portals.map(function(p) {
+					return p.source;
+				}), function() {
+					CT.dom.setContent(selz.portal_requests, _.opts.portals.map(function(p) {
+						var source = CT.data.get(p.source),
+							rsource = CT.data.get(source.parent),
+							n = CT.dom.div([
+								rsource.name + " (" + source.name + ")",
+								CT.dom.link("ACCEPT", function() {
+									vu.core.choice({
+										data: ["new portal"].concat(_.opts.objects.filter(function(f) {
+											return f.kind == "portal";
+										})),
+										cb: function(port) {
+											var pup = function(pthing, upfurn) {
+												vu.storage.edit({
+													key: p.key,
+													target: pthing.opts.key
+												}, function() {
+													n.remove();
+													p.target = pthing.opts.key;
+													CT.data.remove(_.opts.portals, p);
+													pthing.opts.portals.incoming.push(p);
+													selz.portal_requests.update();
+													upfurn && selz.furnishings.update();
+												});
+											};
+											if (port == "new portal")
+												_.selfurn("portal", pup);
+											else
+												pup(zero.core.Thing.get(port.key), true);
+										}
+									});
+								}),
+								CT.dom.pad(),
+								CT.dom.link("REJECT", function() {
+									if (!confirm("really reject?")) return;
+									n.remove();
+									CT.data.remove(_.opts.portals, p);
+									vu.storage.edit(p.key, null, "delete", "key");
+								})
+							]);
+						return n;
+					}));
+				}, "json");
+			};
 		},
 		portal: function(portal) {
 			 var _ = vu.builders.zone._;
 			 return [
 			 	_.unfurn(portal),
 			 	portal.name,
-			 	_.fscale(portal)
+			 	_.fscale(portal),
+			 	_.plinx(portal)
+			 ];
+		},
+		poster: function(poster) {
+			 var _ = vu.builders.zone._;
+			 return [
+			 	_.unfurn(poster),
+			 	poster.name,
+			 	_.fscale(poster)
 			 ];
 		},
 		furnishing: function(furn) {
@@ -85,6 +222,34 @@ vu.builders.zone = {
 		furn: function(furn) {
 			return CT.dom.div(vu.builders.zone._[furn.opts.kind](furn), "margined padded bordered round");
 		},
+		selfurn: function(kind, cb) {
+			var _ = vu.builders.zone._, selz = _.selectors;
+			vu.core.choice({
+				data: Object.values(vu.storage.get(kind)),
+				cb: function(thing) {
+					var eopts = {
+						base: thing.key,
+						parent: _.opts.key,
+						modelName: "furnishing"
+					};
+					if (kind == "poster") { // TODO: probs do this elsewhere/better!
+						eopts.opts = {
+							wall: 0,
+							planeGeometry: [100, 100]
+						};
+					} else if (kind == "portal")
+						eopts.opts = { wall: 0 };
+					vu.storage.edit(eopts, function(furn) {
+						var f = zero.core.current.room.addObject(furn, function() {
+							f.setBounds(); // TODO: this should probably be in zero.core.Room
+							cb && cb(f);
+							selz.controls.update(f);
+							selz.furnishings.update();
+						});
+					});
+				}
+			});
+		},
 		furnishings: function() {
 			var _ = vu.builders.zone._, selz = _.selectors;
 			selz.furnishings = CT.dom.div();
@@ -93,32 +258,7 @@ vu.builders.zone = {
 					CT.dom.button("add", function() {
 						vu.core.choice({
 							data: ["furnishing", "poster", "portal"],
-							cb: function(kind) {
-								vu.core.choice({
-									data: Object.values(vu.storage.get(kind)),
-									cb: function(thing) {
-										var eopts = {
-											base: thing.key,
-											parent: _.opts.key,
-											modelName: "furnishing"
-										};
-										if (kind == "poster") { // TODO: probs do this elsewhere/better!
-											eopts.opts = {
-												wall: 0,
-												planeGeometry: [100, 100]
-											};
-										} else if (kind == "portal")
-											eopts.opts = { wall: 0 };
-										vu.storage.edit(eopts, function(furn) {
-											var f = zero.core.current.room.addObject(CT.merge(furn, furn.opts, thing), function() {
-												f.setBounds(); // TODO: this should probably be in zero.core.Room
-												selz.controls.update(f);
-												selz.furnishings.update();
-											});
-										});
-									}
-								});
-							}
+							cb: _.selfurn
 						});
 					}, "up20 right"),
 					zero.core.current.room.objects.map(_.furn)
@@ -179,6 +319,7 @@ vu.builders.zone = {
 			_.lights();
 			_.cameras();
 			_.controls();
+			_.preqs();
 
 			var enz = core.config.ctvu.loaders.environments;
 			var eselector = selz.environment = CT.dom.select(enz.map(function(item) {
@@ -400,6 +541,7 @@ vu.builders.zone = {
 				selz.cameras.update();
 				selz.controls.update();
 				selz.furnishings.update();
+				selz.portal_requests.update();
 			}, name = room.name || room.environment;
 			_.opts = room;
 			CT.dom.setContent(_.curname, name);
@@ -417,10 +559,10 @@ vu.builders.zone = {
 						name: name,
 						owner: user.core.get("key")
 					}, _.starter), function(room) {
-						var ropts = CT.merge(room, room.opts);
-						vu.storage.get("rooms").push(ropts);
-						CT.data.add(ropts);
-						_.set(ropts);
+						vu.storage.get("rooms").push(room);
+						vu.storage.get("allrooms").push(room);
+						CT.data.add(room);
+						_.set(room);
 					});
 				}
 			});
