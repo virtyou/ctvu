@@ -16,6 +16,7 @@ vu.storage.remote = {
 	edit: function(data, cb, action, pname) {
 		var params = {
 			action: action || "edit",
+			exporter: "json",
 			pw: core.config.ctvu.storage.apikey
 		};
 		params[pname || "data"] = data;
