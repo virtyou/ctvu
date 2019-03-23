@@ -75,7 +75,7 @@ vu.builders.zone = {
 			return n;
 		},
 		portout: function(door) {
-			var n = CT.dom.div(), og, out, sel = function() {
+			var n = CT.dom.div(), og, out, name, sel = function() {
 				CT.db.get("room", function(rooms) {
 					vu.core.choice({
 						data: rooms,
@@ -99,9 +99,12 @@ vu.builders.zone = {
 			}, setP = function() {
 				if (door.opts.portals.outgoing) {
 					CT.db.one(door.opts.portals.outgoing.target, function(target) {
+						if (target.modelName == "room")
+							name = target.name + " (pending)";
+						else
+							name = CT.data.get(target.parent).name + " (" + target.name + ")";
 						CT.dom.setContent(n, CT.dom.link([
-							target.name,
-							(target.modelName == "room") ? "(pending)" : "(switch)"
+							name, "(switch)"
 						], sel));
 					});
 				} else
