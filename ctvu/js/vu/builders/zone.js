@@ -48,20 +48,96 @@ vu.builders.zone = {
 				}, 0, 10, furn.scale().x, 0.01, "w1")
 			], "topbordered padded margined");
 		},
-		poster: function(poster) {
-			 var _ = vu.builders.zone._;
-			 return [
-			 	_.unfurn(poster),
-			 	poster.name,
-			 	_.fscale(poster)
-			 ];
+		portin: function(door) {
+			var _ = vu.builders.zone._, source, snode,
+				n = CT.dom.div(), pz = door.opts.portals.incoming;
+			CT.db.multi(pz.map(function(p) {
+				return p.source;
+			}), function() {
+				CT.dom.setContent(n, pz.map(function(p) {
+					source = CT.data.get(p.source);
+					snode = CT.dom.div([
+						CT.dom.link("unlink", function() {
+							if (!confirm("really unlink?")) return;
+							vu.storage.edit({
+								key: p.key,
+								target: _.opts.key // demoted to room incoming
+							}, function() {
+								CT.data.remove(pz, p);
+								snode.remove();
+								// TODO: add to Room-level incoming!
+							});
+						}, "right")
+					]);
+					return snode;
+				}));
+			});
+			return n;
+		},
+		portout: function(door) {
+			var n = CT.dom.div(), og, out, sel = function() {
+				CT.db.get("room", function(rooms) {
+					vu.core.choice({
+						data: rooms,
+						cb: function(room) {
+							og = door.opts.portals.outgoing;
+							out = {};
+							if (og)
+								out.key = og.key;
+							else {
+								out.modelName = "portal";
+								out.source = door.key;
+							}
+							out.target = room.key;
+							vu.storage.edit(out, function(pdata) {
+								door.opts.portals.outgoing = pdata;
+								setP();
+							});
+						}
+					});
+				});
+			}, setP = function() {
+				if (door.opts.portals.outgoing) {
+					CT.db.one(door.opts.portals.outgoing.target, function(target) {
+						CT.dom.setContent(n, CT.dom.link([
+							target.name,
+							(target.modelName == "room") ? "(pending)" : "(switch)"
+						], sel));
+					});
+				} else
+					CT.dom.setContent(n, CT.dom.link("select", sel));
+			};
+			setP();
+			return n;
+		},
+		plinx: function(portal) {
+			var _ = vu.builders.zone._;
+			return [
+				CT.dom.div([
+					"Outgoing",
+					_.portout(portal)
+				], "topbordered padded margined"),
+				CT.dom.div([
+					"Incoming",
+					_.portin(portal)
+				], "topbordered padded margined")
+			];
 		},
 		portal: function(portal) {
 			 var _ = vu.builders.zone._;
 			 return [
 			 	_.unfurn(portal),
 			 	portal.name,
-			 	_.fscale(portal)
+			 	_.fscale(portal),
+			 	_.plinx(portal)
+			 ];
+		},
+		poster: function(poster) {
+			 var _ = vu.builders.zone._;
+			 return [
+			 	_.unfurn(poster),
+			 	poster.name,
+			 	_.fscale(poster)
 			 ];
 		},
 		furnishing: function(furn) {
