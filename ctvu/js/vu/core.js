@@ -37,7 +37,7 @@ vu.core = {
 			transition: "slide",
 			slide: { origin: origin },
 			content: [
-				header || CT.parse.capitalize(section),
+				header || CT.parse.key2title(section),
 				selector
 			],
 			className: "abs above padded bordered round pointer gmenu " + section
