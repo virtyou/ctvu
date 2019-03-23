@@ -68,7 +68,7 @@ vu.builders.zone = {
 								snode.remove();
 								CT.data.remove(pz, p);
 								p.target = _.opts.key;
-								_.opts.portals.append(pz);
+								_.opts.portals.push(p);
 								_.selectors.portal_requests.update();
 							});
 						}, null, "right red"),
@@ -146,24 +146,23 @@ vu.builders.zone = {
 											return f.kind == "portal";
 										})),
 										cb: function(port) {
-											var pup = function(port) {
+											var pup = function(pthing, upfurn) {
 												vu.storage.edit({
 													key: p.key,
-													target: port.key
+													target: pthing.opts.key
 												}, function() {
 													n.remove();
-													p.target = port.key;
-													port.portals.incoming.push(p);
+													p.target = pthing.opts.key;
 													CT.data.remove(_.opts.portals, p);
+													pthing.opts.portals.incoming.push(p);
 													selz.portal_requests.update();
+													upfurn && selz.furnishings.update();
 												});
 											};
 											if (port == "new portal")
 												_.selfurn("portal", pup);
-											else {
-												pup(port);
-												selz.furnishings.update();
-											}
+											else
+												pup(zero.core.Thing.get(port.key), true);
 										}
 									});
 								}),
@@ -238,7 +237,7 @@ vu.builders.zone = {
 					vu.storage.edit(eopts, function(furn) {
 						var f = zero.core.current.room.addObject(furn, function() {
 							f.setBounds(); // TODO: this should probably be in zero.core.Room
-							cb && cb(furn);
+							cb && cb(f);
 							selz.controls.update(f);
 							selz.furnishings.update();
 						});
