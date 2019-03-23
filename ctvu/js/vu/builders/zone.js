@@ -30,7 +30,12 @@ vu.builders.zone = {
 			]
 		},
 		unfurn: function(furn) {
+			var msg = "really remove this " + furn.opts.kind;
+			if (furn.opts.kind == "portal")
+				msg += " and all incoming/outgoing linkages";
+			msg += "?";
 			return CT.dom.button("remove " + furn.opts.kind, function() {
+				if (!confirm(msg)) return;
 				zero.core.current.room.removeObject(furn);
 				vu.builders.zone._.selectors.furnishings.update();
 				vu.storage.edit(furn.opts.key, null, "delete", "key");
