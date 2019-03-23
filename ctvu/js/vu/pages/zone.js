@@ -26,5 +26,5 @@ CT.onload(function() {
 		vu.builders.zone.menus();
 		// virtual world
 		vu.builders.core.init();
-	});
+	}, true);
 });
