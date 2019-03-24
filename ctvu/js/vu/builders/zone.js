@@ -546,6 +546,7 @@ vu.builders.zone = {
 				selz.portal_requests.update();
 			}, name = room.name || room.environment;
 			_.opts = room;
+			vu.core.setroom(room);
 			CT.dom.setContent(_.curname, name);
 			selz.name.value = name;
 			selz.environment.value = room.environment;
