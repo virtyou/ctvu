@@ -591,7 +591,7 @@ vu.builders.zone = {
 				_.selectors.controls.update();
 			};
 			zero.core.util.join(vu.core.person(popts), function(person) {
-				vu.builders.current.person = person;
+				vu.builders.current.person = zero.core.current.person = person;
 				vu.builders.zone._.set(vu.storage.get("room"), true);
 			});
 			return CT.dom.div([[
