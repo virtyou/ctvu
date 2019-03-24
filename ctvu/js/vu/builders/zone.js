@@ -344,13 +344,15 @@ vu.builders.zone = {
 								vu.core.choice({
 									data: Object.values(vu.storage.get(variety)),
 									cb: function(base) {
+										var upobj = {};
 										_.opts.thing_key = base.key;
 										if (base.texture)
-											_.opts.texture = base.texture;
+											upobj.texture = _.opts.texture = base.texture;
 										if (base.stripset)
-											_.opts.stripset = base.stripset;
+											upobj.stripset = _.opts.stripset = base.stripset;
 										selz.base.update();
-										vu.builders.zone.update();
+										zero.core.current.room.update(upobj);
+//										vu.builders.zone.update();
 										vu.builders.zone.persist({
 											base: base.key
 										});
