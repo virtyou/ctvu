@@ -31,15 +31,26 @@ vu.builders.test = {
 				person = vu.builders.current.person,
 				responses = person.opts.responses,
 				triggers = person.brain.triggers,
-				trigz = CT.data.uniquify(Object.keys(responses).concat(Object.keys(triggers)));
-			CT.dom.setContent(_.selectors.triggers, trigz.map(function(trig) {
-				return CT.dom.div(trig, "bordered padded margined inline-block hoverglow", null, {
-					onclick: function() {
-						person.respond(trig);
-						_.setTriggers();
-					}
-				});
-			}));
+				trigz = CT.data.uniquify(Object.keys(responses).concat(Object.keys(triggers))),
+				vibez = person.opts.vibe;
+			CT.dom.setContent(_.selectors.triggers, [
+				trigz.map(function(trig) {
+					return CT.dom.div(trig, "bordered padded margined inline-block hoverglow", null, {
+						onclick: function() {
+							person.respond(trig);
+							_.setTriggers();
+						}
+					});
+				}),
+				"Vibes",
+				Object.keys(vibez).map(function(vibe) {
+					return CT.dom.div(vibe, "bordered padded margined inline-block hoverglow", null, {
+						onclick: function() {
+							person.vibe.update(vibe);
+						}
+					});
+				})
+			]);
 		},
 		setGestures: function() {
 			var _ = vu.builders.test._,
