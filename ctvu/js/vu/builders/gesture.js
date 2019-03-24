@@ -33,19 +33,13 @@ vu.builders.gesture = {
 			});
 		},
 		initCamera: function() {
-			zero.core.camera.unfollow();
-			var _ = vu.builders.gesture._, butt = CT.dom.button("far", function() {
-				if (butt.innerHTML == "far") {
-					butt.innerHTML = "near";
-					zero.core.camera.move({ z: 280 });
+			var _ = vu.builders.gesture._;
+			vu.controls.initCamera(_.selectors.camera, function(cname) {
+				if (cname == "near")
 					_.swapLimbs("legs", "arms");
-				} else {
-					butt.innerHTML = "far";
-					zero.core.camera.move({ z: 120 });
+				else // far
 					_.swapLimbs("arms", "legs");
-				}
 			});
-			CT.dom.setContent(_.selectors.camera, butt);
 		},
 		initGesture: function() {
 			var _ = vu.builders.gesture._,
