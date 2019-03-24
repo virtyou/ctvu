@@ -13,6 +13,7 @@ vu.builders.play = {
 			vu.controls.initCamera(_.selectors.camera);
 			vu.controls.setTriggers(_.selectors.triggers);
 			vu.controls.setGestures(_.selectors.gestures);
+			person.body.setBounds();
 		},
 		setup: function() {
 			var _ = vu.builders.play._, selz = _.selectors,
