@@ -32,7 +32,7 @@ vu.builders.test = {
 				responses = person.opts.responses,
 				triggers = person.brain.triggers,
 				trigz = CT.data.uniquify(Object.keys(responses).concat(Object.keys(triggers))),
-				vibez = person.opts.vibe;
+				vibez = person.vibe.opts.vibes;
 			CT.dom.setContent(_.selectors.triggers, [
 				trigz.map(function(trig) {
 					return CT.dom.div(trig, "bordered padded margined inline-block hoverglow", null, {
