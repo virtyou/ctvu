@@ -71,6 +71,10 @@ vu.core = {
 	room: function() {
 		return CT.merge(vu.storage.get("room"), core.config.ctvu.builders.room, core.config.ctzero.room);
 	},
+	setroom: function(room) {
+		vu.core._udata.room = room;
+		CT.storage.set("room", room.key);
+	},
 	setchar: function(person) {
 		vu.core._udata.person = person;
 		CT.storage.set("person", person.key);
