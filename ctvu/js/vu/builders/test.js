@@ -8,72 +8,11 @@ vu.builders.test = {
 			gestures: "bottomright"
 		},
 		joined: function(person) {
-			vu.builders.current.person = person;
-			vu.builders.test._.initCamera();
-			vu.builders.test._.setTriggers();
-			vu.builders.test._.setGestures();
-		},
-		initCamera: function() {
-			zero.core.camera.unfollow();
-			var _ = vu.builders.test._, butt = CT.dom.button("far", function() {
-				if (butt.innerHTML == "far") {
-					butt.innerHTML = "near";
-					zero.core.camera.move({ z: 280 });
-				} else {
-					butt.innerHTML = "far";
-					zero.core.camera.move({ z: 120 });
-				}
-			});
-			CT.dom.setContent(_.selectors.camera, butt);
-		},
-		setTriggers: function() {
-			var _ = vu.builders.test._,
-				person = vu.builders.current.person,
-				responses = person.opts.responses,
-				triggers = person.brain.triggers,
-				trigz = CT.data.uniquify(Object.keys(responses).concat(Object.keys(triggers))),
-				vibez = person.vibe.opts.vibes;
-			CT.dom.setContent(_.selectors.triggers, [
-				trigz.map(function(trig) {
-					return CT.dom.div(trig, "bordered padded margined inline-block hoverglow", null, {
-						onclick: function() {
-							person.respond(trig);
-							_.setTriggers();
-						}
-					});
-				}),
-				"Vibes",
-				Object.keys(vibez).map(function(vibe) {
-					return CT.dom.div(vibe, "bordered padded margined inline-block hoverglow", null, {
-						onclick: function() {
-							person.vibe.update(vibe);
-						}
-					});
-				})
-			]);
-		},
-		setGestures: function() {
-			var _ = vu.builders.test._,
-				person = vu.builders.current.person,
-				gestz = person.opts.gestures,
-				dances = person.opts.dances;
-			CT.dom.setContent(_.selectors.gestures, [
-				["ungesture"].concat(Object.keys(gestz)).map(function(gest, i) {
-					return CT.dom.div(gest, "bordered padded margined inline-block hoverglow", null, {
-						onclick: function() {
-							i ? person.gesture(gest) : person.ungesture();
-						}
-					});
-				}),
-				"Dances",
-				["undance"].concat(Object.keys(dances)).map(function(dance, i) {
-					return CT.dom.div(dance, "bordered padded margined inline-block hoverglow", null, {
-						onclick: function() {
-							i ? person.dance(dance) : person.undance();
-						}
-					});
-				})
-			]);
+			var _ = vu.builders.test._;
+			vu.builders.current.person = zero.core.current.person = person;
+			vu.controls.initCamera(_.selectors.camera);
+			vu.controls.setTriggers(_.selectors.triggers);
+			vu.controls.setGestures(_.selectors.gestures);
 		},
 		setup: function() {
 			var _ = vu.builders.test._, selz = _.selectors,
