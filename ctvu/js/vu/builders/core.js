@@ -9,7 +9,10 @@ vu.builders.core = {
 		if (["zone", "item"].indexOf(pname) != -1)
 			CT.dom.addContent("ctheader", _.linx());
 		else {
-			zero.core.util.join(_.raw, _.joined);
+			if (pname == "play")
+				vu.live.init(_.joined);
+			else
+				zero.core.util.join(_.raw, _.joined);
 			CT.dom.addContent("ctheader", vu.core.charlinx());
 		}
 	}

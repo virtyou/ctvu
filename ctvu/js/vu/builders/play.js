@@ -16,19 +16,25 @@ vu.builders.play = {
 			person.body.setBounds();
 			_.controls = new zero.core.Controls({
 				cb: _.action,
-				target: person
+				target: person,
+				moveCb: vu.live.up
 			});
+		},
+		chat: function() {
+			
 		},
 		action: function() {
 			var person = zero.core.current.person,
-				pos = person.body.bone.position;
+				pos = person.body.bone.position, hit = false;
 			zero.core.current.room.objects.filter(function(obj) {
 				var o = obj.opts, og = o.portals && o.portals.outgoing;
 				return og && og.target;
 			}).forEach(function(portal) {
+				if (hit) return;
 				var dist = portal.position().distanceTo(pos);
 				CT.log(portal.name + " " + dist);
 				if (dist < 100) {
+					hit = true;
 					CT.db.one(portal.opts.portals.outgoing.target, function(target) {
 						if (target.owner) // room
 							person.say("this door is locked");
@@ -37,6 +43,8 @@ vu.builders.play = {
 					}, "json");
 				}
 			});
+			if (!hit)
+				vu.builders.play._.chat();
 		},
 		setup: function() {
 			var _ = vu.builders.play._, selz = _.selectors,
