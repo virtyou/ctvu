@@ -19,8 +19,10 @@ vu.live = {
 			meta: function(data) {
 				if (data.user == zero.core.current.person.opts.key)
 					return;
-				var person = vu.live._.people[data.user],
-					s = person.body.springs, meta = data.meta;
+				var person = vu.live._.people[data.user];
+				if (!person)
+					return; // will handle meta when spawn is complete
+				var s = person.body.springs, meta = data.meta;
 				["weave", "slide", "orientation"].forEach(function(prop) { // bob?
 					s[prop].target = meta[prop];
 				});
