@@ -53,7 +53,7 @@ vu.live = {
 					["weave", "slide", "orientation"].forEach(function(prop) {
 						s[prop].target = s[prop].value = meta[prop];
 					});
-					vu.live.dance(person, meta);
+					vu.live._.dance(person, meta);
 				});
 			}, "json");
 		}
