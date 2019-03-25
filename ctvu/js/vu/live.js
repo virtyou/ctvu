@@ -34,7 +34,7 @@ vu.live = {
 		},
 		dance: function(person, meta) {
 			if (meta.gesture)
-				person.gesture(meta.gesture);
+				(person.activeGesture == meta.gesture) || person.gesture(meta.gesture);
 			else if (person.activeGesture)
 				person.ungesture();
 			if (meta.dance)
@@ -59,9 +59,14 @@ vu.live = {
 		}
 	},
 	up: function() {
-		var s = zero.core.current.person.body.springs;
-			CT.pubsub.meta(zero.core.current.room.opts.key,
-				[s.weave.target, s.bob.target, s.slide.target, s.orientation.target]);
+		var person = zero.core.current.person, s = person.body.springs, targets = {
+			dance: person.activeDance,
+			gesture: person.activeGesture
+		};
+		["weave", "slide", "orientation"].forEach(function(prop) {
+			targets[prop] = s[prop].target;
+		});
+		CT.pubsub.meta(zero.core.current.room.opts.key, targets);
 	},
 	init: function(joined) {
 		var _ = vu.live._, person = zero.core.current.person;
