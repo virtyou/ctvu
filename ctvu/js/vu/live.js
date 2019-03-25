@@ -43,18 +43,23 @@ vu.live = {
 				person.undance();
 		},
 		spawn: function(pkey, meta) {
+			if (pkey in vu.live._.people) return; // you switching rooms for instance
+			var isYou = pkey == CT.storage.get("person");
 			CT.db.one(pkey, function(pdata) {
+				if (meta)
+					pdata.body.position = [meta.weave, 0, meta.slide];
 				zero.core.util.join(vu.core.person(pdata), function(person) {
+					person.body.setBounds();
 					var s = person.body.springs;
 					vu.live._.people[pdata.key] = person;
-					if (pdata.key == CT.storage.get("person"))
+					if (isYou)
 						vu.live._.joined(person);
 					if (!meta) return;
 					["weave", "slide", "orientation"].forEach(function(prop) {
 						s[prop].target = s[prop].value = meta[prop];
 					});
 					vu.live._.dance(person, meta);
-				});
+				}, !isYou);
 			}, "json");
 		}
 	},

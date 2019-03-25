@@ -13,7 +13,6 @@ vu.builders.play = {
 			vu.controls.initCamera(_.selectors.cameras);
 			vu.controls.setTriggers(_.selectors.triggers);
 			vu.controls.setGestures(_.selectors.gestures);
-			person.body.setBounds();
 			_.controls = new zero.core.Controls({
 				cb: _.action,
 				target: person,
