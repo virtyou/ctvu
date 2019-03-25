@@ -270,10 +270,12 @@ vu.builders.zone = {
 				pos = target.position(), opts = {
 					position: [pos.x, pos.y, pos.z]
 				};
-			if ("wall" in target.opts)
-				opts.wall = target.opts.wall;
-			vu.storage.setOpts(target.opts.key, opts);
-			_.selectors.controls.update();
+			if (!target.gesture) { // person (probs detect in a nicer way)
+				if ("wall" in target.opts)
+					opts.wall = target.opts.wall;
+				vu.storage.setOpts(target.opts.key, opts);
+				_.selectors.controls.update();
+			}
 		},
 		controls: function() {
 			var _ = vu.builders.zone._, selz = _.selectors;
