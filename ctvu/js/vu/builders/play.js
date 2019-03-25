@@ -21,12 +21,12 @@ vu.builders.play = {
 			});
 		},
 		chat: function() {
-			
+
 		},
 		action: function() {
-			var person = zero.core.current.person,
+			var cur = zero.core.current, person = cur.person,
 				pos = person.body.bone.position, hit = false;
-			zero.core.current.room.objects.filter(function(obj) {
+			cur.room.objects.filter(function(obj) {
 				var o = obj.opts, og = o.portals && o.portals.outgoing;
 				return og && og.target;
 			}).forEach(function(portal) {
@@ -38,8 +38,11 @@ vu.builders.play = {
 					CT.db.one(portal.opts.portals.outgoing.target, function(target) {
 						if (target.owner) // room
 							person.say("this door is locked");
-						else
+						else {
+							CT.pubsub.unsubscribe(cur.room.opts.key);
 							zero.core.util.room(CT.data.get(target.parent));
+							CT.pubsub.subscribe(cur.room.opts.key);
+						}
 					}, "json");
 				}
 			});
