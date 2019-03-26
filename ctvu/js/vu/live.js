@@ -50,7 +50,6 @@ vu.live = {
 				if (meta)
 					pdata.body.position = [meta.weave, 0, meta.slide];
 				zero.core.util.join(vu.core.person(pdata), function(person) {
-					person.body.setBounds();
 					var s = person.body.springs;
 					vu.live._.people[pdata.key] = person;
 					if (isYou)
