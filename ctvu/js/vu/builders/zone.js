@@ -270,10 +270,12 @@ vu.builders.zone = {
 				pos = target.position(), opts = {
 					position: [pos.x, pos.y, pos.z]
 				};
-			if ("wall" in target.opts)
-				opts.wall = target.opts.wall;
-			vu.storage.setOpts(target.opts.key, opts);
-			_.selectors.controls.update();
+			if (!target.gesture) { // person (probs detect in a nicer way)
+				if ("wall" in target.opts)
+					opts.wall = target.opts.wall;
+				vu.storage.setOpts(target.opts.key, opts);
+				_.selectors.controls.update();
+			}
 		},
 		controls: function() {
 			var _ = vu.builders.zone._, selz = _.selectors;
@@ -344,13 +346,15 @@ vu.builders.zone = {
 								vu.core.choice({
 									data: Object.values(vu.storage.get(variety)),
 									cb: function(base) {
+										var upobj = {};
 										_.opts.thing_key = base.key;
 										if (base.texture)
-											_.opts.texture = base.texture;
+											upobj.texture = _.opts.texture = base.texture;
 										if (base.stripset)
-											_.opts.stripset = base.stripset;
+											upobj.stripset = _.opts.stripset = base.stripset;
 										selz.base.update();
-										vu.builders.zone.update();
+										zero.core.current.room.update(upobj);
+//										vu.builders.zone.update();
 										vu.builders.zone.persist({
 											base: base.key
 										});
@@ -378,9 +382,9 @@ vu.builders.zone = {
 						CT.dom.range(function(val) {
 							val = parseFloat(val);
 							scopts[i] = val;
-							room.updateCams = true;
 							room.adjust("scale", dim, val, true);
 							room.setBounds();
+							room.updateCameras();
 							vu.storage.setOpts(_.opts.key, {
 								scale: scopts
 							});
@@ -544,6 +548,7 @@ vu.builders.zone = {
 				selz.portal_requests.update();
 			}, name = room.name || room.environment;
 			_.opts = room;
+			vu.core.setroom(room);
 			CT.dom.setContent(_.curname, name);
 			selz.name.value = name;
 			selz.environment.value = room.environment;
@@ -588,7 +593,7 @@ vu.builders.zone = {
 				_.selectors.controls.update();
 			};
 			zero.core.util.join(vu.core.person(popts), function(person) {
-				vu.builders.current.person = person;
+				vu.builders.current.person = zero.core.current.person = person;
 				vu.builders.zone._.set(vu.storage.get("room"), true);
 			});
 			return CT.dom.div([[

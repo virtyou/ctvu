@@ -30,10 +30,11 @@ vu.core = {
 			transition: "slide"
 		}))).show();
 	},
-	menu: function(section, origin, selector, header) {
+	menu: function(section, origin, selector, header, onclick) {
 		return new CT.modal.Modal({
 			center: false,
 			noClose: true,
+			onclick: onclick,
 			transition: "slide",
 			slide: { origin: origin },
 			content: [
@@ -71,9 +72,19 @@ vu.core = {
 	room: function() {
 		return CT.merge(vu.storage.get("room"), core.config.ctvu.builders.room, core.config.ctzero.room);
 	},
+	setroom: function(room) {
+		vu.core._udata.room = room;
+		CT.storage.set("room", room.key);
+	},
 	setchar: function(person) {
 		vu.core._udata.person = person;
 		CT.storage.set("person", person.key);
+	},
+	isroom: function(rkey) {
+		return rkey == CT.storage.get("room");
+	},
+	ischar: function(pkey) {
+		return pkey == CT.storage.get("person");
 	},
 	birth: function(cb) {
 		vu.core.prompt({
