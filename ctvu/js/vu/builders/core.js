@@ -10,7 +10,7 @@ vu.builders.core = {
 			CT.dom.addContent("ctheader", _.linx());
 		else {
 			if (pname == "play")
-				vu.live.init(_.joined);
+				vu.live.init(_.joined, _.chat);
 			else
 				zero.core.util.join(_.raw, _.joined);
 			CT.dom.addContent("ctheader", vu.core.charlinx());
