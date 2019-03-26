@@ -44,7 +44,7 @@ vu.live = {
 		},
 		spawn: function(pkey, meta) {
 			if (pkey in vu.live._.people) return; // you switching rooms for instance
-			var isYou = pkey == CT.storage.get("person");
+			var isYou = vu.core.ischar(pkey);
 			CT.db.one(pkey, function(pdata) {
 				if (meta)
 					pdata.body.position = [meta.weave, 0, meta.slide];
