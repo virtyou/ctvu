@@ -7,7 +7,7 @@
         "apikey": "APIKEY"
     },
     "blurs": {
-        "talk": ["say something", "test voice", "type something"],
+        "talk": ["say something", "say what?", "type something"],
         "resource": ["what's the name?", "name this resource", "what's it called?"],
         "chain": ["enter name of chained trigger", "what happens next?", "next trigger"],
         "vibe": ["name that vibe", "what's the vibe?", "enter the name of your vibe"],
