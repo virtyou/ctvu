@@ -30,10 +30,11 @@ vu.core = {
 			transition: "slide"
 		}))).show();
 	},
-	menu: function(section, origin, selector, header) {
+	menu: function(section, origin, selector, header, onclick) {
 		return new CT.modal.Modal({
 			center: false,
 			noClose: true,
+			onclick: onclick,
 			transition: "slide",
 			slide: { origin: origin },
 			content: [
