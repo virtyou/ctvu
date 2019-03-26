@@ -108,6 +108,7 @@ iframe {
 	background: black;
 	white-space: nowrap;
 	border: 1px solid green;
+	transition: all 500ms !important;
 }
 
 .gmenu.run_home img {
@@ -175,7 +176,11 @@ iframe {
 	display: inline-block;
 }
 
-.gmenu.triggers, .gmenu.gestures {
-	max-width: 50%;
+.gmenu.triggers, .gmenu.gestures, .gmenu.chat {
+	width: 33%;
 	white-space: normal;
+}
+
+.gmenu.collapsed {
+	max-height: 36px;
 }
