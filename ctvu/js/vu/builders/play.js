@@ -23,6 +23,14 @@ vu.builders.play = {
 		chat: function() {
 
 		},
+		port: function(target) {
+			var _ = vu.builders.play._, cur = zero.core.current;
+			CT.pubsub.unsubscribe(cur.room.opts.key);
+			zero.core.util.room(CT.data.get(target || CT.storage.get("room")));
+			CT.pubsub.subscribe(cur.room.opts.key);
+			_.selectors.run_home.modal[vu.core.isroom(cur.room.opts.key)
+				? "hide" : "show"]("ctmain");
+		},
 		action: function() {
 			var _ = vu.builders.play._,
 				cur = zero.core.current, person = cur.person,
@@ -39,13 +47,8 @@ vu.builders.play = {
 					CT.db.one(portal.opts.portals.outgoing.target, function(target) {
 						if (target.owner) // room
 							person.say("this door is locked");
-						else {
-							CT.pubsub.unsubscribe(cur.room.opts.key);
-							zero.core.util.room(CT.data.get(target.parent));
-							CT.pubsub.subscribe(cur.room.opts.key);
-							_.selectors.run_home.modal[vu.core.isroom(cur.room.opts.key)
-								? "hide" : "show"]("ctmain");
-						}
+						else
+							_.port(target.parent);
 					}, "json");
 				}
 			});
@@ -59,7 +62,7 @@ vu.builders.play = {
 			selz.cameras = CT.dom.div(null, "centered");
 			selz.triggers = CT.dom.div();
 			selz.gestures = CT.dom.div();
-			selz.run_home = CT.dom.img("/img/home.png", null, _.home);
+			selz.run_home = CT.dom.img("/img/home.png", null, function() { _.port(); });
 		}
 	},
 	menus: function() {
