@@ -181,6 +181,16 @@ iframe {
 	white-space: normal;
 }
 
+.gmenu.chat {
+	max-height: 193px;
+}
+
+.gmenu.chat .out {
+	clear: both;
+	overflow-y: auto;
+	max-height: 129px;
+}
+
 .gmenu.collapsed {
-	max-height: 36px;
+	max-height: 60px;
 }
