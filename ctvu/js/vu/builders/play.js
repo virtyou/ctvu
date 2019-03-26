@@ -4,6 +4,7 @@ vu.builders.play = {
 		selectors: {},
 		menus: {
 			cameras: "top",
+			run_home: "topright",
 			triggers: "bottomleft",
 			gestures: "bottomright"
 		},
@@ -23,7 +24,8 @@ vu.builders.play = {
 
 		},
 		action: function() {
-			var cur = zero.core.current, person = cur.person,
+			var _ = vu.builders.play._,
+				cur = zero.core.current, person = cur.person,
 				pos = person.body.bone.position, hit = false;
 			cur.room.objects.filter(function(obj) {
 				var o = obj.opts, og = o.portals && o.portals.outgoing;
@@ -41,12 +43,14 @@ vu.builders.play = {
 							CT.pubsub.unsubscribe(cur.room.opts.key);
 							zero.core.util.room(CT.data.get(target.parent));
 							CT.pubsub.subscribe(cur.room.opts.key);
+							_.selectors.run_home.modal[vu.core.isroom(cur.room.opts.key)
+								? "hide" : "show"]("ctmain");
 						}
 					}, "json");
 				}
 			});
 			if (!hit)
-				vu.builders.play._.chat();
+				_.chat();
 		},
 		setup: function() {
 			var _ = vu.builders.play._, selz = _.selectors,
@@ -55,12 +59,16 @@ vu.builders.play = {
 			selz.cameras = CT.dom.div(null, "centered");
 			selz.triggers = CT.dom.div();
 			selz.gestures = CT.dom.div();
+			selz.run_home = CT.dom.img("/img/home.png", null, _.home);
 		}
 	},
 	menus: function() {
 		var section, _ = vu.builders.play._, selz = _.selectors;
 		_.setup();
-		for (section in _.menus)
-			vu.core.menu(section, _.menus[section], selz[section]).show("ctmain");
+		for (section in _.menus) {
+			selz[section].modal = vu.core.menu(section, _.menus[section], selz[section]);
+			if (section != "run_home")
+				selz[section].modal.show("ctmain");
+		}
 	}
 };
