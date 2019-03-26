@@ -3,6 +3,7 @@ vu.builders.play = {
 		opts: core.config.ctvu.builders.person,
 		selectors: {},
 		menus: {
+			chat: "bottom",
 			cameras: "top",
 			run_home: "topright",
 			triggers: "bottomleft",
@@ -63,13 +64,23 @@ vu.builders.play = {
 			selz.triggers = CT.dom.div();
 			selz.gestures = CT.dom.div();
 			selz.run_home = CT.dom.img("/img/home.png", null, function() { _.port(); });
+			selz.chat = CT.dom.div();
+		},
+		collapse: function(section) {
+			var _ = vu.builders.play._, selz = _.selectors,
+				sel = selz[section];
+			return function() {
+				sel._collapsed = !sel._collapsed;
+				sel.modal.node.classList[sel._collapsed ? "add" : "remove"]("collapsed");
+			};
 		}
 	},
 	menus: function() {
 		var section, _ = vu.builders.play._, selz = _.selectors;
 		_.setup();
 		for (section in _.menus) {
-			selz[section].modal = vu.core.menu(section, _.menus[section], selz[section]);
+			selz[section].modal = vu.core.menu(section, _.menus[section],
+				selz[section], null, vu.builders.play._.collapse(section));
 			if (section != "run_home")
 				selz[section].modal.show("ctmain");
 		}
