@@ -110,6 +110,14 @@ iframe {
 	border: 1px solid green;
 }
 
+.gmenu.run_home img {
+	width: 64px;
+}
+
+.gmenu.run_home img:hover {
+	filter: invert(100%);
+}
+
 .gmenu.basic {
 	width: 217px;
 }
