@@ -17,9 +17,13 @@ vu.builders.play = {
 			vu.controls.setGestures(_.selectors.gestures);
 			_.controls = new zero.core.Controls({
 				cb: _.action,
-				target: person,
-				moveCb: vu.live.up
+				moveCb: _.move,
+				target: person
 			});
+		},
+		move: function() {
+			zero.core.current.person.body.setBob();
+			vu.live.emit();
 		},
 		port: function(target) {
 			var _ = vu.builders.play._, cur = zero.core.current;
