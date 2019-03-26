@@ -29,7 +29,7 @@ vu.live = {
 				vu.live._.dance(person, meta);
 			},
 			message: function(msg) {
-				vu.live._.people[msg.user].say(msg.message, null, true);
+				vu.live._.chat(vu.live._.people[msg.user], msg.message);
 			}
 		},
 		dance: function(person, meta) {
@@ -73,9 +73,10 @@ vu.live = {
 		});
 		CT.pubsub.meta(zero.core.current.room.opts.key, targets);
 	},
-	init: function(joined) {
+	init: function(joined, chat) {
 		var _ = vu.live._, person = zero.core.current.person;
 		_.joined = joined;
+		_.chat = chat;
 		["subscribe", "join", "leave", "meta", "message"].forEach(function(ename) {
 			CT.pubsub.set_cb(ename, _.events[ename]);
 		});
