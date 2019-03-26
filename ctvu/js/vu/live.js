@@ -1,6 +1,7 @@
 vu.live = {
 	_: {
 		people: {},
+		springs: ["weave", "bob", "slide", "orientation"],
 		events: {
 			subscribe: function(data) {
 				var spawn = vu.live._.spawn;
@@ -23,7 +24,7 @@ vu.live = {
 				if (!person)
 					return; // will handle meta when spawn is complete
 				var s = person.body.springs, meta = data.meta;
-				["weave", "slide", "orientation"].forEach(function(prop) { // bob?
+				vu.live._.springs.forEach(function(prop) {
 					s[prop].target = meta[prop];
 				});
 				vu.live._.dance(person, meta);
@@ -55,7 +56,7 @@ vu.live = {
 					if (isYou)
 						vu.live._.joined(person);
 					if (!meta) return;
-					["weave", "slide", "orientation"].forEach(function(prop) {
+					vu.live._.springs.forEach(function(prop) {
 						s[prop].target = s[prop].value = meta[prop];
 					});
 					vu.live._.dance(person, meta);
@@ -63,12 +64,12 @@ vu.live = {
 			}, "json");
 		}
 	},
-	up: function() {
+	emit: function() {
 		var person = zero.core.current.person, s = person.body.springs, targets = {
 			dance: person.activeDance,
 			gesture: person.activeGesture
 		};
-		["weave", "slide", "orientation"].forEach(function(prop) {
+		vu.live._.springs.forEach(function(prop) {
 			targets[prop] = s[prop].target;
 		});
 		CT.pubsub.meta(zero.core.current.room.opts.key, targets);
