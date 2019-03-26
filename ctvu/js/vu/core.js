@@ -79,6 +79,12 @@ vu.core = {
 		vu.core._udata.person = person;
 		CT.storage.set("person", person.key);
 	},
+	isroom: function(rkey) {
+		return rkey == CT.storage.get("room");
+	},
+	ischar: function(pkey) {
+		return pkey == CT.storage.get("person");
+	},
 	birth: function(cb) {
 		vu.core.prompt({
 			prompt: "what's the new character's name?",
