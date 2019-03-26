@@ -57,6 +57,12 @@ vu.builders.play = {
 				CT.dom.pad(),
 				CT.dom.span(msg)
 			]);
+			if (!vu.core.ischar(person.opts.key)) {
+				var r = zero.core.current.room, you = zero.core.current.person,
+					diameter = r.bounds.min.distanceTo(r.bounds.max),
+					dist = person.body.position().distanceTo(you.body.position());
+				person.setVolume(1 - dist / diameter);
+			}
 			person.say(msg, null, true);
 			CT.dom.addContent(vu.builders.play._.selectors.chat.out, mnode);
 			mnode.scrollIntoView();
