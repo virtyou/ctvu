@@ -266,11 +266,11 @@ vu.builders.zone = {
 			};
 		},
 		posup: function() {
-			var _ = vu.builders.zone._, target = _.controls.target,
+			var _ = vu.builders.zone._, target = _.controls.target, pos, opts;
+			if (!target.gesture) { // person (probs detect in a nicer way)
 				pos = target.position(), opts = {
 					position: [pos.x, pos.y, pos.z]
 				};
-			if (!target.gesture) { // person (probs detect in a nicer way)
 				if ("wall" in target.opts)
 					opts.wall = target.opts.wall;
 				vu.storage.setOpts(target.opts.key, opts);
@@ -619,6 +619,7 @@ vu.builders.zone = {
 			onbuild: function(room) {
 				room.objects.forEach(vu.builders.zone._.regObj);
 				cb && cb();
+				room.cut();
 			}
 		}, vu.builders.zone._.opts));
 	},

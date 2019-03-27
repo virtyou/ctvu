@@ -28,7 +28,11 @@ vu.builders.play = {
 		port: function(target) {
 			var _ = vu.builders.play._, cur = zero.core.current;
 			CT.pubsub.unsubscribe(cur.room.opts.key);
-			zero.core.util.room(CT.data.get(target || CT.storage.get("room")));
+			zero.core.util.room(CT.merge({
+				onbuild: function(room) {
+					room.cut();
+				}
+			}, CT.data.get(target || CT.storage.get("room"))));
 			CT.pubsub.subscribe(cur.room.opts.key);
 			_.selectors.run_home.modal[vu.core.isroom(cur.room.opts.key)
 				? "hide" : "show"]("ctmain");
