@@ -595,12 +595,18 @@ vu.builders.zone = {
 			zero.core.util.join(vu.core.person(popts), function(person) {
 				vu.builders.current.person = zero.core.current.person = person;
 				vu.builders.zone._.set(vu.storage.get("room"), true);
+				zero.core.current.room.objects.forEach(vu.builders.zone._.regObj);
 			});
 			return CT.dom.div([[
 				CT.dom.span("viewing:"),
 				CT.dom.pad(),
 				_.curname
 			], CT.dom.link("swap", _.select)], "left shiftall");
+		},
+		regObj: function(furn) {
+			zero.core.click.register(furn, function() {
+				vu.builders.zone._.selectors.controls.update(furn);
+			});
 		}
 	},
 	persist: function(updates) { // NB: this only works in remote mode, screw it ;)
@@ -611,11 +617,7 @@ vu.builders.zone = {
 	update: function(cb) {
 		zero.core.util.room(CT.merge({
 			onbuild: function(room) {
-				room.objects.forEach(function(furn) {
-					zero.core.click.register(furn, function() {
-						vu.builders.zone._.selectors.controls.update(furn);
-					});
-				});
+				room.objects.forEach(vu.builders.zone._.regObj);
 				cb && cb();
 			}
 		}, vu.builders.zone._.opts));
