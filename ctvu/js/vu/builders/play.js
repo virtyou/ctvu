@@ -80,8 +80,9 @@ vu.builders.play = {
 			selz.triggers = CT.dom.div();
 			selz.gestures = CT.dom.div();
 			selz.run_home = CT.dom.img("/img/home.png", null, function() { _.port(); });
-			var out = CT.dom.div(null, "out"), say = function(val) {
+			var out = CT.dom.div(null, "out"), say = function(val, e) {
 				val && CT.pubsub.publish(zero.core.current.room.opts.key, val);
+				e && e.stopPropagation();
 				return "clear";
 			}, listButt = CT.dom.button("listen", function(e) {
 				listButt.style.color = "red";
