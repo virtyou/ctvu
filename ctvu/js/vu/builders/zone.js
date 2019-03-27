@@ -500,42 +500,9 @@ vu.builders.zone = {
 			};
 		},
 		cameras: function() {
-			var _ = vu.builders.zone._, cycbutt = CT.dom.button("cycle", function() {
-				if (cycbutt._cycler) {
-					clearInterval(cycbutt._cycler);
-					delete cycbutt._cycler;
-					cycbutt.innerHTML = "cycle";
-				} else {
-					cycbutt._cycler = setInterval(zero.core.current.room.cut, 3000);
-					cycbutt.innerHTML = "stop cycling";
-				}
-			}), pov = CT.dom.button("pov", function() {
-				zero.core.camera.setSprings(200);
-				zero.core.camera.perspective(vu.builders.current.person);
-			}), selz = _.selectors, room;
+			var selz = vu.builders.zone._.selectors;
 			selz.cameras = CT.dom.div();
-			selz.cameras.update = function() {
-				room = zero.core.current.room;
-				CT.dom.setContent(selz.cameras, [
-					CT.dom.div([
-						cycbutt,
-						CT.dom.button("refresh", function() {
-							room.updateCameras();
-							selz.cameras.update();
-							vu.builders.zone.persist({
-								cameras: room.cameras
-							});
-						})
-					], "right up20"),
-					CT.dom.div([pov].concat(room.cameras.map(function(cam, i) {
-						return CT.dom.button("cam " + i, function() {
-							zero.core.camera.setSprings(20);
-							zero.core.camera.perspective();
-							room.cut(i);
-						});
-					})), "centered clearnode")
-				]);
-			};
+			vu.controls.initCamera(selz.cameras);
 		},
 		set: function(room, noUpdate) {
 			var _ = vu.builders.zone._, selz = _.selectors, upmenus = function() {
