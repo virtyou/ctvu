@@ -1,8 +1,20 @@
 vu.controls = {
+	_: {
+		lookers: {
+			pov: {
+				y: 35,
+				z: 25
+			},
+			behind: {
+				y: 85,
+				z: -155
+			}
+		}
+	},
 	initCamera: function(node, cb) {
 		var mode = location.pathname.split("/").pop().split(".")[0];
 		if (["zone", "play"].indexOf(mode) != -1) {
-			var cycbutt = CT.dom.button("cycle", function(e) {
+			var lookers = vu.controls._.lookers, cycbutt = CT.dom.button("cycle", function(e) {
 				if (cycbutt._cycler) {
 					clearInterval(cycbutt._cycler);
 					delete cycbutt._cycler;
@@ -12,11 +24,18 @@ vu.controls = {
 					cycbutt.innerHTML = "stop cycling";
 				}
 				e.stopPropagation();
-			}), pov = CT.dom.button("pov", function(e) {
-				zero.core.camera.setSprings(200);
-				zero.core.camera.perspective(zero.core.current.person);
-				e.stopPropagation();
-			}), room, tbutts;
+			}), room, tbutts, per, dim, bl, looker = function(perspective) {
+				return function(e) {
+					zero.core.camera.setSprings(200);
+					zero.core.camera.perspective(zero.core.current.person);
+					e.stopPropagation();
+					per = vu.controls._.lookers[perspective];
+					bl = zero.core.current.person.body.looker;
+					for (dim in per)
+						bl.adjust("position", dim, per[dim]);
+				};
+			}, pov = CT.dom.button("pov", looker("pov")),
+				behind = CT.dom.button("behind", looker("behind"));
 			node.update = function() {
 				room = zero.core.current.room;
 				tbutts = [cycbutt];
@@ -30,7 +49,7 @@ vu.controls = {
 				}));
 				CT.dom.setContent(node, [
 					CT.dom.div(tbutts, "right up20"),
-					CT.dom.div([pov].concat(room.cameras.map(function(cam, i) {
+					CT.dom.div([pov, behind].concat(room.cameras.map(function(cam, i) {
 						return CT.dom.button("cam " + i, function(e) {
 							zero.core.camera.setSprings(20);
 							zero.core.camera.perspective();
