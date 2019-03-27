@@ -12,9 +12,10 @@ vu.controls = {
 					cycbutt.innerHTML = "stop cycling";
 				}
 				e.stopPropagation();
-			}), pov = CT.dom.button("pov", function() {
+			}), pov = CT.dom.button("pov", function(e) {
 				zero.core.camera.setSprings(200);
 				zero.core.camera.perspective(zero.core.current.person);
+				e.stopPropagation();
 			}), room, tbutts;
 			node.update = function() {
 				room = zero.core.current.room;
