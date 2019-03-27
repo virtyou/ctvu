@@ -13,6 +13,7 @@ CT.require("user.core");
 CT.require("zero.core");
 CT.require("vu.core");
 CT.require("vu.color");
+CT.require("vu.controls");
 CT.require("vu.storage");
 CT.require("vu.builders.core");
 CT.require("vu.builders.zone");
