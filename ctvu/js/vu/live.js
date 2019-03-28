@@ -2,6 +2,14 @@ vu.live = {
 	_: {
 		people: {},
 		springs: ["weave", "bob", "slide", "orientation"],
+		actions: { // message types
+			chat: function(person, msg) {
+				vu.live._.chat(person, msg);
+			},
+			trigger: function(person, tname) {
+				person.respond(tname);
+			}
+		},
 		events: {
 			subscribe: function(data) {
 				var spawn = vu.live._.spawn;
@@ -30,10 +38,13 @@ vu.live = {
 				vu.live._.dance(person, meta);
 			},
 			message: function(msg) {
-				vu.live._.chat(vu.live._.people[msg.user], msg.message);
+				var data = msg.message;
+				vu.live._.actions[data.action](vu.live._.people[msg.user], data.data);
 			}
 		},
 		dance: function(person, meta) {
+			if (meta.vibe != person.vibe.current)
+				person.vibe.update(meta.vibe);
 			if (meta.gesture)
 				(person.activeGesture == meta.gesture) || person.gesture(meta.gesture);
 			else if (person.activeGesture)
@@ -65,6 +76,7 @@ vu.live = {
 	},
 	emit: function() {
 		var person = zero.core.current.person, s = person.body.springs, targets = {
+			vibe: person.vibe.current,
 			dance: person.activeDance,
 			gesture: person.activeGesture
 		};
