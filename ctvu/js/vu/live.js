@@ -6,6 +6,13 @@ vu.live = {
 			chat: function(person, msg) {
 				vu.live._.chat(person, msg);
 			},
+			inject: function(person, pkey) { // join
+				zero.core.current.room.inject(person, zero.core.Thing.get(pkey));
+				person.body.show();
+			},
+			eject: function(person, pkey) { // leave
+				zero.core.current.room.eject(person, zero.core.Thing.get(pkey));
+			},
 			trigger: function(person, tname) {
 				person.respond(tname);
 			}
@@ -18,12 +25,14 @@ vu.live = {
 				});
 			},
 			join: function(chan, user, meta) {
-				vu.live._.spawn(user, meta);
+				vu.live._.spawn(user, meta, true);
 			},
 			leave: function(chan, user) {
 				var peeps = vu.live._.people;
-				peeps[user].remove();
-				delete peeps[user];
+				setTimeout(function() {
+					peeps[user].remove();
+					delete peeps[user];
+				}, 1000); // leave time for ejection
 			},
 			meta: function(data) {
 				if (data.user == zero.core.current.person.opts.key)
@@ -54,19 +63,19 @@ vu.live = {
 			else if (person.activeDance)
 				person.undance();
 		},
-		spawn: function(pkey, meta) {
+		spawn: function(pkey, meta, invis) {
 			if (pkey in vu.live._.people) return; // you switching rooms for instance
 			var isYou = vu.core.ischar(pkey);
 			CT.db.one(pkey, function(pdata) {
-				if (meta)
-					pdata.body.position = [meta.weave, 0, meta.slide];
-				zero.core.util.join(vu.core.person(pdata), function(person) {
+				if (meta && !invis)
+					pdata.body.position = [meta.weave, meta.bob, meta.slide];
+				zero.core.util.join(vu.core.person(pdata, invis), function(person) {
 					var s = person.body.springs;
 					vu.live._.people[pdata.key] = person;
 					if (isYou)
 						vu.live._.joined(person);
 					if (!meta) return;
-					vu.live._.springs.forEach(function(prop) {
+					invis || vu.live._.springs.forEach(function(prop) {
 						s[prop].target = s[prop].value = meta[prop];
 					});
 					vu.live._.dance(person, meta);
