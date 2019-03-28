@@ -105,7 +105,7 @@ vu.controls = {
 			})
 		]);
 	},
-	setGestures: function(node) {
+	setGestures: function(node, cb) {
 		var person = zero.core.current.person,
 			gestz = person.opts.gestures,
 			dances = person.opts.dances;
@@ -115,6 +115,7 @@ vu.controls = {
 					onclick: function(e) {
 						i ? person.gesture(gest) : person.ungesture();
 						e.stopPropagation();
+						cb && cb("gesture", gest);
 					}
 				});
 			}),
@@ -124,6 +125,7 @@ vu.controls = {
 					onclick: function(e) {
 						i ? person.dance(dance) : person.undance();
 						e.stopPropagation();
+						cb && cb("dance", dance);
 					}
 				});
 			})
