@@ -7,11 +7,11 @@ vu.live = {
 				vu.live._.chat(person, msg);
 			},
 			inject: function(person, pkey) { // join
-				zero.core.current.room.inject(person, zero.core.Thing.get(pkey));
+				zero.core.current.room.inject(person, pkey && zero.core.Thing.get(pkey));
 				person.body.show();
 			},
 			eject: function(person, pkey) { // leave
-				zero.core.current.room.eject(person, zero.core.Thing.get(pkey));
+				zero.core.current.room.eject(person, pkey && zero.core.Thing.get(pkey));
 			},
 			trigger: function(person, tname) {
 				person.respond(tname);
