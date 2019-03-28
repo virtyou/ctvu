@@ -76,7 +76,7 @@ vu.controls = {
 			CT.dom.setContent(node, butt);
 		}
 	},
-	setTriggers: function(node) {
+	setTriggers: function(node, cb) {
 		var person = zero.core.current.person,
 			responses = person.opts.responses,
 			triggers = person.brain.triggers,
@@ -89,6 +89,7 @@ vu.controls = {
 						person.respond(trig);
 						vu.controls.setTriggers(node);
 						e.stopPropagation();
+						cb && cb("trigger", trig);
 					}
 				});
 			}),
@@ -98,6 +99,7 @@ vu.controls = {
 					onclick: function(e) {
 						person.vibe.update(vibe);
 						e.stopPropagation();
+						cb && cb("vibe", vibe);
 					}
 				});
 			})
