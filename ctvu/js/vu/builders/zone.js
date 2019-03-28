@@ -51,7 +51,7 @@ vu.builders.zone = {
 					vu.storage.setOpts(furn.opts.key, {
 						scale: [fval, fval, fval]
 					});
-				}, 0, 10, furn.scale().x, 0.01, "w1")
+				}, 0.2, 16, furn.scale().x, 0.01, "w1")
 			], "topbordered padded margined");
 		},
 		portin: function(door) {
