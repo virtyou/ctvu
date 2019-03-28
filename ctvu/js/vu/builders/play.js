@@ -13,12 +13,20 @@ vu.builders.play = {
 			var _ = vu.builders.play._;
 			vu.builders.current.person = zero.core.current.person = person;
 			vu.controls.initCamera(_.selectors.cameras);
-			vu.controls.setTriggers(_.selectors.triggers);
-			vu.controls.setGestures(_.selectors.gestures);
+			vu.controls.setTriggers(_.selectors.triggers, _.emit);
+			vu.controls.setGestures(_.selectors.gestures, _.emit);
 			_.controls = new zero.core.Controls({
 				cb: _.action,
 				moveCb: _.move,
 				target: person
+			});
+		},
+		emit: function(action, val) {
+			if (["vibe", "gesture", "dance"].indexOf(action) != -1)
+				return vu.live.emit();
+			CT.pubsub.publish(zero.core.current.room.opts.key, {
+				action: action,
+				data: val
 			});
 		},
 		move: function() {
@@ -85,7 +93,7 @@ vu.builders.play = {
 			selz.gestures = CT.dom.div();
 			selz.run_home = CT.dom.img("/img/home.png", null, function() { _.port(); });
 			var out = CT.dom.div(null, "out"), say = function(val, e) {
-				val && CT.pubsub.publish(zero.core.current.room.opts.key, val);
+				val && _.emit("chat", val);
 				e && e.stopPropagation();
 				return "clear";
 			}, listButt = CT.dom.button("listen", function(e) {
