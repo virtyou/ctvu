@@ -65,7 +65,9 @@ vu.core = {
 			node.fields
 		]);
 	},
-	person: function(popts) {
+	person: function(popts, invisible) {
+		if (invisible)
+			popts.body.invisible = true;
 		return zero.core.util.person(vu.core.bgen(popts.body),
 			popts.name || "you", null, popts, popts.body);
 	},
