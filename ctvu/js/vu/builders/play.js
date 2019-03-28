@@ -34,17 +34,23 @@ vu.builders.play = {
 			zero.core.current.person.body.setBob();
 			vu.live.emit();
 		},
-		port: function(target) {
+		portin: function(target, portinkey) {
 			var _ = vu.builders.play._, cur = zero.core.current;
-			CT.pubsub.unsubscribe(cur.room.opts.key);
 			zero.core.util.room(CT.merge({
 				onbuild: function(room) {
+					_.emit("inject", portinkey);
 					room.cut();
 				}
 			}, CT.data.get(target || CT.storage.get("room"))));
 			CT.pubsub.subscribe(cur.room.opts.key);
 			_.selectors.run_home.modal[vu.core.isroom(cur.room.opts.key)
 				? "hide" : "show"]("ctmain");
+		},
+		port: function(target, portout, portin) {
+			var _ = vu.builders.play._, cur = zero.core.current;
+			_.emit("eject", portout);
+			CT.pubsub.unsubscribe(cur.room.opts.key);
+			setTimeout(_.portin, 500, target, portin);
 		},
 		action: function() {
 			var _ = vu.builders.play._,
@@ -63,7 +69,7 @@ vu.builders.play = {
 						if (target.owner) // room
 							person.say("this door is locked");
 						else
-							_.port(target.parent);
+							_.port(target.parent, portal.opts.key, target.key);
 					}, "json");
 				}
 			});
