@@ -32,7 +32,7 @@ vu.live = {
 				setTimeout(function() {
 					peeps[user].remove();
 					delete peeps[user];
-				}, 1000); // leave time for ejection
+				}, 500); // leave time for ejection
 			},
 			meta: function(data) {
 				if (data.user == zero.core.current.person.opts.key)
