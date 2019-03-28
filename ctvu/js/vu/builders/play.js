@@ -9,6 +9,7 @@ vu.builders.play = {
 			triggers: "bottomleft",
 			gestures: "bottomright"
 		},
+		emitters: ["vibe", "gesture", "dance"],
 		joined: function(person) {
 			var _ = vu.builders.play._;
 			vu.builders.current.person = zero.core.current.person = person;
@@ -22,7 +23,7 @@ vu.builders.play = {
 			});
 		},
 		emit: function(action, val) {
-			if (["vibe", "gesture", "dance"].indexOf(action) != -1)
+			if (vu.builders.play._.emitters.indexOf(action) != -1)
 				return vu.live.emit();
 			CT.pubsub.publish(zero.core.current.room.opts.key, {
 				action: action,
