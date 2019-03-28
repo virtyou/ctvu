@@ -36,6 +36,10 @@ vu.builders.play = {
 		},
 		portin: function(target, portinkey) {
 			var _ = vu.builders.play._, cur = zero.core.current;
+			Object.values(cur.people).forEach(function(person) {
+				if (!vu.core.ischar(person.opts.key))
+					person.remove();
+			});
 			zero.core.util.room(CT.merge({
 				onbuild: function(room) {
 					_.emit("inject", portinkey);
