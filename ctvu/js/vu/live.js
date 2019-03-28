@@ -2,6 +2,21 @@ vu.live = {
 	_: {
 		people: {},
 		springs: ["weave", "bob", "slide", "orientation"],
+		actions: { // message types
+			chat: function(person, msg) {
+				vu.live._.chat(person, msg);
+			},
+			inject: function(person, pkey) { // join
+				zero.core.current.room.inject(person, pkey && zero.core.Thing.get(pkey));
+				person.body.show();
+			},
+			eject: function(person, pkey) { // leave
+				zero.core.current.room.eject(person, pkey && zero.core.Thing.get(pkey));
+			},
+			trigger: function(person, tname) {
+				person.respond(tname);
+			}
+		},
 		events: {
 			subscribe: function(data) {
 				var spawn = vu.live._.spawn;
@@ -10,12 +25,14 @@ vu.live = {
 				});
 			},
 			join: function(chan, user, meta) {
-				vu.live._.spawn(user, meta);
+				vu.live._.spawn(user, meta, true);
 			},
 			leave: function(chan, user) {
 				var peeps = vu.live._.people;
-				peeps[user].remove();
-				delete peeps[user];
+				setTimeout(function() {
+					peeps[user].remove();
+					delete peeps[user];
+				}, 500); // leave time for ejection
 			},
 			meta: function(data) {
 				if (data.user == zero.core.current.person.opts.key)
@@ -30,10 +47,13 @@ vu.live = {
 				vu.live._.dance(person, meta);
 			},
 			message: function(msg) {
-				vu.live._.chat(vu.live._.people[msg.user], msg.message);
+				var data = msg.message;
+				vu.live._.actions[data.action](vu.live._.people[msg.user], data.data);
 			}
 		},
 		dance: function(person, meta) {
+			if (meta.vibe != person.vibe.current)
+				person.vibe.update(meta.vibe);
 			if (meta.gesture)
 				(person.activeGesture == meta.gesture) || person.gesture(meta.gesture);
 			else if (person.activeGesture)
@@ -43,19 +63,19 @@ vu.live = {
 			else if (person.activeDance)
 				person.undance();
 		},
-		spawn: function(pkey, meta) {
+		spawn: function(pkey, meta, invis) {
 			if (pkey in vu.live._.people) return; // you switching rooms for instance
 			var isYou = vu.core.ischar(pkey);
 			CT.db.one(pkey, function(pdata) {
-				if (meta)
-					pdata.body.position = [meta.weave, 0, meta.slide];
-				zero.core.util.join(vu.core.person(pdata), function(person) {
+				if (meta && !invis)
+					pdata.body.position = [meta.weave, meta.bob, meta.slide];
+				zero.core.util.join(vu.core.person(pdata, invis), function(person) {
 					var s = person.body.springs;
 					vu.live._.people[pdata.key] = person;
 					if (isYou)
 						vu.live._.joined(person);
 					if (!meta) return;
-					vu.live._.springs.forEach(function(prop) {
+					invis || vu.live._.springs.forEach(function(prop) {
 						s[prop].target = s[prop].value = meta[prop];
 					});
 					vu.live._.dance(person, meta);
@@ -65,6 +85,7 @@ vu.live = {
 	},
 	emit: function() {
 		var person = zero.core.current.person, s = person.body.springs, targets = {
+			vibe: person.vibe.current,
 			dance: person.activeDance,
 			gesture: person.activeGesture
 		};

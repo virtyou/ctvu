@@ -76,7 +76,7 @@ vu.controls = {
 			CT.dom.setContent(node, butt);
 		}
 	},
-	setTriggers: function(node) {
+	setTriggers: function(node, cb) {
 		var person = zero.core.current.person,
 			responses = person.opts.responses,
 			triggers = person.brain.triggers,
@@ -89,6 +89,7 @@ vu.controls = {
 						person.respond(trig);
 						vu.controls.setTriggers(node);
 						e.stopPropagation();
+						cb && cb("trigger", trig);
 					}
 				});
 			}),
@@ -98,12 +99,13 @@ vu.controls = {
 					onclick: function(e) {
 						person.vibe.update(vibe);
 						e.stopPropagation();
+						cb && cb("vibe", vibe);
 					}
 				});
 			})
 		]);
 	},
-	setGestures: function(node) {
+	setGestures: function(node, cb) {
 		var person = zero.core.current.person,
 			gestz = person.opts.gestures,
 			dances = person.opts.dances;
@@ -113,6 +115,7 @@ vu.controls = {
 					onclick: function(e) {
 						i ? person.gesture(gest) : person.ungesture();
 						e.stopPropagation();
+						cb && cb("gesture", gest);
 					}
 				});
 			}),
@@ -122,6 +125,7 @@ vu.controls = {
 					onclick: function(e) {
 						i ? person.dance(dance) : person.undance();
 						e.stopPropagation();
+						cb && cb("dance", dance);
 					}
 				});
 			})

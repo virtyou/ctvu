@@ -9,33 +9,52 @@ vu.builders.play = {
 			triggers: "bottomleft",
 			gestures: "bottomright"
 		},
+		emitters: ["vibe", "gesture", "dance"],
 		joined: function(person) {
 			var _ = vu.builders.play._;
 			vu.builders.current.person = zero.core.current.person = person;
 			vu.controls.initCamera(_.selectors.cameras);
-			vu.controls.setTriggers(_.selectors.triggers);
-			vu.controls.setGestures(_.selectors.gestures);
+			vu.controls.setTriggers(_.selectors.triggers, _.emit);
+			vu.controls.setGestures(_.selectors.gestures, _.emit);
 			_.controls = new zero.core.Controls({
 				cb: _.action,
 				moveCb: _.move,
 				target: person
 			});
 		},
+		emit: function(action, val) {
+			if (vu.builders.play._.emitters.indexOf(action) != -1)
+				return vu.live.emit();
+			CT.pubsub.publish(zero.core.current.room.opts.key, {
+				action: action,
+				data: val
+			});
+		},
 		move: function() {
 			zero.core.current.person.body.setBob();
 			vu.live.emit();
 		},
-		port: function(target) {
+		portin: function(target, portinkey) {
 			var _ = vu.builders.play._, cur = zero.core.current;
-			CT.pubsub.unsubscribe(cur.room.opts.key);
+			Object.values(cur.people).forEach(function(person) {
+				if (!vu.core.ischar(person.opts.key))
+					person.remove();
+			});
 			zero.core.util.room(CT.merge({
 				onbuild: function(room) {
+					_.emit("inject", portinkey);
 					room.cut();
 				}
 			}, CT.data.get(target || CT.storage.get("room"))));
 			CT.pubsub.subscribe(cur.room.opts.key);
 			_.selectors.run_home.modal[vu.core.isroom(cur.room.opts.key)
 				? "hide" : "show"]("ctmain");
+		},
+		port: function(target, portout, portin) {
+			var _ = vu.builders.play._, cur = zero.core.current;
+			_.emit("eject", portout);
+			CT.pubsub.unsubscribe(cur.room.opts.key);
+			setTimeout(_.portin, 500, target, portin);
 		},
 		action: function() {
 			var _ = vu.builders.play._,
@@ -54,7 +73,7 @@ vu.builders.play = {
 						if (target.owner) // room
 							person.say("this door is locked");
 						else
-							_.port(target.parent);
+							_.port(target.parent, portal.opts.key, target.key);
 					}, "json");
 				}
 			});
@@ -85,7 +104,7 @@ vu.builders.play = {
 			selz.gestures = CT.dom.div();
 			selz.run_home = CT.dom.img("/img/home.png", null, function() { _.port(); });
 			var out = CT.dom.div(null, "out"), say = function(val, e) {
-				val && CT.pubsub.publish(zero.core.current.room.opts.key, val);
+				val && _.emit("chat", val);
 				e && e.stopPropagation();
 				return "clear";
 			}, listButt = CT.dom.button("listen", function(e) {
