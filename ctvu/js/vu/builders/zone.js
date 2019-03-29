@@ -191,6 +191,7 @@ vu.builders.zone = {
 			 	_.unfurn(portal),
 			 	portal.name,
 			 	_.fscale(portal),
+			 	_.materials(portal),
 			 	_.plinx(portal)
 			 ];
 		},
@@ -199,7 +200,8 @@ vu.builders.zone = {
 			 return [
 			 	_.unfurn(poster),
 			 	poster.name,
-			 	_.fscale(poster)
+			 	_.fscale(poster),
+			 	_.materials(poster)
 			 ];
 		},
 		furnishing: function(furn) {
@@ -217,7 +219,8 @@ vu.builders.zone = {
 							rotation: rot
 						});
 					}, 0, 6, furn.rotation().y, 0.01, "w1")
-				], "topbordered padded margined")
+				], "topbordered padded margined"),
+			 	_.materials(furn)
 			];
 		},
 		furn: function(furn) {
@@ -442,13 +445,25 @@ vu.builders.zone = {
 				}, 0, 150, obj.thring.material.shininess || 30, 1, "w1"));
 			};
 
+			if (furn) {
+				selz.color.update();
+				selz.specular.update();
+				selz.shininess.update();
+			}
+
 			return [
-				"Color",
-				selz.color,
-				"Specular",
-				selz.specular,
-				"Shininess",
-				selz.shininess
+				CT.dom.div([
+					"Color",
+					selz.color
+				], "topbordered padded margined"),
+				CT.dom.div([
+					"Specular",
+					selz.specular
+				], "topbordered padded margined"),
+				CT.dom.div([
+					"Shininess",
+					selz.shininess
+				], "topbordered padded margined")
 			];
 		},
 		lightup: function(color, lnum) {
