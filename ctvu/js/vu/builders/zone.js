@@ -406,6 +406,17 @@ vu.builders.zone = {
 				CT.dom.setContent(selz.specular, vu.color.selector(room, "specular"));
 			};
 
+			selz.shininess = CT.dom.div();
+			selz.shininess.update = function() {
+				var room = zero.core.current.room;
+				CT.dom.setContent(selz.shininess, CT.dom.range(function(val) {
+					val = parseInt(val);
+					_.opts.material.shininess = room.opts.material.shininess
+						= room.thring.material.shininess = val; // overkill?
+					vu.storage.setMaterial(room.opts.key, { shininess: val });
+				}, 0, 150, _.opts.material.shininess || 30, 1, "w1"));
+			};
+
 			selz.basic = [
 				CT.dom.div([
 					"Name",
@@ -428,7 +439,9 @@ vu.builders.zone = {
 					"Color",
 					selz.color,
 					"Specular",
-					selz.specular
+					selz.specular,
+					"Shininess",
+					selz.shininess
 				], "padded bordered round")
 			];
 		},
@@ -516,6 +529,7 @@ vu.builders.zone = {
 				selz.cameras.update();
 				selz.controls.update();
 				selz.specular.update();
+				selz.shininess.update();
 				selz.furnishings.update();
 				selz.portal_requests.update();
 			}, name = room.name || room.environment;
