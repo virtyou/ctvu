@@ -2,25 +2,63 @@ vu.builders.play = {
 	_: {
 		opts: core.config.ctvu.builders.person,
 		selectors: {},
+		emitters: ["vibe", "gesture", "dance"],
 		menus: {
 			chat: "bottom",
 			cameras: "top",
+			info: "topleft",
 			run_home: "topright",
 			triggers: "bottomleft",
 			gestures: "bottomright"
 		},
-		emitters: ["vibe", "gesture", "dance"],
-		joined: function(person) {
-			var _ = vu.builders.play._;
-			vu.builders.current.person = zero.core.current.person = person;
-			vu.controls.initCamera(_.selectors.cameras);
-			vu.controls.setTriggers(_.selectors.triggers, _.emit);
-			vu.controls.setGestures(_.selectors.gestures, _.emit);
-			_.controls = new zero.core.Controls({
-				cb: _.action,
-				moveCb: _.move,
-				target: person
-			});
+		cbs: {
+			joined: function(person) { // (you)
+				var _ = vu.builders.play._;
+				vu.builders.current.person = zero.core.current.person = person;
+				vu.controls.initCamera(_.selectors.cameras);
+				vu.controls.setTriggers(_.selectors.triggers, _.emit);
+				vu.controls.setGestures(_.selectors.gestures, _.emit);
+				_.controls = new zero.core.Controls({
+					cb: _.action,
+					moveCb: _.move,
+					target: person
+				});
+				zero.core.click.trigger(person.body);
+			},
+			chat: function(person, msg) {
+				var mnode = CT.dom.div([
+					CT.dom.span(person.name, "bold italic green"),
+					CT.dom.pad(),
+					CT.dom.span(msg)
+				]);
+				if (!vu.core.ischar(person.opts.key)) {
+					var r = zero.core.current.room, you = zero.core.current.person,
+						diameter = r.bounds.min.distanceTo(r.bounds.max),
+						dist = person.body.position().distanceTo(you.body.position());
+					person.setVolume(1 - dist / diameter);
+				}
+				person.say(msg, null, true);
+				CT.dom.addContent(vu.builders.play._.selectors.chat.out, mnode);
+				mnode.scrollIntoView();
+			},
+			enter: function(person) {
+				zero.core.click.register(person.body, function() {
+					CT.dom.setContent(vu.builders.play._.selectors.info, [
+						CT.dom.div(person.name, "bigger"),
+						vu.core.ischar(person.opts.key) ? [
+							CT.dom.div("(you)", "up20 right"),
+							"move around with arrow keys",
+							"TAB for jump",
+							"1-9 for gestures",
+							"1-9 + SHIFT for dances",
+							"0 to ungesture",
+							"0 + SHIFT to undance"
+						] : [
+							"SHIFT + click to approach"
+						]
+					]);
+				});
+			}
 		},
 		emit: function(action, val) {
 			if (vu.builders.play._.emitters.indexOf(action) != -1)
@@ -78,33 +116,20 @@ vu.builders.play = {
 				}
 			});
 		},
-		chat: function(person, msg) {
-			var mnode = CT.dom.div([
-				CT.dom.span(person.name, "bold italic green"),
-				CT.dom.pad(),
-				CT.dom.span(msg)
-			]);
-			if (!vu.core.ischar(person.opts.key)) {
-				var r = zero.core.current.room, you = zero.core.current.person,
-					diameter = r.bounds.min.distanceTo(r.bounds.max),
-					dist = person.body.position().distanceTo(you.body.position());
-				person.setVolume(1 - dist / diameter);
-			}
-			person.say(msg, null, true);
-			CT.dom.addContent(vu.builders.play._.selectors.chat.out, mnode);
-			mnode.scrollIntoView();
-		},
 		setup: function() {
 			var _ = vu.builders.play._, selz = _.selectors,
-				popts = _.opts = vu.storage.get("person") || _.opts,
-				blurs = core.config.ctvu.blurs;
+				popts = _.opts = vu.storage.get("person") || _.opts;
 			_.raw = vu.core.person(popts);
 			selz.cameras = CT.dom.div(null, "centered");
 			selz.triggers = CT.dom.div();
 			selz.gestures = CT.dom.div();
 			selz.run_home = CT.dom.img("/img/home.png", null, function() { _.port(); });
+			selz.chat = _.chatterbox();
+			selz.info = CT.dom.div();
+		},
+		chatterbox: function() {
 			var out = CT.dom.div(null, "out"), say = function(val, e) {
-				val && _.emit("chat", val);
+				val && vu.builders.play._.emit("chat", val);
 				e && e.stopPropagation();
 				return "clear";
 			}, listButt = CT.dom.button("listen", function(e) {
@@ -114,10 +139,12 @@ vu.builders.play = {
 					listButt.style.color = "black";
 				});
 				e.stopPropagation();
-			}, "right up20"), cbox = CT.dom.smartField(say, "w1 block mt5", null, null, null, blurs.talk);
+			}, "right up20"), cbox = CT.dom.smartField(say, "w1 block mt5",
+				null, null, null, core.config.ctvu.blurs.talk);
 			cbox.onclick = function(e) { e.stopPropagation(); };
-			selz.chat = CT.dom.div([ listButt, out, cbox ]);
-			selz.chat.out = out;
+			var n = CT.dom.div([ listButt, out, cbox ]);
+			n.out = out;
+			return n;
 		},
 		collapse: function(section) {
 			var _ = vu.builders.play._, selz = _.selectors,
