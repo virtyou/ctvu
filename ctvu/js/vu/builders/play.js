@@ -13,8 +13,8 @@ vu.builders.play = {
 		},
 		cbs: {
 			joined: function(person) { // (you)
-				var _ = vu.builders.play._;
-				vu.builders.current.person = zero.core.current.person = person;
+				var _ = vu.builders.play._, cur = zero.core.current;
+				vu.builders.current.person = cur.person = person;
 				vu.controls.initCamera(_.selectors.cameras);
 				vu.controls.setTriggers(_.selectors.triggers, _.emit);
 				vu.controls.setGestures(_.selectors.gestures, _.emit);
@@ -23,6 +23,7 @@ vu.builders.play = {
 					moveCb: _.move,
 					target: person
 				});
+				cur.room.objects.forEach(_.clickreg);
 				zero.core.click.trigger(person.body);
 			},
 			chat: function(person, msg) {
@@ -42,23 +43,32 @@ vu.builders.play = {
 				mnode.scrollIntoView();
 			},
 			enter: function(person) {
-				zero.core.click.register(person.body, function() {
-					CT.dom.setContent(vu.builders.play._.selectors.info, [
-						CT.dom.div(person.name, "bigger"),
-						vu.core.ischar(person.opts.key) ? [
-							CT.dom.div("(you)", "up20 right"),
-							"move around with arrow keys",
-							"TAB for jump",
-							"1-9 for gestures",
-							"1-9 + SHIFT for dances",
-							"0 to ungesture",
-							"0 + SHIFT to undance"
-						] : [
-							"SHIFT + click to approach"
-						]
-					]);
-				});
+				vu.builders.play._.clickreg(person);
 			}
+		},
+		clickreg: function(thing) {
+			var isYou = vu.core.ischar(thing.opts.key),
+				target = thing.body || thing;
+			zero.core.click.register(target, function() {
+				CT.dom.setContent(vu.builders.play._.selectors.info, [
+					CT.dom.div(thing.name, "bigger"),
+					isYou ? [
+						CT.dom.div("(you)", "up20 right"),
+						"move around with arrow keys",
+						"TAB for jump",
+						"1-9 for gestures",
+						"1-9 + SHIFT for dances",
+						"0 to ungesture",
+						"0 + SHIFT to undance"
+					] : [
+						"SHIFT + click to approach"
+					]
+				]);
+				zero.core.camera.follow(target.looker || target);
+
+				// TODO: person should spin around to face target
+				//isYou || zero.core.current.person[CT.key.down("SHIFT") ? "approach": "look"](target);
+			});
 		},
 		emit: function(action, val) {
 			if (vu.builders.play._.emitters.indexOf(action) != -1)
@@ -82,6 +92,7 @@ vu.builders.play = {
 				onbuild: function(room) {
 					_.emit("inject", portinkey);
 					room.cut();
+					room.objects.forEach(_.clickreg);
 				}
 			}, CT.data.get(target || CT.storage.get("room"))));
 			CT.pubsub.subscribe(cur.room.opts.key);
