@@ -1,6 +1,7 @@
 vu.live = {
 	_: {
 		people: {},
+		pending: {},
 		springs: ["weave", "bob", "slide", "orientation"],
 		actions: { // message types
 			chat: function(person, msg) {
@@ -47,8 +48,12 @@ vu.live = {
 				vu.live._.dance(person, meta);
 			},
 			message: function(msg) {
-				var data = msg.message;
-				vu.live._.actions[data.action](vu.live._.people[msg.user], data.data);
+				var data = msg.message,
+					person = vu.live._.people[msg.user];
+				if (person)
+					vu.live._.actions[data.action](person, data.data);
+				else // probs still building
+					vu.live._.pending[msg.user] = msg;
 			}
 		},
 		dance: function(person, meta) {
@@ -65,20 +70,24 @@ vu.live = {
 		},
 		spawn: function(pkey, meta, invis) {
 			if (pkey in vu.live._.people) return; // you switching rooms for instance
-			var isYou = vu.core.ischar(pkey);
+			var _ = vu.live._, isYou = vu.core.ischar(pkey);
 			CT.db.one(pkey, function(pdata) {
 				if (meta && !invis)
 					pdata.body.position = [meta.weave, meta.bob, meta.slide];
 				zero.core.util.join(vu.core.person(pdata, invis), function(person) {
 					var s = person.body.springs;
-					vu.live._.people[pdata.key] = person;
-					vu.live._.cbs.enter(person);
+					_.people[pdata.key] = person;
+					_.cbs.enter(person);
 					isYou && vu.live._.cbs.joined(person);
+					if (_.pending[pdata.key]) {
+						_.events.message(_.pending[pdata.key]);
+						delete _.pending[pdata.key];
+					}
 					if (!meta) return;
-					invis || vu.live._.springs.forEach(function(prop) {
+					invis || _.springs.forEach(function(prop) {
 						s[prop].target = s[prop].value = meta[prop];
 					});
-					vu.live._.dance(person, meta);
+					_.dance(person, meta);
 				}, !isYou);
 			}, "json");
 		}
