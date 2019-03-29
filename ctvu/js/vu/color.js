@@ -12,7 +12,7 @@ vu.color = {
 		}
 	},
 	selector: function(target, prop, lnum, uplight) {
-		var bcolor = target.opts.color || "#FFFFFF",
+		var bcolor = target.opts.color || target.opts.material[prop] || "#FFFFFF",
 			scolor = (typeof bcolor == "string") ? bcolor : ("#" + bcolor.toString(16));
 		if (!prop)
 			prop = "light " + lnum;
