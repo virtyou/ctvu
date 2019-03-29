@@ -123,10 +123,6 @@ iframe {
 	width: 217px;
 }
 
-/*.gmenu.basic .base {
-	height: 52px;
-}*/
-
 .gmenu.cameras {
     left: 221px !important;
     right: 276px;
@@ -145,10 +141,6 @@ iframe {
 .gmenu.controls {
 	height: 118px;
 }
-
-/*.gmenu.lights {
-	height: calc(100% - 357px);
-}*/
 
 .gmenu .right button {
 	height: 18px;
