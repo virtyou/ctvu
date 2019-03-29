@@ -6,11 +6,12 @@ vu.builders.zone = {
 		menus: {
 			cameras: "top",
 			basic: "topleft",
-			lights: "bottomleft",
+			lights: "topright",
 			controls: "bottomright",
 			furnishings: "topright",
 			portal_requests: "bottom"
 		},
+		swappers: ["furnishings", "lights"],
 		lightdirs: {
 			point: "Position",
 			directional: "Direction"
@@ -184,12 +185,20 @@ vu.builders.zone = {
 				}, "json");
 			};
 		},
+		fname: function(furn) {
+			var n = CT.dom.div(furn.name);
+			n.onclick = function() {
+				vu.builders.zone._.selectors.controls.update(furn);
+			};
+			return n;
+		},
 		portal: function(portal) {
 			 var _ = vu.builders.zone._;
 			 return [
 			 	_.unfurn(portal),
-			 	portal.name,
+			 	_.fname(portal),
 			 	_.fscale(portal),
+			 	_.materials(portal),
 			 	_.plinx(portal)
 			 ];
 		},
@@ -197,15 +206,16 @@ vu.builders.zone = {
 			 var _ = vu.builders.zone._;
 			 return [
 			 	_.unfurn(poster),
-			 	poster.name,
-			 	_.fscale(poster)
+			 	_.fname(poster),
+			 	_.fscale(poster),
+			 	_.materials(poster)
 			 ];
 		},
 		furnishing: function(furn) {
 			var _ = vu.builders.zone._;
 			return [
 				_.unfurn(furn),
-				furn.name,
+				_.fname(furn),
 				_.fscale(furn),
 				CT.dom.div([
 					"Rotation",
@@ -216,7 +226,8 @@ vu.builders.zone = {
 							rotation: rot
 						});
 					}, 0, 6, furn.rotation().y, 0.01, "w1")
-				], "topbordered padded margined")
+				], "topbordered padded margined"),
+			 	_.materials(furn)
 			];
 		},
 		furn: function(furn) {
@@ -406,42 +417,68 @@ vu.builders.zone = {
 				CT.dom.div([
 					"Base",
 					selz.base
-				], "padded bordered round mb5 base"),
+				], "padded bordered round mb5"),
 				CT.dom.div([
 					"Scale",
 					selz.scale
-				], "padded bordered round nonowrap")
+				], "padded bordered round mb5"),
+				CT.dom.div([
+					"Materials",
+					_.materials()
+				], "padded bordered round mb5")
 			];
 		},
-		setColor: function(target, color, prop, lnum) {
-			var copts = {}, _ = vu.builders.zone._, rgb = vu.color.hex2rgb(color);
-			color = parseInt(color.slice(1), 16);
-			if (target.material) { // object
-				target.material.color = rgb;
-				copts[prop] = color;
-				vu.storage.setMaterial(target.opts.key, copts);
-			} else { // light
-				target.setColor(rgb);
-				_.opts.lights[lnum].color = color;
-				vu.builders.zone.persist({
-					lights: _.opts.lights
-				});
+		materials: function(furn) {
+			var obj, selz = furn || vu.builders.zone._.selectors;
+			selz.color = CT.dom.div();
+			selz.color.update = function() {
+				obj = furn || zero.core.current.room;
+				CT.dom.setContent(selz.color, vu.color.selector(obj, "color"));
+			};
+
+			selz.specular = CT.dom.div();
+			selz.specular.update = function() {
+				obj = furn || zero.core.current.room;
+				CT.dom.setContent(selz.specular, vu.color.selector(obj, "specular"));
+			};
+
+			selz.shininess = CT.dom.div();
+			selz.shininess.update = function() {
+				obj = furn || zero.core.current.room;
+				CT.dom.setContent(selz.shininess, CT.dom.range(function(val) {
+					val = parseInt(val);
+					obj.opts.material.shininess = obj.thring.material.shininess = val;
+					vu.storage.setMaterial(obj.opts.key, { shininess: val });
+				}, 0, 150, obj.thring.material.shininess || 30, 1, "w1"));
+			};
+
+			if (furn) {
+				selz.color.update();
+				selz.specular.update();
+				selz.shininess.update();
 			}
+
+			return [
+				CT.dom.div([
+					"Color",
+					selz.color
+				], "topbordered padded margined"),
+				CT.dom.div([
+					"Specular",
+					selz.specular
+				], "topbordered padded margined"),
+				CT.dom.div([
+					"Shininess",
+					selz.shininess
+				], "topbordered padded margined")
+			];
 		},
-		colorSelector: function(target, prop, lnum) {
-			var _ = vu.builders.zone._, selz = _.selectors,
-				bcolor, scolor, room = zero.core.current.room;
-			if (target.material) // object
-				bcolor = target.thring.material[prop] || "#111111";
-			else // light
-				bcolor = target.opts.color || "#111111";
-			scolor = (typeof bcolor == "string") ? bcolor : ("#" + bcolor.toString(16));
-			if (!prop)
-				prop = "light " + lnum;
-			var cnode = vu.color.picker(prop + " selector", scolor, function() {
-				_.setColor(target, cnode.value, prop, lnum);
+		lightup: function(color, lnum) {
+			var _ = vu.builders.zone._;
+			_.opts.lights[lnum].color = color;
+			vu.builders.zone.persist({
+				lights: _.opts.lights
 			});
-			return cnode;
 		},
 		lights: function() {
 			var _ = vu.builders.zone._, selz = _.selectors,
@@ -462,7 +499,7 @@ vu.builders.zone = {
 						});
 					}, "vcrunch right"),
 					room.lights.map(function(light, i) {
-						color = _.colorSelector(light, null, i);
+						color = vu.color.selector(light, null, i, _.lightup);
 						intensity = CT.dom.range(function(val) {
 							val = parseInt(val) / 100;
 							light.setIntensity(val);
@@ -515,9 +552,12 @@ vu.builders.zone = {
 			var _ = vu.builders.zone._, selz = _.selectors, upmenus = function() {
 				selz.base.update();
 				selz.scale.update();
+				selz.color.update();
 				selz.lights.update();
 				selz.cameras.update();
 				selz.controls.update();
+				selz.specular.update();
+				selz.shininess.update();
 				selz.furnishings.update();
 				selz.portal_requests.update();
 			}, name = room.name || room.environment;
@@ -581,6 +621,18 @@ vu.builders.zone = {
 			zero.core.click.register(furn, function() {
 				vu.builders.zone._.selectors.controls.update(furn);
 			});
+		},
+		swap: function() {
+			var _ = vu.builders.zone._, selz = _.selectors;
+			vu.builders.zone._.swappers.forEach(function(section) {
+				selz[section].modal.showHide("ctmain");
+			});
+		},
+		head: function(section) {
+			var n = CT.dom.node(CT.parse.key2title(section));
+			if (vu.builders.zone._.swappers.indexOf(section) != -1)
+				n.onclick = vu.builders.zone._.swap;
+			return n;
 		}
 	},
 	persist: function(updates) { // NB: this only works in remote mode, screw it ;)
@@ -600,7 +652,10 @@ vu.builders.zone = {
 	menus: function() {
 		var section, _ = vu.builders.zone._, selz = _.selectors;
 		_.setup();
-		for (section in _.menus)
-			vu.core.menu(section, _.menus[section], selz[section]).show("ctmain");
+		for (section in _.menus) {
+			selz[section].modal = vu.core.menu(section,
+				_.menus[section], selz[section], _.head(section));
+			(section == "furnishings") || selz[section].modal.show("ctmain");
+		}
 	}
 };

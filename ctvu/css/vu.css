@@ -120,16 +120,12 @@ iframe {
 }
 
 .gmenu.basic {
-	width: 217px;
-}
-
-.gmenu.basic .base {
-	height: 52px;
+	width: 247px;
 }
 
 .gmenu.cameras {
-    left: 221px !important;
-    right: 262px;
+    left: 250px !important;
+    right: 276px;
     white-space: initial;
 }
 
@@ -137,17 +133,13 @@ iframe {
 	margin: 10px 10px 0 0;
 }
 
-.gmenu.furnishings {
-	width: 258px;
+.gmenu.furnishings, .gmenu.lights {
+	width: 272px;
 	max-height: calc(100% - 112px);
 }
 
 .gmenu.controls {
 	height: 118px;
-}
-
-.gmenu.lights {
-	height: calc(100% - 357px);
 }
 
 .gmenu .right button {
