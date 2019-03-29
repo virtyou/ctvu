@@ -2,22 +2,18 @@ vu.color = {
 	set: function(target, color, prop, lnum, uplight) {
 		var copts = {}, _ = vu.builders.zone._, rgb = vu.color.hex2rgb(color);
 		color = parseInt(color.slice(1), 16);
-		if (target.material) { // object
-			target.material.color = rgb;
-			copts[prop] = color;
-			vu.storage.setMaterial(target.opts.key, copts);
-		} else { // light
+		if (uplight) { // light
 			target.setColor(rgb);
 			uplight(color, lnum);
+		} else { // object
+			target.thring.material.color = rgb;
+			copts[prop] = color;
+			vu.storage.setMaterial(target.opts.key, copts);
 		}
 	},
 	selector: function(target, prop, lnum, uplight) {
-		var bcolor, scolor;
-		if (target.material) // object
-			bcolor = target.thring.material[prop] || "#111111";
-		else // light
-			bcolor = target.opts.color || "#111111";
-		scolor = (typeof bcolor == "string") ? bcolor : ("#" + bcolor.toString(16));
+		var bcolor = target.opts.color || "#FFFFFF",
+			scolor = (typeof bcolor == "string") ? bcolor : ("#" + bcolor.toString(16));
 		if (!prop)
 			prop = "light " + lnum;
 		var cnode = vu.color.picker(prop + " selector", scolor, function() {
