@@ -464,12 +464,13 @@ vu.builders.zone = {
 					room.lights.map(function(light, i) {
 						color = _.colorSelector(light, null, i);
 						intensity = CT.dom.range(function(val) {
+							val = parseInt(val) / 100;
 							light.setIntensity(val);
-							_.opts.lights[i].intensity = parseFloat(val);
+							_.opts.lights[i].intensity = val;
 							vu.builders.zone.persist({
 								lights: _.opts.lights
 							});
-						}, 0, 1, light.opts.intensity, 0.01, "w1");
+						}, 0, 100, light.opts.intensity * 100, 1, "w1");
 						content = [
 							CT.dom.button("remove", function() {
 								room.removeLight(light);
