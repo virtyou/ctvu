@@ -120,11 +120,11 @@ iframe {
 }
 
 .gmenu.basic {
-	width: 217px;
+	width: 247px;
 }
 
 .gmenu.cameras {
-    left: 221px !important;
+    left: 250px !important;
     right: 276px;
     white-space: initial;
 }
