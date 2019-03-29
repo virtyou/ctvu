@@ -135,11 +135,11 @@ iframe {
 
 .gmenu.furnishings, .gmenu.lights {
 	width: 272px;
-	max-height: calc(100% - 112px);
+	max-height: calc(100% - 127px);
 }
 
 .gmenu.controls {
-	height: 118px;
+	height: 133px;
 }
 
 .gmenu .right button {

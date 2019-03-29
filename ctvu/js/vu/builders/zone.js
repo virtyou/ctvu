@@ -306,6 +306,7 @@ vu.builders.zone = {
 					target.body ? [
 						"(for scale)",
 						"move around with arrow keys",
+						"TAB for jump",
 						"1-9 for gestures (0 to ungesture)",
 						"1-9 + SHIFT for dances (0 to undance)"
 					] : [
