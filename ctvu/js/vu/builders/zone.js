@@ -185,11 +185,18 @@ vu.builders.zone = {
 				}, "json");
 			};
 		},
+		fname: function(furn) {
+			var n = CT.dom.div(furn.name);
+			n.onclick = function() {
+				vu.builders.zone._.selectors.controls.update(furn);
+			};
+			return n;
+		},
 		portal: function(portal) {
 			 var _ = vu.builders.zone._;
 			 return [
 			 	_.unfurn(portal),
-			 	portal.name,
+			 	_.fname(portal),
 			 	_.fscale(portal),
 			 	_.materials(portal),
 			 	_.plinx(portal)
@@ -199,7 +206,7 @@ vu.builders.zone = {
 			 var _ = vu.builders.zone._;
 			 return [
 			 	_.unfurn(poster),
-			 	poster.name,
+			 	_.fname(poster),
 			 	_.fscale(poster),
 			 	_.materials(poster)
 			 ];
@@ -208,7 +215,7 @@ vu.builders.zone = {
 			var _ = vu.builders.zone._;
 			return [
 				_.unfurn(furn),
-				furn.name,
+				_.fname(furn),
 				_.fscale(furn),
 				CT.dom.div([
 					"Rotation",
