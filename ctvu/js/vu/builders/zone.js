@@ -394,6 +394,18 @@ vu.builders.zone = {
 				}));
 			};
 
+			selz.color = CT.dom.div();
+			selz.color.update = function() {
+				var room = zero.core.current.room;
+				CT.dom.setContent(selz.color, vu.color.selector(room, "color"));
+			};
+
+			selz.specular = CT.dom.div();
+			selz.specular.update = function() {
+				var room = zero.core.current.room;
+				CT.dom.setContent(selz.specular, vu.color.selector(room, "specular"));
+			};
+
 			selz.basic = [
 				CT.dom.div([
 					"Name",
@@ -407,11 +419,17 @@ vu.builders.zone = {
 				CT.dom.div([
 					"Base",
 					selz.base
-				], "padded bordered round mb5 base"),
+				], "padded bordered round mb5"),
 				CT.dom.div([
 					"Scale",
 					selz.scale
-				], "padded bordered round nonowrap")
+				], "padded bordered round mb5"),
+				CT.dom.div([
+					"Color",
+					selz.color,
+					"Specular",
+					selz.specular
+				], "padded bordered round")
 			];
 		},
 		lightup: function(color, lnum) {
@@ -493,9 +511,11 @@ vu.builders.zone = {
 			var _ = vu.builders.zone._, selz = _.selectors, upmenus = function() {
 				selz.base.update();
 				selz.scale.update();
+				selz.color.update();
 				selz.lights.update();
 				selz.cameras.update();
 				selz.controls.update();
+				selz.specular.update();
 				selz.furnishings.update();
 				selz.portal_requests.update();
 			}, name = room.name || room.environment;
