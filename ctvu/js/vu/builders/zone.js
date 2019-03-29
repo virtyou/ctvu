@@ -394,29 +394,6 @@ vu.builders.zone = {
 				}));
 			};
 
-			selz.color = CT.dom.div();
-			selz.color.update = function() {
-				var room = zero.core.current.room;
-				CT.dom.setContent(selz.color, vu.color.selector(room, "color"));
-			};
-
-			selz.specular = CT.dom.div();
-			selz.specular.update = function() {
-				var room = zero.core.current.room;
-				CT.dom.setContent(selz.specular, vu.color.selector(room, "specular"));
-			};
-
-			selz.shininess = CT.dom.div();
-			selz.shininess.update = function() {
-				var room = zero.core.current.room;
-				CT.dom.setContent(selz.shininess, CT.dom.range(function(val) {
-					val = parseInt(val);
-					_.opts.material.shininess = room.opts.material.shininess
-						= room.thring.material.shininess = val; // overkill?
-					vu.storage.setMaterial(room.opts.key, { shininess: val });
-				}, 0, 150, _.opts.material.shininess || 30, 1, "w1"));
-			};
-
 			selz.basic = [
 				CT.dom.div([
 					"Name",
@@ -436,13 +413,42 @@ vu.builders.zone = {
 					selz.scale
 				], "padded bordered round mb5"),
 				CT.dom.div([
-					"Color",
-					selz.color,
-					"Specular",
-					selz.specular,
-					"Shininess",
-					selz.shininess
-				], "padded bordered round")
+					"Materials",
+					_.materials()
+				], "padded bordered round mb5")
+			];
+		},
+		materials: function(furn) {
+			var obj, selz = furn || vu.builders.zone._.selectors;
+			selz.color = CT.dom.div();
+			selz.color.update = function() {
+				obj = furn || zero.core.current.room;
+				CT.dom.setContent(selz.color, vu.color.selector(obj, "color"));
+			};
+
+			selz.specular = CT.dom.div();
+			selz.specular.update = function() {
+				obj = furn || zero.core.current.room;
+				CT.dom.setContent(selz.specular, vu.color.selector(obj, "specular"));
+			};
+
+			selz.shininess = CT.dom.div();
+			selz.shininess.update = function() {
+				obj = furn || zero.core.current.room;
+				CT.dom.setContent(selz.shininess, CT.dom.range(function(val) {
+					val = parseInt(val);
+					obj.opts.material.shininess = obj.thring.material.shininess = val;
+					vu.storage.setMaterial(obj.opts.key, { shininess: val });
+				}, 0, 150, obj.thring.material.shininess || 30, 1, "w1"));
+			};
+
+			return [
+				"Color",
+				selz.color,
+				"Specular",
+				selz.specular,
+				"Shininess",
+				selz.shininess
 			];
 		},
 		lightup: function(color, lnum) {
