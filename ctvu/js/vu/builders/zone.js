@@ -6,11 +6,12 @@ vu.builders.zone = {
 		menus: {
 			cameras: "top",
 			basic: "topleft",
-			lights: "bottomleft",
+			lights: "topright",
 			controls: "bottomright",
 			furnishings: "topright",
 			portal_requests: "bottom"
 		},
+		swappers: ["furnishings", "lights"],
 		lightdirs: {
 			point: "Position",
 			directional: "Direction"
@@ -581,6 +582,18 @@ vu.builders.zone = {
 			zero.core.click.register(furn, function() {
 				vu.builders.zone._.selectors.controls.update(furn);
 			});
+		},
+		swap: function() {
+			var _ = vu.builders.zone._, selz = _.selectors;
+			vu.builders.zone._.swappers.forEach(function(section) {
+				selz[section].modal.showHide("ctmain");
+			});
+		},
+		head: function(section) {
+			var n = CT.dom.node(CT.parse.key2title(section));
+			if (vu.builders.zone._.swappers.indexOf(section) != -1)
+				n.onclick = vu.builders.zone._.swap;
+			return n;
 		}
 	},
 	persist: function(updates) { // NB: this only works in remote mode, screw it ;)
@@ -600,7 +613,10 @@ vu.builders.zone = {
 	menus: function() {
 		var section, _ = vu.builders.zone._, selz = _.selectors;
 		_.setup();
-		for (section in _.menus)
-			vu.core.menu(section, _.menus[section], selz[section]).show("ctmain");
+		for (section in _.menus) {
+			selz[section].modal = vu.core.menu(section,
+				_.menus[section], selz[section], _.head(section));
+			(section == "furnishings") || selz[section].modal.show("ctmain");
+		}
 	}
 };
