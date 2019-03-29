@@ -465,6 +465,10 @@ vu.builders.zone = {
 						color = _.colorSelector(light, null, i);
 						intensity = CT.dom.range(function(val) {
 							light.setIntensity(val);
+							_.opts.lights[i].intensity = parseFloat(val);
+							vu.builders.zone.persist({
+								lights: _.opts.lights
+							});
 						}, 0, 1, light.opts.intensity, 0.01, "w1");
 						content = [
 							CT.dom.button("remove", function() {
