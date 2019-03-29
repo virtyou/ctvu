@@ -4,7 +4,7 @@ vu.live = {
 		springs: ["weave", "bob", "slide", "orientation"],
 		actions: { // message types
 			chat: function(person, msg) {
-				vu.live._.chat(person, msg);
+				vu.live._.cbs.chat(person, msg);
 			},
 			inject: function(person, pkey) { // join
 				zero.core.current.room.inject(person, pkey && zero.core.Thing.get(pkey));
@@ -72,8 +72,8 @@ vu.live = {
 				zero.core.util.join(vu.core.person(pdata, invis), function(person) {
 					var s = person.body.springs;
 					vu.live._.people[pdata.key] = person;
-					if (isYou)
-						vu.live._.joined(person);
+					vu.live._.cbs.enter(person);
+					isYou && vu.live._.cbs.joined(person);
 					if (!meta) return;
 					invis || vu.live._.springs.forEach(function(prop) {
 						s[prop].target = s[prop].value = meta[prop];
@@ -94,10 +94,9 @@ vu.live = {
 		});
 		CT.pubsub.meta(zero.core.current.room.opts.key, targets);
 	},
-	init: function(joined, chat) {
-		var _ = vu.live._, person = zero.core.current.person;
-		_.joined = joined;
-		_.chat = chat;
+	init: function(cbs) {
+		var _ = vu.live._;
+		_.cbs = cbs;
 		["subscribe", "join", "leave", "meta", "message"].forEach(function(ename) {
 			CT.pubsub.set_cb(ename, _.events[ename]);
 		});
