@@ -413,20 +413,22 @@ vu.builders.zone = {
 				], "padded bordered round nonowrap")
 			];
 		},
-		setColor: function(target, color, prop) {
-			var copts = {};
+		setColor: function(target, color, prop, lnum) {
+			var copts = {}, _ = vu.builders.zone._, rgb = vu.color.hex2rgb(color);
+			color = parseInt(color.slice(1), 16);
 			if (target.material) { // object
-				target.material.color = vu.color.hex2rgb(color);
-				color = parseInt(color.slice(1), 16);
+				target.material.color = rgb;
 				copts[prop] = color;
 				vu.storage.setMaterial(target.opts.key, copts);
-			} else // light
-				target.setColor(vu.color.hex2rgb(color));
+			} else { // light
+				target.setColor(rgb);
+				_.opts.lights[lnum].color = color;
+				vu.builders.zone.persist({
+					lights: _.opts.lights
+				});
+			}
 		},
 		colorSelector: function(target, prop, lnum) {
-
-			// TODO: fix color selection!!!!
-
 			var _ = vu.builders.zone._, selz = _.selectors,
 				bcolor, scolor, room = zero.core.current.room;
 			if (target.material) // object
@@ -437,7 +439,7 @@ vu.builders.zone = {
 			if (!prop)
 				prop = "light " + lnum;
 			var cnode = vu.color.picker(prop + " selector", scolor, function() {
-				_.setColor(target, cnode.value, prop);
+				_.setColor(target, cnode.value, prop, lnum);
 			});
 			return cnode;
 		},
