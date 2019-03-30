@@ -65,9 +65,8 @@ vu.builders.play = {
 					]
 				]);
 				zero.core.camera.follow(target.looker || target);
-
-				// TODO: person should spin around to face target
-				//isYou || zero.core.current.person[CT.key.down("SHIFT") ? "approach": "look"](target);
+				!isYou && CT.key.down("SHIFT") &&
+					zero.core.current.person.approach(target);
 			});
 		},
 		emit: function(action, val) {
