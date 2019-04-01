@@ -152,7 +152,7 @@ vu.builders.zone = {
 											return f.kind == "portal";
 										})),
 										cb: function(port) {
-											var pup = function(pthing, upfurn) {
+											var pup = function(pthing) {
 												vu.storage.edit({
 													key: p.key,
 													target: pthing.opts.key
@@ -162,13 +162,13 @@ vu.builders.zone = {
 													CT.data.remove(_.opts.portals, p);
 													pthing.opts.portals.incoming.push(p);
 													selz.portal_requests.update();
-													upfurn && selz.furnishings.update();
+													selz.furnishings.update();
 												});
 											};
 											if (port == "new portal")
 												_.selfurn("portal", pup);
 											else
-												pup(zero.core.Thing.get(port.key), true);
+												pup(zero.core.Thing.get(port.key));
 										}
 									});
 								}),
