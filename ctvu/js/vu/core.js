@@ -168,17 +168,22 @@ vu.core = {
 		else
 			data.room = data.rooms[0];
 	},
+	locd: function() {
+		var cfg = core.config.ctvu.builders, room = vu.core.room(),
+			person = CT.merge(vu.storage.get("person"), cfg.person);
+		 vu.core._udata = {
+			room: room,
+			rooms: [room],
+			person: person,
+			people: [person]
+		};
+		return vu.core._udata;
+	},
 	udata: function(cb, allrooms) {
 		if (vu.core._udata)
 			return cb(vu.core._udata);
-		if (core.config.ctvu.storage.mode == "local" || !user.core.get()) {
-			 // cfg.access.anon must be true
-			var cfg = core.config.ctvu.builders;
-			return cb({
-				people: [CT.merge(vu.storage.get("person"), cfg.person)],
-				rooms: [vu.core.room()]
-			});
-		}
+		if (!user.core.get()) // cfg.access.anon must be true
+			return cb(vu.core.locd());
 		var ukey = user.core.get("key");
 		vu.core.z({
 			action: "json",

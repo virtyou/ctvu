@@ -7,6 +7,6 @@ vu.storage.local = {
 		return CT.storage.get(key);
 	},
 	init: function(cb) {
-		cb();
+		cb(vu.core.locd());
 	}
 };
