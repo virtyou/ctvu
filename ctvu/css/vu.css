@@ -115,7 +115,8 @@ iframe {
 	width: 64px;
 }
 
-.gmenu.run_home img:hover {
+.gmenu.run_home img:hover,
+img.right.h30p.up5 {
 	filter: invert(100%);
 }
 
