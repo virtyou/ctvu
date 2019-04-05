@@ -65,8 +65,10 @@ vu.builders.play = {
 					]
 				]);
 				zero.core.camera.follow(target.looker || target);
-				!isYou && CT.key.down("SHIFT") &&
-					zero.core.current.person.approach(target);
+				if (!isYou) {
+					target.playPause();
+					CT.key.down("SHIFT") && zero.core.current.person.approach(target);
+				}
 			});
 		},
 		emit: function(action, val) {
