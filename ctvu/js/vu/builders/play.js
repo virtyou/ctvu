@@ -133,7 +133,7 @@ vu.builders.play = {
 			selz.cameras = CT.dom.div(null, "centered");
 			selz.triggers = CT.dom.div();
 			selz.gestures = CT.dom.div();
-			selz.run_home = CT.dom.img("/img/home.png", null, function() { _.port(); });
+			selz.run_home = CT.dom.img("/img/vu/home.png", null, function() { _.port(); });
 			selz.chat = _.chatterbox();
 			selz.info = CT.dom.div();
 		},
