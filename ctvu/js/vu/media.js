@@ -26,6 +26,8 @@ vu.media = {
 	},
 	browse: function(variety, cb) {
 		vu.media._.fetch(variety, function(resources) {
+			if (!resources)
+				return alert("nothing yet -- add the first one!");
 			vu.core.choice({
 				data: resources,
 				cb: cb
