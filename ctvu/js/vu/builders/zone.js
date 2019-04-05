@@ -211,6 +211,26 @@ vu.builders.zone = {
 			 	_.materials(poster)
 			 ];
 		},
+		vidsel: function(scr) {
+			var opts = CT.data.get(scr.opts.key);
+			return vu.media.selector(opts, "video", function() {
+				vu.storage.setOpts(scr.opts.key, {
+					video: opts.video
+				});
+				scr.unvideo();
+				scr.update({ video: opts.video });
+			}, true);
+		},
+		screen: function(scr) {
+			 var _ = vu.builders.zone._;
+			 return [
+			 	_.unfurn(scr),
+			 	_.fname(scr),
+			 	_.fscale(scr),
+			 	_.materials(scr),
+			 	_.vidsel(scr)
+			 ];
+		},
 		furnishing: function(furn) {
 			var _ = vu.builders.zone._;
 			return [
@@ -233,31 +253,42 @@ vu.builders.zone = {
 		furn: function(furn) {
 			return CT.dom.div(vu.builders.zone._[furn.opts.kind](furn), "margined padded bordered round");
 		},
+		part: function(thing, kind, cb) {
+			var _ = vu.builders.zone._, selz = _.selectors, eopts = {
+				parent: _.opts.key,
+				modelName: "furnishing"
+			};
+			if (thing) // not required for screen
+				eopts.base = thing.key;
+			if (kind == "poster" || kind == "screen") { // TODO: probs do this elsewhere/better!
+				eopts.opts = {
+					wall: 0,
+					planeGeometry: [100, 100] // TODO: should derive from img/video dims
+				};
+				if (kind == "screen") {
+					eopts.opts.name = "screen" + Math.floor(Math.random() * 1000);
+					eopts.opts.kind = "screen"; // no base necessary...
+				}
+			} else if (kind == "portal")
+				eopts.opts = { wall: 0 };
+			vu.storage.edit(eopts, function(furn) {
+				var f = zero.core.current.room.addObject(furn, function() {
+					_.regObj(f);
+					f.setBounds(); // TODO: this should probably be in zero.core.Room
+					cb && cb(f);
+					selz.controls.update(f);
+					selz.furnishings.update();
+				});
+			});
+		},
 		selfurn: function(kind, cb) {
-			var _ = vu.builders.zone._, selz = _.selectors;
+			var _ = vu.builders.zone._;
+			if (kind == "screen")
+				return _.part(null, "screen", cb);
 			vu.core.choice({
 				data: Object.values(vu.storage.get(kind)),
 				cb: function(thing) {
-					var eopts = {
-						base: thing.key,
-						parent: _.opts.key,
-						modelName: "furnishing"
-					};
-					if (kind == "poster") { // TODO: probs do this elsewhere/better!
-						eopts.opts = {
-							wall: 0,
-							planeGeometry: [100, 100]
-						};
-					} else if (kind == "portal")
-						eopts.opts = { wall: 0 };
-					vu.storage.edit(eopts, function(furn) {
-						var f = zero.core.current.room.addObject(furn, function() {
-							f.setBounds(); // TODO: this should probably be in zero.core.Room
-							cb && cb(f);
-							selz.controls.update(f);
-							selz.furnishings.update();
-						});
-					});
+					_.part(thing, kind, cb);
 				}
 			});
 		},
@@ -268,7 +299,7 @@ vu.builders.zone = {
 				CT.dom.setContent(selz.furnishings, [
 					CT.dom.button("add", function() {
 						vu.core.choice({
-							data: ["furnishing", "poster", "portal"],
+							data: ["furnishing", "poster", "portal", "screen"],
 							cb: _.selfurn
 						});
 					}, "up20 right"),
@@ -286,6 +317,8 @@ vu.builders.zone = {
 					opts.wall = target.opts.wall;
 				vu.storage.setOpts(target.opts.key, opts);
 				_.selectors.controls.update();
+				if (target.opts.kind == "screen")
+					target.playPause();
 			}
 		},
 		controls: function() {
@@ -609,8 +642,8 @@ vu.builders.zone = {
 			};
 			zero.core.util.join(vu.core.person(popts), function(person) {
 				vu.builders.current.person = zero.core.current.person = person;
-				vu.builders.zone._.set(vu.storage.get("room"), true);
 				zero.core.current.room.objects.forEach(vu.builders.zone._.regObj);
+				vu.builders.zone._.set(vu.storage.get("room"), true);
 			});
 			return CT.dom.div([[
 				CT.dom.span("viewing:"),
@@ -619,6 +652,7 @@ vu.builders.zone = {
 			], CT.dom.link("swap", _.select)], "left shiftall");
 		},
 		regObj: function(furn) {
+			CT.data.add(furn.opts);
 			zero.core.click.register(furn, function() {
 				vu.builders.zone._.selectors.controls.update(furn);
 			});
