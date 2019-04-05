@@ -1,6 +1,7 @@
 syms = {
 	".": ["_vu.py"],
 	"js": ["vu"],
+	"img": ["vu"],
 	"css": ["vu.css"],
 	"html": ["vu"]
 }
