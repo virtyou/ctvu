@@ -44,7 +44,7 @@ vu.media = {
 			className: "w1"
 		}));
 	},
-	selector: function(rez, sel, cb) {
+	selector: function(rez, sel, cb, forceShow) {
 		var isIframe = sel == "iframe",
 			isMap = vu.media._.isMap(sel),
 			opts = rez[sel] || {
@@ -138,6 +138,6 @@ vu.media = {
 		if (!vu.media._.isResource(sel))
 			CT.dom.hide(browse);
 
-		return CT.dom.div([browse, name, item, viewer], !rez[sel] && "hidden");
+		return CT.dom.div([browse, name, item, viewer], !forceShow && !rez[sel] && "hidden");
 	}
 };
