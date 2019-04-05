@@ -214,7 +214,7 @@ vu.builders.zone = {
 		vidsel: function(scr) {
 			var opts = CT.data.get(scr.opts.key);
 			return vu.media.selector(opts, "video", function() {
-				vu.storage.setOpts(furn.opts.key, {
+				vu.storage.setOpts(scr.opts.key, {
 					video: opts.video
 				});
 				scr.unvideo();
@@ -272,8 +272,8 @@ vu.builders.zone = {
 			} else if (kind == "portal")
 				eopts.opts = { wall: 0 };
 			vu.storage.edit(eopts, function(furn) {
-				CT.data.add(furn.key);
 				var f = zero.core.current.room.addObject(furn, function() {
+					_.regObj(f);
 					f.setBounds(); // TODO: this should probably be in zero.core.Room
 					cb && cb(f);
 					selz.controls.update(f);
@@ -317,6 +317,8 @@ vu.builders.zone = {
 					opts.wall = target.opts.wall;
 				vu.storage.setOpts(target.opts.key, opts);
 				_.selectors.controls.update();
+				if (target.opts.kind == "screen")
+					target.playPause();
 			}
 		},
 		controls: function() {
