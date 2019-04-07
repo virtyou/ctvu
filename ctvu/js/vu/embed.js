@@ -2,11 +2,14 @@ vu.embed = {
 	_: {
 		receive: function(event) {
 			var d = event.data;
-			zero.core.current.person[d.action](d.data, d.cb && vu.embed._.done);
+			zero.core.current.person[d.action](d.data, function() {
+				d.cb && vu.embed._.done(d.cb);
+			});
 		},
-		done: function() {
+		done: function(cbkey) {
 			window.parent.postMessage({
-				action: "cb"
+				action: "cb",
+				data: cbkey
 			});
 		}
 	},
