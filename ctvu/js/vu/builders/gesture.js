@@ -236,6 +236,23 @@ vu.builders.gesture = {
 					selz[side + "_" + sub + "_button"] = CT.dom.div(null, "right");
 				});
 			});
+		},
+		header: function(section) {
+			var selz = vu.builders.gesture._.selectors, content = [
+				selz[section + "_button"],
+				CT.dom.span(CT.parse.key2title(section))
+			];
+			if (section == "gestures" || section == "dances") {
+				content.push(CT.dom.pad());
+				content.push(CT.dom.link("import/export", function() {
+					vu.core.impex(zero.core.current.person.opts[section], function(val) {
+						var upobj = {};
+						upobj[section] = val;
+						vu.builders.gesture.persist(upobj);
+					});
+				}));
+			}
+			return content;
 		}
 	},
 	persist: function(updates, sub) {
@@ -251,10 +268,7 @@ vu.builders.gesture = {
 		_.setup();
 		CT.dom.id("ctmain").className = "gpage"; // for gmenu 33% rule exclusion
 		for (section in _.menus) {
-			modal = vu.core.menu(section, _.menus[section], selz[section], [
-				selz[section + "_button"],
-				CT.parse.key2title(section)
-			]);
+			modal = vu.core.menu(section, _.menus[section], selz[section], _.header(section));
 			if (section.endsWith("arm"))
 				_.arms.push(modal);
 			if (section.endsWith("leg"))
