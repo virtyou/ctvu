@@ -1,25 +1,31 @@
 window.VU = {
 	_: {
 		people: {},
-		actions: ["say", "respond", "responses", "triggers"],
+		actions: ["say", "respond", "responses", "triggers", "trigger"],
 		pusher: function(action, person) {
 			return function(data, cb) {
-				person.cb = cb;
+				if (action == "trigger")
+					person.cbs[data] = cb;
+				else
+					person.cb = cb;
 				person.iframe.contentWindow.postMessage({
 					action: action,
 					data: data,
-					cb: cb && person.key
+					cb: !!cb
 				});
 			};
 		},
 		puller: function(event) {
-			var d = event.data;
+			var d = event.data, person = VU._.people[d.person];
 			if (d.action == "cb")
-				VU._.people[d.person].cb(d.data);
-			// else....
+				person.cb(d.data);
+			else if (d.action == "trigger")
+				person.cbs[d.data]();
 		},
 		person: function(ifr, key) {
-			var p = VU._.people[key] = { iframe: ifr, key: key };
+			var p = VU._.people[key] = {
+				cbs: {}, key: key, iframe: ifr
+			};
 			VU._.actions.forEach(function(action) {
 				p[action] = vu._.pusher(action, p);
 			});

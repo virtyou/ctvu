@@ -3,32 +3,33 @@ vu.embed = {
 		receive: function(event) {
 			var d = event.data, data = d.data,
 				person = zero.core.current.person;
-			if (d.action == "triggers") {
+			if (d.action == "trigger") {
+				person.brain.triggers[d.data] = function() {
+					vu.embed._.done(null, d.data);
+				};
+			} else if (d.action == "triggers") {
 				if (data)
 					person.brain.triggers = data;
 				else
-					vu.embed._.done(d.cb, person.brain.triggers);
+					vu.embed._.done(person.brain.triggers);
 			} else if (d.action == "responses") {
 				if (data)
 					person.opts.responses = data;
 				else
-					vu.embed._.done(d.cb, person.opts.responses);
-			} else {
-				person[d.action](data, function() {
-					d.cb && vu.embed._.done(d.cb);
-				});
-			}
+					vu.embed._.done(person.opts.responses);
+			} else
+				person[d.action](data, d.cb && vu.embed._.done);
 		},
-		done: function(cbkey, data) {
+		done: function(data, trigger) {
 			window.parent.postMessage({
-				action: "cb",
-				data: data,
-				person: cbkey
+				action: trigger && "trigger" || "cb",
+				data: trigger || data,
+				person: vu.embed._.key
 			});
 		}
 	},
 	init: function() {
-		var h = document.location.hash.slice(1),
+		var h = vu.embed._.key = document.location.hash.slice(1),
 			pkey, rkey, keys = [pkey, rkey] = h.split("_");
 		CT.db.multi(keys, function(data) {
 			data[1].people.push(data[0]);
