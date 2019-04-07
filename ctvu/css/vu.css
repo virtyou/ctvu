@@ -174,7 +174,8 @@ img.right.h30p.up5 {
 	display: inline-block;
 }
 
-.gmenu.triggers, .gmenu.gestures, .gmenu.chat {
+.gmenu.triggers, .gmenu.chat,
+#ctmain:not(.gpage) .gmenu.gestures {
 	width: 33%;
 	white-space: normal;
 }
