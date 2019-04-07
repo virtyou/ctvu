@@ -9,7 +9,7 @@ vu.builders.test = {
 		},
 		joined: function(person) {
 			var _ = vu.builders.test._;
-			vu.builders.current.person = zero.core.current.person = person;
+			zero.core.current.person = person;
 			vu.controls.initCamera(_.selectors.camera);
 			vu.controls.setTriggers(_.selectors.triggers);
 			vu.controls.setGestures(_.selectors.gestures);

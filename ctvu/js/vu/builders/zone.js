@@ -329,7 +329,7 @@ vu.builders.zone = {
 			selz.controls = CT.dom.div();
 			selz.controls.update = function(target) {
 				if (!target) {
-					target = vu.builders.current.person;
+					target = zero.core.current.person;
 					zero.core.camera.follow(target.body.looker);
 				} else
 					zero.core.camera.follow(target);
@@ -641,7 +641,7 @@ vu.builders.zone = {
 				_.selectors.controls.update();
 			};
 			zero.core.util.join(vu.core.person(popts), function(person) {
-				vu.builders.current.person = zero.core.current.person = person;
+				zero.core.current.person = person;
 				zero.core.current.room.objects.forEach(vu.builders.zone._.regObj);
 				vu.builders.zone._.set(vu.storage.get("room"), true);
 			});

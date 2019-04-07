@@ -7,7 +7,7 @@ vu.builders.talk = {
 			background: "img"
 		},
 		joined: function(person) {
-			vu.builders.current.person = zero.core.current.person = person;
+			zero.core.current.person = person;
 			zero.core.camera.unfollow();
 			vu.builders.talk._.loadTriggers({
 				branches: person.opts.responses
@@ -34,7 +34,7 @@ vu.builders.talk = {
 				vu.builders.talk._.setTriggers(r.branches, path);
 		},
 		tree: function(path) {
-			var person = vu.builders.current.person,
+			var person = zero.core.current.person,
 				_ = vu.builders.talk._;
 			CT.dom.setContent("tree", CT.layout.tree({
 				branches: person.opts.responses,
@@ -76,7 +76,7 @@ vu.builders.talk = {
 			var i, r = {
 				branches: {
 					root: {
-						branches: vu.builders.current.person.opts.responses
+						branches: zero.core.current.person.opts.responses
 					}
 				}
 			}, path = id.slice(4).split("_");
@@ -86,7 +86,7 @@ vu.builders.talk = {
 		},
 		initCluster: function(resps, path) {
 			var _ = vu.builders.talk._,
-				cur = vu.builders.current;
+				cur = zero.core.current;
 			vu.core.prompt({
 				prompt: "what's the new trigger?",
 				cb: function(val) {
@@ -110,7 +110,7 @@ vu.builders.talk = {
 				popts = _.opts = vu.storage.get("person") || _.opts,
 				rz = selz.responses, dz = selz.disable, rzt = rz.trigger,
 				persist = vu.builders.talk.persist, blurs = cfg.blurs,
-				cur = vu.builders.current;
+				cur = zero.core.current;
 
 			rzt.innerHTML = trigz[0];
 			var justlow = function(f) {
@@ -266,7 +266,7 @@ vu.builders.talk = {
 		vu.storage.save(popts, null, "person", updates, sub);
 	},
 	menu: function() {
-		var cur = vu.builders.current, _ = vu.builders.talk._,
+		var cur = zero.core.current, _ = vu.builders.talk._,
 			selz = _.selectors, blurs = core.config.ctvu.blurs;
 		_.setup();
 		var respond = function(val) {

@@ -4,13 +4,13 @@ vu.builders.vibe = {
 		accessories: core.config.ctvu.builders.accessories,
 		selectors: {},
 		joined: function(person) {
-			vu.builders.current.person = person;
+			zero.core.current.person = person;
 			zero.core.camera.unfollow();
 			vu.builders.vibe._.loadVibes();
 		},
 		loadVibes: function() {
 			var _ = vu.builders.vibe._,
-				person = vu.builders.current.person,
+				person = zero.core.current.person,
 				vopts = person.vibe.opts.vibes;
 			vu.core.fieldList(_.selectors.vibes, Object.keys(vopts), null, function(v) {
 				// generator
@@ -48,7 +48,7 @@ vu.builders.vibe = {
 			_.setVibe(person.vibe.current);
 		},
 		setVibe: function(vibe) {
-			var person = vu.builders.current.person,
+			var person = zero.core.current.person,
 				vopts = person.vibe.opts.vibes;
 			CT.dom.setContent(vu.builders.vibe._.selectors.mood, [
 				CT.dom.div(vibe, "big"),
@@ -78,7 +78,7 @@ vu.builders.vibe = {
 			selz.voice = CT.dom.select(["Joanna", "Justin", "Ivy",
 				"Joey", "Kendra", "Matthew", "Kimberly", "Salli"],
 				null, null, popts.voice, null, function() {
-					var person = vu.builders.current.person;
+					var person = zero.core.current.person;
 					if (person) {
 						person.voice = selz.voice.value;
 						persist({ voice: person.voice });
@@ -96,7 +96,7 @@ vu.builders.vibe = {
 		vu.storage.save(popts, null, "person", updates, sub);
 	},
 	menu: function() {
-		var cur = vu.builders.current, _ = vu.builders.vibe._,
+		var cur = zero.core.current, _ = vu.builders.vibe._,
 			selz = _.selectors, blurs = core.config.ctvu.blurs;
 		_.setup();
 		return [

@@ -1,5 +1,3 @@
-vu.builders.current = {};
-
 vu.builders.core = {
 	init: function() {
 		var pname = location.pathname.split("/").pop().split(".")[0],

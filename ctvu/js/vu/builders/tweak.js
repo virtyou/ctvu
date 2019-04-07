@@ -3,10 +3,9 @@ vu.builders.tweak = {
 		opts: core.config.ctvu.builders.person,
 		accessories: core.config.ctvu.builders.accessories,
 		selectors: {},
-		joined: function(_person) {
-			var person = vu.builders.current.person = zero.core.current.person = _person,
-				_ = vu.builders.tweak._, popts = _.opts,
-				has_menu = false;
+		joined: function(person) {
+			var _ = vu.builders.tweak._, popts = _.opts, has_menu = false;
+			zero.core.current.person = person;
 			for (var c in popts.colors) {
 				var comps = c.split(".").slice(1);
 				_.target = person.body;
@@ -100,7 +99,7 @@ vu.builders.tweak = {
 				vu.builders.tweak.persist();
 			} else { // remote
 				color = parseInt(color.slice(1), 16);
-				var bod = vu.builders.current.person.body;
+				var bod = zero.core.current.person.body;
 				if (bod.head.opts.key) { // parts tree
 					var copts = {};
 					copts[prop] = color;
@@ -144,14 +143,14 @@ vu.builders.tweak = {
 			var pselector = selz.character = CT.dom.select(avz.map(function(item) {
 				return item.split(".").pop();
 			}), avz, null, bt && bt.slice(bt.indexOf(".") + 1), null, function() {
-				if (vu.builders.current.person) {
+				if (zero.core.current.person) {
 					persist({ template: "templates." + pselector.value }, "body");
 					location = location; // hack! do something smarter...
 				}
 			});
 			selz.accessories = (accz[template] || accz.sassy).map(function(acc) {
 				return CT.dom.checkboxAndLabel(acc, true, null, null, null, function(cb) {
-					var head = vu.builders.current.person.head;
+					var head = zero.core.current.person.head;
 					if (cb.checked) // hard-wiring one.body for now ... genericize later
 						head.attach(templates.one.body.accessories[acc]);
 					else
@@ -170,7 +169,7 @@ vu.builders.tweak = {
 		vu.storage.save(popts, null, "person", updates, sub);
 	},
 	menu: function() {
-		var cur = vu.builders.current, _ = vu.builders.tweak._, selz = _.selectors,
+		var cur = zero.core.current, _ = vu.builders.tweak._, selz = _.selectors,
 			blurs = core.config.ctvu.blurs, popts = _.opts,
 			mode = core.config.ctvu.storage.mode,
 			baseClass = "padded bordered round mb5" + (mode == "remote" ? " hidden" : "");

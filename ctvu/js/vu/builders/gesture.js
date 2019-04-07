@@ -16,7 +16,7 @@ vu.builders.gesture = {
 			right_hand: "bottomleft"
 		},
 		joined: function(person) {
-			vu.builders.current.person = person;
+			zero.core.current.person = person;
 			vu.builders.gesture._.initCamera();
 			if (!Object.keys(person.opts.gestures).length)
 				vu.builders.gesture._.initGesture();
@@ -43,7 +43,7 @@ vu.builders.gesture = {
 		},
 		initGesture: function() {
 			var _ = vu.builders.gesture._,
-				cur = vu.builders.current;
+				cur = zero.core.current;
 			vu.core.prompt({
 				prompt: "what's the new gesture?",
 				cb: function(val) {
@@ -57,7 +57,7 @@ vu.builders.gesture = {
 		},
 		setDance: function(dname) {
 			var _ = vu.builders.gesture._, selz = _.selectors,
-				person = vu.builders.current.person,
+				person = zero.core.current.person,
 				dopts = person.opts.dances;
 
 			selz.steps.update = function() {
@@ -69,7 +69,7 @@ vu.builders.gesture = {
 		},
 		loadGestures: function() {
 			var _ = vu.builders.gesture._,
-				person = vu.builders.current.person,
+				person = zero.core.current.person,
 				gopts = person.opts.gestures,
 				dopts = person.opts.dances,
 				curDance, dbutt = CT.dom.button("dance", function() {
@@ -156,7 +156,7 @@ vu.builders.gesture = {
 			});
 		},
 		jointRange: function(gesture, val, side, sub, part, axis, modpart) {
-			var person = vu.builders.current.person,
+			var person = zero.core.current.person,
 				gopts = person.opts.gestures,
 				gesture_opts = gopts[gesture],
 				popts = { gestures: gopts },
@@ -173,7 +173,7 @@ vu.builders.gesture = {
 		},
 		setJoints: function(gesture, side, sub) {
 			var _ = vu.builders.gesture._, selz = _.selectors,
-				person = vu.builders.current.person,
+				person = zero.core.current.person,
 				gopts = person.opts.gestures,
 				gesture_opts = gopts[gesture],
 				val, modpart, partnames;
