@@ -4,7 +4,7 @@ vu.builders.tweak = {
 		accessories: core.config.ctvu.builders.accessories,
 		selectors: {},
 		joined: function(_person) {
-			var person = vu.builders.current.person = _person,
+			var person = vu.builders.current.person = zero.core.current.person = _person,
 				_ = vu.builders.tweak._, popts = _.opts,
 				has_menu = false;
 			for (var c in popts.colors) {
@@ -200,7 +200,12 @@ vu.builders.tweak = {
 				selz.shininess
 			], "padded bordered round mb5"),
 			CT.dom.div([
-				CT.dom.div("morphs", "centered"),
+				CT.dom.link("import/export", function() {
+					vu.core.impex(zero.core.current.person.body.opts.morphs, function(val) {
+						vu.builders.tweak.persist({ morphs: val }, "body");
+					});
+				}, null, "right"),
+				"morphs",
 				selz.morphs
 			], "padded bordered round")
 		];
