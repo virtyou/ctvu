@@ -111,6 +111,11 @@ vu.builders.vibe = {
 				}, "w1 block mt5", null, null, null, blurs.talk)
 			], "padded bordered round mb5"),
 			CT.dom.div([
+				CT.dom.link("import/export", function() {
+					vu.core.impex(cur.person.vibe.opts.vibes, function(val) {
+						vu.builders.vibe.persist({ vibe: val });
+					});
+				}, null, "right"),
 				"Vibes",
 				selz.vibes
 			], "padded bordered round mb5"),

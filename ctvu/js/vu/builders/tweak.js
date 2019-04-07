@@ -200,7 +200,7 @@ vu.builders.tweak = {
 			], "padded bordered round mb5"),
 			CT.dom.div([
 				CT.dom.link("import/export", function() {
-					vu.core.impex(zero.core.current.person.body.opts.morphs, function(val) {
+					vu.core.impex(cur.person.body.opts.morphs, function(val) {
 						vu.builders.tweak.persist({ morphs: val }, "body");
 					});
 				}, null, "right"),

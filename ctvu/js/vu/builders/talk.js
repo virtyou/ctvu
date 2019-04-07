@@ -292,7 +292,7 @@ vu.builders.talk = {
 					CT.dom.span("Triggers"),
 					CT.dom.pad(),
 					CT.dom.link("import/export", function() {
-						vu.core.impex(zero.core.current.person.opts.responses, function(val) {
+						vu.core.impex(cur.person.opts.responses, function(val) {
 							vu.builders.talk.persist({ responses: val });
 						});
 					})
