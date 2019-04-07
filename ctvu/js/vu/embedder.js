@@ -1,12 +1,13 @@
 window.VU = {
 	_: {
 		people: {},
+		actions: ["say", "respond", "responses", "triggers"],
 		pusher: function(action, person) {
-			return function(words, cb) {
+			return function(data, cb) {
 				person.cb = cb;
 				person.iframe.contentWindow.postMessage({
 					action: action,
-					data: words,
+					data: data,
 					cb: cb && person.key
 				});
 			};
@@ -14,13 +15,14 @@ window.VU = {
 		puller: function(event) {
 			var d = event.data;
 			if (d.action == "cb")
-				VU._.people[d.data].cb();
+				VU._.people[d.person].cb(d.data);
 			// else....
 		},
 		person: function(ifr, key) {
 			var p = VU._.people[key] = { iframe: ifr, key: key };
-			p.say = VU._.pusher("say", p);
-			p.respond = VU._.pusher("respond", p);
+			VU._.actions.forEach(function(action) {
+				p[action] = vu._.pusher(action, p);
+			});
 			return p;
 		}
 	},
