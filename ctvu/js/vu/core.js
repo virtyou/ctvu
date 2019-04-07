@@ -57,12 +57,13 @@ vu.core = {
 			slide: { origin: "top" },
 			content: [
 				"Here's the configuration. Be careful!",
-				CT.dom.textArea({
+				CT.dom.smartField({
 					isTA: true,
+					classname: "w400p h400p",
 					value: JSON.stringify(data),
 					cb: function(val) {
 						if (confirm("are you sure you want to save your changes?")) {
-							onchange(val);
+							onchange(JSON.parse(val));
 							window.location = location; // lol lazy ;)
 						}
 					}
