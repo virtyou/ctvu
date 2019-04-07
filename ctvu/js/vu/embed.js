@@ -1,29 +1,31 @@
 vu.embed = {
 	_: {
 		receive: function(event) {
-			var d = event.data, data = d.data,
+			var d = event.data, data = d.data, _ = vu.embed._,
 				person = zero.core.current.person;
-			if (d.action == "trigger") {
+			if (d.action == "listen")
+				zero.core.rec.listen(_.done);
+			else if (d.action == "trigger") {
 				person.brain.triggers[d.data] = function() {
-					vu.embed._.done(null, d.data);
+					_.done(d.data, "trigger");
 				};
 			} else if (d.action == "triggers") {
 				if (data)
 					person.brain.triggers = data;
 				else
-					vu.embed._.done(person.brain.triggers);
+					_.done(person.brain.triggers);
 			} else if (d.action == "responses") {
 				if (data)
 					person.opts.responses = data;
 				else
-					vu.embed._.done(person.opts.responses);
+					_.done(person.opts.responses);
 			} else
-				person[d.action](data, d.cb && vu.embed._.done);
+				person[d.action](data, d.cb && _.done);
 		},
-		done: function(data, trigger) {
+		done: function(data, action) {
 			window.parent.postMessage({
-				action: trigger && "trigger" || "cb",
-				data: trigger || data,
+				action: action || "cb",
+				data: data,
 				person: vu.embed._.key
 			});
 		}

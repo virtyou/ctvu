@@ -1,7 +1,7 @@
 window.VU = {
 	_: {
 		people: {},
-		actions: ["say", "respond", "responses", "triggers", "trigger"],
+		actions: ["say", "respond", "responses", "triggers", "trigger", "listen"],
 		pusher: function(action, person) {
 			return function(data, cb) {
 				if (action == "trigger")
