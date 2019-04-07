@@ -33,7 +33,10 @@ vu.embed = {
 		CT.db.multi(keys, function(data) {
 			data[1].people.push(data[0]);
 			core.config.ctzero.room = data[1];
-			zero.core.util.init();
+			zero.core.util.init(function(person) {
+				zero.core.camera.unfollow();
+				person.look(zero.core.camera);
+			});
 		}, "json");
 		window.addEventListener("message", vu.embed._.receive);
 	}
