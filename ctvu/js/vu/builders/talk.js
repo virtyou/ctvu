@@ -7,7 +7,7 @@ vu.builders.talk = {
 			background: "img"
 		},
 		joined: function(person) {
-			vu.builders.current.person = person;
+			vu.builders.current.person = zero.core.current.person = person;
 			zero.core.camera.unfollow();
 			vu.builders.talk._.loadTriggers({
 				branches: person.opts.responses
@@ -288,7 +288,15 @@ vu.builders.talk = {
 			], "padded bordered round mb5"),
 			CT.dom.div([
 				_.helno("Triggers"),
-				"Triggers",
+				[
+					CT.dom.span("Triggers"),
+					CT.dom.pad(),
+					CT.dom.link("import/export", function() {
+						vu.core.impex(zero.core.current.person.opts.responses, function(val) {
+							vu.builders.talk.persist({ responses: val });
+						});
+					})
+				],
 				selz.triggers
 			], "padded bordered round mb5"),
 			CT.dom.div([
