@@ -56,6 +56,10 @@ iframe {
 	overflow-y: hidden;
 }
 
+#ctmain.embedded {
+	top: 0;
+}
+
 #menu {
 	position: absolute;
 	top: 0px;
