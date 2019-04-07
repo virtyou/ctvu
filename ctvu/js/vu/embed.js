@@ -1,15 +1,29 @@
 vu.embed = {
 	_: {
 		receive: function(event) {
-			var d = event.data;
-			zero.core.current.person[d.action](d.data, function() {
-				d.cb && vu.embed._.done(d.cb);
-			});
+			var d = event.data, data = d.data,
+				person = zero.core.current.person;
+			if (d.action == "triggers") {
+				if (data)
+					person.brain.triggers = data;
+				else
+					vu.embed._.done(d.cb, person.brain.triggers);
+			} else if (d.action == "responses") {
+				if (data)
+					person.opts.responses = data;
+				else
+					vu.embed._.done(d.cb, person.opts.responses);
+			} else {
+				person[d.action](data, function() {
+					d.cb && vu.embed._.done(d.cb);
+				});
+			}
 		},
-		done: function(cbkey) {
+		done: function(cbkey, data) {
 			window.parent.postMessage({
 				action: "cb",
-				data: cbkey
+				data: data,
+				person: cbkey
 			});
 		}
 	},
