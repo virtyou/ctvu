@@ -249,6 +249,7 @@ vu.builders.gesture = {
 	menus: function() {
 		var modal, section, _ = vu.builders.gesture._, selz = _.selectors;
 		_.setup();
+		CT.dom.id("ctmain").className = "gpage"; // for gmenu 33% rule exclusion
 		for (section in _.menus) {
 			modal = vu.core.menu(section, _.menus[section], selz[section], [
 				selz[section + "_button"],
