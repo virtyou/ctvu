@@ -51,6 +51,25 @@ vu.core = {
 			style: "single-choice"
 		}));
 	},
+	impex: function(data, onchange) {
+		(new CT.modal.Modal({
+			transition: "slide",
+			slide: { origin: "top" },
+			content: [
+				"Here's the configuration. Be careful!",
+				CT.dom.textArea({
+					isTA: true,
+					value: JSON.stringify(data),
+					cb: function(val) {
+						if (confirm("are you sure you want to save your changes?")) {
+							onchange(val);
+							window.location = location; // lol lazy ;)
+						}
+					}
+				})
+			]
+		})).show();
+	},
 	fieldList: function(node, values, cb, generator, onadd, onremove) {
 		cb = cb || node.update;
 		node.fields = CT.dom.fieldList(values, generator || function(v) {
