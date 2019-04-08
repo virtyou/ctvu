@@ -64,6 +64,9 @@ vu.embed = {
 		}, "json");
 	},
 	init: function() {
+		var ear = CT.dom.div(null, null, "listening_indicator");
+		CT.dom.addContent("ctmain", ear);
+		zero.core.rec.setIndicator(ear);
 		window.addEventListener("message", vu.embed._.receive);
 		var h = vu.embed._.key = document.location.hash.slice(1);
 		if (h.indexOf("_") != -1) // person / room specified - else, user key

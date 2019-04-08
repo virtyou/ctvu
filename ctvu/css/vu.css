@@ -99,6 +99,19 @@ iframe {
 	left: 275px;
 }
 
+#listening_indicator {
+	position: absolute;
+	top: 0;
+	left: 0;
+	opacity: 0;
+	width: 80px;
+	height: 80px;
+	margin: 20px;
+	background: red;
+	border-radius: 50%;
+	transition: opacity 1s;
+}
+
 .dropper {
 	border: 2px dashed white;
 	margin-top: 5px;
