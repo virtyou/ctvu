@@ -29,9 +29,9 @@ window.VU = {
 			} else // bridge
 				VU._.bridges[d.bridge].cbs[d.action](d.data);
 		},
-		person: function(ifr, key) {
+		person: function(ifr, key, onready) {
 			var p = VU._.people[key] = {
-				cbs: {}, key: key, iframe: ifr
+				cbs: {}, key: key, iframe: ifr, cb: onready
 			};
 			VU._.actions.forEach(function(action) {
 				p[action] = VU._.sender(action, p);
@@ -46,9 +46,9 @@ window.VU = {
 						entity.person + "_" + entity.room);
 			}
 		},
-		bridge: function(ifr, key) {
+		bridge: function(ifr, key, onready) {
 			var _ = VU._, b = _.bridges[key] = {
-				cbs: {}, key: key, iframe: ifr
+				cbs: {}, key: key, iframe: ifr, cb: onready
 			};
 			_.queries.forEach(function(query) {
 				b[query] = _.sender(query, b, _.upbridge);
@@ -78,18 +78,18 @@ window.VU = {
 			}
 		}
 	},
-	bridge: function(node, ukey) { // useful for getting user data pre-select
+	bridge: function(node, ukey, onready) { // useful for getting user data pre-select
 		VU.init();
 		var ifr = VU._.iframe(ukey);
 		node.appendChild(ifr);
-		return VU._.bridge(ifr, ukey);
+		return VU._.bridge(ifr, ukey, onready);
 	},
-	embed: function(node, pkey, rkey) {
+	embed: function(node, pkey, rkey, onready) {
 		VU.init();
 		var key = pkey + "_" + rkey,
 			ifr = VU._.iframe(key);
 		node.appendChild(ifr);
-		return VU._.person(ifr, key);
+		return VU._.person(ifr, key, onready);
 	},
 	init: function() {
 		if (!VU._.initialized) {

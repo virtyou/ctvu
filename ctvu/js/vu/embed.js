@@ -77,5 +77,6 @@ vu.embed = {
 		var h = vu.embed._.key = document.location.hash.slice(1);
 		if (h.indexOf("_") != -1) // person / room specified - else, user key
 			vu.embed.setup.apply(null, h.split("_"));
+		vu.embed._.done();
 	}
 };
