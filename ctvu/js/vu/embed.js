@@ -47,7 +47,13 @@ vu.embed = {
 		}
 	},
 	room: function(rkey) {
-		zero.core.util.room(CT.data.get(rkey));
+		var room = CT.data.get(rkey);
+		if (zero.core.current.room)
+			zero.core.util.room(room);
+		else {
+			core.config.ctzero.room = room;
+			zero.core.util.init();
+		}
 	},
 	person: function(pkey, cb) {
 		if (zero.core.current.person)
