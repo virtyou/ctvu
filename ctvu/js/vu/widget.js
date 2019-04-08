@@ -1,4 +1,4 @@
-vu.embed = {
+vu.widget = {
 	_: {
 		bridge: function(d) {
 			var _ = vu.embed._;

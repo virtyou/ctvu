@@ -57,7 +57,7 @@ window.VU = {
 		},
 		iframe: function(key) {
 			var loc = VU._.location(), ifr = document.createElement("iframe");
-			ifr.src = loc.protocol + "://" + loc.domain + "/vu/embed.html#" + key;
+			ifr.src = loc.protocol + "://" + loc.domain + "/vu/widget.html#" + key;
 			ifr.style.width = ifr.style.height = "100%";
 			return ifr;
 		},

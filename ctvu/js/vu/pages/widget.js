@@ -3,6 +3,6 @@ CT.require("CT.db");
 CT.require("core");
 CT.require("zero.core");
 CT.require("vu.core");
-CT.require("vu.embed");
+CT.require("vu.widget");
 
-CT.onload(vu.embed.init);
+CT.onload(vu.widget.init);
