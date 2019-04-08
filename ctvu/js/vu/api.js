@@ -71,7 +71,7 @@ window.VU = {
 				i, p, parts, loc = VU._.loc = {};
 			for (i = 0; i < s.length; i++) {
 				p = s[i].src;
-				if (p.slice(-15) == "/vu/embedder.js") {
+				if (p.slice(-10) == "/vu/api.js") {
 					loc.full = p;
 					parts = p.split("://");
 					loc.protocol = parts[0];
