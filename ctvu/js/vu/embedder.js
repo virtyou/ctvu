@@ -55,23 +55,39 @@ window.VU = {
 			});
 			return p;
 		},
-		iframe: function(key, domain, protocol) {
-			var ifr = document.createElement("iframe");
-			ifr.src = (protocol || "https") + "://" + (domain || "virtyou.org") + "/vu/embed.html#" + key;
+		iframe: function(key) {
+			var loc = VU._.location(), ifr = document.createElement("iframe");
+			ifr.src = loc.protocol + "://" + loc.domain + "/vu/embed.html#" + key;
 			ifr.style.width = ifr.style.height = "100%";
 			return ifr;
+		},
+		location: function() {
+			if (VU._.loc)
+				return VU._.loc;
+			var s = document.getElementsByTagName("script"),
+				i, p, parts, loc = VU._.loc = {};
+			for (i = 0; i < s.length; i++) {
+				p = s[i].src;
+				if (p.slice(-15) == "/vu/embedder.js") {
+					loc.full = p;
+					parts = p.split("://");
+					loc.protocol = parts[0];
+					loc.domain = parts[1].split("/").shift();
+					return loc;
+				}
+			}
 		}
 	},
-	bridge: function(node, ukey, domain, protocol) { // useful for getting user data pre-select
+	bridge: function(node, ukey) { // useful for getting user data pre-select
 		VU.init();
-		var ifr = VU._.iframe(ukey, domain, protocol);
+		var ifr = VU._.iframe(ukey);
 		node.appendChild(ifr);
 		return VU._.bridge(ifr, ukey);
 	},
-	embed: function(node, pkey, rkey, domain, protocol) {
+	embed: function(node, pkey, rkey) {
 		VU.init();
 		var key = pkey + "_" + rkey,
-			ifr = VU._.iframe(key, domain, protocol);
+			ifr = VU._.iframe(key);
 		node.appendChild(ifr);
 		return VU._.person(ifr, key);
 	},
