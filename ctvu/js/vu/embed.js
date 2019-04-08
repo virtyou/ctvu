@@ -1,8 +1,19 @@
 vu.embed = {
 	_: {
+		bridge: function(d) {
+			var _ = vu.embed._;
+			if (d.action == "rooms" || d.action == "people") {
+				vu.core.udata(function(udata) {
+					_.done(udata[d.action], d.action);
+				}, true, _.key);
+			} else // room / person
+				vu.embed[d.action](d.data);
+		},
 		receive: function(event) {
-			var d = event.data, data = d.data, _ = vu.embed._,
-				person = zero.core.current.person;
+			var d = event.data, data = d.data, _ = vu.embed._;
+			if (["rooms", "people", "room", "person"].indexOf(d.action) != -1)
+				return _.bridge(d);
+			var person = zero.core.current.person;
 			if (d.action == "listen")
 				zero.core.rec.listen(_.done);
 			else if (d.action == "trigger") {
@@ -23,24 +34,39 @@ vu.embed = {
 				person[d.action](data, d.cb && _.done);
 		},
 		done: function(data, action) {
-			window.parent.postMessage({
+			var _ = vu.embed._, d = {
 				action: action || "cb",
-				data: data,
-				person: vu.embed._.key
-			});
+				data: data
+			};
+			d[(_.key.indexOf("_") != -1) ? "person" : "bridge"] = _.key;
+			window.parent.postMessage(d);
+		},
+		refreshKey: function() {
+			var cur = zero.core.current;
+			vu.embed._.key = cur.person.opts.key + "_" + cur.room.opts.key;
 		}
 	},
-	init: function() {
-		var h = vu.embed._.key = document.location.hash.slice(1),
-			pkey, rkey, keys = [pkey, rkey] = h.split("_");
-		CT.db.multi(keys, function(data) {
-			data[1].people.push(data[0]);
-			core.config.ctzero.room = data[1];
-			zero.core.util.init(function(person) {
-				zero.core.camera.unfollow();
-				person.look(zero.core.camera);
-			});
+	room: function(rkey) {
+		zero.core.util.room(CT.data.get(rkey));
+	},
+	person: function(pkey, cb) {
+		if (zero.core.current.person)
+			zero.core.current.person.remove();
+		zero.core.util.join(CT.data.get(pkey), function() {
+			vu.embed._.refreshKey();
+			cb && cb();
+		}, true, true, true);
+	},
+	setup: function(pkey, rkey) {
+		CT.db.multi([pkey, rkey], function() {
+			vu.embed.room(rkey);
+			vu.embed.person(pkey);
 		}, "json");
+	},
+	init: function() {
 		window.addEventListener("message", vu.embed._.receive);
+		var h = vu.embed._.key = document.location.hash.slice(1);
+		if (h.indexOf("_") != -1) // person / room specified - else, user key
+			vu.embed.setup.apply(null, h.split("_"));
 	}
 };
