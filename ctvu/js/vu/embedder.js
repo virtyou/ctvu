@@ -55,10 +55,13 @@ window.VU = {
 			});
 			return p;
 		},
-		iframe: function(key) {
+		iframe: function(key, node) {
 			var loc = VU._.location(), ifr = document.createElement("iframe");
 			ifr.src = loc.protocol + "://" + loc.domain + "/vu/widget.html#" + key;
 			ifr.style.width = ifr.style.height = "100%";
+			if (typeof node == "string")
+				node = document.getElementById(node);
+			node.appendChild(ifr);
 			return ifr;
 		},
 		location: function() {
@@ -80,16 +83,12 @@ window.VU = {
 	},
 	bridge: function(node, ukey, onready) { // useful for getting user data pre-select
 		VU.init();
-		var ifr = VU._.iframe(ukey);
-		node.appendChild(ifr);
-		return VU._.bridge(ifr, ukey, onready);
+		return VU._.bridge(VU._.iframe(ukey, node), ukey, onready);
 	},
 	embed: function(node, pkey, rkey, onready) {
 		VU.init();
-		var key = pkey + "_" + rkey,
-			ifr = VU._.iframe(key);
-		node.appendChild(ifr);
-		return VU._.person(ifr, key, onready);
+		var key = pkey + "_" + rkey;
+		return VU._.person(VU._.iframe(key, node), key, onready);
 	},
 	init: function() {
 		if (!VU._.initialized) {
