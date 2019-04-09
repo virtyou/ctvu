@@ -77,7 +77,7 @@ window.VU = {
 			for (i = 0; i < s.length; i++) {
 				p = s[i].src;
 				if (p.slice(-10) == "/vu/api.js")
-					return p.slice(0, -13); // TODO: back to 10
+					return p.slice(0, -10);
 			}
 		}
 	},
