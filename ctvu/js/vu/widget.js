@@ -40,7 +40,7 @@ vu.widget = {
 				data: data
 			};
 			d[(_.key.indexOf("_") != -1) ? "person" : "bridge"] = _.key;
-			window.parent.postMessage(d, "*");//_.targetOrigin);
+			window.parent.postMessage(d, _.targetOrigin);
 		},
 		refreshKey: function() {
 			var cur = zero.core.current;

@@ -18,7 +18,7 @@ window.VU = {
 					action: action,
 					data: data,
 					cb: !!cb
-				}, "*");//entity.iframe._targetOrigin);
+				}, entity.iframe._targetOrigin);
 				return onsend && onsend(action, entity, data, cb);
 			};
 		},
@@ -64,7 +64,7 @@ window.VU = {
 		iframe: function(key, node) {
 			var ifr = document.createElement("iframe"),
 				loc = VU._.location();
-			ifr._targetOrigin = loc.split("/")[2]; // lol hacky
+			ifr._targetOrigin = loc;
 			ifr.src = loc + "/vu/widget.html#" + key;
 			ifr.style.width = ifr.style.height = "100%";
 			if (typeof node == "string")
@@ -77,7 +77,7 @@ window.VU = {
 			for (i = 0; i < s.length; i++) {
 				p = s[i].src;
 				if (p.slice(-10) == "/vu/api.js")
-					return p.slice(0, -10);
+					return p.slice(0, -13); // TODO: back to 10
 			}
 		}
 	},
