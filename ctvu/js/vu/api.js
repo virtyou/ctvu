@@ -6,15 +6,19 @@ window.VU = {
 		queries: ["rooms", "people", "room", "person"],
 		sender: function(action, entity, onsend) {
 			return function(data, cb) {
-				if (["trigger", "people", "rooms"].indexOf(action) != -1)
+				if (["people", "rooms", "listen", "trigger"].indexOf(action) != -1) {
+					if (action != "trigger") {
+						cb = data;
+						data = action;
+					}
 					entity.cbs[data] = cb;
-				else
+				} else
 					entity.cb = cb;
 				entity.iframe.contentWindow.postMessage({
 					action: action,
 					data: data,
 					cb: !!cb
-				});
+				}, "*");//entity.iframe._targetOrigin);
 				return onsend && onsend(action, entity, data);
 			};
 		},
@@ -31,8 +35,9 @@ window.VU = {
 		},
 		person: function(ifr, key, onready) {
 			var p = VU._.people[key] = {
-				cbs: {}, key: key, iframe: ifr, cb: onready
+				cbs: {}, key: key, iframe: ifr,
 			};
+			ifr.onload = onready;
 			VU._.actions.forEach(function(action) {
 				p[action] = VU._.sender(action, p);
 			});
@@ -48,16 +53,19 @@ window.VU = {
 		},
 		bridge: function(ifr, key, onready) {
 			var _ = VU._, b = _.bridges[key] = {
-				cbs: {}, key: key, iframe: ifr, cb: onready
+				cbs: {}, key: key, iframe: ifr,
 			};
+			ifr.onload = onready;
 			_.queries.forEach(function(query) {
 				b[query] = _.sender(query, b, _.upbridge);
 			});
 			return b;
 		},
 		iframe: function(key, node) {
-			var ifr = document.createElement("iframe");
-			ifr.src = VU._.location() + "vu/widget.html#" + key;
+			var ifr = document.createElement("iframe"),
+				loc = VU._.location();
+			ifr._targetOrigin = loc.split("/")[2]; // lol hacky
+			ifr.src = loc + "vu/widget.html#" + key;
 			ifr.style.width = ifr.style.height = "100%";
 			if (typeof node == "string")
 				node = document.getElementById(node);
