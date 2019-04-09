@@ -53,11 +53,11 @@ window.VU = {
 			_.queries.forEach(function(query) {
 				b[query] = _.sender(query, b, _.upbridge);
 			});
-			return p;
+			return b;
 		},
 		iframe: function(key, node) {
-			var loc = VU._.location(), ifr = document.createElement("iframe");
-			ifr.src = loc.protocol + "://" + loc.domain + "/vu/widget.html#" + key;
+			var ifr = document.createElement("iframe");
+			ifr.src = VU._.location() + "vu/widget.html#" + key;
 			ifr.style.width = ifr.style.height = "100%";
 			if (typeof node == "string")
 				node = document.getElementById(node);
@@ -65,19 +65,11 @@ window.VU = {
 			return ifr;
 		},
 		location: function() {
-			if (VU._.loc)
-				return VU._.loc;
-			var s = document.getElementsByTagName("script"),
-				i, p, parts, loc = VU._.loc = {};
+			var i, p, s = document.getElementsByTagName("script");
 			for (i = 0; i < s.length; i++) {
 				p = s[i].src;
-				if (p.slice(-10) == "/vu/api.js") {
-					loc.full = p;
-					parts = p.split("://");
-					loc.protocol = parts[0];
-					loc.domain = parts[1].split("/").shift();
-					return loc;
-				}
+				if (p.slice(-10) == "/vu/api.js")
+					return p.slice(0, -12); // reduce to 6 for prod mode
 			}
 		}
 	},
