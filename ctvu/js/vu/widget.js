@@ -5,12 +5,13 @@ vu.widget = {
 			if (d.action == "rooms" || d.action == "people") {
 				vu.core.udata(function(udata) {
 					_.done(udata[d.action], d.action);
-				}, true, _.key);
+				}, true, _.key, true);
 			} else // room / person
 				vu.widget[d.action](d.data);
 		},
 		receive: function(event) {
 			var d = event.data, data = d.data, _ = vu.widget._;
+			_.targetOrigin = event.origin;
 			if (["rooms", "people", "room", "person"].indexOf(d.action) != -1)
 				return _.bridge(d);
 			var person = zero.core.current.person;
@@ -39,7 +40,7 @@ vu.widget = {
 				data: data
 			};
 			d[(_.key.indexOf("_") != -1) ? "person" : "bridge"] = _.key;
-			window.parent.postMessage(d);
+			window.parent.postMessage(d, "*");//_.targetOrigin);
 		},
 		refreshKey: function() {
 			var cur = zero.core.current;
@@ -77,6 +78,5 @@ vu.widget = {
 		var h = vu.widget._.key = document.location.hash.slice(1);
 		if (h.indexOf("_") != -1) // person / room specified - else, user key
 			vu.widget.setup.apply(null, h.split("_"));
-		vu.widget._.done();
 	}
 };
