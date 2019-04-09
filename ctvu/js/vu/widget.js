@@ -7,7 +7,7 @@ vu.widget = {
 					_.done(udata[d.action], d.action);
 				}, true, _.key, true);
 			} else // room / person
-				vu.widget[d.action](d.data);
+				vu.widget[d.action](d.data, d.cb && _.done);
 		},
 		receive: function(event) {
 			var d = event.data, data = d.data, _ = vu.widget._;
@@ -59,7 +59,7 @@ vu.widget = {
 	person: function(pkey, cb) {
 		if (zero.core.current.person)
 			zero.core.current.person.remove();
-		zero.core.util.join(CT.data.get(pkey), function() {
+		zero.core.util.join(vu.core.person(CT.data.get(pkey)), function() {
 			vu.widget._.refreshKey();
 			cb && cb();
 		}, true, true, true);

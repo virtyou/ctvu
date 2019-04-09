@@ -19,7 +19,7 @@ window.VU = {
 					data: data,
 					cb: !!cb
 				}, "*");//entity.iframe._targetOrigin);
-				return onsend && onsend(action, entity, data);
+				return onsend && onsend(action, entity, data, cb);
 			};
 		},
 		puller: function(event) {
@@ -33,9 +33,9 @@ window.VU = {
 			} else // bridge
 				VU._.bridges[d.bridge].cbs[d.action](d.data);
 		},
-		person: function(ifr, key, onready) {
+		person: function(ifr, key, onready, cb) {
 			var p = VU._.people[key] = {
-				cbs: {}, key: key, iframe: ifr,
+				cbs: {}, key: key, iframe: ifr, cb: cb,
 			};
 			ifr.onload = onready;
 			VU._.actions.forEach(function(action) {
@@ -43,12 +43,12 @@ window.VU = {
 			});
 			return p;
 		},
-		upbridge: function(action, entity, data) {
+		upbridge: function(action, entity, data, cb) {
 			if (["room", "person"].indexOf(action) != -1) {
 				entity[action] = data;
 				if (action == "person")
 					return VU._.person(entity.iframe,
-						entity.person + "_" + entity.room);
+						entity.person + "_" + entity.room, null, cb);
 			}
 		},
 		bridge: function(ifr, key, onready) {
