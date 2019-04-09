@@ -199,10 +199,10 @@ vu.core = {
 		};
 		return vu.core._udata;
 	},
-	udata: function(cb, allrooms, ukey) {
+	udata: function(cb, allrooms, ukey, skipsets) {
 		if (vu.core._udata)
 			return cb(vu.core._udata);
-		if (!user.core.get()) // cfg.access.anon must be true
+		if (!(ukey || user.core.get())) // cfg.access.anon must be true
 			return cb(vu.core.locd());
 		ukey = ukey || user.core.get("key");
 		vu.core.z({
@@ -219,6 +219,8 @@ vu.core = {
 				});
 			}
 			vu.core._udata = data;
+			if (skipsets)
+				return cb(data);
 			vu.core.seta(function() {
 				vu.core.setz();
 				cb(data);
