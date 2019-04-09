@@ -1,16 +1,16 @@
 vu.widget = {
 	_: {
 		bridge: function(d) {
-			var _ = vu.embed._;
+			var _ = vu.widget._;
 			if (d.action == "rooms" || d.action == "people") {
 				vu.core.udata(function(udata) {
 					_.done(udata[d.action], d.action);
 				}, true, _.key);
 			} else // room / person
-				vu.embed[d.action](d.data);
+				vu.widget[d.action](d.data);
 		},
 		receive: function(event) {
-			var d = event.data, data = d.data, _ = vu.embed._;
+			var d = event.data, data = d.data, _ = vu.widget._;
 			if (["rooms", "people", "room", "person"].indexOf(d.action) != -1)
 				return _.bridge(d);
 			var person = zero.core.current.person;
@@ -34,7 +34,7 @@ vu.widget = {
 				person[d.action](data, d.cb && _.done);
 		},
 		done: function(data, action) {
-			var _ = vu.embed._, d = {
+			var _ = vu.widget._, d = {
 				action: action || "cb",
 				data: data
 			};
@@ -43,7 +43,7 @@ vu.widget = {
 		},
 		refreshKey: function() {
 			var cur = zero.core.current;
-			vu.embed._.key = cur.person.opts.key + "_" + cur.room.opts.key;
+			vu.widget._.key = cur.person.opts.key + "_" + cur.room.opts.key;
 		}
 	},
 	room: function(rkey) {
@@ -59,24 +59,24 @@ vu.widget = {
 		if (zero.core.current.person)
 			zero.core.current.person.remove();
 		zero.core.util.join(CT.data.get(pkey), function() {
-			vu.embed._.refreshKey();
+			vu.widget._.refreshKey();
 			cb && cb();
 		}, true, true, true);
 	},
 	setup: function(pkey, rkey) {
 		CT.db.multi([pkey, rkey], function() {
-			vu.embed.room(rkey);
-			vu.embed.person(pkey);
+			vu.widget.room(rkey);
+			vu.widget.person(pkey);
 		}, "json");
 	},
 	init: function() {
 		var ear = CT.dom.div(null, null, "listening_indicator");
 		CT.dom.addContent("ctmain", ear);
 		zero.core.rec.setIndicator(ear);
-		window.addEventListener("message", vu.embed._.receive);
-		var h = vu.embed._.key = document.location.hash.slice(1);
+		window.addEventListener("message", vu.widget._.receive);
+		var h = vu.widget._.key = document.location.hash.slice(1);
 		if (h.indexOf("_") != -1) // person / room specified - else, user key
-			vu.embed.setup.apply(null, h.split("_"));
-		vu.embed._.done();
+			vu.widget.setup.apply(null, h.split("_"));
+		vu.widget._.done();
 	}
 };
