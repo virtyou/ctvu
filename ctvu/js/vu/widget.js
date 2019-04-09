@@ -71,6 +71,7 @@ vu.widget = {
 		}, "json");
 	},
 	init: function() {
+		vu.core.init();
 		var ear = CT.dom.div(null, null, "listening_indicator");
 		CT.dom.addContent("ctmain", ear);
 		zero.core.rec.setIndicator(ear);
