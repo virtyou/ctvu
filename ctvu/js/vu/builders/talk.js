@@ -26,12 +26,12 @@ vu.builders.talk = {
 			selz.bread = CT.dom.div(null, "right");
 			_.raw = vu.core.person(popts);
 		},
-		loadTriggers: function(r, path) {
+		loadTriggers: function(r, path, trig) {
 			path = path || ["root"];
 			if (!r.branches || !Object.keys(r.branches).length)
 				vu.builders.talk._.initCluster(r, path);
 			else
-				vu.builders.talk._.setTriggers(r.branches, path);
+				vu.builders.talk._.setTriggers(r.branches, path, trig);
 		},
 		tree: function(path) {
 			var person = zero.core.current.person,
@@ -41,8 +41,8 @@ vu.builders.talk = {
 				nameCb: function(opts) {
 					if (opts.name == "root")
 						return opts.name;
-					var resp, path, chain;
-					[resp, path] = _.getCluster(opts.id);
+					var resp, path, trig, chain;
+					[resp, path, trig] = _.getCluster(opts.id);
 					chain = CT.dom.span(resp.chain);
 					return [
 						CT.dom.span(opts.name),
@@ -58,7 +58,7 @@ vu.builders.talk = {
 									vu.builders.talk.persist({
 										responses: person.opts.responses
 									});
-									_.setTriggers(resp.branches, path);
+									_.setTriggers(resp.branches, path, trig);
 								}
 							});
 						}),
@@ -79,10 +79,12 @@ vu.builders.talk = {
 						branches: zero.core.current.person.opts.responses
 					}
 				}
-			}, path = id.slice(4).split("_");
+			}, path = id.slice(4).split("_"), trig;
+			if (path.length > 1)
+				trig = path.pop();
 			for (i = 0; i < path.length; i++)
 				r = r.branches[path[i]];
-			return [r, path];
+			return [r, path, trig];
 		},
 		initCluster: function(resps, path) {
 			var _ = vu.builders.talk._,
@@ -104,7 +106,7 @@ vu.builders.talk = {
 				}
 			});
 		},
-		setTriggers: function(responses, path) {
+		setTriggers: function(responses, path, trig) {
 			var trigz = Object.keys(responses), cfg = core.config.ctvu,
 				_ = vu.builders.talk._, selz = _.selectors,
 				popts = _.opts = vu.storage.get("person") || _.opts,
@@ -112,7 +114,7 @@ vu.builders.talk = {
 				persist = vu.builders.talk.persist, blurs = cfg.blurs,
 				cur = zero.core.current;
 
-			rzt.innerHTML = trigz[0];
+			rzt.innerHTML = trig || trigz[0];
 			var justlow = function(f) {
 				if (f.value != "*")
 					f.value = vu.core.jlo(f.value);
