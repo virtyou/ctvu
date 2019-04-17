@@ -9,9 +9,11 @@ vu.builders.talk = {
 		joined: function(person) {
 			zero.core.current.person = person;
 			zero.core.camera.unfollow();
-			vu.builders.talk._.loadTriggers({
-				branches: person.opts.responses
-			});
+			vu.builders.talk._.initTriggers();
+		},
+		initTriggers: function() {
+			var _ = vu.builders.talk._;
+			_.loadTriggers.apply(null, _.getCluster(document.location.hash.slice(1) || "ctl_root"));
 		},
 		setup: function() {
 			var _ = vu.builders.talk._, selz = _.selectors,
