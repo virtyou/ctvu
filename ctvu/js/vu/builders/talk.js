@@ -53,7 +53,6 @@ vu.builders.talk = {
 							vu.core.prompt({
 								prompt: "chain to what?",
 								cb: function(val) {
-									val = vu.core.jlo(val);
 									if (!val) return;
 									resp.chain = val;
 									CT.dom.setContent(chain, val);
@@ -94,7 +93,6 @@ vu.builders.talk = {
 			vu.core.prompt({
 				prompt: "what's the new trigger?",
 				cb: function(val) {
-					val = vu.core.jlo(val);
 					if (!val) return;
 					resps.branches = {};
 					resps.branches[val] = {
@@ -117,10 +115,6 @@ vu.builders.talk = {
 				cur = zero.core.current;
 
 			rzt.innerHTML = trig || trigz[0];
-			var justlow = function(f) {
-				if (f.value != "*")
-					f.value = vu.core.jlo(f.value);
-			};
 			vu.core.fieldList(selz.triggers, trigz, null, function(v) {
 				var f = CT.dom.field(null, v);
 				if (v) {
@@ -131,7 +125,6 @@ vu.builders.talk = {
 					};
 					f.onkeyup = function() {
 						if (f.value) {
-							justlow(f);
 							responses[f.value] = responses[f._trigger];
 							delete responses[f._trigger];
 							rzt.innerHTML = f._trigger = f.value;
@@ -139,8 +132,7 @@ vu.builders.talk = {
 						} else
 							f.value = f._trigger; // meh
 					};
-				} else
-					f.onkeyup = function() { justlow(f); };
+				}
 				return f;
 			}, function(iput) {
 				var key = iput.value;
