@@ -12,8 +12,9 @@ vu.builders.talk = {
 			vu.builders.talk._.initTriggers();
 		},
 		initTriggers: function() {
-			var _ = vu.builders.talk._;
-			_.loadTriggers.apply(null, _.getCluster(document.location.hash.slice(1) || "ctl_root"));
+			var _ = vu.builders.talk._,
+				path = decodeURIComponent(document.location.hash.slice(1)) || "ctl_root";
+			_.loadTriggers.apply(null, _.getCluster(path));
 		},
 		setup: function() {
 			var _ = vu.builders.talk._, selz = _.selectors,
@@ -74,7 +75,7 @@ vu.builders.talk = {
 			CT.dom.id("ctl_" + path).classList.add("selbranch");
 		},
 		getCluster: function(id) {
-			var i, r = {
+			var i, p, r = {
 				branches: {
 					root: {
 						branches: zero.core.current.person.opts.responses
@@ -83,8 +84,17 @@ vu.builders.talk = {
 			}, path = id.slice(4).split("_"), trig;
 			if (path.length > 1)
 				trig = path.pop();
-			for (i = 0; i < path.length; i++)
-				r = r.branches[path[i]];
+			for (i = 0; i < path.length; i++) {
+				p = path[i];
+				if (!r.branches[p]) {
+					r.branches[p] = {
+						branches: {}
+					};
+				}
+				r = r.branches[p];
+			}
+			if (trig && !r.branches[trig])
+				r.branches[trig] = {};
 			return [r, path, trig];
 		},
 		initCluster: function(resps, path) {
