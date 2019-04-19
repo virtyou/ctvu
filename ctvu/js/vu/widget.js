@@ -12,6 +12,8 @@ vu.widget = {
 		receive: function(event) {
 			var d = event.data, data = d.data, _ = vu.widget._;
 			_.targetOrigin = event.origin;
+			if (d.action == "ping")
+				return;
 			if (["rooms", "people", "room", "person"].indexOf(d.action) != -1)
 				return _.bridge(d);
 			var person = zero.core.current.person;
@@ -67,7 +69,7 @@ vu.widget = {
 	setup: function(pkey, rkey) {
 		CT.db.multi([pkey, rkey], function() {
 			vu.widget.room(rkey);
-			vu.widget.person(pkey);
+			vu.widget.person(pkey, vu.widget._.done);
 		}, "json");
 	},
 	init: function() {

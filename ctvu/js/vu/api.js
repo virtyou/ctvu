@@ -2,7 +2,7 @@ window.VU = {
 	_: {
 		people: {},
 		bridges: {},
-		actions: ["say", "respond", "responses", "triggers", "trigger", "listen"],
+		actions: ["ping", "say", "respond", "responses", "triggers", "trigger", "listen"],
 		queries: ["rooms", "people", "room", "person"],
 		sender: function(action, entity, onsend) {
 			return function(data, cb) {
@@ -12,7 +12,7 @@ window.VU = {
 						data = action;
 					}
 					entity.cbs[data] = cb;
-				} else
+				} else if (action != "ping")
 					entity.cb = cb;
 				entity.iframe.contentWindow.postMessage({
 					action: action,
@@ -35,12 +35,14 @@ window.VU = {
 		},
 		person: function(ifr, key, onready, cb) {
 			var p = VU._.people[key] = {
-				cbs: {}, key: key, iframe: ifr, cb: cb,
+				cbs: {}, key: key, iframe: ifr, cb: cb || onready
 			};
-			ifr.onload = onready;
 			VU._.actions.forEach(function(action) {
 				p[action] = VU._.sender(action, p);
 			});
+			ifr.onload = onready && function() {
+				p.ping(); // opens bidirectional stream
+			};
 			return p;
 		},
 		upbridge: function(action, entity, data, cb) {
