@@ -13,7 +13,7 @@ vu.builders.talk = {
 		},
 		initTriggers: function() {
 			var _ = vu.builders.talk._,
-				path = decodeURIComponent(document.location.hash.slice(1)) || "ctl_root";
+				path = decodeURIComponent(document.location.hash.slice(1)).toLowerCase() || "ctl_root";
 			_.loadTriggers.apply(null, _.getCluster(path));
 		},
 		setup: function() {
@@ -54,6 +54,7 @@ vu.builders.talk = {
 							vu.core.prompt({
 								prompt: "chain to what?",
 								cb: function(val) {
+									val = val.toLowerCase();
 									if (!val) return;
 									resp.chain = val;
 									CT.dom.setContent(chain, val);
@@ -103,6 +104,7 @@ vu.builders.talk = {
 			vu.core.prompt({
 				prompt: "what's the new trigger?",
 				cb: function(val) {
+					val = val.toLowerCase();
 					if (!val) return;
 					resps.branches = {};
 					resps.branches[val] = {
@@ -135,6 +137,7 @@ vu.builders.talk = {
 					};
 					f.onkeyup = function() {
 						if (f.value) {
+							f.value = f.value.toLowerCase();
 							responses[f.value] = responses[f._trigger];
 							delete responses[f._trigger];
 							rzt.innerHTML = f._trigger = f.value;
@@ -142,6 +145,8 @@ vu.builders.talk = {
 						} else
 							f.value = f._trigger; // meh
 					};
+				} else {
+					f.onkeyup = function() { f.value = f.value.toLowerCase() };
 				}
 				return f;
 			}, function(iput) {
