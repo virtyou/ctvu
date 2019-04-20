@@ -89,13 +89,14 @@ vu.builders.talk = {
 				p = path[i];
 				if (!r.branches[p]) {
 					r.branches[p] = {
+						phrase: p,
 						branches: {}
 					};
 				}
 				r = r.branches[p];
 			}
 			if (trig && !r.branches[trig])
-				r.branches[trig] = {};
+				r.branches[trig] = { phrase: trig };
 			return [r, path, trig];
 		},
 		initCluster: function(resps, path) {
