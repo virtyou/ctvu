@@ -29,7 +29,9 @@ vu.widget = {
 				else
 					_.done(person.brain.triggers);
 			} else if (d.action == "responses") {
-				if (data)
+				if (data == true)
+					vu.core.update(_.done);
+				else if (data)
 					person.opts.responses = data;
 				else
 					_.done(person.opts.responses);
