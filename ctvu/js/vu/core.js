@@ -85,6 +85,14 @@ vu.core = {
 			node.fields
 		]);
 	},
+	update: function(cb, option) { // responses, gestures, dances...
+		option = option || "responses";
+		var person = zero.core.current.person;
+		CT.db.one(person.opts.key, function(pdata) {
+			person.opts[option] = pdata[option];
+			cb(pdata[option]);
+		}, "json", true);
+	},
 	person: function(popts, invisible) {
 		if (invisible)
 			popts.body.invisible = true;
