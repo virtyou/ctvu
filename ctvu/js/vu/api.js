@@ -23,15 +23,17 @@ window.VU = {
 			};
 		},
 		puller: function(event) {
-			var d = event.data, person;
+			var d = event.data, person, _ = VU._;
 			if (d.person) {
-				person = VU._.people[d.person];
+				person = _.people[d.person];
 				if (d.action == "cb")
 					person.cb(d.data);
 				else if (d.action == "trigger")
 					person.cbs[d.data]();
+				else if (d.action == "resolve")
+					_.onresolved && _.onresolved();
 			} else // bridge
-				VU._.bridges[d.bridge].cbs[d.action](d.data);
+				_.bridges[d.bridge].cbs[d.action](d.data);
 		},
 		person: function(ifr, key, onready, cb) {
 			var p = VU._.people[key] = {
@@ -91,6 +93,9 @@ window.VU = {
 		VU.init();
 		var key = pkey + "_" + rkey;
 		return VU._.person(VU._.iframe(key, node), key, onready);
+	},
+	onresolved: function(cb) {
+		VU._.onresolved = cb;
 	},
 	init: function() {
 		if (!VU._.initialized) {
