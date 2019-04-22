@@ -30,6 +30,8 @@ window.VU = {
 					person.cb(d.data);
 				else if (d.action == "trigger")
 					person.cbs[d.data]();
+				else if (d.action == "listen")
+					person.cbs.listen(d.data);
 				else if (d.action == "resolve")
 					_.onresolved && _.onresolved();
 			} else // bridge
@@ -69,6 +71,7 @@ window.VU = {
 			var ifr = document.createElement("iframe"),
 				loc = VU._.location();
 			ifr._targetOrigin = loc;
+			ifr.allow = "microphone";
 			ifr.src = loc + "/vu/widget.html#" + key;
 			ifr.style.width = ifr.style.height = "100%";
 			if (typeof node == "string")

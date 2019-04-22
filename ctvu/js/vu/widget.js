@@ -18,7 +18,7 @@ vu.widget = {
 				return _.bridge(d);
 			var person = zero.core.current.person;
 			if (d.action == "listen")
-				zero.core.rec.listen(_.done);
+				zero.core.rec.listen(function(phrase) { _.done(phrase, "listen"); });
 			else if (d.action == "trigger") {
 				person.brain.triggers[d.data] = function() {
 					_.done(d.data, "trigger");
