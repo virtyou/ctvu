@@ -64,7 +64,7 @@ vu.widget = {
 		var _ = vu.widget._;
 		if (zero.core.current.person)
 			zero.core.current.person.remove();
-		zero.core.util.join(vu.core.person(CT.data.get(pkey)), function() {
+		zero.core.util.join(vu.core.person(CT.data.get(pkey)), function(person) {
 			_.refreshKey();
 			person.onresolved = function() {
 				_.done(null, "resolve");
