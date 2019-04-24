@@ -46,7 +46,8 @@ vu.builders.talk = {
 						return opts.name;
 					var resp, path, trig, chain;
 					[resp, path, trig] = _.getCluster(opts.id);
-					chain = CT.dom.span(resp.chain);
+					if (trig && opts.name && trig != opts.name) // ? lol
+						chain = CT.dom.span(resp.branches[trig].branches[opts.name].chain);
 					return [
 						CT.dom.span(opts.name),
 						CT.dom.pad(),
@@ -56,7 +57,7 @@ vu.builders.talk = {
 								cb: function(val) {
 									val = val.toLowerCase();
 									if (!val) return;
-									resp.chain = val;
+									resp.branches[trig].branches[opts.name].chain = val;
 									CT.dom.setContent(chain, val);
 									vu.builders.talk.persist({
 										responses: person.opts.responses
