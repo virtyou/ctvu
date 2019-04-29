@@ -4,6 +4,7 @@ vu.media = {
 			image: "img",
 			background: "img"
 		},
+		bgz: ["background", "video", "iframe", "map", "panorama", "environment"],
 		isMap: function(sel) {
 			return ["map", "panorama"].indexOf(sel) != -1;
 		},
@@ -23,6 +24,22 @@ vu.media = {
 				cb(rz[variety]);
 			});
 		}
+	},
+	checkBoxGate: function(obj, sel, node) {
+		var bgz = vu.media._.bgz;
+		return CT.dom.checkboxAndLabel(sel, !!obj[sel], null, null, null, function(cbox) {
+			if (cbox.checked && (bgz.indexOf(sel) != -1)) {
+				for (var i = 0; i < bgz.length; i++) {
+					if (obj[bgz[i]]) {
+						cbox.checked = false;
+						return;
+					}
+				}
+			}
+			CT.dom.showHide(node, cbox.checked, !cbox.checked);
+			if (!cbox.checked)
+				delete obj[sel];
+		});
 	},
 	browse: function(variety, cb) {
 		vu.media._.fetch(variety, function(resources) {

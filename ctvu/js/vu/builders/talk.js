@@ -190,22 +190,6 @@ vu.builders.talk = {
 					}, "w1 block mt5", null, responses[rzt.innerHTML][reaction], null, blurs[reaction]));
 				};
 			});
-			var bgz = ["background", "video", "iframe", "map", "panorama", "environment"];
-			var checkBoxGate = function(obj, sel, node) {
-				return CT.dom.checkboxAndLabel(sel, !!obj[sel], null, null, null, function(cbox) {
-					if (cbox.checked && (bgz.indexOf(sel) != -1)) {
-						for (var i = 0; i < bgz.length; i++) {
-							if (obj[bgz[i]]) {
-								cbox.checked = false;
-								return;
-							}
-						}
-					}
-					CT.dom.showHide(node, cbox.checked, !cbox.checked);
-					if (!cbox.checked)
-						delete obj[sel];
-				});
-			};
 			selz.mood.refresh = function() {
 				CT.dom.setContent(selz.mood, zero.core.Mood.vectors.map(function(sel) {
 					var rez = responses[rzt.innerHTML],
@@ -216,18 +200,18 @@ vu.builders.talk = {
 						persist({ responses: popts.responses });
 					}, 0, 100, 100 * (moodz[sel] || 0), 1, "w1" + ((sel in moodz) ? "" : " hidden"));
 					return [
-						checkBoxGate(moodz, sel, range),
+						vu.media.checkBoxGate(moodz, sel, range),
 						range
 					];
 				}));
 			};
 			selz.media.refresh = function() {
-				CT.dom.setContent(selz.media, ["image", "audio", "background", "video", "iframe", "map", "panorama", "environment"].map(function(sel) {
+				CT.dom.setContent(selz.media, ["button", "image", "audio", "background", "video", "iframe", "map", "panorama", "environment"].map(function(sel) {
 					var rez = responses[rzt.innerHTML], node = vu.media.selector(rez, sel, function() {
 						persist({ responses: cur.person.opts.responses });
 					});
 					return [
-						checkBoxGate(rez, sel, node),
+						vu.media.checkBoxGate(rez, sel, node),
 						node
 					];
 				}));
