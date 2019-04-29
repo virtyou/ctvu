@@ -17,7 +17,10 @@
         "environment": ["what's the environment?", "which environment?", "environment"],
         "gesture": ["what's the gesture?", "gesture, please", "any gesture?"],
         "dance": ["got a dance in mind?", "how about a dance?", "would you like to dance?"],
-        "name": ["what's the name?", "name, please", "name?"]
+        "name": ["what's the name?", "name, please", "name?"],
+        "trigger": ["what's the trigger?", "trigger?"],
+        "className": ["string of CSS class names", "enter class names here"],
+        "css": ["enter custom CSS rules", "custom CSS here", "style with CSS"]
     },
     "loaders": {
         "customs": ["one.earring", "one.pony"],
