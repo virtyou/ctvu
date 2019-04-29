@@ -52,7 +52,7 @@ vu.media = {
 		});
 	},
 	viewer: function(node, opts, sel) {
-		if (sel == "environment") return;
+		if (sel == "environment" || sel == "button") return;
 		if (vu.media._.isMap(sel)) {
 			node.classList.add("h100p");
 			return zero.core.util[sel](opts.item, node);
@@ -77,7 +77,15 @@ vu.media = {
 			vu.media.viewer(viewer, opts, sel);
 
 		// item
-		if (sel == "environment") {
+		if (sel == "button") {
+			var oi = opts.item = opts.item || {};
+			item = CT.dom.div(["trigger", "className", "css"].map(function(part) {
+				return CT.dom.smartField(function(val) {
+					oi[part] = val;
+					cb();
+				}, "w1 block mt5", null, oi[part], null, blurs[part], part == "css");
+			}), !opts.name && "hidden");
+		} else if (sel == "environment") {
 			item = CT.dom.select(core.config.ctvu.loaders.environments,
 				null, null, opts.item && opts.item.environment, null, function(val) {
 					opts.item = {
@@ -132,7 +140,7 @@ vu.media = {
 		var name = CT.dom.smartField(function(val) {
 			if (!val) return name.blur();
 			opts.name = val;
-			if (isIframe || isMap || sel == "environment")
+			if (isIframe || isMap || ["button", "environment"].indexOf(sel) != -1)
 				return update();
 			CT.net.post({
 				path: "/_db",
