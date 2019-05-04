@@ -11,6 +11,7 @@ vu.widget = {
 		},
 		receive: function(event) {
 			var d = event.data, data = d.data, _ = vu.widget._;
+			if (!d.action) return;
 			_.targetOrigin = event.origin;
 			if (d.action == "ping")
 				return;

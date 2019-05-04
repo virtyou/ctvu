@@ -34,7 +34,7 @@ window.VU = {
 					person.cbs.listen(d.data);
 				else if (d.action == "resolve")
 					_.onresolved && _.onresolved();
-			} else // bridge
+			} else if (d.bridge)
 				_.bridges[d.bridge].cbs[d.action](d.data);
 		},
 		person: function(ifr, key, onready, cb) {
