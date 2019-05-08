@@ -2,7 +2,7 @@ window.VU = {
 	_: {
 		people: {},
 		bridges: {},
-		actions: ["ping", "say", "respond", "responses", "triggers", "trigger", "listen"],
+		actions: ["ping", "set", "say", "respond", "responses", "triggers", "trigger", "listen"],
 		queries: ["rooms", "people", "room", "person"],
 		sender: function(action, entity, onsend) {
 			return function(data, cb) {
@@ -12,7 +12,7 @@ window.VU = {
 						data = action;
 					}
 					entity.cbs[data] = cb;
-				} else if (action != "ping")
+				} else if (action != "ping" && action != "set")
 					entity.cb = cb;
 				entity.iframe.contentWindow.postMessage({
 					action: action,

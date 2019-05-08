@@ -15,6 +15,11 @@ vu.widget = {
 			_.targetOrigin = event.origin;
 			if (d.action == "ping")
 				return;
+			if (d.action == "set") {
+				for (var k in d.data)
+					CT.storage.set("preset_" + k, d.data[k]);
+				return;
+			}
 			if (["rooms", "people", "room", "person"].indexOf(d.action) != -1)
 				return _.bridge(d);
 			var person = zero.core.current.person;
