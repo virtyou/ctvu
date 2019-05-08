@@ -116,15 +116,21 @@ vu.core = {
 	ischar: function(pkey) {
 		return pkey == CT.storage.get("person");
 	},
+	baby: function(name) {
+		var d = {
+			action: "person",
+			name: name,
+			owner: user.core.get("key")
+		}, respz = CT.storage.get("preset_responses");
+		if (respz)
+			d.responses = respz;
+		return d;
+	},
 	birth: function(cb) {
 		vu.core.prompt({
 			prompt: "what's the new character's name?",
 			cb: function(name) {
-				vu.core.v({
-					action: "person",
-					name: name,
-					owner: user.core.get("key")
-				}, function(person) {
+				vu.core.v(vu.core.baby(name), function(person) {
 					vu.core._udata.people.push(person);
 					vu.core.setchar(person);
 					cb();
