@@ -2,6 +2,7 @@ window.VU = {
 	_: {
 		people: {},
 		bridges: {},
+		switchers: {},
 		actions: ["ping", "set", "say", "respond", "responses", "triggers", "trigger", "listen"],
 		queries: ["rooms", "people", "room", "person"],
 		sender: function(action, entity, onsend) {
@@ -67,6 +68,17 @@ window.VU = {
 			});
 			return b;
 		},
+		switcher: function(ifr, key, onready) {
+			var p = VU._.switchers[key] = {
+				cbs: {}, key: key, iframe: ifr
+			};
+			p.ping = VU._.sender("ping", p);
+			ifr.onload = function() {
+				p.ping(); // opens bidirectional stream
+				onready && onready();
+			};
+			return p;
+		},
 		iframe: function(key, node) {
 			var ifr = document.createElement("iframe"),
 				loc = VU._.location();
@@ -87,6 +99,10 @@ window.VU = {
 					return p.slice(0, -10);
 			}
 		}
+	},
+	switcher: function(node, curkey, onready) {
+		VU.init();
+		return VU._.switcher(VU._.iframe("~" + (curkey || ""), node), curkey, onready);
 	},
 	bridge: function(node, ukey, onready) { // useful for getting user data pre-select
 		VU.init();
