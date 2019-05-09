@@ -3,6 +3,7 @@ CT.require("CT.db");
 CT.require("CT.dom");
 CT.require("CT.storage");
 CT.require("core");
+CT.require("user.core");
 CT.require("zero.core");
 CT.require("vu.core");
 CT.require("vu.widget");
