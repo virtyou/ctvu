@@ -55,6 +55,15 @@ vu.widget = {
 		refreshKey: function() {
 			var cur = zero.core.current;
 			vu.widget._.key = cur.person.opts.key + "_" + cur.room.opts.key;
+		},
+		load: function() {
+			var h = vu.widget._.key = document.location.hash.slice(1);
+			if (h.startsWith("~")) {
+				h = vu.widget._.key = h.slice(1);
+				CT.dom.setContent("ctmain", CT.dom.div(user.core.links(null, true),
+					"h1 wm200p automarg mt40"));
+			} else if (h.indexOf("_") != -1) // person / room specified - else, user key
+				vu.widget.setup.apply(null, h.split("_"));
 		}
 	},
 	room: function(rkey) {
@@ -90,8 +99,6 @@ vu.widget = {
 		CT.dom.addContent("ctmain", ear);
 		zero.core.rec.setIndicator(ear);
 		window.addEventListener("message", vu.widget._.receive);
-		var h = vu.widget._.key = document.location.hash.slice(1);
-		if (h.indexOf("_") != -1) // person / room specified - else, user key
-			vu.widget.setup.apply(null, h.split("_"));
+		vu.widget._.load();
 	}
 };
