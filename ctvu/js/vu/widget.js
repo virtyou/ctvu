@@ -62,7 +62,7 @@ vu.widget = {
 				h = vu.widget._.key = h.slice(1);
 				CT.dom.setContent("ctmain", CT.dom.div([
 					user.core.links(null, true),
-					CT.dom.div("Who Are You?", "biggerest bigpadded mt40")
+					CT.dom.div("Who Are You?", "biggerest bigpadded down30")
 				], "h1 wm200p mt40 automarg centered"));
 			} else if (h.indexOf("_") != -1) // person / room specified - else, user key
 				vu.widget.setup.apply(null, h.split("_"));
