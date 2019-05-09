@@ -60,8 +60,10 @@ vu.widget = {
 			var h = vu.widget._.key = document.location.hash.slice(1);
 			if (h.startsWith("~")) {
 				h = vu.widget._.key = h.slice(1);
-				CT.dom.setContent("ctmain", CT.dom.div(user.core.links(null, true),
-					"h1 wm200p automarg mt40"));
+				CT.dom.setContent("ctmain", CT.dom.div([
+					user.core.links(null, true),
+					CT.dom.div("Who Are You?", "biggerest bigpadded mt40")
+				], "h1 wm200p mt40 automarg centered"));
 			} else if (h.indexOf("_") != -1) // person / room specified - else, user key
 				vu.widget.setup.apply(null, h.split("_"));
 		}
