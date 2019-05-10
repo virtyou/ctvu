@@ -1,9 +1,9 @@
 from cantools.web import respond, succeed, cgi_get, read_file
 from ctone.spawners import person, thing, asset, room
-from model import db
+from model import db, Person, Room
 
 def response():
-	action = cgi_get("action", choices=["person", "import", "thing", "asset", "room"])
+	action = cgi_get("action", choices=["person", "import", "thing", "asset", "room", "ready"])
 	if action == "asset":
 		succeed(asset(cgi_get("name"),
 			variety=cgi_get("variety"),
@@ -18,6 +18,12 @@ def response():
 		succeed(thing(cgi_get("data"), cgi_get("owner")).data())
 	if action == "person":
 		succeed(person(cgi_get("name"), cgi_get("owner")).data())
+	if action == "ready":
+		user = cgi_get("user")
+		succeed({
+			"person": not not Person.query(Person.owner == user).count(),
+			"room": not not Room.query(Room.owner == user).count()
+		})
 	if action == "import":
 		pfrom = db.get(cgi_get("from"))
 		pto = db.get(cgi_get("to"))
