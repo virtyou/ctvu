@@ -63,16 +63,33 @@ vu.widget = {
 			vu.widget._.key = cur.person.opts.key + "_" + cur.room.opts.key;
 		},
 		setSwitcher: function() {
-			var bignode = CT.dom.div(null, "biggerest bigpadded down30"),
-				upyou = function() {
+			var bignode = CT.dom.div(null, "biggerest bigpadded down30"), checker,
+				chuckers = { person: "talk", room: "zone" }, upyou = function() {
 					var u = user.core.get();
 					CT.dom.setContent(bignode, u ? ("you are " + u.email) : "Who Are You?");
-					vu.widget._.done(u);
+					if (!u)
+						return vu.widget._.done(u);
+					vu.core.v({
+						action: "ready",
+						user: u.key
+					}, function(ready) {
+						for (checker in chuckers) {
+							if (!ready[checker]) {
+								return CT.dom.addContent(bignode, CT.dom.div([
+									"oh no, you need a " + checker,
+									CT.dom.button("create one now!", function() {
+										window.open("/vu/" + chuckers[checker] + ".html", "_parent");
+									})
+								], "small"));
+							}
+						}
+						vu.widget._.done(u);
+					});
 				};
 			CT.dom.setContent("ctmain", CT.dom.div([
 				user.core.links(null, true),
 				bignode
-			], "h1 wm200p mt40 automarg centered"));
+			], "h1 wm400p mt40 automarg centered"));
 			user.core.onchange(upyou);
 			setTimeout(upyou, 1000);
 		},
