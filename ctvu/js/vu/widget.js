@@ -44,27 +44,43 @@ vu.widget = {
 			} else
 				person[d.action](data, d.cb && _.done);
 		},
+		variety: function() {
+			var key = vu.widget._.key;
+			if (key == "switcheroo")
+				return "switcheroo";
+			return (key.indexOf("_") != -1) ? "person" : "bridge";
+		},
 		done: function(data, action) {
 			var _ = vu.widget._, d = {
 				action: action || "cb",
 				data: data
 			};
-			d[(_.key.indexOf("_") != -1) ? "person" : "bridge"] = _.key;
+			d[_.variety()] = _.key;
 			window.parent.postMessage(d, _.targetOrigin);
 		},
 		refreshKey: function() {
 			var cur = zero.core.current;
 			vu.widget._.key = cur.person.opts.key + "_" + cur.room.opts.key;
 		},
+		setSwitcher: function() {
+			var bignode = CT.dom.div(null, "biggerest bigpadded down30"),
+				upyou = function() {
+					var u = user.core.get();
+					CT.dom.setContent(bignode, u ? ("you are " + u.email) : "Who Are You?");
+					vu.widget._.done(u);
+				};
+			CT.dom.setContent("ctmain", CT.dom.div([
+				user.core.links(null, true),
+				bignode
+			], "h1 wm200p mt40 automarg centered"));
+			user.core.onchange(upyou);
+			setTimeout(upyou, 1000);
+		},
 		load: function() {
-			var h = vu.widget._.key = document.location.hash.slice(1);
-			if (h.startsWith("~")) {
-				h = vu.widget._.key = h.slice(1);
-				CT.dom.setContent("ctmain", CT.dom.div([
-					user.core.links(null, true),
-					CT.dom.div("Who Are You?", "biggerest bigpadded down30")
-				], "h1 wm200p mt40 automarg centered"));
-			} else if (h.indexOf("_") != -1) // person / room specified - else, user key
+			var _ = vu.widget._, h = _.key = document.location.hash.slice(1);
+			if (h == "switcheroo")
+				_.setSwitcher();
+			else if (h.indexOf("_") != -1) // person / room specified - else, user key
 				vu.widget.setup.apply(null, h.split("_"));
 		}
 	},
