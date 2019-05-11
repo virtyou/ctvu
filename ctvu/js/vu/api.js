@@ -2,7 +2,7 @@ window.VU = {
 	_: {
 		people: {},
 		bridges: {},
-		actions: ["ping", "say", "respond", "responses", "triggers", "trigger", "listen"],
+		actions: ["ping", "set", "say", "respond", "responses", "triggers", "trigger", "listen"],
 		queries: ["rooms", "people", "room", "person"],
 		switchies: ["set", "ping"],
 		sender: function(action, entity, onsend) {
