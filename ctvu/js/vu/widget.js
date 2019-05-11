@@ -15,6 +15,11 @@ vu.widget = {
 			_.targetOrigin = event.origin;
 			if (d.action == "ping")
 				return;
+			if (d.action == "set") {
+				for (var k in d.data)
+					CT.storage.set("preset_" + k, d.data[k]);
+				return;
+			}
 			if (["rooms", "people", "room", "person"].indexOf(d.action) != -1)
 				return _.bridge(d);
 			var person = zero.core.current.person;
@@ -39,17 +44,63 @@ vu.widget = {
 			} else
 				person[d.action](data, d.cb && _.done);
 		},
+		variety: function() {
+			var key = vu.widget._.key;
+			if (key == "switcheroo")
+				return "switcheroo";
+			return (key.indexOf("_") != -1) ? "person" : "bridge";
+		},
 		done: function(data, action) {
 			var _ = vu.widget._, d = {
 				action: action || "cb",
 				data: data
 			};
-			d[(_.key.indexOf("_") != -1) ? "person" : "bridge"] = _.key;
+			d[_.variety()] = _.key;
 			window.parent.postMessage(d, _.targetOrigin);
 		},
 		refreshKey: function() {
 			var cur = zero.core.current;
 			vu.widget._.key = cur.person.opts.key + "_" + cur.room.opts.key;
+		},
+		setSwitcher: function() {
+			var bignode = CT.dom.div(null, "biggerest bigpadded down30"), checker,
+				chuckers = { person: "talk", room: "zone" }, upyou = function() {
+					var u = user.core.get();
+					CT.dom.setContent(bignode, u ? ("you are " + u.email) : "Who Are You?");
+					if (!u)
+						return vu.widget._.done(u);
+					vu.core.v({
+						action: "ready",
+						user: u.key
+					}, function(ready) {
+						for (checker in chuckers) {
+							if (!ready[checker]) {
+								CT.dom.addContent(bignode, CT.dom.div([
+									"oh no, you need a " + checker,
+									CT.dom.button("create one now!", function() {
+										window.open("/vu/" + chuckers[checker] + ".html", "_parent");
+									})
+								], "small"));
+								u.unready = true;
+								return vu.widget._.done(u);
+							}
+						}
+						vu.widget._.done(u);
+					});
+				};
+			CT.dom.setContent("ctmain", CT.dom.div([
+				user.core.links(null, true),
+				bignode
+			], "h1 wm400p mt40 automarg centered"));
+			user.core.onchange(upyou);
+			setTimeout(upyou, 1000);
+		},
+		load: function() {
+			var _ = vu.widget._, h = _.key = document.location.hash.slice(1);
+			if (h == "switcheroo")
+				_.setSwitcher();
+			else if (h.indexOf("_") != -1) // person / room specified - else, user key
+				vu.widget.setup.apply(null, h.split("_"));
 		}
 	},
 	room: function(rkey) {
@@ -85,8 +136,6 @@ vu.widget = {
 		CT.dom.addContent("ctmain", ear);
 		zero.core.rec.setIndicator(ear);
 		window.addEventListener("message", vu.widget._.receive);
-		var h = vu.widget._.key = document.location.hash.slice(1);
-		if (h.indexOf("_") != -1) // person / room specified - else, user key
-			vu.widget.setup.apply(null, h.split("_"));
+		vu.widget._.load();
 	}
 };

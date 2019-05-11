@@ -36,9 +36,20 @@ vu.builders.talk = {
 			else
 				vu.builders.talk._.setTriggers(r.branches, path, trig);
 		},
+		mergeRecs: function(resps) {
+			var ps = CT.storage.get("preset_responses") || {}, p;
+			for (p in ps) {
+				if (!(p in resps) && confirm("add recommended branch, " + p + "?")) {
+					resps[p] = ps[p];
+					vu.builders.talk.persist({
+						responses: resps
+					});
+				}
+			}
+		},
 		tree: function(path) {
-			var person = zero.core.current.person,
-				_ = vu.builders.talk._;
+			var person = zero.core.current.person, _ = vu.builders.talk._;
+			_.mergeRecs(person.opts.responses);
 			CT.dom.setContent("tree", CT.layout.tree({
 				branches: person.opts.responses,
 				nameCb: function(opts) {

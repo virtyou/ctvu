@@ -2,8 +2,9 @@ window.VU = {
 	_: {
 		people: {},
 		bridges: {},
-		actions: ["ping", "say", "respond", "responses", "triggers", "trigger", "listen"],
+		actions: ["ping", "set", "say", "respond", "responses", "triggers", "trigger", "listen"],
 		queries: ["rooms", "people", "room", "person"],
+		switchies: ["set", "ping"],
 		sender: function(action, entity, onsend) {
 			return function(data, cb) {
 				if (["people", "rooms", "listen", "trigger"].indexOf(action) != -1) {
@@ -12,7 +13,7 @@ window.VU = {
 						data = action;
 					}
 					entity.cbs[data] = cb;
-				} else if (action != "ping")
+				} else if (action != "ping" && action != "set")
 					entity.cb = cb;
 				entity.iframe.contentWindow.postMessage({
 					action: action,
@@ -36,6 +37,8 @@ window.VU = {
 					_.onresolved && _.onresolved();
 			} else if (d.bridge)
 				_.bridges[d.bridge].cbs[d.action](d.data);
+			else if (d.switcheroo)
+				_.switcheroo.cb(d.data);
 		},
 		person: function(ifr, key, onready, cb) {
 			var p = VU._.people[key] = {
@@ -67,6 +70,18 @@ window.VU = {
 			});
 			return b;
 		},
+		switcher: function(ifr, onswitch) {
+			var _ = VU._, s = _.switcheroo = {
+				cbs: {}, key: "switcheroo", iframe: ifr, cb: onswitch
+			};
+			_.switchies.forEach(function(switchie) {
+				s[switchie] = _.sender(switchie, s, _.upbridge);
+			});
+			ifr.onload = function() {
+				s.ping(); // opens bidirectional stream
+			};
+			return s;
+		},
 		iframe: function(key, node) {
 			var ifr = document.createElement("iframe"),
 				loc = VU._.location();
@@ -87,6 +102,10 @@ window.VU = {
 					return p.slice(0, -10);
 			}
 		}
+	},
+	switcher: function(node, onswitch) {
+		VU.init();
+		return VU._.switcher(VU._.iframe("switcheroo", node), onswitch);
 	},
 	bridge: function(node, ukey, onready) { // useful for getting user data pre-select
 		VU.init();

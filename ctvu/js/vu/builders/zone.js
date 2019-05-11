@@ -642,8 +642,9 @@ vu.builders.zone = {
 			};
 			zero.core.util.join(vu.core.person(popts), function(person) {
 				zero.core.current.person = person;
-				zero.core.current.room.objects.forEach(vu.builders.zone._.regObj);
-				vu.builders.zone._.set(vu.storage.get("room"), true);
+				zero.core.current.room.objects.forEach(_.regObj);
+				var r = vu.storage.get("room");
+				r ? _.set(r, true) : _.build();
 			});
 			return CT.dom.div([[
 				CT.dom.span("viewing:"),

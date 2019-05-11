@@ -56,8 +56,12 @@ iframe {
 	overflow-y: hidden;
 }
 
-#ctmain.embedded {
+.embedded #ctmain {
 	top: 0;
+}
+
+.embedded .basicpopup {
+	max-height: 90%;
 }
 
 #menu {
