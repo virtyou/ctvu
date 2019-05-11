@@ -2,8 +2,9 @@ window.VU = {
 	_: {
 		people: {},
 		bridges: {},
-		actions: ["ping", "set", "say", "respond", "responses", "triggers", "trigger", "listen"],
+		actions: ["ping", "say", "respond", "responses", "triggers", "trigger", "listen"],
 		queries: ["rooms", "people", "room", "person"],
+		switchies: ["set", "ping"],
 		sender: function(action, entity, onsend) {
 			return function(data, cb) {
 				if (["people", "rooms", "listen", "trigger"].indexOf(action) != -1) {
@@ -70,14 +71,16 @@ window.VU = {
 			return b;
 		},
 		switcher: function(ifr, onswitch) {
-			var p = VU._.switcheroo = {
+			var _ = VU._, s = _.switcheroo = {
 				cbs: {}, key: "switcheroo", iframe: ifr, cb: onswitch
 			};
-			p.ping = VU._.sender("ping", p);
+			_.switchies.forEach(function(switchie) {
+				s[switchie] = _.sender(switchie, s, _.upbridge);
+			});
 			ifr.onload = function() {
-				p.ping(); // opens bidirectional stream
+				s.ping(); // opens bidirectional stream
 			};
-			return p;
+			return s;
 		},
 		iframe: function(key, node) {
 			var ifr = document.createElement("iframe"),
