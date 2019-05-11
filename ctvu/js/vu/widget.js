@@ -75,12 +75,14 @@ vu.widget = {
 					}, function(ready) {
 						for (checker in chuckers) {
 							if (!ready[checker]) {
-								return CT.dom.addContent(bignode, CT.dom.div([
+								CT.dom.addContent(bignode, CT.dom.div([
 									"oh no, you need a " + checker,
 									CT.dom.button("create one now!", function() {
 										window.open("/vu/" + chuckers[checker] + ".html", "_parent");
 									})
 								], "small"));
+								u.unready = true;
+								return vu.widget._.done(u);
 							}
 						}
 						vu.widget._.done(u);
