@@ -49,7 +49,8 @@ vu.builders.talk = {
 		},
 		tree: function(path) {
 			var person = zero.core.current.person, _ = vu.builders.talk._;
-			_.mergeRecs(person.opts.responses) || CT.dom.setContent("tree", CT.layout.tree({
+			_.mergeRecs(person.opts.responses);
+			CT.dom.setContent("tree", CT.layout.tree({
 				branches: person.opts.responses,
 				nameCb: function(opts) {
 					if (opts.name == "root")
