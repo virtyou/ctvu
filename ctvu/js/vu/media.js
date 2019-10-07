@@ -45,7 +45,7 @@ vu.media = {
 		vu.media._.fetch(variety, function(resources) {
 			if (!resources)
 				return alert("nothing yet -- add the first one!");
-			vu.core.choice({
+			CT.modal.choice({
 				data: resources,
 				cb: cb
 			})

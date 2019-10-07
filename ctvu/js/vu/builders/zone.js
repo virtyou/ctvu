@@ -87,7 +87,7 @@ vu.builders.zone = {
 		},
 		portout: function(door) {
 			var n = CT.dom.div(), og, out, name, sel = function() {
-				vu.core.choice({
+				CT.modal.choice({
 					data: vu.storage.get("allrooms"),
 					cb: function(room) {
 						og = door.opts.portals.outgoing;
@@ -147,7 +147,7 @@ vu.builders.zone = {
 							n = CT.dom.div([
 								rsource.name + " (" + source.name + ")",
 								CT.dom.link("ACCEPT", function() {
-									vu.core.choice({
+									CT.modal.choice({
 										data: ["new portal"].concat(_.opts.objects.filter(function(f) {
 											return f.kind == "portal";
 										})),
@@ -285,7 +285,7 @@ vu.builders.zone = {
 			var _ = vu.builders.zone._;
 			if (kind == "screen")
 				return _.part(null, "screen", cb);
-			vu.core.choice({
+			CT.modal.choice({
 				data: Object.values(vu.storage.get(kind)),
 				cb: function(thing) {
 					_.part(thing, kind, cb);
@@ -298,7 +298,7 @@ vu.builders.zone = {
 			selz.furnishings.update = function() {
 				CT.dom.setContent(selz.furnishings, [
 					CT.dom.button("add", function() {
-						vu.core.choice({
+						CT.modal.choice({
 							data: ["furnishing", "poster", "portal", "screen"],
 							cb: _.selfurn
 						});
@@ -385,10 +385,10 @@ vu.builders.zone = {
 			selz.base.update = function() {
 				var content = [
 					CT.dom.button("swap", function() {
-						vu.core.choice({
+						CT.modal.choice({
 							data: ["wallpaper", "shell"],
 							cb: function(variety) {
-								vu.core.choice({
+								CT.modal.choice({
 									data: Object.values(vu.storage.get(variety)),
 									cb: function(base) {
 										var upobj = {};
@@ -522,7 +522,7 @@ vu.builders.zone = {
 				room = zero.core.current.room;
 				CT.dom.setContent(selz.lights, [
 					CT.dom.button("add", function() {
-						vu.core.choice({
+						CT.modal.choice({
 							data: ["ambient", "directional", "point"],
 							cb: function(variety) {
 								room.addLight({
@@ -604,7 +604,7 @@ vu.builders.zone = {
 		},
 		build: function() {
 			var _ = vu.builders.zone._;
-			vu.core.prompt({
+			CT.modal.prompt({
 				prompt: "what's the new zone's name?",
 				cb: function(name) {
 					vu.core.v(CT.merge({
@@ -623,7 +623,7 @@ vu.builders.zone = {
 		select: function() {
 			var _ = vu.builders.zone._,
 				zones = vu.storage.get("rooms");
-			vu.core.choice({
+			CT.modal.choice({
 				prompt: "select zone",
 				data: [{ name: "new zone" }].concat(zones),
 				cb: function(zone) {

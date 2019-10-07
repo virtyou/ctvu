@@ -25,11 +25,6 @@ vu.core = {
 	jlo: function(v) {
 		return v.replace(/[^a-z]/g, '');
 	},
-	prompt: function(opts) {
-		(new CT.modal.Prompt(CT.merge(opts, {
-			transition: "slide"
-		}))).show();
-	},
 	menu: function(section, origin, selector, header, onclick) {
 		return new CT.modal.Modal({
 			center: false,
@@ -43,13 +38,6 @@ vu.core = {
 			],
 			className: "abs above padded bordered round pointer gmenu " + section
 		});
-	},
-	choice: function(opts) {
-		vu.core.prompt(CT.merge(opts, {
-			noClose: true,
-			defaultIndex: 0,
-			style: "single-choice"
-		}));
 	},
 	impex: function(data, onchange) {
 		(new CT.modal.Modal({
@@ -127,7 +115,7 @@ vu.core = {
 		return d;
 	},
 	birth: function(cb) {
-		vu.core.prompt({
+		CT.modal.prompt({
 			prompt: "what's the new character's name?",
 			cb: function(name) {
 				vu.core.v(vu.core.baby(name), function(person) {
@@ -139,7 +127,7 @@ vu.core = {
 		});
 	},
 	charselect: function(cb) {
-		vu.core.choice({
+		CT.modal.choice({
 			prompt: "select character",
 			data: [{ name: "new character" }].concat(vu.core._udata.people),
 			cb: function(person) {
@@ -162,7 +150,7 @@ vu.core = {
 			nodes = nodes.concat([
 				CT.dom.pad(),
 				CT.dom.link("import", function() {
-					vu.core.choice({
+					CT.modal.choice({
 						prompt: "import configuration (morphs, vibe, gestures, dances, responses) from whom?",
 						data: data.people.filter(function(peep) {
 							return peep.name != person.name;

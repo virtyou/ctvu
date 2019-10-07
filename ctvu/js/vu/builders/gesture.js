@@ -44,7 +44,7 @@ vu.builders.gesture = {
 		initGesture: function() {
 			var _ = vu.builders.gesture._,
 				cur = zero.core.current;
-			vu.core.prompt({
+			CT.modal.prompt({
 				prompt: "what's the new gesture?",
 				cb: function(val) {
 					val = vu.core.jlo(val);

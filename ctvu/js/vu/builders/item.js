@@ -122,7 +122,7 @@ vu.builders.item = {
 		},
 		itemSelect: function() {
 			var _ = vu.builders.item._;
-			vu.core.choice({
+			CT.modal.choice({
 				prompt: "select item",
 				data: [{ name: "new item" }].concat(_.items),
 				cb: function(item) {
@@ -134,7 +134,7 @@ vu.builders.item = {
 		},
 		forge: function() {
 			var _ = vu.builders.item._;
-			vu.core.prompt({
+			CT.modal.prompt({
 				prompt: "what's the new item's name?",
 				cb: function(name) {
 					vu.core.v({

@@ -62,7 +62,7 @@ vu.builders.talk = {
 						CT.dom.span(opts.name),
 						CT.dom.pad(),
 						CT.dom.link("->", function() {
-							vu.core.prompt({
+							CT.modal.prompt({
 								prompt: "chain to what?",
 								cb: function(val) {
 									val = val.toLowerCase();
@@ -113,7 +113,7 @@ vu.builders.talk = {
 		initCluster: function(resps, path) {
 			var _ = vu.builders.talk._,
 				cur = zero.core.current;
-			vu.core.prompt({
+			CT.modal.prompt({
 				prompt: "what's the new trigger?",
 				cb: function(val) {
 					val = val.toLowerCase();
