@@ -69,7 +69,7 @@ iframe {
 	top: 0px;
 	left: 0px;
 	bottom: 0px;
-	width: 275px;
+	width: 287px;
 	padding: 4px;
 	padding-top: 0;
 	overflow-y: scroll;
@@ -81,7 +81,7 @@ iframe {
 	right: 0px;
 	bottom: 0px;
 	font-size: 120%;
-	max-width: calc(100% - 275px);
+	max-width: calc(100% - 287px);
 }
 
 #tree div {
@@ -100,7 +100,7 @@ iframe {
 	top: 0px;
 	right: 0px;
 	bottom: 0px;
-	left: 275px;
+	left: 287px;
 }
 
 #listening_indicator {
