@@ -94,8 +94,84 @@ vu.menu.Body = CT.Class({
 			}
 		});
 	},
-	loadMain: function() {
+	loadExtras: function() {
 
+	},
+	loadMain: function() {
+		this.selector(this.opts.main);
+		this.loadExtras();
+	},
+	constraints: function(side, sub, part, axis) {
+		return {
+			min: 0.1,
+			max: 2.0
+		};
+	},
+	jointRange: function(sname, sitem, val, side, sub, part, axis, modpart) {
+		var constraints = this.constraints(side, sub, part, axis),
+			person = zero.core.current.person,
+			gopts = person.opts[sname],
+			per = this._.peritem;
+		return CT.dom.div([
+			axis ? CT.parse.toCaps([part, axis]).join(" ") : CT.parse.capitalize(part),
+			CT.dom.range(function(val) {
+				CT.log([side, sub, part, axis, ":", val].join(" "));
+				modpart[part][axis] = val / 100;
+				person[sname.slice(0, -1)](sitem);
+				per(sname, gopts);
+			}, constraints.min * 100, constraints.max * 100, 100 * (val || 0), 1, "w1")
+		], "w1 pr10");
+	},
+	setJoints: function(sname, sitem, side, sub) {
+		var _ = this._, selz = _.selectors,
+			person = zero.core.current.person,
+			gopts = person.opts[sname],
+			sing = sname.slice(0, -1),
+			item_opts = gopts[sitem],
+			val, modpart, partnames,
+			jrange = this.jointRange, jset = this.setJoints;
+		if (!item_opts)
+			item_opts = gopts[sitem] = {};
+		if (!item_opts[side])
+			item_opts[side] = {};
+		if (!item_opts[side][sub])
+			item_opts[side][sub] = {};
+		modpart = item_opts[side][sub]; // such as hand or arm
+		partnames = Object.keys(modpart);
+		CT.dom.setContent(selz[side + "_" + sub], partnames.length ? partnames.map(function(part) {
+			val = modpart[part];
+			return CT.dom.div([
+				Object.keys(val).map(function(axis) {
+					return jrange(sname, sitem, val[axis], side, sub, part, axis, modpart);
+				})
+			], "jblock pr10");
+		}) : "");
+		CT.dom.setContent(selz[side + "_" + sub + "_button"], partnames.length ? CT.dom.button("clear", function() {
+			if (!confirm("really?"))
+				return;
+			person["un" + sing](null, side, sub);
+			delete item_opts[side][sub];
+			if (!Object.keys(item_opts[side]).length)
+				delete item_opts[side];
+			jset(sname, sitem, side, sub);
+		}) : CT.dom.button("add", function() {
+			zero.core[CT.parse.capitalize(sub)].parts.forEach(function(part) {
+				modpart[part] = {};
+				Object.keys(zero.base.aspects[sub][part]).forEach(function(dim) {
+					modpart[part][dim] = 0;
+				});
+			});
+			jset(sname, sitem, side, sub);
+		}));
+	},
+	setItem: function(sname, sitem) {
+		var jset = this.setJoints, selz = this._.selectors;
+		["left", "right"].forEach(function(side) {
+			["leg", "arm", "hand"].forEach(function(sub) {
+				jset(sname, sitem, side, sub);
+			});
+		});
+		CT.dom.setContent(selz[sname + "_button"], sitem);
 	},
 	selector: function(sname, onfocus) {
 		var _ = this._, selz = _.selectors,
@@ -104,7 +180,8 @@ vu.menu.Body = CT.Class({
 			sing = sname.slice(0, -1),
 			capd = CT.parse.capitalize(sing),
 			apro = "active" + capd,
-			setr = this["set" + capd];
+			setr = this["set" + capd],
+			seti = this.setItem;
 		vu.core.fieldList(selz[sname], Object.keys(gopts), null, function(v, i) {
 			// generator
 			var f = CT.dom.field(null, v);
@@ -113,7 +190,7 @@ vu.menu.Body = CT.Class({
 				f.onfocus = function() {
 					if (person[apro])
 						person["un" + sing]();
-					setr(f.value);
+					setr ? setr(f.value) : seti(sname, f.value);
 					(onfocus || person[sing])(f.value);
 				};
 				f.onkeyup = function() {
