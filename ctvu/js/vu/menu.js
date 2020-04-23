@@ -75,6 +75,11 @@ vu.menu.Body = CT.Class({
 				}));
 			}
 			return content;
+		},
+		peritem: function(k, v) {
+			var pobj = {};
+			pobj[k] = v;
+			this.persist(pobj);
 		}
 	},
 	initMain: function() {
@@ -95,6 +100,51 @@ vu.menu.Body = CT.Class({
 	},
 	loadMain: function() {
 
+	},
+	selector: function(sname, onfocus) {
+		var _ = this._, selz = _.selectors,
+			person = zero.core.current.person,
+			gopts = person.opts[sname],
+			sing = sname.slice(0, -1),
+			capd = CT.parse.capitalize(sing),
+			apro = "active" + capd,
+			setr = this["set" + capd];
+		vu.core.fieldList(selz[sname], Object.keys(gopts), null, function(v, i) {
+			// generator
+			var f = CT.dom.field(null, v);
+			if (v) {
+				f._trigger = v;
+				f.onfocus = function() {
+					if (person[apro])
+						person["un" + sing]();
+					setr(f.value);
+					(onfocus || person[sing])(f.value);
+				};
+				f.onkeyup = function() {
+					if (f.value) {
+						gopts[f.value] = gopts[f._trigger];
+						delete gopts[f._trigger];
+						person[apro] = f._trigger = f.value;
+						_.peritem(sname, gopts);
+					} else
+						f.value = f._trigger; // meh
+				};
+				!i && setTimeout(f.onfocus); // select 1st
+			}
+			return f;
+		}, function(iput) {
+			// onadd
+			var key = iput.value;
+			if (key in gopts) return; // already exists...
+			gopts[key] = {};
+			setTimeout(function() {
+				iput.focus();
+			});
+		}, function(val) {
+			// onremove
+			delete gopts[val];
+			_.peritem(sname, gopts);
+		});
 	},
 	persist: function(updates, sub) {
 		var popts = this._.opts;
