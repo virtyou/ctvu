@@ -74,6 +74,7 @@ vu.menu.Body = CT.Class({
 					});
 				}));
 			}
+			return content;
 		}
 	},
 	initMain: function() {
