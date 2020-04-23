@@ -83,14 +83,14 @@ vu.menu.Body = CT.Class({
 	initMain: function() {
 		var _ = this._, mprop = this.opts.main,
 			per = _.peritem, cur = zero.core.current,
-			sing = mprop.slice(0, -1);
+			sing = mprop.slice(0, -1), lm = this.loadMain;
 		CT.modal.prompt({
 			prompt: "what's the new " + sing + "?",
 			cb: function(val) {
 				val = vu.core.jlo(val);
 				cur.person.opts[mprop][val] = {};
 				per(mprop, cur.person.opts[mprop]);
-				_.loadMain();
+				lm();
 			}
 		});
 	},
