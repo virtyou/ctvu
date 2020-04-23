@@ -80,92 +80,21 @@ vu.builders.Gesture = CT.Class({
 		CT.dom.setContent(selz.step, dname);
 	},
 	loadMain: function() {
-		var _ = this._, selz = _.selectors,
-			setd = this.setDance, setg = this.setGesture,
-			person = zero.core.current.person, per = this.persist,
-			gopts = person.opts.gestures, dopts = person.opts.dances,
-			curDance, dbutt = CT.dom.button("dance", function() {
-				if (person.activeDance)
-					person.undance();
-				else
-					person.dance(curDance);
-				dbutt.innerHTML = person.activeDance ? "undance" : "dance";
-			});
+		var _ = this._, selz = _.selectors, curDance,
+			person = zero.core.current.person;
+		var dbutt = CT.dom.button("dance", function() {
+			if (person.activeDance)
+				person.undance();
+			else
+				person.dance(curDance);
+			dbutt.innerHTML = person.activeDance ? "undance" : "dance";
+		});
 		CT.dom.setContent(selz.dances_button, dbutt);
-		vu.core.fieldList(selz.dances, Object.keys(dopts), null, function(v, i) {
-			// generator
-			var f = CT.dom.field(null, v);
-			if (v) {
-				f._trigger = v;
-				f.onfocus = function() {
-					if (person.activeDance)
-						person.undance();
-//						dopts[f.value].steps && person.dance(f.value);
-					curDance = f.value;
-					setd(f.value);
-				};
-				f.onkeyup = function() {
-					if (f.value) {
-						dopts[f.value] = dopts[f._trigger];
-						delete dopts[f._trigger];
-						person.activeDance = f._trigger = f.value;
-						per({ dances: dopts });
-					} else
-						f.value = f._trigger; // meh
-				};
-				!i && setTimeout(f.onfocus); // select 1st
-			}
-			return f;
-		}, function(iput) {
-			// onadd
-			var key = iput.value;
-			if (key in dopts) return; // already exists...
-			dopts[key] = {};
-			setTimeout(function() {
-				iput.focus();
-			});
-		}, function(val) {
-			// onremove
-			delete dopts[val];
-			per({ dances: dopts });
+		this.selector("dances", function(v) {
+			curDance = v;
 		});
 		CT.dom.addContent(selz.dances, [selz.step, "Steps", selz.steps]);
-		vu.core.fieldList(selz.gestures, Object.keys(gopts), null, function(v, i) {
-			// generator
-			var f = CT.dom.field(null, v);
-			if (v) {
-				f._trigger = v;
-				f.onfocus = function() {
-					if (person.activeGesture)
-						person.ungesture();
-					person.gesture(f.value);
-					setg(f.value);
-				};
-				f.onkeyup = function() {
-					if (f.value) {
-						gopts[f.value] = gopts[f._trigger];
-						delete gopts[f._trigger];
-						person.activeGesture = f._trigger = f.value;
-						per({ gestures: gopts });
-					} else
-						f.value = f._trigger; // meh
-				};
-				!i && setTimeout(f.onfocus); // select 1st
-			}
-			return f;
-		}, function(iput) {
-			// onadd
-			var key = iput.value;
-			if (key in gopts) return; // already exists...
-			gopts[key] = {};
-			setTimeout(function() {
-				iput.focus();
-			});
-		}, function(val) {
-			// onremove
-			delete gopts[val];
-			per({ gestures: gopts });
-		});
+		this.selector("gestures");
 	}
 }, vu.menu.Body);
 
