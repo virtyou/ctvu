@@ -1,71 +1,8 @@
 vu.builders.Gesture = CT.Class({
 	CLASSNAME: "vu.builders.Gesture",
-	jointRange: function(gesture, val, side, sub, part, axis, modpart) {
-		var person = zero.core.current.person,
-			gopts = person.opts.gestures,
-			popts = { gestures: gopts },
-			constraints = person.body.torso[sub +
-				"s"][side].aspects[part + "_" + axis].opts,
-			per = this.persist;
-		return CT.dom.div([
-			axis ? CT.parse.toCaps([part, axis]).join(" ") : CT.parse.capitalize(part),
-			CT.dom.range(function(val) {
-				CT.log([side, sub, part, axis, ":", val].join(" "));
-				modpart[part][axis] = val / 100;
-				person.gesture(gesture);
-				per(popts);
-			}, constraints.min * 100, constraints.max * 100, 100 * (val || 0), 1, "w1")
-		], "w1 pr10");
-	},
-	setJoints: function(gesture, side, sub) {
-		var _ = this._, selz = _.selectors,
-			person = zero.core.current.person,
-			gopts = person.opts.gestures,
-			gesture_opts = gopts[gesture],
-			val, modpart, partnames,
-			jrange = this.jointRange, jset = this.setJoints;
-		if (!gesture_opts)
-			gesture_opts = gopts[gesture] = {};
-		if (!gesture_opts[side])
-			gesture_opts[side] = {};
-		if (!gesture_opts[side][sub])
-			gesture_opts[side][sub] = {};
-		modpart = gesture_opts[side][sub]; // such as hand or arm
-		partnames = Object.keys(modpart);
-		CT.dom.setContent(selz[side + "_" + sub], partnames.length ? partnames.map(function(part) {
-			val = modpart[part];
-			return CT.dom.div([
-				Object.keys(val).map(function(axis) {
-					return jrange(gesture, val[axis], side, sub, part, axis, modpart);
-				})
-			], "jblock pr10");
-		}) : "");
-		CT.dom.setContent(selz[side + "_" + sub + "_button"], partnames.length ? CT.dom.button("clear", function() {
-			if (!confirm("really?"))
-				return;
-			person.ungesture(null, side, sub);
-			delete gesture_opts[side][sub];
-			if (!Object.keys(gesture_opts[side]).length)
-				delete gesture_opts[side];
-			jset(gesture, side, sub);
-		}) : CT.dom.button("add", function() {
-			zero.core[CT.parse.capitalize(sub)].parts.forEach(function(part) {
-				modpart[part] = {};
-				Object.keys(zero.base.aspects[sub][part]).forEach(function(dim) {
-					modpart[part][dim] = 0;
-				});
-			});
-			jset(gesture, side, sub);
-		}));
-	},
-	setGesture: function(gesture) {
-		var jset = this.setJoints, selz = this._.selectors;
-		["left", "right"].forEach(function(side) {
-			["leg", "arm", "hand"].forEach(function(sub) {
-				jset(gesture, side, sub);
-			});
-		});
-		CT.dom.setContent(selz.gestures_button, gesture);
+	constraints: function(side, sub, part, axis) {
+		return zero.core.current.person.body.torso[sub +
+			"s"][side].aspects[part + "_" + axis].opts;
 	},
 	setDance: function(dname) {
 		var _ = this._, selz = _.selectors,
@@ -79,7 +16,7 @@ vu.builders.Gesture = CT.Class({
 		vu.core.fieldList(selz.steps, dopts[dname].steps);
 		CT.dom.setContent(selz.step, dname);
 	},
-	loadMain: function() {
+	loadExtras: function() {
 		var _ = this._, selz = _.selectors, curDance,
 			person = zero.core.current.person;
 		var dbutt = CT.dom.button("dance", function() {
@@ -94,7 +31,6 @@ vu.builders.Gesture = CT.Class({
 			curDance = v;
 		});
 		CT.dom.addContent(selz.dances, [selz.step, "Steps", selz.steps]);
-		this.selector("gestures");
 	}
 }, vu.menu.Body);
 
