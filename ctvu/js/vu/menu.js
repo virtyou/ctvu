@@ -60,17 +60,15 @@ vu.menu.Body = CT.Class({
 			});
 		},
 		header: function(section) {
-			var selz = this._.selectors, content = [
+			var _ = this._, selz = _.selectors, content = [
 				selz[section + "_button"],
 				CT.dom.span(CT.parse.key2title(section))
-			], per = this.persist;
+			], per = _.peritem;
 			if (this.opts.impex.includes(section)) {
 				content.push(CT.dom.pad());
 				content.push(CT.dom.link("import/export", function() {
 					vu.core.impex(zero.core.current.person.opts[section], function(val) {
-						var upobj = {};
-						upobj[section] = val;
-						per(upobj);
+						per(section, val);
 					});
 				}));
 			}
@@ -84,16 +82,14 @@ vu.menu.Body = CT.Class({
 	},
 	initMain: function() {
 		var _ = this._, mprop = this.opts.main,
-			per = this.persist, cur = zero.core.current,
+			per = _.peritem, cur = zero.core.current,
 			sing = mprop.slice(0, -1);
 		CT.modal.prompt({
 			prompt: "what's the new " + sing + "?",
 			cb: function(val) {
 				val = vu.core.jlo(val);
 				cur.person.opts[mprop][val] = {};
-				var d = {};
-				d[mprop] = cur.person.opts[mprop];
-				per(d);
+				per(mprop, cur.person.opts[mprop]);
 				_.loadMain();
 			}
 		});
