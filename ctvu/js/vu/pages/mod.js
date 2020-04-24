@@ -14,14 +14,14 @@ CT.require("vu.controls");
 CT.require("vu.storage");
 CT.require("vu.menu");
 CT.require("vu.builders.core");
-CT.require("vu.builders.gesture");
+CT.require("vu.builders.mod");
 
 CT.onload(function() {
 	CT.initCore();
 	vu.core.init();
 	vu.storage.init(function() {
 		// menu
-		vu.builders.gesture.menus();
+		vu.builders.mod.menus();
 		// virtual world
 		vu.builders.core.init();
 	});

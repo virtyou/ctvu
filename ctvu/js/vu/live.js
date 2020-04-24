@@ -94,6 +94,7 @@ vu.live = {
 	},
 	emit: function() {
 		var person = zero.core.current.person, s = person.body.springs, targets = {
+			mod: person.activeMod,
 			vibe: person.vibe.current,
 			dance: person.activeDance,
 			gesture: person.activeGesture

@@ -130,5 +130,18 @@ vu.controls = {
 				});
 			})
 		]);
+	},
+	setMods: function(node, cb) {
+		var person = zero.core.current.person,
+			modz = person.opts.mods;
+		CT.dom.setContent(node, ["unmod"].concat(Object.keys(modz)).map(function(m, i) {
+			return CT.dom.div(m, "bordered padded margined inline-block hoverglow", null, {
+				onclick: function(e) {
+					i ? person.mod(m) : person.unmod();
+					e.stopPropagation();
+					cb && cb("mod", m);
+				}
+			});
+		}));
 	}
 };
