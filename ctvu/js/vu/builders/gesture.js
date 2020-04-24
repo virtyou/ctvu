@@ -38,8 +38,7 @@ vu.builders.gesture = {
 	menus: function() {
 		vu.builders.gesture = new vu.builders.Gesture({
 			main: "gestures",
-			topright: "dances",
-			impex: ["gestures", "dances"],
+			secondary: "dances",
 			subs: {
 				"step": CT.dom.div(null, "right"),
 				"steps": CT.dom.div()

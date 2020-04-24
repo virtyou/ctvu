@@ -9,6 +9,7 @@ vu.menu.Body = CT.Class({
 		legs: [],
 		menus: {
 			camera: "top",
+			spine: "topright",
 			left_leg: "right",
 			right_leg: "left",
 			left_arm: "right",
@@ -35,7 +36,7 @@ vu.menu.Body = CT.Class({
 			});
 		},
 		initCamera: function() {
-			var _ = this._;
+			var _ = this._, oz = this.opts;
 			vu.controls.initCamera(_.selectors.camera, function(cname) {
 				if (cname == "near")
 					_.swapLimbs("legs", "arms");
@@ -47,6 +48,8 @@ vu.menu.Body = CT.Class({
 			var _ = this._, selz = _.selectors; oz = this.opts,
 			_.opts = vu.storage.get("person") || _.opts;
 			_.raw = vu.core.person(_.opts);
+			selz.spine = CT.dom.div();
+			selz.spine_button = CT.dom.div(null, "right");
 			selz.camera = CT.dom.div(null, "centered");
 			for (var s in oz.subs)
 				selz[s] = oz.subs[s];
@@ -231,24 +234,33 @@ vu.menu.Body = CT.Class({
 		var modal, section, _ = this._, selz = _.selectors;
 		this.opts = opts = CT.merge(opts, {
 			main: null, // required! -> becomes top-left
-			subs: {}, // node map
-			impex: [],
-			topleft: null,
-			topright: null
+			secondary: null,
+			subs: {} // node map
 		});
-		opts.topleft = opts.topleft || opts.main;
-		_.menus[opts.topleft] = "topleft";
-		_.menus[opts.topright] = "topright";
+		opts.impex = [opts.main];
+		if (opts.secondary) {
+			opts.topright = opts.secondary;
+			opts.impex.push(opts.secondary);
+			_.menus[opts.secondary] = "topright";
+		}
+		opts.topleft = opts.main;
+		_.menus[opts.main] = "topleft";
 		_.setup();
 		CT.dom.id("ctmain").className = "gpage"; // 33% gmenu exclusion
 		for (section in _.menus) {
 			modal = vu.core.menu(section, _.menus[section],
 				selz[section], _.header(section));
+			if (opts.secondary) {
+				if (section == opts.secondary)
+					_.legs.push(modal);
+				else if (section == "spine")
+					_.arms.push(modal);
+			}
 			if (section.endsWith("arm"))
 				_.arms.push(modal);
 			if (section.endsWith("leg"))
 				_.legs.push(modal);
-			else
+			else if (section != opts.secondary)
 				modal.show("ctmain");
 		}
 	}
