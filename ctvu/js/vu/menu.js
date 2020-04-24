@@ -131,17 +131,23 @@ vu.menu.Body = CT.Class({
 			gopts = person.opts[sname],
 			sing = sname.slice(0, -1),
 			item_opts = gopts[sitem],
-			val, modpart, partnames,
+			val, modpart, partnames, bside,
 			jrange = this.jointRange, jset = this.setJoints;
 		if (!item_opts)
 			item_opts = gopts[sitem] = {};
 		if (!item_opts[side])
 			item_opts[side] = {};
-		if (!item_opts[side][sub])
-			item_opts[side][sub] = {};
-		modpart = item_opts[side][sub]; // such as hand or arm
+		if (side == "spine") { // TODO: hm.... probs revisit
+			bname = side;
+			modpart = item_opts[side];
+		} else {
+			bname = side + "_" + sub;
+			if (!item_opts[side][sub])
+				item_opts[side][sub] = {};
+			modpart = item_opts[side][sub]; // such as hand or arm
+		}
 		partnames = Object.keys(modpart);
-		CT.dom.setContent(selz[side + "_" + sub], partnames.length ? partnames.map(function(part) {
+		CT.dom.setContent(selz[bname], partnames.length ? partnames.map(function(part) {
 			val = modpart[part];
 			return CT.dom.div([
 				Object.keys(val).map(function(axis) {
@@ -149,7 +155,7 @@ vu.menu.Body = CT.Class({
 				})
 			], "jblock pr10");
 		}) : "");
-		CT.dom.setContent(selz[side + "_" + sub + "_button"], partnames.length ? CT.dom.button("clear", function() {
+		CT.dom.setContent(selz[bname + "_button"], partnames.length ? CT.dom.button("clear", function() {
 			if (!confirm("really?"))
 				return;
 			person["un" + sing](null, side, sub);
@@ -158,9 +164,10 @@ vu.menu.Body = CT.Class({
 				delete item_opts[side];
 			jset(sname, sitem, side, sub);
 		}) : CT.dom.button("add", function() {
-			zero.core[CT.parse.capitalize(sub)].parts.forEach(function(part) {
+			var pmod = zero.core[CT.parse.capitalize(sub)];
+			(pmod ? pmod.parts : [sub]).forEach(function(part) {
 				modpart[part] = {};
-				Object.keys(zero.base.aspects[sub][part]).forEach(function(dim) {
+				Object.keys(zero.base.aspects[pmod ? sub : side][part]).forEach(function(dim) {
 					modpart[part][dim] = 0;
 				});
 			});
@@ -174,6 +181,7 @@ vu.menu.Body = CT.Class({
 				jset(sname, sitem, side, sub);
 			});
 		});
+		jset(sname, sitem, "spine", "neck");
 		CT.dom.setContent(selz[sname + "_button"], sitem);
 	},
 	selector: function(sname, onfocus) {
