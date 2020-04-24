@@ -4,6 +4,7 @@ vu.builders.test = {
 		selectors: {},
 		menus: {
 			camera: "top",
+			mods: "topright",
 			triggers: "bottomleft",
 			gestures: "bottomright"
 		},
@@ -13,6 +14,7 @@ vu.builders.test = {
 			vu.controls.initCamera(_.selectors.camera);
 			vu.controls.setTriggers(_.selectors.triggers);
 			vu.controls.setGestures(_.selectors.gestures);
+			vu.controls.setMods(_.selectors.mods);
 		},
 		setup: function() {
 			var _ = vu.builders.test._, selz = _.selectors,
@@ -21,6 +23,7 @@ vu.builders.test = {
 			selz.camera = CT.dom.div(null, "centered");
 			selz.triggers = CT.dom.div();
 			selz.gestures = CT.dom.div();
+			selz.mods = CT.dom.div();
 		}
 	},
 	menus: function() {
