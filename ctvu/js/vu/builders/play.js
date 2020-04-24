@@ -2,11 +2,12 @@ vu.builders.play = {
 	_: {
 		opts: core.config.ctvu.builders.person,
 		selectors: {},
-		emitters: ["vibe", "gesture", "dance"],
+		emitters: ["vibe", "gesture", "dance", "mod"],
 		menus: {
 			chat: "bottom",
 			cameras: "top",
 			info: "topleft",
+			mods: "topright",
 			run_home: "topright",
 			triggers: "bottomleft",
 			gestures: "bottomright"
@@ -18,6 +19,7 @@ vu.builders.play = {
 				vu.controls.initCamera(_.selectors.cameras);
 				vu.controls.setTriggers(_.selectors.triggers, _.emit);
 				vu.controls.setGestures(_.selectors.gestures, _.emit);
+				vu.controls.setMods(_.selectors.mods, _.emit);
 				_.controls = new zero.core.Controls({
 					cb: _.action,
 					moveCb: _.move,
@@ -138,6 +140,7 @@ vu.builders.play = {
 			selz.run_home = CT.dom.img("/img/vu/home.png", null, function() { _.port(); });
 			selz.chat = _.chatterbox();
 			selz.info = CT.dom.div();
+			selz.mods = CT.dom.div();
 		},
 		chatterbox: function() {
 			var out = CT.dom.div(null, "out"), say = function(val, e) {
