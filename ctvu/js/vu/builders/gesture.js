@@ -1,6 +1,8 @@
 vu.builders.Gesture = CT.Class({
 	CLASSNAME: "vu.builders.Gesture",
 	constraints: function(side, sub, part, axis) {
+		if (side == "spine")
+			return { min: -1, max: 1 };
 		return zero.core.current.person.body.torso[sub +
 			"s"][side].aspects[part + "_" + axis].opts;
 	},
