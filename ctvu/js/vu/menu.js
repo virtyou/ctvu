@@ -83,6 +83,7 @@ vu.menu.Body = CT.Class({
 			this.persist(pobj);
 		}
 	},
+	neutral: 0,
 	initMain: function() {
 		var _ = this._, mprop = this.opts.main,
 			per = _.peritem, cur = zero.core.current,
@@ -132,6 +133,7 @@ vu.menu.Body = CT.Class({
 			sing = sname.slice(0, -1),
 			item_opts = gopts[sitem],
 			val, modpart, partnames, bside,
+			neu = this.neutral, curl = this.curl,
 			jrange = this.jointRange, jset = this.setJoints;
 		if (!item_opts)
 			item_opts = gopts[sitem] = {};
@@ -168,7 +170,8 @@ vu.menu.Body = CT.Class({
 			(pmod ? pmod.parts : [sub]).forEach(function(part) {
 				modpart[part] = {};
 				Object.keys(zero.base.aspects[pmod ? sub : side][part]).forEach(function(dim) {
-					modpart[part][dim] = 0;
+					if (curl || (dim != "curl"))
+						modpart[part][dim] = neu;
 				});
 			});
 			jset(sname, sitem, side, sub);

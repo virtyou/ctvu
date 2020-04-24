@@ -1,5 +1,6 @@
 vu.builders.Gesture = CT.Class({
 	CLASSNAME: "vu.builders.Gesture",
+	curl: true,
 	constraints: function(side, sub, part, axis) {
 		if (side == "spine")
 			return { min: -1, max: 1 };

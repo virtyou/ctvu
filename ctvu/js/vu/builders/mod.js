@@ -1,5 +1,6 @@
 vu.builders.Mod = CT.Class({
 	CLASSNAME: "vu.builders.Mod",
+	neutral: 1,
 	loadExtras: function() {
 
 	}
