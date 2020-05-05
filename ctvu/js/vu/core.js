@@ -1,10 +1,10 @@
 vu.core = {
 	bgen: function(opts) {
 		return opts.template ? eval(opts.template) : function() {
-			opts.joints = zero.base.joints();
-			opts.springs = zero.base.springs();
-			opts.aspects = zero.base.aspects();
-			opts.tickers = zero.base.tickers();
+//			opts.joints = zero.base.joints();
+//			opts.springs = zero.base.springs();
+//			opts.aspects = zero.base.aspects();
+//			opts.tickers = zero.base.tickers();
 			return opts;
 		};
 	},
