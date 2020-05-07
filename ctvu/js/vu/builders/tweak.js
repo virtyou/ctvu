@@ -60,11 +60,12 @@ vu.builders.tweak = {
 			};
 			if (core.config.ctvu.storage.mode == "remote")
 				registerHair(); // local disabled for now (must add hair alternatives 1st)
-			_.setMorphs(person);
+			_.setMorphs(person, "head");
+			_.setMorphs(person, "body");
 			zero.core.camera.unfollow();
 		},
-		setMorphs: function(person) {
-			var _ = vu.builders.tweak._, bod = person.body,
+		setMorphs: function(person, part) {
+			var _ = vu.builders.tweak._, bod = person[part],
 				spropts = core.config.ctvu.builders.tweak.staticSpring;
 
 			bod.staticMorphs.forEach(function(m) {
@@ -79,7 +80,7 @@ vu.builders.tweak = {
 				zero.core.morphs.delta(bod, m);
 			});
 
-			CT.dom.setContent(_.selectors.morphs, bod.staticMorphs.map(function(sel) {
+			CT.dom.setContent(_.selectors["morphs_" + part], bod.staticMorphs.map(function(sel) {
 				return [
 					sel,
 					CT.dom.range(function(val) {
@@ -87,7 +88,7 @@ vu.builders.tweak = {
 						bod.springs[sel].target = bod.opts.morphs[sel] = val / 100;
 						vu.builders.tweak.persist({
 							morphs: bod.opts.morphs
-						}, "body");
+						}, part);
 					}, 0, 100, 100 * (bod.opts.morphs[sel] || 0), 1, "w1")
 				];
 			}));
@@ -157,12 +158,15 @@ vu.builders.tweak = {
 						head.detach(acc);
 				});
 			});
-			selz.morphs = CT.dom.div();
+			selz.morphs_head = CT.dom.div();
+			selz.morphs_body = CT.dom.div();
 		}
 	},
 	persist: function(updates, sub) {
 		var popts = vu.builders.tweak._.opts;
-		if (sub)
+		if (sub == "head")
+			popts.body.parts[0] = CT.merge(updates, popts.body.parts[0]);
+		else if (sub)
 			popts[sub] = CT.merge(updates, popts[sub]);
 		else
 			popts = CT.merge(updates, popts);
@@ -199,13 +203,21 @@ vu.builders.tweak = {
 				selz.shininess
 			], "padded bordered round mb5"),
 			CT.dom.div([
+				CT.dom.div("morphs", "centered"),
+				CT.dom.link("import/export", function() {
+					vu.core.impex(cur.person.head.opts.morphs, function(val) {
+						vu.builders.tweak.persist({ morphs: val }, "head");
+					});
+				}, null, "right"),
+				CT.dom.div("head", "backtilt yellow"),
+				selz.morphs_head,
 				CT.dom.link("import/export", function() {
 					vu.core.impex(cur.person.body.opts.morphs, function(val) {
 						vu.builders.tweak.persist({ morphs: val }, "body");
 					});
 				}, null, "right"),
-				"morphs",
-				selz.morphs
+				CT.dom.div("body", "backtilt yellow"),
+				selz.morphs_body,
 			], "padded bordered round")
 		];
 	}
