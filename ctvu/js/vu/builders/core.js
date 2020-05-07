@@ -3,7 +3,11 @@ vu.builders.core = {
 		var pname = location.pathname.split("/").pop().split(".")[0],
 			_ = vu.builders[pname]._;
 		core.config.ctzero.room = vu.core.room();
+		if (pname == "item")
+			delete core.config.ctzero.room.texture;
 		zero.core.util.init();
+		if (pname == "item")
+			zero.core.camera.move({ x: 0, y: 0, z: 200 });
 		if (["zone", "item"].indexOf(pname) != -1)
 			CT.dom.addContent("ctheader", _.linx());
 		else {
