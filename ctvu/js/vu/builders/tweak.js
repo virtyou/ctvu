@@ -33,7 +33,7 @@ vu.builders.tweak = {
 				});
 			});
 			["L", "R"].map(function(part) {
-				var pthing = person.head["eyeGroup" + part]["eye" + part],
+				var pthing = person.head["eye" + part],
 					pname = ((part == "L") ? "left" : "right") + " eye";
 				zero.core.click.register(pthing, function() {
 					if (has_menu) return true;
