@@ -33,7 +33,9 @@ vu.storage.remote = {
 				ent = udata.person;
 			else if (ent_type == "room")
 				ent = udata.room;
-			if (sub)
+			if (sub == "head")
+				ent = ent.body.parts[0];
+			else if (sub)
 				ent = ent[sub];
 		}
 		obj.key = ent.key;
