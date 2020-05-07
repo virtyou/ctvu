@@ -171,6 +171,10 @@ vu.builders.item = {
 		if (_.thing)
 			_.thing.remove();
 		_.thing = new zero.core.Thing(_.thopts);
+		var oz = _.thing.opts;
+		zero.core.current.room.update({
+			texture: (oz.kind == "wallpaper") && oz.texture
+		});
 	},
 	menu: function() {
 		var _ = vu.builders.item._, selz = _.selectors;
