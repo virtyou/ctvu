@@ -111,7 +111,7 @@ vu.builders.play = {
 		action: function() {
 			var _ = vu.builders.play._,
 				cur = zero.core.current, person = cur.person,
-				pos = person.body.bone.position, hit = false;
+				pos = person.body.group.position, hit = false;
 			cur.room.objects.filter(function(obj) {
 				var o = obj.opts, og = o.portals && o.portals.outgoing;
 				return og && og.target;
