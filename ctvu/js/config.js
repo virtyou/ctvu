@@ -71,7 +71,7 @@
             "responses": {},
             "voice": "Joanna",
             "body": {
-                "template": "templates.one.body.sassy"
+                "template": "templates.one.body.basic"
             }
         }
     }

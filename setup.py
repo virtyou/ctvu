@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='ctvu',
-    version="0.1",
+    version="0.1.1",
     author='Mario Balibrera',
     author_email='mario.balibrera@gmail.com',
     license='MIT License',
