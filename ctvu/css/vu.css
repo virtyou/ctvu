@@ -190,9 +190,14 @@ img.right.h30p.up5 {
 	height: 160px;
 }
 
+.gmenu.spine .jblock,
 .gmenu.left_hand .jblock, .gmenu.right_hand .jblock {
 	width: 20%;
 	display: inline-block;
+}
+
+.gmenu.spine {
+	width: 47%;
 }
 
 .gmenu.triggers, .gmenu.chat,
