@@ -131,19 +131,13 @@ vu.menu.Body = CT.Class({
 			person = zero.core.current.person,
 			gopts = person.opts[sname],
 			sing = sname.slice(0, -1),
-			item_opts = gopts[sitem],
-			val, modpart, partnames, bside,
+			item_opts = gopts[sitem] = gopts[sitem] || {},
+			modpart = item_opts[side] = item_opts[side] || {},
+			val, partnames, bname = side,
 			neu = this.neutral, curl = this.curl,
 			jrange = this.jointRange, jset = this.setJoints;
-		if (!item_opts)
-			item_opts = gopts[sitem] = {};
-		if (!item_opts[side])
-			item_opts[side] = {};
-		if (side == "spine") { // TODO: hm.... probs revisit
-			bname = side;
-			modpart = item_opts[side];
-		} else {
-			bname = side + "_" + sub;
+		if (sub) {
+			bname += "_" + sub;
 			if (!item_opts[side][sub])
 				item_opts[side][sub] = {};
 			modpart = item_opts[side][sub]; // such as hand or arm
@@ -161,15 +155,20 @@ vu.menu.Body = CT.Class({
 			if (!confirm("really?"))
 				return;
 			person["un" + sing](null, side, sub);
-			delete item_opts[side][sub];
-			if (!Object.keys(item_opts[side]).length)
+			if (sub) {
+				delete item_opts[side][sub];
+				if (!Object.keys(item_opts[side]).length)
+					delete item_opts[side];
+			} else
 				delete item_opts[side];
 			jset(sname, sitem, side, sub);
 		}) : CT.dom.button("add", function() {
-			var pmod = zero.core[CT.parse.capitalize(sub)];
-			(pmod ? pmod.parts : [sub]).forEach(function(part) {
+			var _c = CT.parse.capitalize,
+				pmod = zero.core[_c(side)] || zero.core[_c(sub)],
+				az = zero.base.aspects[sub || side];
+			pmod.parts.forEach(function(part) {
 				modpart[part] = {};
-				Object.keys(zero.base.aspects[pmod ? sub : side][part]).forEach(function(dim) {
+				Object.keys(az[part]).forEach(function(dim) {
 					if (curl || (dim != "curl"))
 						modpart[part][dim] = neu;
 				});
@@ -184,7 +183,7 @@ vu.menu.Body = CT.Class({
 				jset(sname, sitem, side, sub);
 			});
 		});
-		jset(sname, sitem, "spine", "neck");
+		jset(sname, sitem, "spine");
 		CT.dom.setContent(selz[sname + "_button"], sitem);
 	},
 	selector: function(sname, onfocus) {
