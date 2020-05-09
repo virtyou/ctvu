@@ -350,12 +350,13 @@ vu.builders.zone = {
 			};
 		},
 		setup: function() {
-			var _ = vu.builders.zone._, selz = _.selectors;
+			var _ = vu.builders.zone._, selz = _.selectors,
+				persist = vu.builders.zone.persist;
 			_.opts = vu.storage.get("room") || _.opts;
 
 			selz.name = CT.dom.smartField(function(val) {
 				if (_.opts && (_.opts.name != val)) {
-					vu.builders.zone.persist({
+					persist({
 						name: val
 					});
 					_.opts.name = val;
@@ -374,7 +375,7 @@ vu.builders.zone = {
 			}), enz, null, _.opts.environment, null, function() {
 				if (_.opts.environment != eselector.value) {
 					_.opts.environment = eselector.value;
-					vu.builders.zone.persist({
+					persist({
 						environment: eselector.value
 					});
 					zero.core.util.room(_.opts);
@@ -400,7 +401,7 @@ vu.builders.zone = {
 										selz.base.update();
 										zero.core.current.room.update(upobj);
 //										vu.builders.zone.update();
-										vu.builders.zone.persist({
+										persist({
 											base: base.key
 										});
 									}
@@ -438,6 +439,20 @@ vu.builders.zone = {
 				}));
 			};
 
+			selz.friction = CT.dom.div();
+			selz.friction.update = function() {
+				var r = zero.core.current.room;
+				CT.dom.setContent(selz.friction,
+					CT.dom.checkboxAndLabel("grippy floor", r.grippy,
+						null, null, null, function(cbox) {
+							var g = _.opts.grippy = cbox.checked;
+							r.setFriction(g);
+							persist({
+								grippy: g
+							});
+						}));
+			};
+
 			selz.basic = [
 				CT.dom.div([
 					"Name",
@@ -451,6 +466,10 @@ vu.builders.zone = {
 				CT.dom.div([
 					"Base",
 					selz.base
+				], "padded bordered round mb5"),
+				CT.dom.div([
+					"Friction",
+					selz.friction
 				], "padded bordered round mb5"),
 				CT.dom.div([
 					"Scale",
@@ -590,6 +609,7 @@ vu.builders.zone = {
 				selz.lights.update();
 				selz.cameras.update();
 				selz.controls.update();
+				selz.friction.update();
 				selz.specular.update();
 				selz.shininess.update();
 				selz.furnishings.update();
