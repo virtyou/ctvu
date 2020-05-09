@@ -16,11 +16,13 @@ vu.builders.tweak = {
 			}
 			_.target = person.body;
 
-			zero.core.click.register(_.target, function() {
-				if (has_menu) return true;
-				person.say("skin");
-				_.target = person.body;
-				CT.dom.setContent(_.selectors.partLabel, "skin");
+			["body", "head"].forEach(function(part) {
+				zero.core.click.register(person[part], function() {
+					if (has_menu) return true;
+					person.say(part);
+					_.target = person[part];
+					CT.dom.setContent(_.selectors.partLabel, part);
+				});
 			});
 			["teeth", "tongue", "teeth_top"].map(function(p) {
 				var pthing = person.head[p],
@@ -58,7 +60,7 @@ vu.builders.tweak = {
 					});
 				});
 			};
-			if (core.config.ctvu.storage.mode == "remote")
+			if (false)//core.config.ctvu.storage.mode == "remote")
 				registerHair(); // local disabled for now (must add hair alternatives 1st)
 			_.setMorphs(person, "head");
 			_.setMorphs(person, "body");
@@ -131,7 +133,7 @@ vu.builders.tweak = {
 			_.colorSelector(rawp, "color");
 			_.colorSelector(rawp, "specular");
 			
-			selz.partLabel = CT.dom.span("Skin", "bold"),
+			selz.partLabel = CT.dom.span("Body", "bold"),
 			selz.shininess = CT.dom.range(function(val) {
 				CT.log("shininess: " + val);
 				_.target.material.shininess = val;
