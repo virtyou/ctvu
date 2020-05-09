@@ -137,6 +137,16 @@ vu.builders.tweak = {
 				_.target.material.shininess = val;
 				vu.storage.setMaterial(_.target.opts.key, { shininess: val });
 			}, 0, 150, rawp.body.material.shininess || 30, 1, "w1");
+			selz.opacity = CT.dom.range(function(val) {
+				CT.log("opacity: " + val);
+				var tm = _.target.material;
+				tm.opacity = val / 100;
+				tm.transparent = val < 100;
+				vu.storage.setMaterial(_.target.opts.key, {
+					opacity: tm.opacity,
+					transparent: tm.transparent
+				});
+			}, 0, 100, rawp.body.material.opacity * 100, 1, "w1");
 
 			rawp.body.skipPrecompile = true;
 
@@ -197,6 +207,10 @@ vu.builders.tweak = {
 			CT.dom.div([
 				"Specular",
 				selz.specular
+			], "padded bordered round mb5"),
+			CT.dom.div([
+				"Opacity",
+				selz.opacity
 			], "padded bordered round mb5"),
 			CT.dom.div([
 				"Shininess",
