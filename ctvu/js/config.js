@@ -7,6 +7,7 @@
         "apikey": "APIKEY"
     },
     "blurs": {
+        "mod": ["what's the mod called?", "change into what?"],
         "talk": ["say something", "say what?", "type something"],
         "resource": ["what's the name?", "name this resource", "what's it called?"],
         "chain": ["enter name of chained trigger", "what happens next?", "next trigger"],
@@ -31,6 +32,7 @@
     "builders": {
         "talk": {
             "help": {
+                "mod": "Mods are configured on the mod page. Use 'unmod' to stop modding.",
                 "responses": "Your character will say one of these in response to this trigger.",
                 "disable": "Disable any triggers that should no longer apply at this point in the conversation. Use 'untrigger' to clear all.",
                 "chain": "Chain together triggers to define complex responses.",
