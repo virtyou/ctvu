@@ -21,7 +21,7 @@ vu.builders.talk = {
 				popts = _.opts = vu.storage.get("person") || _.opts,
 				persist = vu.builders.talk.persist,
 				trigz = ["responses", "disable", "chain", "vibe", "mood",
-					"media", "crumbz", "gesture", "dance", "triggers"];
+					"media", "crumbz", "gesture", "dance", "triggers", "mod"];
 			trigz.forEach(function(trig) {
 				selz[trig] = CT.dom.div();
 			});
@@ -181,7 +181,7 @@ vu.builders.talk = {
 				if (!Array.isArray(rez.phrase))
 					rez.phrase = [rez.phrase];
 				vu.core.fieldList(rz, rez.phrase);
-				["disable", "mood", "vibe", "media", "chain", "gesture", "dance"].forEach(function(trig) {
+				["disable", "mood", "vibe", "media", "chain", "gesture", "dance", "mod"].forEach(function(trig) {
 					selz[trig].refresh();
 				});
 				_.tree(path.join("_") + "_" + rzt.innerHTML);
@@ -193,7 +193,7 @@ vu.builders.talk = {
 			dz.refresh = function() {
 				vu.core.fieldList(dz, responses[rzt.innerHTML].disable);
 			};
-			["chain", "vibe", "gesture", "dance"].forEach(function(reaction) {
+			["chain", "vibe", "gesture", "dance", "mod"].forEach(function(reaction) {
 				selz[reaction].refresh = function() {
 					CT.dom.setContent(selz[reaction], CT.dom.smartField(function(val) {
 						responses[rzt.innerHTML][reaction] = val;
@@ -311,7 +311,7 @@ vu.builders.talk = {
 				selz.responses.trigger,
 				selz.crumbz
 			], "padded bordered round"),
-			["Responses", "Disable", "Chain", "Gesture", "Dance", "Vibe", "Mood", "Media"].map(function(item) {
+			["Responses", "Disable", "Chain", "Mod", "Gesture", "Dance", "Vibe", "Mood", "Media"].map(function(item) {
 				return CT.dom.div([
 					_.helno(item),
 					item,
