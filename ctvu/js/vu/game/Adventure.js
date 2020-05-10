@@ -12,8 +12,7 @@ vu.game.Adventure = CT.Class({
 		else {
 			CT.db.one(key, function(sdata) {
 				_.scenes[key] = new vu.game.Scene(CT.merge({
-					player: this.player,
-					state: this.state
+					adventure: this
 				}, sdata));
 			}, "json");
 		}
@@ -41,6 +40,7 @@ vu.game.Adventure = CT.Class({
 		var s = this.state = opts.state;
 		s.actors = s.actors || {};
 		s.inventory = s.inventory || [];
+		this.game = opts.game;
 		CT.modal.modal(CT.dom.div([
 			CT.dom.div(opts.name, "bigger"),
 			opts.description,

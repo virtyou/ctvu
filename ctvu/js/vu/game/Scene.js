@@ -31,15 +31,17 @@ vu.game.Scene = CT.Class({
 		this.opts = opts = CT.merge(opts, {
 			name: "scene title",
 			description: "scene description",
-			player: null,
 			room: null,
-			state: { inventory: [], actors: {} },
-			actors: [],
 			props: {}, // TODO
+			actors: [],
 			scripts: {}
 		});
-		this.state = opts.state;
-		var osa = opts.state.actors;
+		var a = this.adventure = opts.adventure,
+			s = this.state = a && a.state || {
+				inventory: [], actors: {}
+			}, osa = s.actors;
+		this.player = a && a.player ||
+			core.config.ctvu.builders.person; // kosher?
 		opts.actors.forEach(function(a) {
 			osa[a.name] = osa[a.name] || {};
 		});
