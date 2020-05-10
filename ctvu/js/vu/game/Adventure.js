@@ -3,8 +3,9 @@ vu.game.Adventure = CT.Class({
 	_: {
 		scenes: {}
 	},
-	scene: function(skey) {
+	setScene: function(skey) {
 		var _ = this._, zcc = zero.core.current;
+		skey = skey || this.opts.scenes[0];
 		if (zcc.scene)
 			zcc.scene.unload();
 		if (key in _.scenes)
@@ -17,26 +18,20 @@ vu.game.Adventure = CT.Class({
 			}, "json");
 		}
 	},
-	setPlayer: function() {
-		var oz = this.opts;
-		// if > 1, use selector
-		this.player = oz.players[0];
-		// sel p, then:
-		this.setScene(oz.scenes[0]);
-	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
+			player: null,
+			state: {},
 			game: {
 				name: "game title",
 				description: "game description",
 				scenes: [], // keys
-				players: [],
 				initial: {},
 				victory: {},
 				defeat: {}
-			},
-			state: {}
+			}
 		});
+		this.player = opts.player;
 		var s = this.state = opts.state;
 		s.actors = s.actors || {};
 		s.inventory = s.inventory || [];
@@ -45,6 +40,6 @@ vu.game.Adventure = CT.Class({
 			CT.dom.div(opts.name, "bigger"),
 			opts.description,
 			"(close this window to start!)"
-		], "centered kidvp"), null, this.setPlayer);
+		], "centered kidvp"), null, this.setScene);
 	}
 });
