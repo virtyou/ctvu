@@ -18,7 +18,7 @@ class Scene(db.TimeStampedBase):
 			"key": self.id(),
 			"name": self.name,
 			"description": self.description,
-			"room": self.room.json(),
+			"room": self.room.get().json(),
 			"actors": [a.json() for a in db.get_multi(self.actors)],
 			"props": self.props,
 			"scripts": self.scripts
