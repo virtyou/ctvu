@@ -8,11 +8,11 @@ class Resource(db.TimeStampedBase):
 	item = db.Binary(unique=True)
 
 class Scene(db.TimeStampedBase):
-	owners = db.ForeignKey(kind="Member", repeated=True)
+	owners = db.ForeignKey(kind="member", repeated=True)
 	name = db.String()
 	description = db.Text()
-	room = db.ForeignKey(kind="Room")
-	actors = db.ForeignKey(kind="Person", repeated=True)
+	room = db.ForeignKey(kind="room")
+	actors = db.ForeignKey(kind="person", repeated=True)
 	props = db.JSON() # state/interactivity map - room items
 	scripts = db.JSON() # trigger "start" on load
 
@@ -28,19 +28,19 @@ class Scene(db.TimeStampedBase):
 		}
 
 class Game(db.TimeStampedBase):
-	owners = db.ForeignKey(kind="Member", repeated=True)
+	owners = db.ForeignKey(kind="member", repeated=True)
 	name = db.String()
 	description = db.Text()
 	scenes = db.ForeignKey(kind=Scene, repeated=True)
-	players = db.ForeignKey(kind="Person", repeated=True)
+	players = db.ForeignKey(kind="person", repeated=True)
 	initial = db.JSON()
 	victory = db.JSON()
 	defeat = db.JSON()
 	live = db.Boolean(default=False) # games page list
 
 class Adventure(db.TimeStampedBase):
-	owner = db.ForeignKey(kind="Member")
-	player = db.ForeignKey(kind="Person")
+	owner = db.ForeignKey(kind="member")
+	player = db.ForeignKey(kind="person")
 	game = db.ForeignKey(kind=Game)
 	state = db.JSON()
 
