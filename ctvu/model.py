@@ -13,6 +13,17 @@ class Scene(db.TimeStampedBase):
 	props = db.JSON() # state/interactivity map - room items
 	scripts = db.JSON() # trigger "start" on load
 
+	def json(self):
+		return {
+			"key": self.id(),
+			"name": self.name,
+			"description": self.description,
+			"room": self.room.json(),
+			"actors": [a.json() for a in db.get_multi(self.actors)],
+			"props": self.props,
+			"scripts": self.scripts
+		}
+
 class Game(db.TimeStampedBase):
 	name = db.String()
 	description = db.Text()
