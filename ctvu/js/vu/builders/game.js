@@ -3,7 +3,11 @@ vu.builders.game = {
 		selectors: {},
 		menus: {},
 		begin: function(gkey) {
-
+			vu.storage.edit({
+				modelName: "adventure",
+				owner: user.core.get("key"),
+				game: gkey
+			}, vu.builders.game._.resume);
 		},
 		resume: function(aopts) {
 			zero.core.current.adventure = new vu.game.Adventure(aopts);
