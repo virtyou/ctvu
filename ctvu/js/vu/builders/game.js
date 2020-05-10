@@ -2,12 +2,29 @@ vu.builders.game = {
 	_: {
 		selectors: {},
 		menus: {},
-		begin: function(gkey) {
+		newa: function(gkey, pkey) {
 			vu.storage.edit({
 				modelName: "adventure",
 				owner: user.core.get("key"),
+				player: pkey,
 				game: gkey
 			}, vu.builders.game._.resume);
+		},
+		begin: function(gkey) {
+			var _ = vu.builders.game._;
+			CT.db.one(gkey, function(gopts) {
+				if (gopts.players.length == 1)
+					return _.newa(gkey, gopts.players[0]);
+				CT.db.multi(gopts.players, function(players) {
+					CT.modal.choice({
+						prompt: "please select your player",
+						data: players,
+						cb: function(player) {
+							_.newa(gkey, player.key);
+						}
+					});
+				});
+			});
 		},
 		resume: function(aopts) {
 			zero.core.current.adventure = new vu.game.Adventure(aopts);
