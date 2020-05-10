@@ -2,10 +2,9 @@ vu.game.Scene = CT.Class({
 	CLASSNAME: "vu.game.Scene",
 	refresh: function() {
 		this.log("refresh");
-		// state has been updated > TODO:
+		// state has probs been updated > TODO:
 		// - check victory/defeat conditions
-		// - if multi, ws push
-		// - either way update db
+		// - if multi, ws push; always update db
 	},
 	script: function(sname) {
 		var oz = this.opts;
@@ -37,13 +36,10 @@ vu.game.Scene = CT.Class({
 			scripts: {}
 		});
 		var a = this.adventure = opts.adventure,
-			s = this.state = a && a.state || {
-				inventory: [], actors: {}
-			}, osa = s.actors;
-		this.player = a && a.player ||
-			core.config.ctvu.builders.person; // kosher?
-		opts.actors.forEach(function(a) {
-			osa[a.name] = osa[a.name] || {};
+			s = this.state = a.state, osa = s.actors;
+		this.player = a.player;
+		opts.actors.forEach(function(p) {
+			osa[p.name] = osa[p.name] || {};
 		});
 		CT.modal.modal(CT.dom.div([
 			CT.dom.div(opts.name, "bigger"),
