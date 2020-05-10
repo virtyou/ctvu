@@ -16,16 +16,10 @@ CT.require("vu.core");
 CT.require("vu.controls");
 CT.require("vu.storage");
 CT.require("vu.game");
-CT.require("vu.builders.core");
 CT.require("vu.builders.game");
 
 CT.onload(function() {
 	CT.initCore();
 	vu.core.init();
-	vu.storage.init(function() {
-		// menu
-		vu.builders.game.menus();
-		// virtual world
-		vu.builders.core.init();
-	}, true);
+	vu.storage.init(vu.builders.game.menus, true);
 });
