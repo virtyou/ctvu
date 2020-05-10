@@ -1,6 +1,5 @@
 from cantools import db
 
-# change all owners, CTUser->Member asap!
 # add Resource.owner right??
 
 class Resource(db.TimeStampedBase):
@@ -9,7 +8,7 @@ class Resource(db.TimeStampedBase):
 	item = db.Binary(unique=True)
 
 class Scene(db.TimeStampedBase):
-	owners = db.ForeignKey(kind="CTUser", repeated=True)
+	owners = db.ForeignKey(kind="Member", repeated=True)
 	name = db.String()
 	description = db.Text()
 	room = db.ForeignKey(kind="Room")
@@ -29,7 +28,7 @@ class Scene(db.TimeStampedBase):
 		}
 
 class Game(db.TimeStampedBase):
-	owners = db.ForeignKey(kind="CTUser", repeated=True)
+	owners = db.ForeignKey(kind="Member", repeated=True)
 	name = db.String()
 	description = db.Text()
 	scenes = db.ForeignKey(kind=Scene, repeated=True)
@@ -40,7 +39,7 @@ class Game(db.TimeStampedBase):
 	live = db.Boolean(default=False) # games page list
 
 class Adventure(db.TimeStampedBase):
-	owner = db.ForeignKey(kind="CTUser")
+	owner = db.ForeignKey(kind="Member")
 	game = db.ForeignKey(kind=Game)
 	state = db.JSON() # start @ game.initial{}
 
