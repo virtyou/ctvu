@@ -38,6 +38,7 @@ vu.game.Scene = CT.Class({
 			props: {}, // TODO
 			scripts: {}
 		});
+		this.state = opts.state;
 		var osa = opts.state.actors;
 		opts.actors.forEach(function(a) {
 			osa[a.name] = osa[a.name] || {};
