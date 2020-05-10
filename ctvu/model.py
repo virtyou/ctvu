@@ -42,7 +42,10 @@ class Adventure(db.TimeStampedBase):
 	owner = db.ForeignKey(kind="Member")
 	player = db.ForeignKey(kind="Person")
 	game = db.ForeignKey(kind=Game)
-	state = db.JSON() # start @ game.initial{}
+	state = db.JSON()
+
+	def oncreate(self):
+		self.state = self.game.get().initial
 
 	def json(self):
 		return {
