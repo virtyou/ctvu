@@ -12,7 +12,8 @@ vu.game.Adventure = CT.Class({
 		else {
 			CT.db.one(key, function(sdata) {
 				_.scenes[key] = new vu.game.Scene(CT.merge({
-					player: this.player
+					player: this.player,
+					state: this.state
 				}, sdata));
 			}, "json");
 		}
@@ -34,8 +35,16 @@ vu.game.Adventure = CT.Class({
 				initial: {},
 				victory: {},
 				defeat: {}
-			}
+			},
+			state: {}
 		});
-		this.setPlayer();
+		var s = this.state = opts.state;
+		s.actors = s.actors || {};
+		s.inventory = s.inventory || [];
+		CT.modal.modal(CT.dom.div([
+			CT.dom.div(opts.name, "bigger"),
+			opts.description,
+			"(close this window to start!)"
+		], "centered kidvp"), null, this.setPlayer);
 	}
 });
