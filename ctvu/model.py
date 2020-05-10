@@ -37,6 +37,7 @@ class Game(db.TimeStampedBase):
 	initial = db.JSON()
 	victory = db.JSON()
 	defeat = db.JSON()
+	live = db.Boolean(default=False) # games page list
 
 class Adventure(db.TimeStampedBase):
 	owner = db.ForeignKey(kind="CTUser")
