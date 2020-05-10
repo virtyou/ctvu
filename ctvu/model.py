@@ -40,14 +40,14 @@ class Game(db.TimeStampedBase):
 
 class Adventure(db.TimeStampedBase):
 	owner = db.ForeignKey(kind="Member")
+	player = db.ForeignKey(kind="Person")
 	game = db.ForeignKey(kind=Game)
 	state = db.JSON() # start @ game.initial{}
 
 	def json(self):
-		gd = self.game.get().data()
-		gd['players'] = [p.json() for p in db.get_multi(gd['players'])]
 		return {
 			"key": self.id(),
-			"game": gd,
-			"state": self.state
+			"state": self.state,
+			"game": self.game.get().data(),
+			"player": self.player.get().json()
 		}
