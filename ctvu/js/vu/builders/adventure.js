@@ -55,4 +55,3 @@ vu.builders.adventure = {
 		}
 	}
 };
-//modelName, cb, limit, offset, order, filters, sync, count, exporter
