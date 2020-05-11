@@ -81,7 +81,7 @@ vu.builders.vibe = {
 					var person = zero.core.current.person;
 					if (person) {
 						person.voice = selz.voice.value;
-						persist({ voice: person.voice });
+						vu.builders.vibe.persist({ voice: person.voice });
 					}
 				});
 
