@@ -26,6 +26,7 @@ vu.game.Adventure = CT.Class({
 				name: "game title",
 				description: "game description",
 				scenes: [], // keys
+				portals: {},
 				initial: {},
 				victory: {},
 				defeat: {}
@@ -36,6 +37,7 @@ vu.game.Adventure = CT.Class({
 		s.actors = s.actors || {};
 		s.inventory = s.inventory || [];
 		this.game = opts.game;
+		this.portals = opts.game.portals;
 		CT.modal.modal(CT.dom.div([
 			CT.dom.div(opts.game.name, "bigger"),
 			opts.game.description,
