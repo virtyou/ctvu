@@ -27,11 +27,21 @@ vu.builders.scene = {
 							prompt: "please select an actor",
 							data: zero.core.current.scene.actors,
 							cb: function(actor) {
-								// assume say for now -- extend to respond, etc
-								CT.modal.prompt({
-									prompt: "what's the line?",
-									cb: function(line) {
-										cb({ actor: actor.name, line: line });
+								CT.modal.choice({
+									prompt: "please select an action",
+									data: ["say", "respond"],
+									cb: function(action) {
+										// TODO: extend to position, etc
+										CT.modal.prompt({
+											prompt: "what's the line?",
+											cb: function(line) {
+												cb({
+													actor: actor.name,
+													action: action,
+													line: line
+												});
+											}
+										})
 									}
 								})
 							}
