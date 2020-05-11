@@ -10,15 +10,13 @@ vu.builders.scene = {
 		},
 		load: function(scene) {
 			var _ = vu.builders.scene._, selz = _.selectors,
-				sname = CT.dom.span();
+				snode = CT.dom.div();
 			zero.core.current.scene = scene;
 			CT.dom.setContent(selz.info, [
 				CT.dom.div(scene.name, "bigger"),
 				scene.description,
 				"room: " + scene.room.name,
-				CT.dom.span("script:"),
-				CT.dom.pad(),
-				sname
+				snode
 			]);
 			var az = CT.dom.div(scene.actors.map(function(a) {
 				return a.name;
@@ -76,7 +74,7 @@ vu.builders.scene = {
 				if (v) {
 					f._trigger = v;
 					f.onfocus = function() {
-						sname.innerHTML = f._trigger;
+						CT.dom.setContent(snode, "scene: " + f._trigger);
 						selz.steps.refresh(f._trigger);
 					};
 					f.onkeyup = function() {
@@ -84,7 +82,8 @@ vu.builders.scene = {
 							f.value = f.value.toLowerCase();
 							scene.scripts[f.value] = scene.scripts[f._trigger];
 							delete scene.scripts[f._trigger];
-							sname.innerHTML = f._trigger = f.value;
+							CT.dom.setContent(snode, "scene: " + f.value);
+							f._trigger = f.value;
 							upscripts();
 						} else
 							f.value = f._trigger; // meh
@@ -106,18 +105,34 @@ vu.builders.scene = {
 			});
 		},
 		step: function(cb) {
-			// assume actor for now -- extend to lights, camera, props, and state
 			CT.modal.choice({
-				prompt: "please select an actor",
-				data: zero.core.current.scene.actors,
-				cb: function(actor) {
-					// assume say for now -- extend to respond, etc
-					CT.modal.prompt({
-						prompt: "what's the line?",
-						cb: function(line) {
-							cb({ actor: actor.name, line: line });
-						}
-					})
+				prompt: "please select a variety",
+				data: ["actor", "camera"], // lights, props, state
+				cb: function(stype) {
+					if (stype == "actor") {
+						CT.modal.choice({
+							prompt: "please select an actor",
+							data: zero.core.current.scene.actors,
+							cb: function(actor) {
+								// assume say for now -- extend to respond, etc
+								CT.modal.prompt({
+									prompt: "what's the line?",
+									cb: function(line) {
+										cb({ actor: actor.name, line: line });
+									}
+								})
+							}
+						});
+					} else if (stype == "camera") {
+						CT.modal.choice({
+							prompt: "please select an angle",
+							data: ["behind", "pov", "rotate",
+								"0", "1", "2", "3", "4", "5", "6", "7", "8"],
+							cb: function(angle) {
+								cb({ camera: angle });
+							}
+						});
+					}
 				}
 			});
 		},
