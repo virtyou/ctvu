@@ -23,6 +23,14 @@ vu.builders.scene = {
 				return a.name;
 			}));
 
+			selz.steps.update = function() {
+
+			};
+			selz.steps.refresh = function(sname) {
+				CT.dom.setContent(selz.steps, scene.scripts[sname].map(function(s) {
+					return JSON.stringify(s);
+				}));
+			};
 
 			vu.core.fieldList(selz.scripts, Object.keys(scene.scripts), null, function(v) {
 				var f = CT.dom.field(null, v);
@@ -30,7 +38,7 @@ vu.builders.scene = {
 					f._trigger = v;
 					f.onfocus = function() {
 						sname.innerHTML = f._trigger;
-						//rz.refresh(f._trigger);
+						selz.steps.refresh(f._trigger);
 					};
 					f.onkeyup = function() {
 						if (f.value) {
