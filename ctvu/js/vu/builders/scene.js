@@ -3,12 +3,12 @@ vu.builders.scene = {
 		selectors: {},
 		menus: {
 			cameras: "top",
-			lights: "bottom",
-			info: "topleft",
+			props: "right",
 			scripts: "left",
+			info: "topleft",
+			lights: "topright",
 			steps: "bottomleft",
-			actors: "topright",
-			props: "bottomright"
+			actors: "bottomright"
 		},
 		upscripts: function() {
 			var scene = zero.core.current.scene;
@@ -18,14 +18,15 @@ vu.builders.scene = {
 			});
 		},
 		step: function(cb) {
+			var zcc = zero.core.current;
 			CT.modal.choice({
 				prompt: "please select a variety",
-				data: ["actor", "camera"], // lights, props, state
+				data: ["actor", "lights", "camera"], // props, state
 				cb: function(stype) {
 					if (stype == "actor") {
 						CT.modal.choice({
 							prompt: "please select an actor",
-							data: zero.core.current.scene.actors,
+							data: zcc.scene.actors,
 							cb: function(actor) {
 								CT.modal.choice({
 									prompt: "please select an action",
@@ -53,6 +54,18 @@ vu.builders.scene = {
 								"0", "1", "2", "3", "4", "5", "6", "7", "8"],
 							cb: function(angle) {
 								cb({ camera: angle });
+							}
+						});
+					} else if (stype == "lights") {
+						CT.modal.choice({
+							prompt: "please adjust the lighting, and click 'ready' to save a step. click 'cancel' to abort.",
+							data: ["ready", "cancel"],
+							cb: function(resp) {
+								(resp == "ready") && cb({
+									lights: zcc.room.lights.map(function(light) {
+										return light.opts.intensity;
+									})
+								});
 							}
 						});
 					}
@@ -119,9 +132,14 @@ vu.builders.scene = {
 			};
 		},
 		backstage: function() {
-			var _ = vu.builders.scene._;
-			//_.lights();
-			vu.controls.initCamera(_.selectors.cameras);
+			var _ = vu.builders.scene._, selz = _.selectors,
+				zcc = zero.core.current, scene = zcc.scene;
+			vu.controls.initCamera(selz.cameras);
+			CT.dom.setContent(selz.lights, CT.dom.div(zcc.room.lights.map(function(light) {
+				return CT.dom.range(function(val) {
+					light.setIntensity(parseInt(val) / 100);
+				}, 0, 100, light.opts.intensity * 100, 1, "w1 block");
+			}), "noflow"));
 		}
 	},
 	load: function(scene) {
