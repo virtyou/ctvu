@@ -12,12 +12,12 @@ CT.require("core");
 CT.require("user.core");
 CT.require("zero.core");
 CT.require("vu.core");
-CT.require("vu.controls");
 CT.require("vu.storage");
 CT.require("vu.builders.game");
 
+// TODO: rm some imports!!
+
 CT.onload(function() {
 	CT.initCore();
-	vu.core.init();
-	vu.storage.init(vu.builders.game.menus, true);
+	vu.builders.game.init();
 });
