@@ -2,8 +2,10 @@ vu.builders.scene = {
 	_: {
 		selectors: {},
 		menus: {
-			info: "top",
-			scripts: "topleft",
+			cameras: "top",
+			lights: "bottom",
+			info: "topleft",
+			scripts: "left",
 			steps: "bottomleft",
 			actors: "topright",
 			props: "bottomright"
@@ -105,7 +107,11 @@ vu.builders.scene = {
 					})
 				]);
 			};
-
+		},
+		backstage: function() {
+			var _ = vu.builders.scene._;
+			//_.lights();
+			vu.controls.initCamera(_.selectors.cameras);
 		}
 	},
 	load: function(scene) {
@@ -163,7 +169,7 @@ vu.builders.scene = {
 			scene = zero.core.current.scene;
 		cfg.room = scene.room;
 		cfg.people = scene.actors;
-		zero.core.util.init();
+		zero.core.util.init(null, vu.builders.scene._.backstage);
 	},
 	setup: function() {
 		var skey = location.hash.slice(1),
@@ -175,6 +181,8 @@ vu.builders.scene = {
 		selz.steps = CT.dom.div();
 		selz.actors = CT.dom.div();
 		selz.props = CT.dom.div();
+		selz.lights = CT.dom.div();
+		selz.cameras = CT.dom.div(null, "centered");
 		CT.db.one(skey, vu.builders.scene.load, "json");
 	},
 	menus: function() {
