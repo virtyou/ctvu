@@ -14,6 +14,7 @@ CT.require("zero.core");
 CT.require("vu.core");
 CT.require("vu.controls");
 CT.require("vu.storage");
+CT.require("vu.game.util");
 CT.require("vu.builders.scene");
 
 CT.onload(function() {
