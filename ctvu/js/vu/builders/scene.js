@@ -17,13 +17,15 @@ vu.builders.scene = {
 				scripts: scene.scripts
 			});
 		},
-		step: function(cb) {
+		step: function(cb, cur) {
 			var zcc = zero.core.current;
 			CT.modal.choice({
 				prompt: "please select a variety",
-				data: ["actor", "lights", "camera"], // props, state
+				data: ["lights", "camera", "action"].filter(function(st) { // +props,state
+					return !cur || !(st in cur);
+				}),
 				cb: function(stype) {
-					if (stype == "actor") {
+					if (stype == "action") {
 						CT.modal.choice({
 							prompt: "please select an actor",
 							data: zcc.scene.actors,
@@ -103,18 +105,73 @@ vu.builders.scene = {
 				})
 			]);
 		},
+		shifter: function(stpr, dir) {
+			var _ = vu.builders.scene._, zcc = zero.core.current,
+				arr = zcc.scene.scripts[zcc.script],
+				i = CT.dom.childNum(stpr),
+				el = arr.splice(i, 1)[0];
+			if (dir == "up") {
+				arr.splice(i - 1, 0, el);
+				stpr.parentNode.insertBefore(stpr, stpr.previousSibling);
+			} else {
+				arr.splice(i + 1, 0, el);
+				if (stpr.nextSibling.nextSibling)
+					stpr.parentNode.insertBefore(stpr, stpr.nextSibling.nextSibling);
+				else
+					stpr.parentNode.appendChild(stpr);
+			}
+			_.upscripts();
+		},
 		stepper: function(s) {
-			return CT.dom.div(JSON.stringify(s),
-				"bordered padded margined round", null, {
-					onclick: function() {
-						vu.game.util.step(s);
-					}
-				});
+			var _ = vu.builders.scene._, zcc = zero.core.current, k;
+			var stpr = CT.dom.div([
+				CT.dom.button("edit", function() {
+					CT.modal.choice({
+						prompt: "how would you like to modify this step?",
+						data: ["add something", "remove entirely", "shift"],
+						cb: function(etype) {
+							if (etype == "remove entirely") {
+								CT.data.remove(zcc.scene.scripts[zcc.script], s);
+								_.upscripts();
+							} else if (etype == "add something") {
+								_.step(function(upz) {
+									for (k in upz)
+										s[k] = upz[k];
+									CT.dom.replace(stpr, _.stepper(s));
+									_.upscripts();
+								}, s);
+							} else { // shift
+								if (stpr.nextSibling && stpr.previousSibling) {
+									CT.modal.choice({
+										prompt: "which direction?",
+										data: ["up", "down"],
+										cb: function(dir) {
+											_.shifter(stpr, dir);
+										}
+									});
+								} else if (stpr.nextSibling)
+									_.shifter(stpr, "down");
+								else if (stpr.previousSibling)
+									_.shifter(stpr, "up");
+								else
+									alert("nowhere to shift! first, add another step!");
+							}
+						}
+					});
+				}, "right"),
+				JSON.stringify(s)
+			], "bordered padded margined round", null, {
+				onclick: function() {
+					vu.game.util.step(s);
+				}
+			});
+			return stpr;
 		},
 		steps: function() {
 			var _ = vu.builders.scene._, selz = _.selectors,
 				scene = zero.core.current.scene;
 			selz.steps.refresh = function(sname) {
+				zero.core.current.script = sname;
 				var stez = CT.dom.div(scene.scripts[sname].map(_.stepper));
 				CT.dom.setContent(selz.steps, [
 					stez,
@@ -160,7 +217,7 @@ vu.builders.scene = {
 			if (v) {
 				f._trigger = v;
 				f.onfocus = function() {
-					CT.dom.setContent(snode, "scene: " + f._trigger);
+					CT.dom.setContent(snode, "script: " + f._trigger);
 					selz.steps.refresh(f._trigger);
 				};
 				f.onkeyup = function() {
@@ -168,7 +225,7 @@ vu.builders.scene = {
 						f.value = f.value.toLowerCase();
 						scene.scripts[f.value] = scene.scripts[f._trigger];
 						delete scene.scripts[f._trigger];
-						CT.dom.setContent(snode, "scene: " + f.value);
+						CT.dom.setContent(snode, "script: " + f.value);
 						f._trigger = f.value;
 						upscripts();
 					} else
