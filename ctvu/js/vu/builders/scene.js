@@ -91,18 +91,28 @@ vu.builders.scene = {
 		]);
 		_.actors();
 
+		var stepper = function(s) {
+			return CT.dom.div(JSON.stringify(s),
+				"bordered padded margined round", null, {
+					onclick: function() {
+						vu.game.util.step(s);
+					}
+				});
+		};
+
 		selz.steps.refresh = function(sname) {
-			var stez = CT.dom.div(scene.scripts[sname].map(function(s) {
-				return JSON.stringify(s);
-			}));
+			var stez = CT.dom.div(scene.scripts[sname].map(stepper));
 			CT.dom.setContent(selz.steps, [
 				stez,
 				CT.dom.button("add step", function() {
 					_.step(function(step) {
-						CT.dom.addContent(stez, JSON.stringify(step));
+						CT.dom.addContent(stez, stepper(step));
 						scene.scripts[sname].push(step);
 						upscripts();
 					});
+				}),
+				CT.dom.button("play all", function() {
+					vu.game.util.script(scene.scripts[sname]);
 				})
 			]);
 		};
@@ -141,6 +151,15 @@ vu.builders.scene = {
 			delete scene.scripts[val];
 			upscripts();
 		});
+
+		vu.builders.scene.build();
+	},
+	build: function() {
+		var cfg = core.config.ctzero,
+			scene = zero.core.current.scene;
+		cfg.room = scene.room;
+		cfg.people = scene.actors;
+		zero.core.util.init();
 	},
 	setup: function() {
 		var skey = location.hash.slice(1),
