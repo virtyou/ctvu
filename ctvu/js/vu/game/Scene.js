@@ -12,9 +12,11 @@ vu.game.Scene = CT.Class({
 			this.refresh, this.state);
 	},
 	start: function() {
-		var oz = this.opts, zcc = zero.core.current;
-		zcc.person = zcc.people[oz.player.name];
-		this.script("start");
+		var thaz = this, zcc = zero.core.current;
+		zcc.person = zcc.people[this.player.name];
+		setTimeout(function() { // figure out race cond..
+			thaz.script("start");
+		});
 	},
 	unload: function() {
 		// get rid of room / people!
@@ -22,7 +24,7 @@ vu.game.Scene = CT.Class({
 	load: function() {
 		var oz = this.opts, cfg = core.config.ctzero;
 		cfg.room = oz.room;
-		cfg.people = oz.actors.concat([oz.player]);
+		cfg.people = oz.actors.concat([this.player]);
 		zero.core.util.init(null, this.start);
 		zero.core.current.scene = this;
 	},
@@ -45,6 +47,6 @@ vu.game.Scene = CT.Class({
 			CT.dom.div(opts.name, "bigger"),
 			opts.description,
 			"(close this window to start!)"
-		], "centered kidvp"), null, this.load);
+		], "centered kidvp"), this.load);
 	}
 });

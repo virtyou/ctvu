@@ -3,9 +3,9 @@ vu.game.Adventure = CT.Class({
 	_: {
 		scenes: {}
 	},
-	setScene: function(skey) {
-		var _ = this._, zcc = zero.core.current;
-		skey = skey || this.opts.scenes[0];
+	setScene: function(key) {
+		var _ = this._, thaz = this, zcc = zero.core.current;
+		key = key || this.game.scenes[0];
 		if (zcc.scene)
 			zcc.scene.unload();
 		if (key in _.scenes)
@@ -13,7 +13,7 @@ vu.game.Adventure = CT.Class({
 		else {
 			CT.db.one(key, function(sdata) {
 				_.scenes[key] = new vu.game.Scene(CT.merge({
-					adventure: this
+					adventure: thaz
 				}, sdata));
 			}, "json");
 		}
@@ -37,9 +37,9 @@ vu.game.Adventure = CT.Class({
 		s.inventory = s.inventory || [];
 		this.game = opts.game;
 		CT.modal.modal(CT.dom.div([
-			CT.dom.div(opts.name, "bigger"),
-			opts.description,
+			CT.dom.div(opts.game.name, "bigger"),
+			opts.game.description,
 			"(close this window to start!)"
-		], "centered kidvp"), null, this.setScene);
+		], "centered kidvp"), this.setScene);
 	}
 });
