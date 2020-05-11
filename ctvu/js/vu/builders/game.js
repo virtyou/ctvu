@@ -64,30 +64,31 @@ vu.builders.game = {
 				], "bordered padded margined round")
 			]);
 		},
+		scene: function(s) {
+			return CT.dom.div([
+				CT.dom.link(s.name, null,
+					"/vu/scene.html#" + s.key, "big"),
+				s.description,
+				"room: " + s.room.name,
+				"actors: " + s.actors.map(function(a) {
+					return a.name;
+				}).join(", "),
+				"portal linkages!!!!!"
+			], "bordered padded margined round");
+		},
 		scenes: function(game) {
 			var n = CT.dom.div(), _ = vu.builders.game._;
 			CT.db.multi(game.scenes, function(scenes) {
+				var snode = CT.dom.div(scenes.map(_.scene));
 				CT.dom.setContent(n, [
-					scenes.map(function(s) {
-						return return CT.dom.div([
-							CT.dom.link(s.name, null,
-								"/vu/scene.html#" + s.key, "big"),
-							s.description,
-							"room: " + s.room.name,
-							"actors: " + s.actors.map(function(a) {
-								return a.name;
-							}).join(", "),
-							"props...",
-							"portal linkages!!!!!"
-						], "bordererd padded margined round");
-					}),
+					snode,
 					CT.dom.button("add scene", function() {
 						CT.modal.choice({
 							prompt: "please select a room",
 							data: vu.storage.get("rooms"),
 							cb: function(room) {
 								_.create("scene", function(s) {
-									location = "/vu/scene.html#" + s.key;
+									CT.dom.addContent(snode, _.scene(s));
 								}, {
 									room: room.key
 								});
@@ -108,7 +109,7 @@ vu.builders.game = {
 			CT.modal.choice({
 				prompt: "please select a game",
 				data: ["new game"].concat(games),
-				function(game) {
+				cb: function(game) {
 					if (game == "new game")
 						_.create();
 					else
