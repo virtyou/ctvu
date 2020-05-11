@@ -20,7 +20,7 @@ vu.game.util = {
 			});
 		}
 		if (step.camera)
-			zero.core.camera[step.camera](step.camopts);
+			zero.core.camera.angle(step.camera);
 		if (step.prop)
 			r[step.prop][step.directive](step.direction);
 		if (step.state)
