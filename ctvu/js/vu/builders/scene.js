@@ -11,6 +11,7 @@ vu.builders.scene = {
 		load: function(scene) {
 			var _ = vu.builders.scene._, selz = _.selectors,
 				sname = CT.dom.span();
+			zero.core.current.scene = scene;
 			CT.dom.setContent(selz.info, [
 				CT.dom.div(scene.name, "bigger"),
 				scene.description,
@@ -23,13 +24,27 @@ vu.builders.scene = {
 				return a.name;
 			}));
 
-			selz.steps.update = function() {
-
+			var upscripts = function() {
+				vu.storage.edit({
+					key: scene.key,
+					scripts: scene.scripts
+				});
 			};
+
 			selz.steps.refresh = function(sname) {
-				CT.dom.setContent(selz.steps, scene.scripts[sname].map(function(s) {
+				var stez = CT.dom.div(scene.scripts[sname].map(function(s) {
 					return JSON.stringify(s);
 				}));
+				CT.dom.setContent(selz.steps, [
+					stez,
+					CT.dom.button("add step", function() {
+						_.step(function(step) {
+							CT.dom.addContent(stez, JSON.stringify(step));
+							scene.scripts[sname].push(step);
+							upscripts();
+						});
+					})
+				]);
 			};
 
 			vu.core.fieldList(selz.scripts, Object.keys(scene.scripts), null, function(v) {
@@ -46,10 +61,7 @@ vu.builders.scene = {
 							scene.scripts[f.value] = scene.scripts[f._trigger];
 							delete scene.scripts[f._trigger];
 							sname.innerHTML = f._trigger = f.value;
-							vu.storage.edit({
-								key: scene.key,
-								scripts: scene.scripts
-							});
+							upscripts();
 						} else
 							f.value = f._trigger; // meh
 					};
@@ -66,10 +78,23 @@ vu.builders.scene = {
 				});
 			}, function(val) {
 				delete scene.scripts[val];
-				vu.storage.edit({
-					key: scene.key,
-					scripts: scene.scripts
-				});
+				upscripts();
+			});
+		},
+		step: function(cb) {
+			// assume actor for now -- extend to lights, camera, props, and state
+			CT.modal.choice({
+				prompt: "please select an actor",
+				data: zero.core.current.scene.actors,
+				cb: function(actor) {
+					// assume say for now -- extend to respond, etc
+					CT.modal.prompt({
+						prompt: "what's the line?",
+						cb: function(line) {
+							cb({ actor: actor.name, line: line });
+						}
+					})
+				}
 			});
 		},
 		setup: function() {
