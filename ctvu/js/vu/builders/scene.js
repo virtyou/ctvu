@@ -20,9 +20,33 @@ vu.builders.scene = {
 				CT.dom.pad(),
 				sname
 			]);
-			CT.dom.setContent(selz.actors, scene.actors.map(function(a) {
+			var az = CT.dom.div(scene.actors.map(function(a) {
 				return a.name;
 			}));
+			CT.dom.setContent(selz.actors, [
+				az,
+				CT.dom.button("add", function() {
+					var akeys = scene.actors.map(function(a) {
+						return a.key;
+					});
+					CT.modal.choice({
+						prompt: "please select an actor",
+						data: vu.storage.get("people").filter(function(p) {
+							return !akeys.includes(p.key);
+						}),
+						cb: function(person) {
+							scene.actors.push(person);
+							CT.dom.addContent(az, person.name);
+							vu.storage.edit({
+								key: scene.key,
+								actors: scene.actors.map(function(a) {
+									return a.key;
+								})
+							});
+						}
+					});
+				})
+			]);
 
 			var upscripts = function() {
 				vu.storage.edit({
