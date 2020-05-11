@@ -61,6 +61,17 @@ vu.builders.game = {
 				CT.dom.div([
 					"conditions",
 					_.conditions(game)
+				], "bordered padded margined round"),
+				CT.dom.div([
+					"live",
+					CT.dom.checkboxAndLabel("list on games page",
+						game.live, null, null, null, function(cb) {
+							game.live = cb.checked;
+							vu.storage.edit({
+								key: game.key,
+								live: game.live
+							});
+						})
 				], "bordered padded margined round")
 			]);
 		},
