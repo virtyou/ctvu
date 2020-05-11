@@ -28,14 +28,14 @@ vu.game.util = {
 		if (step.actor)
 			zcc.people[step.actor][step.action || "say"](step.line, nextStep);
 		else
-			nextStep();
+			nextStep && nextStep();
 	},
 	script: function(script, cb, state) {
 		var step = script.shift();
 		if (!step)
 			return cb && cb();
 		vu.game.util.step(step, function() {
-			setTimeout(zero.core.util.script, step.pause || 0,
+			setTimeout(vu.game.util.script, step.pause || 0,
 				script, cb, state);
 		});
 	}
