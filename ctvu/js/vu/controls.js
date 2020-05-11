@@ -13,11 +13,16 @@ vu.controls = {
 					zero.core.camera.angle(perspective);
 					e.stopPropagation();
 				};
-			}, pov = CT.dom.button("pov", looker("pov")),
+			}, pov = CT.dom.button("pov", looker("pov")), bcams,
 				behind = CT.dom.button("behind", looker("behind"));
 			node.update = function() {
 				room = zero.core.current.room;
 				tbutts = [cycbutt];
+				if (mode == "scene") {
+					bcams = [];
+					tbutts.pop();
+				} else
+					bcams = [pov, behind];
 				(mode == "zone") && tbutts.push(CT.dom.button("refresh", function(e) {
 					room.updateCameras();
 					node.update();
@@ -28,7 +33,7 @@ vu.controls = {
 				}));
 				CT.dom.setContent(node, [
 					CT.dom.div(tbutts, "right up20"),
-					CT.dom.div([pov, behind].concat(room.cameras.map(function(cam, i) {
+					CT.dom.div(bcams.concat(room.cameras.map(function(cam, i) {
 						return CT.dom.button("cam " + i, function(e) {
 							zero.core.camera.setSprings(20);
 							zero.core.camera.perspective();
