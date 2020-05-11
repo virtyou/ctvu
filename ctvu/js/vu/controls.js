@@ -38,7 +38,7 @@ vu.controls = {
 					})), "centered clearnode")
 				]);
 			};
-			(mode == "play") && node.update();
+			(mode == "play") || (mode == "scene") && node.update();
 		} else {
 			zero.core.camera.unfollow();
 			var butt = CT.dom.button("far", function(e) {
