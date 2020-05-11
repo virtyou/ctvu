@@ -31,6 +31,7 @@ vu.game.util = {
 			nextStep && nextStep();
 	},
 	script: function(script, cb, state) {
+		script = script.slice();
 		var step = script.shift();
 		if (!step)
 			return cb && cb();
