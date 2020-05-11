@@ -77,6 +77,35 @@ vu.builders.scene = {
 					});
 				})
 			]);
+		},
+		stepper: function(s) {
+			return CT.dom.div(JSON.stringify(s),
+				"bordered padded margined round", null, {
+					onclick: function() {
+						vu.game.util.step(s);
+					}
+				});
+		},
+		steps: function() {
+			var _ = vu.builders.scene._, selz = _.selectors,
+				scene = zero.core.current.scene;
+			selz.steps.refresh = function(sname) {
+				var stez = CT.dom.div(scene.scripts[sname].map(_.stepper));
+				CT.dom.setContent(selz.steps, [
+					stez,
+					CT.dom.button("add step", function() {
+						_.step(function(step) {
+							CT.dom.addContent(stez, _.stepper(step));
+							scene.scripts[sname].push(step);
+							_.upscripts();
+						});
+					}),
+					CT.dom.button("play all", function() {
+						vu.game.util.script(scene.scripts[sname]);
+					})
+				]);
+			};
+
 		}
 	},
 	load: function(scene) {
@@ -90,32 +119,7 @@ vu.builders.scene = {
 			snode
 		]);
 		_.actors();
-
-		var stepper = function(s) {
-			return CT.dom.div(JSON.stringify(s),
-				"bordered padded margined round", null, {
-					onclick: function() {
-						vu.game.util.step(s);
-					}
-				});
-		};
-
-		selz.steps.refresh = function(sname) {
-			var stez = CT.dom.div(scene.scripts[sname].map(stepper));
-			CT.dom.setContent(selz.steps, [
-				stez,
-				CT.dom.button("add step", function() {
-					_.step(function(step) {
-						CT.dom.addContent(stez, stepper(step));
-						scene.scripts[sname].push(step);
-						upscripts();
-					});
-				}),
-				CT.dom.button("play all", function() {
-					vu.game.util.script(scene.scripts[sname]);
-				})
-			]);
-		};
+		_.steps();
 
 		vu.core.fieldList(selz.scripts, Object.keys(scene.scripts), null, function(v) {
 			var f = CT.dom.field(null, v);
