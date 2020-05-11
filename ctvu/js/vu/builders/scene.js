@@ -15,6 +15,9 @@ vu.builders.scene = {
 				scene.description,
 				"room: " + scene.room.name
 			]);
+			CT.dom.setContent(selz.actors, scene.actors.map(function(a) {
+				return a.name;
+			}));
 		},
 		setup: function() {
 			var skey = location.hash.slice(1),
