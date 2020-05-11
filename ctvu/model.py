@@ -33,6 +33,7 @@ class Game(db.TimeStampedBase):
 	description = db.Text()
 	scenes = db.ForeignKey(kind=Scene, repeated=True)
 	players = db.ForeignKey(kind="person", repeated=True)
+	portals = db.JSON() # { portalA: { doorX: portalB } }
 	initial = db.JSON()
 	victory = db.JSON()
 	defeat = db.JSON()
