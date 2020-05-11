@@ -1,26 +1,27 @@
-//modelName, cb, limit, offset, order, filters, sync, count, exporter
 vu.builders.game = {
 	_: {
-		create: function() {
+		create: function(ctype, cb, extras) {
+			ctype = ctype || "game";
 			CT.modal.prompt({
-				prompt: "what's the new game called?",
+				prompt: "what's the new " + ctype + " called?",
 				cb: function(name) {
 					CT.modal.prompt({
 						isTA: true,
-						prompt: "please describe the game",
+						prompt: "please describe the " + ctype,
 						cb: function(desc) {
-							vu.storage.edit({
-								modelName: "game",
+							vu.storage.edit(CT.merge(extras, {
+								modelName: ctype,
 								name: name,
 								description: desc,
 								owners: [user.core.get("key")]
-							}, vu.builders.game._.load);
+							}), cb || vu.builders.game._.load);
 						}
 					});
 				}
 			});
 		},
 		load: function(game) {
+			var _ = vu.builders.game._;
 			CT.dom.setContent("ctmain", [
 				CT.dom.div([
 					"name",
@@ -53,7 +54,52 @@ vu.builders.game = {
 						}
 					})
 				], "bordered padded margined round"),
+				CT.dom.div([
+					"scenes",
+					_.scenes(game)
+				], "bordered padded margined round"),
+				CT.dom.div([
+					"conditions",
+					_.conditions(game)
+				], "bordered padded margined round")
 			]);
+		},
+		scenes: function(game) {
+			var n = CT.dom.div(), _ = vu.builders.game._;
+			CT.db.multi(game.scenes, function(scenes) {
+				CT.dom.setContent(n, [
+					scenes.map(function(s) {
+						return return CT.dom.div([
+							CT.dom.link(s.name, null,
+								"/vu/scene.html#" + s.key, "big"),
+							s.description,
+							"room: " + s.room.name,
+							"actors: " + s.actors.map(function(a) {
+								return a.name;
+							}).join(", "),
+							"props...",
+							"portal linkages!!!!!"
+						], "bordererd padded margined round");
+					}),
+					CT.dom.button("add scene", function() {
+						CT.modal.choice({
+							prompt: "please select a room",
+							data: vu.storage.get("rooms"),
+							cb: function(room) {
+								_.create("scene", function(s) {
+									location = "/vu/scene.html#" + s.key;
+								}, {
+									room: room.key
+								});
+							}
+						});
+					})
+				]);
+			}, "json");
+			return n;
+		},
+		conditions: function(game) {
+
 		}
 	},
 	init: function() {
