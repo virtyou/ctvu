@@ -44,6 +44,8 @@ vu.storage.remote = {
 	get: function(ent_type) {
 		if (ent_type == "person")
 			return vu.core._udata.person;
+		else if (ent_type == "people")
+			return vu.core._udata.people;
 		else if (ent_type == "room")
 			return vu.core._udata.room;
 		else if (ent_type == "rooms")

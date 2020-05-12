@@ -1,44 +1,28 @@
 vu.controls = {
-	_: {
-		lookers: {
-			pov: {
-				y: 35,
-				z: 25
-			},
-			behind: {
-				y: 85,
-				z: -155
-			}
-		}
-	},
 	initCamera: function(node, cb) {
 		var mode = location.pathname.split("/").pop().split(".")[0];
-		if (["zone", "play"].indexOf(mode) != -1) {
-			var lookers = vu.controls._.lookers, cycbutt = CT.dom.button("cycle", function(e) {
-				if (cycbutt._cycler) {
-					clearInterval(cycbutt._cycler);
-					delete cycbutt._cycler;
-					cycbutt.innerHTML = "cycle";
-				} else {
-					cycbutt._cycler = setInterval(zero.core.current.room.cut, 3000);
+		if (["zone", "play", "scene", "adventure"].indexOf(mode) != -1) {
+			var cycbutt = CT.dom.button("cycle", function(e) {
+				if (zero.core.camera.cycle())
 					cycbutt.innerHTML = "stop cycling";
-				}
+				else
+					cycbutt.innerHTML = "cycle";
 				e.stopPropagation();
 			}), room, tbutts, per, dim, bl, looker = function(perspective) {
 				return function(e) {
-					zero.core.camera.setSprings(200);
-					zero.core.camera.perspective(zero.core.current.person);
+					zero.core.camera.angle(perspective);
 					e.stopPropagation();
-					per = vu.controls._.lookers[perspective];
-					bl = zero.core.current.person.body.looker;
-					for (dim in per)
-						bl.adjust("position", dim, per[dim]);
 				};
-			}, pov = CT.dom.button("pov", looker("pov")),
+			}, pov = CT.dom.button("pov", looker("pov")), bcams,
 				behind = CT.dom.button("behind", looker("behind"));
 			node.update = function() {
 				room = zero.core.current.room;
 				tbutts = [cycbutt];
+				if (mode == "scene") {
+					bcams = [];
+					tbutts.pop();
+				} else
+					bcams = [pov, behind];
 				(mode == "zone") && tbutts.push(CT.dom.button("refresh", function(e) {
 					room.updateCameras();
 					node.update();
@@ -49,7 +33,7 @@ vu.controls = {
 				}));
 				CT.dom.setContent(node, [
 					CT.dom.div(tbutts, "right up20"),
-					CT.dom.div([pov, behind].concat(room.cameras.map(function(cam, i) {
+					CT.dom.div(bcams.concat(room.cameras.map(function(cam, i) {
 						return CT.dom.button("cam " + i, function(e) {
 							zero.core.camera.setSprings(20);
 							zero.core.camera.perspective();
@@ -59,7 +43,7 @@ vu.controls = {
 					})), "centered clearnode")
 				]);
 			};
-			(mode == "play") && node.update();
+			((mode == "play") || (mode == "scene")) && node.update();
 		} else {
 			zero.core.camera.unfollow();
 			var butt = CT.dom.button("far", function(e) {

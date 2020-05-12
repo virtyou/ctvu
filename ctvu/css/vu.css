@@ -227,3 +227,11 @@ img.right.h30p.up5 {
 /*.gmenu.mods {
 	max-width: 180px;
 }*/
+
+.gmenu.steps {
+	min-width: 200px;
+	max-width: calc(100% - 410px);
+}
+.gmenu.actors {
+	max-width: 416px;
+}
