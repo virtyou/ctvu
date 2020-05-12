@@ -32,19 +32,37 @@ vu.builders.scene = {
 							cb: function(actor) {
 								CT.modal.choice({
 									prompt: "please select an action",
-									data: ["say", "respond"],
+									data: ["say", "respond", "move"],
 									cb: function(action) {
-										// TODO: extend to position, etc
-										CT.modal.prompt({
-											prompt: "what's the line?",
-											cb: function(line) {
-												cb({
-													actor: actor.name,
-													action: action,
-													line: line
-												});
-											}
-										})
+										if (action == "move") {
+											CT.modal.choice({
+												prompt: "please adjust " + actor.name + "'s position and orientation, and click 'ready' to save. click 'cancel' to abort.",
+												data: ["ready", "cancel"],
+												cb: function(resp) {
+													var pbs = zcc.people[actor.name].body.springs;
+													(resp == "ready") && cb({
+														actor: actor.name,
+														action: action,
+														line: {
+															weave: pbs.weave.target,
+															slide: pbs.slide.target,
+															orientation: pbs.orientation.target
+														}
+													});
+												}
+											});
+										} else {
+											CT.modal.prompt({
+												prompt: "what's the line?",
+												cb: function(line) {
+													cb({
+														actor: actor.name,
+														action: action,
+														line: line
+													});
+												}
+											})
+										}
 									}
 								})
 							}
@@ -60,7 +78,7 @@ vu.builders.scene = {
 						});
 					} else if (stype == "lights") {
 						CT.modal.choice({
-							prompt: "please adjust the lighting, and click 'ready' to save a step. click 'cancel' to abort.",
+							prompt: "please adjust the lighting, and click 'ready' to save. click 'cancel' to abort.",
 							data: ["ready", "cancel"],
 							cb: function(resp) {
 								(resp == "ready") && cb({
