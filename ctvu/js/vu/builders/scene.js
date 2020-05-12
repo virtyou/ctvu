@@ -30,35 +30,42 @@ vu.builders.scene = {
 							cb: function(actor) {
 								CT.modal.choice({
 									prompt: "please select an action",
-									data: ["say", "respond", "move"],
+									data: ["say", "respond", "move", "approach"],
 									cb: function(action) {
+										var act = function(line) {
+											cb({
+												actor: actor.name,
+												action: action,
+												line: line
+											});
+										};
 										if (action == "move") {
 											CT.modal.choice({
 												prompt: "please adjust " + actor.name + "'s position and orientation, and click 'ready' to save. click 'cancel' to abort.",
 												data: ["ready", "cancel"],
 												cb: function(resp) {
 													var pbs = zcc.people[actor.name].body.springs;
-													(resp == "ready") && cb({
-														actor: actor.name,
-														action: action,
-														line: {
-															weave: pbs.weave.target,
-															slide: pbs.slide.target,
-															orientation: pbs.orientation.target
-														}
+													(resp == "ready") && act({
+														weave: pbs.weave.target,
+														slide: pbs.slide.target,
+														orientation: pbs.orientation.target
 													});
+												}
+											});
+										} else if (action == "approach") {
+											CT.modal.choice({
+												prompt: "please select a target",
+												data: zcc.scene.actors.filter(function(a) {
+													return a.name != actor.name;
+												}),
+												cb: function(target) {
+													act(target.name);
 												}
 											});
 										} else {
 											CT.modal.prompt({
 												prompt: "what's the line?",
-												cb: function(line) {
-													cb({
-														actor: actor.name,
-														action: action,
-														line: line
-													});
-												}
+												cb: act
 											})
 										}
 									}
