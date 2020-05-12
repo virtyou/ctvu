@@ -9,6 +9,7 @@ vu.menu.Body = CT.Class({
 		legs: [],
 		menus: {
 			camera: "top",
+			body: "topleft",
 			spine: "topright",
 			left_leg: "right",
 			right_leg: "left",
@@ -48,7 +49,9 @@ vu.menu.Body = CT.Class({
 			var _ = this._, selz = _.selectors; oz = this.opts,
 			_.opts = vu.storage.get("person") || _.opts;
 			_.raw = vu.core.person(_.opts);
+			selz.body = CT.dom.div();
 			selz.spine = CT.dom.div();
+			selz.body_button = CT.dom.div(null, "right");
 			selz.spine_button = CT.dom.div(null, "right");
 			selz.camera = CT.dom.div(null, "centered");
 			for (var s in oz.subs)
@@ -105,6 +108,13 @@ vu.menu.Body = CT.Class({
 		this.selector(this.opts.main);
 		this.loadExtras();
 	},
+	bodmod: function(modpart) { // scale-oriented -- override in gesture
+		modpart.scale = {
+			x: 1,
+			y: 1,
+			z: 1
+		};
+	},
 	constraints: function(side, sub, part, axis) {
 		return {
 			min: 0.1,
@@ -134,7 +144,7 @@ vu.menu.Body = CT.Class({
 			item_opts = gopts[sitem] = gopts[sitem] || {},
 			modpart = item_opts[side] = item_opts[side] || {},
 			val, partnames, bname = side,
-			neu = this.neutral, curl = this.curl,
+			neu = this.neutral, curl = this.curl, bm = this.bodmod,
 			jrange = this.jointRange, jset = this.setJoints;
 		if (sub) {
 			bname += "_" + sub;
@@ -166,13 +176,16 @@ vu.menu.Body = CT.Class({
 			var _c = CT.parse.capitalize,
 				pmod = zero.core[_c(side)] || zero.core[_c(sub)],
 				az = zero.base.aspects[sub || side];
-			pmod.parts.forEach(function(part) {
-				modpart[part] = {};
-				Object.keys(az[part]).forEach(function(dim) {
-					if (curl || (dim != "curl"))
-						modpart[part][dim] = neu;
+			if (pmod.parts) {
+				pmod.parts.forEach(function(part) {
+					modpart[part] = {};
+					Object.keys(az[part]).forEach(function(dim) {
+						if (curl || (dim != "curl"))
+							modpart[part][dim] = neu;
+					});
 				});
-			});
+			} else // body
+				bm(modpart);
 			jset(sname, sitem, side, sub);
 		}));
 	},
@@ -184,6 +197,7 @@ vu.menu.Body = CT.Class({
 			});
 		});
 		jset(sname, sitem, "spine");
+		jset(sname, sitem, "body");
 		CT.dom.setContent(selz[sname + "_button"], sitem);
 	},
 	selector: function(sname, onfocus) {
