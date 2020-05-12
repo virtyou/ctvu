@@ -204,7 +204,7 @@ vu.builders.scene = {
 						}
 					});
 				}, "right"),
-				JSON.stringify(s)
+				JSON.stringify(s).replace(/,/g, ",&#8203;")
 			], "bordered padded margined round", null, {
 				onclick: function() {
 					vu.game.util.step(s);
