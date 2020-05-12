@@ -74,14 +74,35 @@ vu.builders.scene = {
 				}
 			});
 		},
+		actor: function(a) {
+			var zcc = zero.core.current, pz = zcc.people, r = zcc.room;
+			return CT.dom.div([
+				a.name,
+				CT.dom.div([
+					"weave",
+					CT.dom.range(function(val) {
+						pz[a.name].body.springs.weave.target = parseInt(val);
+					}, r.bounds.min.x, r.bounds.max.x, 0/*?*/, 1, "w1 block")
+				], "bordered padded margined round"),
+				CT.dom.div([
+					"slide",
+					CT.dom.range(function(val) {
+						pz[a.name].body.springs.slide.target = parseInt(val);
+					}, r.bounds.min.z, r.bounds.max.z, 0/*?*/, 1, "w1 block")
+				], "bordered padded margined round"),
+				CT.dom.div([
+					"orientation",
+					CT.dom.range(function(val) {
+						pz[a.name].body.springs.orientation.target = parseInt(val);
+					}, -3, 3, 0/*?*/, 1, "w1 block")
+				], "bordered padded margined round")
+			], "bordered padded margined round inline-block");
+		},
 		actors: function() {
 			var _ = vu.builders.scene._, selz = _.selectors,
 				scene = zero.core.current.scene,
-				az = CT.dom.div(scene.actors.map(function(a) {
-					return a.name;
-				}));
+				az = CT.dom.div(scene.actors.map(_.actor));
 			CT.dom.setContent(selz.actors, [
-				az,
 				CT.dom.button("add", function() {
 					var akeys = scene.actors.map(function(a) {
 						return a.key;
@@ -93,7 +114,7 @@ vu.builders.scene = {
 						}),
 						cb: function(person) {
 							scene.actors.push(person);
-							CT.dom.addContent(az, person.name);
+							CT.dom.addContent(az, _.actor(person));
 							vu.storage.edit({
 								key: scene.key,
 								actors: scene.actors.map(function(a) {
@@ -102,7 +123,8 @@ vu.builders.scene = {
 							});
 						}
 					});
-				})
+				}, "abs ctr shiftup"),
+				az
 			]);
 		},
 		shifter: function(stpr, dir) {
@@ -172,25 +194,30 @@ vu.builders.scene = {
 				scene = zero.core.current.scene;
 			selz.steps.refresh = function(sname) {
 				zero.core.current.script = sname;
-				var stez = CT.dom.div(scene.scripts[sname].map(_.stepper));
+				var stez = CT.dom.div(scene.scripts[sname].map(_.stepper),
+					"nonowrap");
 				CT.dom.setContent(selz.steps, [
-					stez,
-					CT.dom.button("add step", function() {
-						_.step(function(step) {
-							CT.dom.addContent(stez, _.stepper(step));
-							scene.scripts[sname].push(step);
-							_.upscripts();
-						});
-					}),
-					CT.dom.button("play all", function() {
-						vu.game.util.script(scene.scripts[sname]);
-					})
+					CT.dom.div([
+						CT.dom.button("add step", function() {
+							_.step(function(step) {
+								CT.dom.addContent(stez, _.stepper(step));
+								scene.scripts[sname].push(step);
+								_.upscripts();
+							});
+						}),
+						CT.dom.button("play all", function() {
+							vu.game.util.script(scene.scripts[sname]);
+						})
+					], "abs ctr shiftup"),
+					stez
 				]);
 			};
 		},
 		backstage: function() {
 			var _ = vu.builders.scene._, selz = _.selectors,
 				zcc = zero.core.current, scene = zcc.scene;
+			_.actors();
+			zcc.room.setFriction(false); // for positioning......
 			vu.controls.initCamera(selz.cameras);
 			CT.dom.setContent(selz.lights, CT.dom.div(zcc.room.lights.map(function(light) {
 				return CT.dom.range(function(val) {
@@ -209,7 +236,6 @@ vu.builders.scene = {
 			"room: " + scene.room.name,
 			snode
 		]);
-		_.actors();
 		_.steps();
 
 		vu.core.fieldList(selz.scripts, Object.keys(scene.scripts), null, function(v) {
