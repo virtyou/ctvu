@@ -3,9 +3,7 @@ vu.builders.scene = {
 		selectors: {},
 		menus: {
 			cameras: "top",
-			props: "right",
-			scripts: "left",
-			info: "topleft",
+			main: "topleft",
 			lights: "topright",
 			steps: "bottomleft",
 			actors: "bottomright"
@@ -237,22 +235,30 @@ vu.builders.scene = {
 			_.actors();
 			zcc.room.setFriction(false); // for positioning......
 			vu.controls.initCamera(selz.cameras);
-			CT.dom.setContent(selz.lights, CT.dom.div(zcc.room.lights.map(function(light) {
-				return CT.dom.range(function(val) {
-					light.setIntensity(parseInt(val) / 100);
-				}, 0, 100, light.opts.intensity * 100, 1, "w1 block");
-			}), "noflow"));
+			CT.dom.setContent(selz.lights, [
+				CT.dom.div(zcc.room.lights.map(function(light) {
+					return CT.dom.range(function(val) {
+						light.setIntensity(parseInt(val) / 100);
+					}, 0, 100, light.opts.intensity * 100, 1, "w1 block");
+				}), "noflow"),
+				CT.dom.br(),
+				"Props [TODO]",
+				selz.props
+			]);
 		}
 	},
 	load: function(scene) {
 		var _ = vu.builders.scene._, selz = _.selectors,
-			snode = CT.dom.div(), upscripts = _.upscripts;
+			snode = CT.dom.div(null, "right"), upscripts = _.upscripts;
 		zero.core.current.scene = scene;
-		CT.dom.setContent(selz.info, [
+		CT.dom.setContent(selz.main, [
 			CT.dom.div(scene.name, "bigger"),
 			scene.description,
 			"room: " + scene.room.name,
-			snode
+			CT.dom.br(),
+			snode,
+			"Scripts",
+			selz.scripts
 		]);
 		_.steps();
 
@@ -261,7 +267,7 @@ vu.builders.scene = {
 			if (v) {
 				f._trigger = v;
 				f.onfocus = function() {
-					CT.dom.setContent(snode, "script: " + f._trigger);
+					CT.dom.setContent(snode, f._trigger);
 					selz.steps.refresh(f._trigger);
 				};
 				f.onkeyup = function() {
@@ -269,7 +275,7 @@ vu.builders.scene = {
 						f.value = f.value.toLowerCase();
 						scene.scripts[f.value] = scene.scripts[f._trigger];
 						delete scene.scripts[f._trigger];
-						CT.dom.setContent(snode, "script: " + f.value);
+						CT.dom.setContent(snode, f.value);
 						f._trigger = f.value;
 						upscripts();
 					} else
@@ -305,7 +311,7 @@ vu.builders.scene = {
 			selz = vu.builders.scene._.selectors;
 		if (!skey)
 			return alert("no scene specified!");
-		selz.info = CT.dom.div();
+		selz.main = CT.dom.div();
 		selz.scripts = CT.dom.div();
 		selz.steps = CT.dom.div();
 		selz.actors = CT.dom.div();
