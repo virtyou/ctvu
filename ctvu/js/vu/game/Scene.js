@@ -22,7 +22,9 @@ vu.game.Scene = CT.Class({
 		// get rid of room / people!
 	},
 	load: function() {
-		var oz = this.opts, cfg = core.config.ctzero;
+		var oz = this.opts, cfg = core.config.ctzero, p;
+		for (p of oz.actors)
+			p.grippy = false;
 		cfg.room = oz.room;
 		cfg.people = oz.actors.concat([this.player]);
 		zero.core.util.init(null, this.start);
