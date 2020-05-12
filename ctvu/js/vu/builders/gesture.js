@@ -2,10 +2,19 @@ vu.builders.Gesture = CT.Class({
 	CLASSNAME: "vu.builders.Gesture",
 	curl: true,
 	constraints: function(side, sub, part, axis) {
+		if (side == "body")
+			return { min: -Math.PI, max: Math.PI };
 		if (side == "spine")
 			return { min: -1, max: 1 };
 		return zero.core.current.person.body.torso[sub +
 			"s"][side].aspects[part + "_" + axis].opts;
+	},
+	bodmod: function(part) {
+		part.rotation = {
+			x: 0,
+			y: 0,
+			z: 0
+		};
 	},
 	setDance: function(dname) {
 		var _ = this._, selz = _.selectors,
