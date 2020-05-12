@@ -110,9 +110,9 @@ vu.menu.Body = CT.Class({
 	},
 	bodmod: function(modpart) { // scale-oriented -- override in gesture
 		modpart.scale = {
-			x: 1,
-			y: 1,
-			z: 1
+			width: 1,
+			height: 1,
+			depth: 1
 		};
 	},
 	constraints: function(side, sub, part, axis) {
