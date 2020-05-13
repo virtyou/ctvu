@@ -100,7 +100,10 @@ vu.builders.item = {
 				else
 					_.forge();
 			}, 1000, null, null, {
-				owner: user.core.get("key")
+				owners: {
+					comparator: "contains",
+					value: user.core.get("key")
+				}
 			});
 		},
 		setItem: function(item) {
