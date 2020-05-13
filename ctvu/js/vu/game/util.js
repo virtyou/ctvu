@@ -12,6 +12,14 @@ vu.game.util = {
 				state[k] = v;
 		}
 	},
+	text: function(msg, pause) {
+		var mod = CT.modal.modal(msg, null, {
+			noClose: true,
+			transition: "fade",
+			className: "basicpopup screentext"
+		});
+		setTimeout(mod.hide, pause || 3000);
+	},
 	step: function(step, nextStep) {
 		var zcc = zero.core.current, r = zcc.room;
 		if (step.lights) {
@@ -19,6 +27,8 @@ vu.game.util = {
 				r.lights[i][step.directive || "setIntensity"](val);
 			});
 		}
+		if (step.text)
+			vu.game.util.text(step.text, step.pause);
 		if (step.camera)
 			zero.core.camera.angle(step.camera);
 		if (step.prop)
