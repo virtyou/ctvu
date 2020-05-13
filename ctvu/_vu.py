@@ -21,8 +21,8 @@ def response():
 	if action == "ready":
 		user = cgi_get("user")
 		succeed({
-			"person": not not Person.query(Person.owner == user).count(),
-			"room": not not Room.query(Room.owner == user).count()
+			"person": not not Person.query(Person.owners.contains(user)).count(),
+			"room": not not Room.query(Room.owners.contains(user)).count()
 		})
 	if action == "import":
 		pfrom = db.get(cgi_get("from"))
