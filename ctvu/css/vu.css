@@ -238,3 +238,12 @@ img.right.h30p.up5 {
 .gmenu.body {
 	margin-left: 235px;
 }
+
+.screentext {
+	color: white;
+	padding: 20px;
+	font-size: 200%;
+	background: none;
+	border-radius: 50%;
+	border: 1px dotted gray;
+}
