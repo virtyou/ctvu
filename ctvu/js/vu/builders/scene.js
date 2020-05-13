@@ -19,7 +19,7 @@ vu.builders.scene = {
 			var zcc = zero.core.current;
 			CT.modal.choice({
 				prompt: "please select a variety",
-				data: ["lights", "camera", "action"].filter(function(st) { // +props,state
+				data: ["lights", "camera", "action", "text"].filter(function(st) { // +props,state
 					return !cur || !(st in cur);
 				}),
 				cb: function(stype) {
@@ -91,6 +91,14 @@ vu.builders.scene = {
 										return light.opts.intensity;
 									})
 								});
+							}
+						});
+					} else if (stype == "text") {
+						CT.modal.prompt({
+							prompt: "what should it say?",
+							isTA: true,
+							cb: function(msg) {
+								cb({ text: msg });
 							}
 						});
 					}
