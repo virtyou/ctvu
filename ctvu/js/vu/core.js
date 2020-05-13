@@ -15,11 +15,12 @@ vu.core = {
 			cb: cb
 		});
 	},
-	v: function(params, cb) {
+	v: function(params, cb, eb) {
 		CT.net.post({
 			path: "/_vu",
 			params: params,
-			cb: cb
+			cb: cb,
+			eb: eb
 		});
 	},
 	jlo: function(v) {
@@ -146,6 +147,27 @@ vu.core = {
 				});
 			})
 		];
+		if (person.owners[0] == user.core.get("key")) {
+			nodes = nodes.concat([
+				CT.dom.pad(),
+				CT.dom.link("share", function() {
+					CT.modal.prompt({
+						prompt: "what's your friend's email address?",
+						cb: function(email) {
+							vu.core.v({
+								action: "share",
+								content: person.key,
+								email: email
+							}, function() {
+								alert("great!");
+							}, function(msg) {
+								alert(msg);
+							});
+						}
+					});
+				})
+			]);
+		}
 		if (data.people.length > 1) {
 			nodes = nodes.concat([
 				CT.dom.pad(),
