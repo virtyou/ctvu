@@ -44,24 +44,45 @@ vu.builders.tweak = {
 					CT.dom.setContent(_.selectors.partLabel, pname);
 				});
 			});
-			var registerHair = function() {
-				zero.core.click.register(Object.values(person.head.hair)[0], function() {
-					if (has_menu) return true;
-					has_menu = true;
-					var m = new zero.core.Menu({
-						items: Object.values(vu.storage.get("hair")),
-						onselect: function(hopts) {
-							CT.log(hopts.name);
-							m.close();
+			var htar;
+			var hmenu = function() {
+				has_menu = true;
+				var m = new zero.core.Menu({
+					items: Object.values(vu.storage.get("hair")),
+					onselect: function(hopts) {
+						CT.log(hopts.name);
+						m.close();
+						vu.storage.edit({
+							key: htar.opts.key,
+							base: hopts.key
+						}, function(hnew) {
 							person.head.detach("hair");
-							person.head.attach(hopts, registerHair, true);
-							has_menu = false;
-						}
-					});
+							person.head.attach(hnew, function() {
+								registerHair();
+								onhair();
+							}, true);
+						});
+						has_menu = false;
+					}
 				});
 			};
-			if (false)//core.config.ctvu.storage.mode == "remote")
-				registerHair(); // local disabled for now (must add hair alternatives 1st)
+			var onhair = function() {
+				if (has_menu) return true;
+				person.say("hair");
+				if (!htar.material) // custom
+					return hmenu();
+				_.target = htar;
+				CT.dom.setContent(_.selectors.partLabel, [
+					CT.dom.span("hair"),
+					CT.dom.pad(),
+					CT.dom.link("(swap)", hmenu)
+				]);
+			};
+			var registerHair = function() {
+				htar = Object.values(person.head.hair)[0];
+				zero.core.click.register(htar, onhair);
+			};
+			registerHair();
 			_.setMorphs(person, "head");
 			_.setMorphs(person, "body");
 			zero.core.camera.unfollow();
@@ -133,7 +154,7 @@ vu.builders.tweak = {
 			_.colorSelector(rawp, "color");
 			_.colorSelector(rawp, "specular");
 			
-			selz.partLabel = CT.dom.span("Body", "bold"),
+			selz.partLabel = CT.dom.span("body", "bold"),
 			selz.shininess = CT.dom.range(function(val) {
 				CT.log("shininess: " + val);
 				_.target.material.shininess = val;
