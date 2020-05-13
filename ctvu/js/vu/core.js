@@ -217,7 +217,7 @@ vu.core = {
 			if (allrooms) {
 				vu.core._allrooms = data.rooms;
 				data.rooms = data.rooms.filter(function(r) {
-					return r.owner == ukey;
+					return r.owners.includes(ukey);
 				});
 			}
 			vu.core._udata = data;
