@@ -38,6 +38,9 @@ class Game(db.TimeStampedBase):
 	defeat = db.JSON()
 	live = db.Boolean(default=False) # games page list
 
+	def json(self):
+		return self.data()
+
 # TODO: support multi (owners[] etc)
 class Adventure(db.TimeStampedBase):
 	owner = db.ForeignKey(kind="member")
