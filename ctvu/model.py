@@ -32,10 +32,10 @@ class Game(db.TimeStampedBase):
 	description = db.Text()
 	scenes = db.ForeignKey(kind=Scene, repeated=True)
 	players = db.ForeignKey(kind="person", repeated=True)
-	portals = db.JSON() # { portalA: { doorX: portalB } }
-	initial = db.JSON()
-	victory = db.JSON()
-	defeat = db.JSON()
+	portals = db.JSON(default={}) # { portalA: { doorX: portalB } }
+	initial = db.JSON(default={})
+	victory = db.JSON(default={})
+	defeat = db.JSON(default={})
 	live = db.Boolean(default=False) # games page list
 
 	def json(self):
@@ -46,7 +46,7 @@ class Adventure(db.TimeStampedBase):
 	owner = db.ForeignKey(kind="member")
 	player = db.ForeignKey(kind="person")
 	game = db.ForeignKey(kind=Game)
-	state = db.JSON()
+	state = db.JSON(default={})
 
 	def oncreate(self):
 		self.state = self.game.get().initial
