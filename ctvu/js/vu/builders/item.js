@@ -109,6 +109,7 @@ vu.builders.item = {
 		setItem: function(item) {
 			var _ = vu.builders.item._, selz = _.selectors, s, t;
 			_.item = item;
+			_.sharer.update(item);
 			CT.dom.setContent(_.curname, item.name);
 			selz.name.value = _.thopts.name = item.name;
 			selz.kind.value = _.thopts.kind = item.kind;
@@ -155,13 +156,20 @@ vu.builders.item = {
 		},
 		linx: function() {
 			var _ = vu.builders.item._;
+			_.sharer = vu.core.sharer();
 			_.curname = CT.dom.span(null, "bold");
 			_.getThings();
-			return CT.dom.div([[
-				CT.dom.span("viewing:"),
-				CT.dom.pad(),
-				_.curname
-			], CT.dom.link("swap", _.itemSelect)], "left shiftall");
+			return CT.dom.div([
+				[
+					CT.dom.span("viewing:"),
+					CT.dom.pad(),
+					_.curname
+				], [
+					CT.dom.link("swap", _.itemSelect),
+					CT.dom.pad(),
+					_.sharer
+				]
+			], "left shiftall");
 		}
 	},
 	persist: function(updates) { // NB: this only works in remote mode, screw it ;)
