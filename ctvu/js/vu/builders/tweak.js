@@ -85,6 +85,13 @@ vu.builders.tweak = {
 				_.asseter.swapper(target)
 			]);
 		},
+		uptex: function(tx) {
+			var _ = vu.builders.tweak._;
+			CT.log("texture: " + tx);
+			vu.storage.setOpts(_.target.opts.key, {
+				texture: tx
+			});
+		},
 		setMorphs: function(person, part) {
 			var _ = vu.builders.tweak._, bod = person[part],
 				spropts = core.config.ctvu.builders.tweak.staticSpring;
@@ -152,7 +159,7 @@ vu.builders.tweak = {
 			_.colorSelector(rawp, "color");
 			_.colorSelector(rawp, "specular");
 			
-			_.asseter = new vu.menu.Asset();
+			_.asseter = new vu.menu.Asset({ cb: this.uptex });
 			selz.partLabel = CT.dom.span("body", "bold"),
 			selz.shininess = CT.dom.range(function(val) {
 				CT.log("shininess: " + val);
