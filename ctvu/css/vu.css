@@ -233,6 +233,7 @@ img.right.h30p.up5 {
 	max-width: calc(100% - 410px);
 }
 .gmenu.actors {
+	min-width: 110px;
 	max-width: 416px;
 }
 .gmenu.body {
