@@ -19,5 +19,5 @@ CT.require("vu.builders.game");
 
 CT.onload(function() {
 	CT.initCore();
-	vu.builders.game.init();
+	vu.storage.init(vu.builders.game.init, true);
 });
