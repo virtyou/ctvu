@@ -139,35 +139,52 @@ vu.core = {
 			}
 		});
 	},
+	sharepop: function(item) {
+		CT.modal.prompt({
+			prompt: "what's your friend's email address?",
+			cb: function(email) {
+				vu.core.v({
+					action: "share",
+					content: item.key,
+					email: email
+				}, function() {
+					alert("great!");
+				}, function(msg) {
+					alert(msg);
+				});
+			}
+		});
+	},
+	sharer: function(item) {
+		var sl = CT.dom.link("share", function() {
+			vu.core.sharepop(item);
+		});
+		sl.update = function(newitem) {
+			item = newitem;
+			if (item.owners[0] == user.core.get("key"))
+				sl.style.display = "inline";
+			else
+				sl.style.display = "none";
+		};
+		return sl;
+	},
+	share: function(item, nodes) {
+		if (item.owners[0] == user.core.get("key")) {
+			nodes = nodes.concat([
+				CT.dom.pad(),
+				vu.core.sharer(item)
+			]);
+		}
+		return nodes;
+	},
 	charlinx: function() {
-		var data = vu.core._udata, person = data.person, nodes = [
+		var data = vu.core._udata, person = data.person, nodes = vu.core.share(person, [
 			CT.dom.link("swap", function() {
 				vu.core.charselect(function() {
 					window.location = location; // cheaterly!!!
 				});
 			})
-		];
-		if (person.owners[0] == user.core.get("key")) {
-			nodes = nodes.concat([
-				CT.dom.pad(),
-				CT.dom.link("share", function() {
-					CT.modal.prompt({
-						prompt: "what's your friend's email address?",
-						cb: function(email) {
-							vu.core.v({
-								action: "share",
-								content: person.key,
-								email: email
-							}, function() {
-								alert("great!");
-							}, function(msg) {
-								alert(msg);
-							});
-						}
-					});
-				})
-			]);
-		}
+		]);
 		if (data.people.length > 1) {
 			nodes = nodes.concat([
 				CT.dom.pad(),
