@@ -11,19 +11,22 @@ vu.builders.adventure = {
 			}, vu.builders.adventure._.resume);
 		},
 		begin: function(gkey) {
-			var _ = vu.builders.adventure._;
-			CT.db.one(gkey, function(gopts) {
-				if (gopts.players.length == 1)
-					return _.newa(gkey, gopts.players[0]);
-				CT.db.multi(gopts.players, function(players) {
-					CT.modal.choice({
-						prompt: "please select your player",
-						data: players,
-						cb: function(player) {
-							_.newa(gkey, player.key);
-						}
-					});
+			var _ = vu.builders.adventure._, playpro = function(players) {
+				CT.modal.choice({
+					prompt: "please select your player",
+					data: players,
+					cb: function(player) {
+						_.newa(gkey, player.key);
+					}
 				});
+			};
+			CT.db.one(gkey, function(gopts) {
+				if (gopts.players.length == 0)
+					playpro(vu.storage.get("people"));
+				else if (gopts.players.length == 1)
+					return _.newa(gkey, gopts.players[0]);
+				else
+					CT.db.multi(gopts.players, playpro);
 			});
 		},
 		resume: function(aopts) {
