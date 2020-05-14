@@ -14,7 +14,7 @@ vu.builders.tweak = {
 				});
 				_.target.material.color = vu.core.hex2rgb(popts.colors[c]);
 			}
-			_.target = person.body;
+			_.partLabel(person.body, null, true);
 
 			var reg = function(part) {
 				zero.core.click.register(part, function() {
@@ -56,15 +56,7 @@ vu.builders.tweak = {
 			};
 			var onhair = function() {
 				if (has_menu) return true;
-				person.say("hair");
-				if (!htar.material) // custom
-					return hmenu();
-				_.target = htar;
-				CT.dom.setContent(_.selectors.partLabel, [
-					CT.dom.span("hair"),
-					CT.dom.pad(),
-					CT.dom.link("(swap)", hmenu)
-				]);
+				_.partLabel(htar, hmenu);
 			};
 			var registerHair = function() {
 				htar = Object.values(person.head.hair)[0];
@@ -75,12 +67,13 @@ vu.builders.tweak = {
 			_.setMorphs(person, "body");
 			zero.core.camera.unfollow();
 		},
-		partLabel: function(target) {
+		partLabel: function(target, clicker, nosay) {
 			var _ = vu.builders.tweak._, k = target.opts.kind;
 			_.target = target;
-			zero.core.current.person.say(k);
+			nosay || zero.core.current.person.say(k);
 			CT.dom.setContent(_.selectors.partLabel, [
-				CT.dom.span(target.name + " (" + k +")"),
+				CT.dom[clicker ? "link" : "span"](target.name + " (" + k +")",
+					clicker),
 				CT.dom.pad(),
 				_.asseter.swapper(target)
 			]);
