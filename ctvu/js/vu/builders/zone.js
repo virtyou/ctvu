@@ -616,6 +616,7 @@ vu.builders.zone = {
 				selz.portal_requests.update();
 			}, name = room.name || room.environment;
 			_.opts = room;
+			_.sharer.update(room);
 			vu.core.setroom(room);
 			CT.dom.setContent(_.curname, name);
 			selz.name.value = name;
@@ -655,6 +656,7 @@ vu.builders.zone = {
 		},
 		linx: function() {
 			var _ = vu.builders.zone._, popts = vu.storage.get("person");
+			_.sharer = vu.core.sharer();
 			_.curname = CT.dom.span(null, "bold");
 			// add person for scale
 			popts.body.onclick = function() {
@@ -666,11 +668,17 @@ vu.builders.zone = {
 				var r = vu.storage.get("room");
 				r ? _.set(r, true) : _.build();
 			});
-			return CT.dom.div([[
-				CT.dom.span("viewing:"),
-				CT.dom.pad(),
-				_.curname
-			], CT.dom.link("swap", _.select)], "left shiftall");
+			return CT.dom.div([
+				[
+					CT.dom.span("viewing:"),
+					CT.dom.pad(),
+					_.curname
+				], [
+					CT.dom.link("swap", _.select),
+					CT.dom.pad(),
+					_.sharer
+				]
+			], "left shiftall");
 		},
 		regObj: function(furn) {
 			CT.data.add(furn.opts);
