@@ -25,6 +25,11 @@ vu.builders.game = {
 							data: vu.storage.get("rooms"),
 							cb: function(room) {
 								create("scene", function(s) {
+									game.scenes.push(s.key);
+									vu.storage.edit({
+										key: game.key,
+										scenes: game.scenes
+									});
 									CT.dom.addContent(snode, scene(s));
 								}, {
 									room: room.key
