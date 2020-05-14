@@ -1,7 +1,7 @@
 vu.menu.Asset = CT.Class({
 	CLASSNAME: "vu.menu.Asset",
 	_: {
-		textures: {},
+		textures: { all: [] },
 		ones: [
 			"bg7.jpg", "bgBITZs4a.jpg", "bg_yan3.jpg", "bod.jpg",
 			"bunny_ears.jpg", "bunny_teeth.jpg", "eye_brown_basic.jpg",
@@ -12,20 +12,35 @@ vu.menu.Asset = CT.Class({
 		].map(function(o) {
 			return "/maps/one/" + o;
 		}),
+		modal: function(target, data) {
+			var _ = this._, cb = this.opts.cb;
+			CT.modal.prompt({
+				prompt: "please select a texture",
+				style: "icon",
+				recenter: true,
+				className: "basicpopup mosthigh galimg",
+				data: data || _.ones.concat(_.textures.all),
+				cb: function(tx) {
+					target.update({ texture: tx });
+					cb(tx);
+				}
+			});
+		},
 		sel: function(target) {
 			var _ = this._, cb = this.opts.cb;
 			return function() {
-				CT.modal.prompt({
-					prompt: "please select a texture",
-					style: "icon",
-					recenter: true,
-					className: "basicpopup mosthigh galimg",
-					data: _.ones,
-					cb: function(tx) {
-						target.update({ texture: tx });
-						cb(tx);
-					}
-				});
+				if (target.opts.kind in _.textures) {
+					CT.modal.choice({
+						prompt: "want to see all options or just our recommendations?",
+						data: ["all", "recommendations"],
+						cb: function(subset) {
+							if (subset == "all")
+								return _.modal(target);
+							_.modal(target, _.textures[target.opts.kind]);
+						}
+					});
+				} else
+					_.modal(target);
 			};
 		}
 	},
@@ -33,11 +48,11 @@ vu.menu.Asset = CT.Class({
 		return CT.dom.link("swap", this._.sel(target));
 	},
 	load: function(assets) {
-		var _ = this._, ass;
-		_.textures.all = assets;
+		var tz = this._.textures, ass;
 		for (ass of assets) {
-			_.textures[ass.kind] = _.textures[ass.kind] || [];
-			_.textures[ass.kind].push(ass);
+			tz[ass.kind] = tz[ass.kind] || [];
+			tz[ass.kind].push(ass.item);
+			tz.all.push(ass.item);
 		}
 	},
 	init: function(opts) {
