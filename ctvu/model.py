@@ -1,8 +1,7 @@
 from cantools import db
 
-# add Resource.owner right??
-
 class Resource(db.TimeStampedBase):
+	owners = db.ForeignKey(kind="member", repeated=True)
 	variety = db.String(choices=["image", "background", "audio", "video"])
 	name = db.String()
 	item = db.Binary(unique=True)
@@ -39,6 +38,7 @@ class Game(db.TimeStampedBase):
 	defeat = db.JSON()
 	live = db.Boolean(default=False) # games page list
 
+# TODO: support multi (owners[] etc)
 class Adventure(db.TimeStampedBase):
 	owner = db.ForeignKey(kind="member")
 	player = db.ForeignKey(kind="person")

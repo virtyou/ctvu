@@ -122,7 +122,7 @@ vu.builders.play = {
 				if (dist < 100) {
 					hit = true;
 					CT.db.one(portal.opts.portals.outgoing.target, function(target) {
-						if (target.owner) // room
+						if (target.owners) // room    ??? is this right ??
 							person.say("this door is locked");
 						else
 							_.port(target.parent, portal.opts.key, target.key);

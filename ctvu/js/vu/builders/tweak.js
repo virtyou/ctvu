@@ -14,35 +14,23 @@ vu.builders.tweak = {
 				});
 				_.target.material.color = vu.core.hex2rgb(popts.colors[c]);
 			}
-			_.target = person.body;
+			_.partLabel(person.body, null, true);
+
+			var reg = function(part) {
+				zero.core.click.register(part, function() {
+					if (has_menu) return true;
+					_.partLabel(part);
+				});
+			};
 
 			["body", "head"].forEach(function(part) {
-				zero.core.click.register(person[part], function() {
-					if (has_menu) return true;
-					person.say(part);
-					_.target = person[part];
-					CT.dom.setContent(_.selectors.partLabel, part);
-				});
+				reg(person[part]);
 			});
 			["teeth", "tongue", "teeth_top"].map(function(p) {
-				var pthing = person.head[p],
-					part = p.replace("_", " ");
-				zero.core.click.register(pthing, function() {
-					if (has_menu) return true;
-					person.say(part);
-					_.target = pthing;
-					CT.dom.setContent(_.selectors.partLabel, part);
-				});
+				reg(person.head[p]);
 			});
 			["L", "R"].map(function(part) {
-				var pthing = person.head["eye" + part],
-					pname = ((part == "L") ? "left" : "right") + " eye";
-				zero.core.click.register(pthing, function() {
-					if (has_menu) return true;
-					person.say(pname);
-					_.target = pthing;
-					CT.dom.setContent(_.selectors.partLabel, pname);
-				});
+				reg(person.head["eye" + part]);
 			});
 			var htar;
 			var hmenu = function() {
@@ -61,22 +49,14 @@ vu.builders.tweak = {
 								registerHair();
 								onhair();
 							}, true);
+							has_menu = false;
 						});
-						has_menu = false;
 					}
 				});
 			};
 			var onhair = function() {
 				if (has_menu) return true;
-				person.say("hair");
-				if (!htar.material) // custom
-					return hmenu();
-				_.target = htar;
-				CT.dom.setContent(_.selectors.partLabel, [
-					CT.dom.span("hair"),
-					CT.dom.pad(),
-					CT.dom.link("(swap)", hmenu)
-				]);
+				_.partLabel(htar, hmenu);
 			};
 			var registerHair = function() {
 				htar = Object.values(person.head.hair)[0];
@@ -86,6 +66,24 @@ vu.builders.tweak = {
 			_.setMorphs(person, "head");
 			_.setMorphs(person, "body");
 			zero.core.camera.unfollow();
+		},
+		partLabel: function(target, clicker, nosay) {
+			var _ = vu.builders.tweak._, k = target.opts.kind;
+			_.target = target;
+			nosay || zero.core.current.person.say(k);
+			CT.dom.setContent(_.selectors.partLabel, [
+				CT.dom[clicker ? "link" : "span"](target.name + " (" + k +")",
+					clicker),
+				CT.dom.pad(),
+				_.asseter.swapper(target)
+			]);
+		},
+		uptex: function(tx) {
+			var _ = vu.builders.tweak._;
+			CT.log("texture: " + tx);
+			vu.storage.setOpts(_.target.opts.key, {
+				texture: tx
+			});
 		},
 		setMorphs: function(person, part) {
 			var _ = vu.builders.tweak._, bod = person[part],
@@ -154,6 +152,7 @@ vu.builders.tweak = {
 			_.colorSelector(rawp, "color");
 			_.colorSelector(rawp, "specular");
 			
+			_.asseter = new vu.menu.Asset({ cb: this.uptex });
 			selz.partLabel = CT.dom.span("body", "bold"),
 			selz.shininess = CT.dom.range(function(val) {
 				CT.log("shininess: " + val);

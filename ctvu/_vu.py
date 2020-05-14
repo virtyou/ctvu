@@ -1,9 +1,9 @@
-from cantools.web import respond, succeed, cgi_get, read_file
+from cantools.web import respond, succeed, fail, cgi_get, read_file
 from ctone.spawners import person, thing, asset, room
-from model import db, Person, Room
+from model import db, Member, Person, Room
 
 def response():
-	action = cgi_get("action", choices=["person", "import", "thing", "asset", "room", "ready"])
+	action = cgi_get("action", choices=["person", "import", "thing", "asset", "room", "ready", "share"])
 	if action == "asset":
 		succeed(asset(cgi_get("name"),
 			variety=cgi_get("variety"),
@@ -21,8 +21,8 @@ def response():
 	if action == "ready":
 		user = cgi_get("user")
 		succeed({
-			"person": not not Person.query(Person.owner == user).count(),
-			"room": not not Room.query(Room.owner == user).count()
+			"person": not not Person.query(Person.owners.contains(user)).count(),
+			"room": not not Room.query(Room.owners.contains(user)).count()
 		})
 	if action == "import":
 		pfrom = db.get(cgi_get("from"))
@@ -33,5 +33,14 @@ def response():
 			setattr(pto, item, getattr(pfrom, item))
 		ptbod.morphs = pfbod.morphs
 		db.put_multi([pto, ptbod])
+	if action == "share":
+		p = Member.query(Member.email == cgi_get("email")).get()
+		if not p:
+			fail("no member with that email :(")
+		c = db.get(cgi_get("content"))
+		if p.key in c.owners:
+			fail("already sharing with that person!")
+		c.owners = c.owners + [p.key]
+		c.put()
 
 respond(response)
