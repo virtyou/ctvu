@@ -12,8 +12,8 @@ class Scene(db.TimeStampedBase):
 	description = db.Text()
 	room = db.ForeignKey(kind="room")
 	actors = db.ForeignKey(kind="person", repeated=True)
-	props = db.JSON() # state/interactivity map - room items
-	scripts = db.JSON() # trigger "start" on load
+	props = db.JSON(default={}) # state/interactivity map - room items
+	scripts = db.JSON(default={}) # trigger "start" on load
 
 	def json(self):
 		return {
