@@ -13,9 +13,10 @@ vu.builders.game = {
 			], "bordered padded margined round");
 		},
 		scenes: function(game) {
-			var n = CT.dom.div(), _ = vu.builders.game._;
+			var n = CT.dom.div(), vbg = vu.builders.game,
+				scene = vbg._.scene, create = vbg.create;
 			CT.db.multi(game.scenes, function(scenes) {
-				var snode = CT.dom.div(scenes.map(_.scene));
+				var snode = CT.dom.div(scenes.map(scene));
 				CT.dom.setContent(n, [
 					snode,
 					CT.dom.button("add scene", function() {
@@ -23,8 +24,8 @@ vu.builders.game = {
 							prompt: "please select a room",
 							data: vu.storage.get("rooms"),
 							cb: function(room) {
-								_.create("scene", function(s) {
-									CT.dom.addContent(snode, _.scene(s));
+								create("scene", function(s) {
+									CT.dom.addContent(snode, scene(s));
 								}, {
 									room: room.key
 								});
