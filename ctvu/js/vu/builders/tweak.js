@@ -16,33 +16,21 @@ vu.builders.tweak = {
 			}
 			_.target = person.body;
 
-			["body", "head"].forEach(function(part) {
-				zero.core.click.register(person[part], function() {
+			var reg = function(part) {
+				zero.core.click.register(part, function() {
 					if (has_menu) return true;
-					person.say(part);
-					_.target = person[part];
-					CT.dom.setContent(_.selectors.partLabel, part);
+					_.partLabel(part);
 				});
+			};
+
+			["body", "head"].forEach(function(part) {
+				reg(person[part]);
 			});
 			["teeth", "tongue", "teeth_top"].map(function(p) {
-				var pthing = person.head[p],
-					part = p.replace("_", " ");
-				zero.core.click.register(pthing, function() {
-					if (has_menu) return true;
-					person.say(part);
-					_.target = pthing;
-					CT.dom.setContent(_.selectors.partLabel, part);
-				});
+				reg(person.head[p]);
 			});
 			["L", "R"].map(function(part) {
-				var pthing = person.head["eye" + part],
-					pname = ((part == "L") ? "left" : "right") + " eye";
-				zero.core.click.register(pthing, function() {
-					if (has_menu) return true;
-					person.say(pname);
-					_.target = pthing;
-					CT.dom.setContent(_.selectors.partLabel, pname);
-				});
+				reg(person.head["eye" + part]);
 			});
 			var htar;
 			var hmenu = function() {
@@ -61,8 +49,8 @@ vu.builders.tweak = {
 								registerHair();
 								onhair();
 							}, true);
+							has_menu = false;
 						});
-						has_menu = false;
 					}
 				});
 			};
@@ -86,6 +74,16 @@ vu.builders.tweak = {
 			_.setMorphs(person, "head");
 			_.setMorphs(person, "body");
 			zero.core.camera.unfollow();
+		},
+		partLabel: function(target) {
+			var _ = vu.builders.tweak._, k = target.opts.kind;
+			_.target = target;
+			zero.core.current.person.say(k);
+			CT.dom.setContent(_.selectors.partLabel, [
+				CT.dom.span(target.name + " (" + k +")"),
+				CT.dom.pad(),
+				_.asseter.swapper(target)
+			]);
 		},
 		setMorphs: function(person, part) {
 			var _ = vu.builders.tweak._, bod = person[part],
@@ -154,6 +152,7 @@ vu.builders.tweak = {
 			_.colorSelector(rawp, "color");
 			_.colorSelector(rawp, "specular");
 			
+			_.asseter = new vu.menu.Asset();
 			selz.partLabel = CT.dom.span("body", "bold"),
 			selz.shininess = CT.dom.range(function(val) {
 				CT.log("shininess: " + val);
