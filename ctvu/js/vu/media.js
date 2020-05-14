@@ -68,7 +68,8 @@ vu.media = {
 			isMap = vu.media._.isMap(sel),
 			opts = rez[sel] || {
 				variety: sel,
-				modelName: "resource"
+				modelName: "resource",
+				owners: [user.core.get("key")]
 			}, item, blurs = core.config.ctvu.blurs;
 
 		// viewer (img/audio)
