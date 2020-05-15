@@ -217,10 +217,10 @@ vu.builders.tweak = {
 				CT.dom.pad(),
 				selz.character
 			], baseClass),
-			CT.dom.div([
-				CT.dom.div("accessories", "centered"),
-				selz.accessories
-			], "padded bordered round mb5"),
+//			CT.dom.div([
+//				CT.dom.div("accessories", "centered"),
+//				selz.accessories
+//			], "padded bordered round mb5"),
 			CT.dom.div(selz.partLabel, "padded bordered round mb5"),
 			CT.dom.div([
 				"Color",
