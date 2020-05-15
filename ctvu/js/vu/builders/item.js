@@ -23,7 +23,7 @@ vu.builders.item = {
 				action: "asset",
 				name: ctfile.name(),
 				variety: variety,
-				owner: user.core.get("key")
+				owners: [user.core.get("key")]
 			});
 		},
 		download: function(url, dname, lname, dclass) {
