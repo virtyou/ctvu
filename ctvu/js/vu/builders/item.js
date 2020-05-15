@@ -18,7 +18,7 @@ vu.builders.item = {
 			return CT.file.make(JSON.stringify(three_json));
 		},
 		asset: function(ctfile, variety) {
-			var _ = vu.builders.item._, selz = _.selectors;
+			var selz = vu.builders.item._.selectors;
 			ctfile.upload("/_vu", selz[variety].update, {
 				action: "asset",
 				name: ctfile.name(),
