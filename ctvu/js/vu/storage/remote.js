@@ -41,6 +41,9 @@ vu.storage.remote = {
 		obj.key = ent.key;
 		vu.storage.edit(obj, cb);
 	},
+	has: function(ent_type) {
+		return !!vu.core._udata[ent_type];
+	},
 	get: function(ent_type) {
 		if (ent_type == "person")
 			return vu.core._udata.person;
@@ -54,7 +57,7 @@ vu.storage.remote = {
 			return vu.core._allrooms;
 		else if (ent_type in vu.storage._extras)
 			return vu.storage._extras[ent_type];
-		return CT.db.get(key);
+//		return CT.db.get(key);
 	},
 	_readys: 0,
 	_ready: function(cb, rcount) {
