@@ -12,11 +12,11 @@ vu.game.Scene = CT.Class({
 			this.refresh, this.state);
 	},
 	start: function() {
-		var thaz = this, zcc = zero.core.current;
+		var zcc = zero.core.current, actor;
 		zcc.person = zcc.people[this.player.name];
-		setTimeout(function() { // figure out race cond..
-			thaz.script("start");
-		});
+		for (actor in zcc.people)
+			zcc.people[actor].respond("init");
+		this.script("start");
 	},
 	unload: function() {
 		// get rid of room / people!
