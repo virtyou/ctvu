@@ -152,6 +152,7 @@ vu.builders.scene = {
 									return a.key;
 								})
 							});
+							zero.core.util.join(person);
 						}
 					});
 				}, "abs ctr shiftup"),
