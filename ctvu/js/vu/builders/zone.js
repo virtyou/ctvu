@@ -384,28 +384,41 @@ vu.builders.zone = {
 
 			selz.base = CT.dom.div();
 			selz.base.update = function() {
+				var options = ["shell"];
+				if (vu.storage.has("wallpaper"))
+					options.push("wallpaper");
+				options.push("wallpaper (Pexels)");
 				var content = [
 					CT.dom.button("swap", function() {
 						CT.modal.choice({
-							data: ["wallpaper", "shell"],
+							data: options,
 							cb: function(variety) {
-								CT.modal.choice({
-									data: Object.values(vu.storage.get(variety)),
-									cb: function(base) {
-										var upobj = {};
-										_.opts.thing_key = base.key;
-										if (base.texture)
-											upobj.texture = _.opts.texture = base.texture;
-										if (base.stripset)
-											upobj.stripset = _.opts.stripset = base.stripset;
-										selz.base.update();
-										zero.core.current.room.update(upobj);
-//										vu.builders.zone.update();
-										persist({
-											base: base.key
-										});
-									}
-								});
+								if (variety == "wallpaper (Pexels)") {
+									vu.media.browse("image", function(img) {
+										var upobj = { texture: img.item },
+											r = zero.core.current.room;
+										r.update(upobj);
+										vu.storage.setOpts(r.opts.key, upobj);
+									});
+								} else {
+									CT.modal.choice({
+										data: Object.values(vu.storage.get(variety)),
+										cb: function(base) {
+											var upobj = {};
+											_.opts.thing_key = base.key;
+											if (base.texture)
+												upobj.texture = _.opts.texture = base.texture;
+											if (base.stripset)
+												upobj.stripset = _.opts.stripset = base.stripset;
+											selz.base.update();
+											zero.core.current.room.update(upobj);
+	//										vu.builders.zone.update();
+											persist({
+												base: base.key
+											});
+										}
+									});
+								}
 							}
 						});
 					}, "up20 right")
