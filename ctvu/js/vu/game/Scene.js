@@ -12,10 +12,8 @@ vu.game.Scene = CT.Class({
 			this.refresh, this.state);
 	},
 	start: function() {
-		var zcc = zero.core.current, actor;
+		var zcc = zero.core.current;
 		zcc.person = zcc.people[this.player.name];
-		for (actor in zcc.people)
-			zcc.people[actor].respond("init");
 		this.script("start");
 	},
 	unload: function() {

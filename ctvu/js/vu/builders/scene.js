@@ -133,8 +133,6 @@ vu.builders.scene = {
 			var _ = vu.builders.scene._, selz = _.selectors,
 				zcc = zero.core.current, scene = zcc.scene, actor,
 				az = CT.dom.div(scene.actors.map(_.actor));
-			for (actor in zcc.people)
-				zcc.people[actor].respond("init");
 			CT.dom.setContent(selz.actors, [
 				CT.dom.button("add", function() {
 					var akeys = scene.actors.map(function(a) {
@@ -154,9 +152,7 @@ vu.builders.scene = {
 									return a.key;
 								})
 							});
-							zero.core.util.join(person, function(fullp) {
-								fullp.respond("init");
-							});
+							zero.core.util.join(person);
 						}
 					});
 				}, "abs ctr shiftup"),
