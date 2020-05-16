@@ -95,15 +95,29 @@ vu.media = {
 			cb: cb
 		});
 	},
-	recprompt: function(cb) {
+	recprompt: function(cb, hasRec) {
+		if (!hasRec) return cb("all");
 		CT.modal.choice({
 			prompt: "want to see all options or just our recommendations?",
 			data: ["all", "recommendations"],
 			cb: cb
 		});
 	},
-	texture: function(cb, variety, kind) { // image, background, texture
+	texture: function(cb, variety, kind, reqkey) { // image, background, texture
 		var _ = vu.media._;
+		if (reqkey) {
+			var origcb = cb;
+			cb = function(tx) {
+				if (tx.key) return origcb(tx);
+				vu.core.v({
+					action: "resource",
+					kind: kind,
+					url: tx.item,
+					name: tx.name,
+					variety: tx.variety
+				}, origcb);
+			};
+		}
 		_.init(function() {
 			var rz = _.resources, tz = _.textures;
 			if (kind) { // asset...
@@ -113,7 +127,7 @@ vu.media = {
 					vu.media.txprompt(cb, // assets (textures) first
 						tz.all.concat(rz.image).concat(rz.background));
 					
-				});
+				}, tz[kind]);
 			} else { // resource - image or background
 				vu.media.recprompt(function(subset) {
 					if (subset != "all")
@@ -124,7 +138,7 @@ vu.media = {
 					else // background
 						vu.media.txprompt(cb, // variety first
 							rz.background.concat(rz.image).concat(tz.all));
-				});
+				}, rz[variety]);
 			}
 		});
 	},
