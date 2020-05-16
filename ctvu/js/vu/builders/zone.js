@@ -387,14 +387,14 @@ vu.builders.zone = {
 				var options = ["shell"];
 				if (vu.storage.has("wallpaper"))
 					options.push("wallpaper");
-				options.push("wallpaper (Pexels)");
+				options.push("wallpaper (extended)");
 				var content = [
 					CT.dom.button("swap", function() {
 						CT.modal.choice({
 							data: options,
 							cb: function(variety) {
-								if (variety == "wallpaper (Pexels)") {
-									vu.media.browse("image", function(img) {
+								if (variety == "wallpaper (extended)") {
+									vu.media.browse("background", function(img) {
 										var upobj = { texture: img.item },
 											r = zero.core.current.room;
 										r.update(upobj);

@@ -5,24 +5,61 @@ vu.media = {
 			background: "img"
 		},
 		bgz: ["background", "video", "iframe", "map", "panorama", "environment"],
-		extra: { // pacdv
-			audio: ["air_hum.wav", "airport-gate-1.mp3", "airplane-interior-1.mp3", "airport-security-1.mp3", "amusement-park.mp3", "bus-1.mp3", "caf-1.mp3", "caf-2.mp3", "car-interior-1.mp3", "c-p-1.mp3", "city-traffic-1.mp3", "c-c-1.mp3", "crowd_outside_1.wav", "crowd_outside_2.wav", "crowd_outside_3.wav", "crowd_outside_4.wav", "downtown-1.mp3", "downtown-2.mp3", "downtown-3.mp3", "e-s.mp3", "fast_food_joint_1.wav", "fire-1.mp3", "food_court.wav", "freeway-1.mp3", "freeway-2.mp3", "grocery_store_1.wav", "g-t-1.mp3", "hallway-crowd.mp3", "highway-1.mp3", "kids-playing-football.mp3", "kids-playing-football-2.mp3", "laundry_room_1.wav", "lobby_1.wav", "l-c-1.mp3", "l-c-2.mp3", "marketplace_1.wav", "marketplace_2.wav", "marketplace_3.wav", "metro-station-1.mp3", "o-c-1.mp3", "park_1.wav", "park_2.wav", "party_crowd_1.wav", "people-talking.mp3", "rain_1.mp3", "rain_2.wav", "rain_3.wav", "rain_4.wav", "rain-5.mp3", "rain-6.mp3", "restaurant_1.wav", "restaurant-2.mp3", "river-1.mp3", "river-2.mp3", "s-y.mp3", "s-w-1.mp3", "s-w-2.mp3", "shopping-mall-1.mp3", "store-paging.wav", "street-construction-1.mp3", "s-h.mp3", "street-traffic-1.mp3", "street-traffic-2.mp3", "water-fountain-1.mp3", "waterfall-1.mp3", "water-stream-1.mp3", "wind-breeze-1.mp3", "windy-forest-1.mp3"].map(function(a) {
+		audio: {
+			ambient: ["air_hum.wav", "airport-gate-1.mp3", "airplane-interior-1.mp3", "airport-security-1.mp3", "amusement-park.mp3", "bus-1.mp3", "caf-1.mp3", "caf-2.mp3", "car-interior-1.mp3", "c-p-1.mp3", "city-traffic-1.mp3", "c-c-1.mp3", "crowd_outside_1.wav", "crowd_outside_2.wav", "crowd_outside_3.wav", "crowd_outside_4.wav", "downtown-1.mp3", "downtown-2.mp3", "downtown-3.mp3", "e-s.mp3", "fast_food_joint_1.wav", "fire-1.mp3", "food_court.wav", "freeway-1.mp3", "freeway-2.mp3", "grocery_store_1.wav", "g-t-1.mp3", "hallway-crowd.mp3", "highway-1.mp3", "kids-playing-football.mp3", "kids-playing-football-2.mp3", "laundry_room_1.wav", "lobby_1.wav", "l-c-1.mp3", "l-c-2.mp3", "marketplace_1.wav", "marketplace_2.wav", "marketplace_3.wav", "metro-station-1.mp3", "o-c-1.mp3", "park_1.wav", "park_2.wav", "party_crowd_1.wav", "people-talking.mp3", "rain_1.mp3", "rain_2.wav", "rain_3.wav", "rain_4.wav", "rain-5.mp3", "rain-6.mp3", "restaurant_1.wav", "restaurant-2.mp3", "river-1.mp3", "river-2.mp3", "s-y.mp3", "s-w-1.mp3", "s-w-2.mp3", "shopping-mall-1.mp3", "store-paging.wav", "street-construction-1.mp3", "s-h.mp3", "street-traffic-1.mp3", "street-traffic-2.mp3", "water-fountain-1.mp3", "waterfall-1.mp3", "water-stream-1.mp3", "wind-breeze-1.mp3", "windy-forest-1.mp3"
+			].map(function(a) {
 				return {
 					name: "pacdv: " + a.split(".")[0],
 					variety: "audio",
+					kind: "ambient",
 					item: "https://www.pacdv.com/sounds/ambience_sounds/" + a
 				};
 			}),
-			image: [216671, 966927, 2117937, 838981, 266643,
+			music: ["Rolemusic/Rolemusic_-_Singles/Rolemusic_-_the_river.mp3","Rolemusic/Rolemusic_-_Singles/Rolemusic_-_Omou_matsu.mp3","sawsquarenoise/Towel_Defence_OST/sawsquarenoise_-_09_-_Towel_Defence_Sad_Ending.mp3","sawsquarenoise/Towel_Defence_OST/sawsquarenoise_-_10_-_Towel_Defence_Ending.mp3","sawsquarenoise/Towel_Defence_OST/sawsquarenoise_-_04_-_Towel_Defence_Ingame_Action.mp3","sawsquarenoise/Towel_Defence_OST/sawsquarenoise_-_08_-_Towel_Defence_Press_Roll.mp3","sawsquarenoise/Towel_Defence_OST/sawsquarenoise_-_07_-_Towel_Defence_Jingle_Win.mp3","sawsquarenoise/Towel_Defence_OST/sawsquarenoise_-_06_-_Towel_Defence_Jingle_Loose.mp3","sawsquarenoise/Towel_Defence_OST/sawsquarenoise_-_01_-_Towel_Defence_Splash_Screen.mp3","sawsquarenoise/Towel_Defence_OST/sawsquarenoise_-_05_-_Towel_Defence_Block_Bonus.mp3","sawsquarenoise/Towel_Defence_OST/sawsquarenoise_-_03_-_Towel_Defence_Ingame.mp3","sawsquarenoise/Towel_Defence_OST/sawsquarenoise_-_02_-_Towel_Defence_Comic.mp3","Rolemusic/Rolemusic_-_Singles/Rolemusic_-_Shaanti.mp3","Rolemusic/Rolemusic_-_Singles/Rolemusic_-_w1x.mp3","Creo/Creo_-_Singles/Creo_-_01_-_Place_on_Fire.mp3","Rolemusic/Rolemusic_-_Singles/Rolemusic_-_02_-_May.mp3","Rolemusic/Rolemusic_-_Singles/Rolemusic_-_Step_to_Space.mp3","Captive_Portal/Toy_Sounds_Vol_1/Captive_Portal_-_04_-_A_Candy_Addiction.mp3","Captive_Portal/Toy_Sounds_Vol_1/Captive_Portal_-_03_-_An_Example_For.mp3","Captive_Portal/Toy_Sounds_Vol_1/Captive_Portal_-_02_-_Me_As.mp3"
+			].map(function(m) {
+				return {
+					name: "freemusicarchive: " + m.split("-").pop().split(".")[0],
+					variety: "audio",
+					kind: "music",
+					item: "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/" + m
+				};
+			}),
+			event: ["Cartoon Chipmunk Riser Toy Sound Effect", "Cartoon Dizzy Fall A Sound Effect", "Cartoon Dizzy Fall B Sound Effect", "Cartoon Dizzy Rising A Sound Effect", "Cartoon Fail A Sound Effect", "Cartoon Fall A Sound Effect", "Cartoon Funny Rise A Sound Effect", "Cartoon Funny Rise B Sound Effect", "Cartoon Happy Trill A Sound Effect", "Cartoon Happy Trill B Sound Effect", "Cartoon Happy Trill Sound Effect", "Cartoon Jumpy B Sound Effect", "Cartoon Jumpy Sound Effect", "Cartoon Laser A Sound Effect", "Cartoon Riser A Sound Effect", "Cartoon Short Fall A Sound Effect", "Cartoon Short Fall B Sound Effect", "Cartoon Short Rise A Sound Effect", "Cartoon Short Rise B Sound Effect", "Cartoon Slip A Sound Effect", "Cartoon Slip B Sound Effect", "Cartoon Slip Sound Effect", "Cartoon Squirrely A Sound Effect", "Cartoon Squirrely B Sound Effect", "Cartoon Suspenseful Trill A Sound Effect", "Cartoon Suspenseful Trill B Sound Effect", "Cartoon Suspenseful Trill Sound Effect", "Cartoon Whistle Fall A Sound Effect", "Cartoon Whistle Fall B Sound Effect", "Cartoon Whistle Up Sound Effect", "Cartoon Zoink A Sound Effect"
+			].map(function(e, i) {
+				return {
+					name: "fesliyanstudios: " + e,
+					variety: "audio",
+					kind: "event",
+					item: "https://www.fesliyanstudios.com/soundeffects-download.php?id=" + (i + 7001)
+				};
+			})
+		},
+		images: {
+			background: [216671, 966927, 2117937, 838981, 266643,
 				3847498, 220182, 235986, 1227511, 3255761, 1022692,
 				326311, 235994, 164005, 129733, 172289, 326333, 172292,
-				129731, 163999, 139306, 172276, 172278, 207253].map(function(p, i) {
+				129731, 163999, 139306, 172276, 172278, 207253
+			].map(function(p, i) {
 				var name = "Pexels " + ((i < 11) ? "Rock" : "Wood");
 				name += " Texture (" + i + ")";
 				return {
 					name: name,
-					variety: "image",
+					variety: "background",
 					item: "https://images.pexels.com/photos/" + p + "/pexels-photo-" + p + ".jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
+				};
+			}),
+			image: [
+				"bg7.jpg", "bgBITZs4a.jpg", "bg_yan3.jpg", "bod.jpg",
+				"bunny_ears.jpg", "bunny_teeth.jpg", "eye_brown_basic.jpg",
+				"graph_paper.jpg", "hair_alphaGimp3_2SMALL.png",
+				"hair_alphaGimp3a.png", "hairC5dHat.png", "hair.png",
+				"hairShrunk.png", "head.jpg", "head_UV2.jpg", "icon.jpg",
+				"room1.jpg", "shirt.jpg", "teeth256s.jpg", "white.jpg"
+			].map(function(o) {
+				return {
+					name: "ctone: " + o.split(".")[0],
+					variety: "image",
+					item: "/maps/one/" + o
 				};
 			})
 		},
@@ -32,22 +69,159 @@ vu.media = {
 		isResource: function(sel) {
 			return ["image", "background", "audio", "video"].indexOf(sel) != -1;
 		},
-		fetch: function(variety, cb) {
-			var _ = vu.media._;
-			if (_.resources)
-				return cb(_.resources[variety]);
-			CT.db.get("resource", function(rez) {
-				var rz = _.resources = {};
-				rez.forEach(function(r) {
-					if (!(r.variety in rz))
-						rz[r.variety] = [];
-					rz[r.variety].push(r);
-				});
-				for (var v in _.extra)
-					rz[v] = (rz[v] || []).concat(_.extra[v]);
-				cb(rz[variety]);
-			});
+		initRes: function(r) {
+			var rz = vu.media._.resources;
+			if (!(r.variety in rz))
+				rz[r.variety] = [];
+			rz[r.variety].push(r);
+			if (r.kind) {
+				if (!(r.kind in rz))
+					rz[r.kind] = [];
+				rz[r.kind].push(r);
+			}
 		}
+	},
+	init: function(cb) {
+		var _ = vu.media._, loader = function() {
+			if (!(_.resources && _.textures)) return;
+			cb && cb();
+			return true;
+		};
+		if (loader()) return;
+		CT.db.get("asset", function(assets) {
+			var tz = _.textures = { all: [] }, ass;
+			for (ass of assets) {
+				tz[ass.kind] = tz[ass.kind] || [];
+				tz[ass.kind].push(ass);
+				tz.all.push(ass);
+			}
+			loader();
+		}, null, null, null, {
+			variety: "texture"
+		});
+		CT.db.get("resource", function(rez) {
+			var rz = _.resources = {};
+			rez.forEach(_.initRes);
+			for (var sec of ["audio", "images"]) {
+				for (var sub in _[sec]) {
+					rz[sec] = (rz[sec] || []).concat(_[sec][sub]);
+					rz[sub] = (rz[sub] || []).concat(_[sec][sub]);
+				}
+			}
+			loader();
+		}, null, null, null, null, null, null, "json");
+	},
+	fetch: function(variety, cb) {
+		vu.media.init(function() {
+			cb(vu.media._.resources[variety]);
+		});
+	},
+	txprompt: function(cb, data) {
+		CT.modal.prompt({
+			prompt: "please select a texture",
+			style: "icon",
+			recenter: true,
+			className: "basicpopup mosthigh galimg",
+			data: data,
+			cb: cb
+		});
+	},
+	audprompt: function(cb, data) {
+		CT.modal.prompt({
+			prompt: "please select a clip",
+			style: "sound",
+			data: data,
+			cb: cb
+		});
+	},
+	recprompt: function(cb, hasRec) {
+		if (!hasRec) return cb("all");
+		CT.modal.choice({
+			prompt: "want to see all options or just our recommendations?",
+			data: ["all", "recommendations"],
+			cb: cb
+		});
+	},
+	resourcer: function(cb, kind) {
+		return function(tx) {
+			if (tx.key) return cb(tx);
+			vu.core.v({
+				action: "resource",
+				url: tx.item,
+				name: tx.name,
+				variety: tx.variety,
+				kind: kind || tx.kind
+			}, cb);
+		};
+	},
+	texture: function(cb, variety, kind, reqkey) { // image, background, texture
+		var _ = vu.media._;
+		if (reqkey)
+			cb = vu.media.resourcer(cb, kind);
+		vu.media.init(function() {
+			var rz = _.resources, tz = _.textures;
+			if (kind) { // asset...
+				vu.media.recprompt(function(subset) {
+					if (subset != "all")
+						return vu.media.txprompt(cb, tz[kind]);
+					vu.media.txprompt(cb, // assets (textures) first
+						tz.all.concat(rz.image).concat(rz.background));
+				}, tz[kind]);
+			} else { // resource - image or background
+				vu.media.recprompt(function(subset) {
+					if (subset != "all")
+						return vu.media.txprompt(cb, rz[variety]);
+					if (variety == "image")
+						vu.media.txprompt(cb, // variety first
+							rz.image.concat(rz.background).concat(tz.all));
+					else // background
+						vu.media.txprompt(cb, // variety first
+							rz.background.concat(rz.image).concat(tz.all));
+				}, rz[variety]);
+			}
+		});
+	},
+	audio: function(cb, kind, reqkey) { // music, ambient, event
+		var _ = vu.media._;
+		kind = kind || "event";
+		if (reqkey)
+			cb = vu.media.resourcer(cb, kind);
+		vu.media.init(function() {
+			var rz = _.resources;
+			vu.media.recprompt(function(subset) {
+				if (subset != "all")
+					return vu.media.audprompt(cb, rz[kind]);
+				vu.media.audprompt(cb, rz.audio);
+			}, rz[kind]);
+		});
+	},
+	swapper: function(target, cb) {
+		var up = function(tx) {
+			target.update({ texture: tx.item });
+			cb(tx.item);
+		};
+		return CT.dom.link("swap", function() {
+			CT.modal.choice({
+				data: ["browse", "upload"],
+				cb: function(which) {
+					if (which == "browse")
+						return vu.media.texture(up,
+							null, target.opts.kind);
+					CT.modal.prompt({
+						style: "file",
+						cb: function(ctfile) {
+							ctfile.upload("/_vu", up, {
+								action: "asset",
+								name: ctfile.name(),
+								variety: "texture",
+								kind: target.opts.kind,
+								owner: user.core.get("key")
+							});
+						}
+					})
+				}
+			});
+		});
 	},
 	checkBoxGate: function(obj, sel, node) {
 		var bgz = vu.media._.bgz;
@@ -65,14 +239,18 @@ vu.media = {
 				delete obj[sel];
 		});
 	},
-	browse: function(variety, cb) {
-		vu.media._.fetch(variety, function(resources) {
+	browse: function(variety, cb, kind, reqkey) {
+		vu.media.fetch(variety, function(resources) {
+			if (["image", "background"].includes(variety))
+				return vu.media.texture(cb, variety, reqkey);
+			if (variety == "audio")
+				return vu.media.audio(cb, kind, reqkey);
 			if (!resources)
 				return alert("nothing yet -- add the first one!");
 			CT.modal.choice({
 				data: resources,
 				cb: cb
-			})
+			});
 		});
 	},
 	viewer: function(node, opts, sel) {
@@ -88,13 +266,16 @@ vu.media = {
 		}));
 	},
 	selector: function(rez, sel, cb, forceShow) {
-		var isIframe = sel == "iframe",
-			isMap = vu.media._.isMap(sel),
+		var _ = vu.media._, isMap = _.isMap(sel),
+			isIframe = sel == "iframe",
 			opts = rez[sel] || {
 				variety: sel,
 				modelName: "resource",
 				owners: [user.core.get("key")]
 			}, item, blurs = core.config.ctvu.blurs;
+
+		if (sel == "audio")
+			opts.kind = "event";
 
 		// viewer (img/audio)
 		var viewer = CT.dom.div(null, "mt5");
@@ -136,14 +317,14 @@ vu.media = {
 			}), !opts.item.lat && "hidden");
 		} else if (!isIframe) { // standard -- drag drop
 			item = CT.dom.div(CT.file.dragdrop(function(ctfile) {
-				ctfile.upload("/_db", function(url) {
-					opts.item = url;
+				ctfile.upload("/_vu", function(ent) {
+					Object.assign(opts, ent);
+					name.value = opts.name
 					vu.media.viewer(viewer, opts, sel);
 					cb();
 				}, {
-					action: "blob",
-					key: opts.key,
-					property: "item"
+					action: "resource",
+					key: opts.key
 				});
 			}), !opts.item && "hidden");
 		}
@@ -167,14 +348,9 @@ vu.media = {
 			opts.name = val;
 			if (isIframe || isMap || ["button", "environment"].indexOf(sel) != -1)
 				return update();
-			CT.net.post({
-				path: "/_db",
-				params: {
-					action: "edit",
-					pw: core.config.ctvu.storage.apikey,
-					data: opts
-				},
-				cb: update
+			vu.storage.edit(opts, function(ent) {
+				_.initRes(ent);
+				update(ent);
 			});
 		}, null, null, opts.name, null, blurs[sel] || blurs.resource);
 
@@ -187,7 +363,7 @@ vu.media = {
 				cb();
 			});
 		});
-		if (!vu.media._.isResource(sel))
+		if (!_.isResource(sel))
 			CT.dom.hide(browse);
 
 		return CT.dom.div([browse, name, item, viewer], !forceShow && !rez[sel] && "hidden");
