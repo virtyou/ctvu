@@ -53,37 +53,38 @@ vu.media = {
 			if (!(r.variety in rz))
 				rz[r.variety] = [];
 			rz[r.variety].push(r);
-		},
-		init: function(cb) {
-			var _ = vu.media._, loader = function() {
-				if (!(_.resources && _.textures)) return;
-				cb();
-				return true;
-			};
-			if (loader()) return;
-			CT.db.get("asset", function(assets) {
-				var tz = _.textures = { all: [] }, ass;
-				for (ass of assets) {
-					tz[ass.kind] = tz[ass.kind] || [];
-					tz[ass.kind].push(ass);
-					tz.all.push(ass);
-				}
-				loader();
-			}, null, null, null, {
-				variety: "texture"
-			});
-			CT.db.get("resource", function(rez) {
-				var rz = _.resources = {};
-				rez.forEach(_.initRes);
-				for (var v in _.extra)
-					rz[v] = (rz[v] || []).concat(_.extra[v]);
-				loader();
-			}, null, null, null, null, null, null, "json");
 		}
 	},
+	init: function(cb) {
+		var _ = vu.media._, loader = function() {
+			if (!(_.resources && _.textures)) return;
+			cb && cb();
+			return true;
+		};
+		if (loader()) return;
+		CT.db.get("asset", function(assets) {
+			var tz = _.textures = { all: [] }, ass;
+			for (ass of assets) {
+				tz[ass.kind] = tz[ass.kind] || [];
+				tz[ass.kind].push(ass);
+				tz.all.push(ass);
+			}
+			loader();
+		}, null, null, null, {
+			variety: "texture"
+		});
+		CT.db.get("resource", function(rez) {
+			var rz = _.resources = {};
+			rez.forEach(_.initRes);
+			for (var v in _.extra)
+				rz[v] = (rz[v] || []).concat(_.extra[v]);
+			loader();
+		}, null, null, null, null, null, null, "json");
+	},
 	fetch: function(variety, cb) {
-		var _ = vu.media._;
-		_.init(function() { cb(_.resources[variety]); });
+		vu.media.init(function() {
+			cb(vu.media._.resources[variety]);
+		});
 	},
 	txprompt: function(cb, data) {
 		CT.modal.prompt({
@@ -118,7 +119,7 @@ vu.media = {
 				}, origcb);
 			};
 		}
-		_.init(function() {
+		vu.media.init(function() {
 			var rz = _.resources, tz = _.textures;
 			if (kind) { // asset...
 				vu.media.recprompt(function(subset) {
@@ -201,6 +202,9 @@ vu.media = {
 				modelName: "resource",
 				owners: [user.core.get("key")]
 			}, item, blurs = core.config.ctvu.blurs;
+
+		if (sel == "audio")
+			opts.kind = "event";
 
 		// viewer (img/audio)
 		var viewer = CT.dom.div(null, "mt5");
