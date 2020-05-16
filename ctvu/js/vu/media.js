@@ -246,14 +246,14 @@ vu.media = {
 			}), !opts.item.lat && "hidden");
 		} else if (!isIframe) { // standard -- drag drop
 			item = CT.dom.div(CT.file.dragdrop(function(ctfile) {
-				ctfile.upload("/_db", function(url) {
-					opts.item = url;
+				ctfile.upload("/_vu", function(ent) {
+					Object.assign(opts, ent);
+					name.value = opts.name
 					vu.media.viewer(viewer, opts, sel);
 					cb();
 				}, {
-					action: "blob",
-					key: opts.key,
-					property: "item"
+					action: "resource",
+					key: opts.key
 				});
 			}), !opts.item && "hidden");
 		}
