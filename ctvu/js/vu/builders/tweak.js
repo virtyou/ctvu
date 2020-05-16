@@ -75,7 +75,7 @@ vu.builders.tweak = {
 				CT.dom[clicker ? "link" : "span"](target.name + " (" + k +")",
 					clicker),
 				CT.dom.pad(),
-				_.asseter.swapper(target)
+				vu.media.swapper(target, this.uptex)
 			]);
 		},
 		uptex: function(tx) {
@@ -152,7 +152,6 @@ vu.builders.tweak = {
 			_.colorSelector(rawp, "color");
 			_.colorSelector(rawp, "specular");
 			
-			_.asseter = new vu.menu.Asset({ cb: this.uptex });
 			selz.partLabel = CT.dom.span("body", "bold"),
 			selz.shininess = CT.dom.range(function(val) {
 				CT.log("shininess: " + val);
