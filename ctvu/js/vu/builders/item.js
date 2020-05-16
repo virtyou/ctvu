@@ -23,6 +23,7 @@ vu.builders.item = {
 				action: "asset",
 				name: ctfile.name(),
 				variety: variety,
+				kind: selz.kind.value,
 				owner: user.core.get("key")
 			});
 		},
@@ -70,16 +71,22 @@ vu.builders.item = {
 					vu.builders.item.update();
 				}
 				_.item.texture = asset && asset.key;
-				CT.dom.setContent(selz.texture_name, asset && CT.dom.link(asset.name, function() {
-					(new CT.modal.Modal({
-						transition: "slide",
-						content: [
+				CT.dom.setContent(selz.texture_name,
+					asset && CT.dom.link(asset.name, function() {
+						var m = CT.modal.modal([
 							CT.dom.div("Texture: " + asset.name, "big centered"),
 							CT.dom.img(asset.item, "w200p block"),
+							CT.dom.link("browse", function() {
+								m.hide();
+								vu.media.texture(selz.texture.update,
+									null, selz.kind.value, true);
+							}, null, "right"),
 							_.download(asset.item, asset.name)
-						]
-					})).show();
-				}));
+						]);
+					}) || CT.dom.link("browse", function() {
+						vu.media.texture(selz.texture.update,
+							null, selz.kind.value, true);
+					}));
 			};
 			selz.stripset.update = function(asset) {
 				thopts.stripset = asset && asset.item;
@@ -122,7 +129,7 @@ vu.builders.item = {
 				selz.stripset.update(CT.data.get(item.stripset));
 				selz.texture.update(CT.data.get(item.texture));
 				vu.builders.item.update();
-			});
+			}, "json");
 		},
 		itemSelect: function() {
 			var _ = vu.builders.item._;
@@ -141,15 +148,22 @@ vu.builders.item = {
 			CT.modal.prompt({
 				prompt: "what's the new item's name?",
 				cb: function(name) {
-					vu.core.v({
-						action: "thing",
-						owner: user.core.get("key"),
-						data: {
-							name: name
+					CT.modal.choice({
+						prompt: "what kind of thing is it?",
+						data: _.kinds,
+						cb: function(kind) {
+							vu.core.v({
+								action: "thing",
+								owner: user.core.get("key"),
+								data: {
+									name: name,
+									kind: kind
+								}
+							}, function(item) {
+								_.items.push(item);
+								_.setItem(item);
+							});
 						}
-					}, function(item) {
-						_.items.push(item);
-						_.setItem(item);
 					});
 				}
 			});
