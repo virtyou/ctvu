@@ -12,7 +12,7 @@ CT.require("zero.core");
 CT.require("vu.core");
 CT.require("vu.controls");
 CT.require("vu.storage");
-CT.require("vu.menu");
+CT.require("vu.menu.Body");
 CT.require("vu.builders.core");
 CT.require("vu.builders.gesture");
 
