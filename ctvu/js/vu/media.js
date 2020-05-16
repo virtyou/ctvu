@@ -5,15 +5,27 @@ vu.media = {
 			background: "img"
 		},
 		bgz: ["background", "video", "iframe", "map", "panorama", "environment"],
-		extra: { // pacdv
-			audio: ["air_hum.wav", "airport-gate-1.mp3", "airplane-interior-1.mp3", "airport-security-1.mp3", "amusement-park.mp3", "bus-1.mp3", "caf-1.mp3", "caf-2.mp3", "car-interior-1.mp3", "c-p-1.mp3", "city-traffic-1.mp3", "c-c-1.mp3", "crowd_outside_1.wav", "crowd_outside_2.wav", "crowd_outside_3.wav", "crowd_outside_4.wav", "downtown-1.mp3", "downtown-2.mp3", "downtown-3.mp3", "e-s.mp3", "fast_food_joint_1.wav", "fire-1.mp3", "food_court.wav", "freeway-1.mp3", "freeway-2.mp3", "grocery_store_1.wav", "g-t-1.mp3", "hallway-crowd.mp3", "highway-1.mp3", "kids-playing-football.mp3", "kids-playing-football-2.mp3", "laundry_room_1.wav", "lobby_1.wav", "l-c-1.mp3", "l-c-2.mp3", "marketplace_1.wav", "marketplace_2.wav", "marketplace_3.wav", "metro-station-1.mp3", "o-c-1.mp3", "park_1.wav", "park_2.wav", "party_crowd_1.wav", "people-talking.mp3", "rain_1.mp3", "rain_2.wav", "rain_3.wav", "rain_4.wav", "rain-5.mp3", "rain-6.mp3", "restaurant_1.wav", "restaurant-2.mp3", "river-1.mp3", "river-2.mp3", "s-y.mp3", "s-w-1.mp3", "s-w-2.mp3", "shopping-mall-1.mp3", "store-paging.wav", "street-construction-1.mp3", "s-h.mp3", "street-traffic-1.mp3", "street-traffic-2.mp3", "water-fountain-1.mp3", "waterfall-1.mp3", "water-stream-1.mp3", "wind-breeze-1.mp3", "windy-forest-1.mp3"
+		sounds: {
+			ambient: ["air_hum.wav", "airport-gate-1.mp3", "airplane-interior-1.mp3", "airport-security-1.mp3", "amusement-park.mp3", "bus-1.mp3", "caf-1.mp3", "caf-2.mp3", "car-interior-1.mp3", "c-p-1.mp3", "city-traffic-1.mp3", "c-c-1.mp3", "crowd_outside_1.wav", "crowd_outside_2.wav", "crowd_outside_3.wav", "crowd_outside_4.wav", "downtown-1.mp3", "downtown-2.mp3", "downtown-3.mp3", "e-s.mp3", "fast_food_joint_1.wav", "fire-1.mp3", "food_court.wav", "freeway-1.mp3", "freeway-2.mp3", "grocery_store_1.wav", "g-t-1.mp3", "hallway-crowd.mp3", "highway-1.mp3", "kids-playing-football.mp3", "kids-playing-football-2.mp3", "laundry_room_1.wav", "lobby_1.wav", "l-c-1.mp3", "l-c-2.mp3", "marketplace_1.wav", "marketplace_2.wav", "marketplace_3.wav", "metro-station-1.mp3", "o-c-1.mp3", "park_1.wav", "park_2.wav", "party_crowd_1.wav", "people-talking.mp3", "rain_1.mp3", "rain_2.wav", "rain_3.wav", "rain_4.wav", "rain-5.mp3", "rain-6.mp3", "restaurant_1.wav", "restaurant-2.mp3", "river-1.mp3", "river-2.mp3", "s-y.mp3", "s-w-1.mp3", "s-w-2.mp3", "shopping-mall-1.mp3", "store-paging.wav", "street-construction-1.mp3", "s-h.mp3", "street-traffic-1.mp3", "street-traffic-2.mp3", "water-fountain-1.mp3", "waterfall-1.mp3", "water-stream-1.mp3", "wind-breeze-1.mp3", "windy-forest-1.mp3"
 			].map(function(a) {
 				return {
 					name: "pacdv: " + a.split(".")[0],
 					variety: "audio",
+					kind: "ambient",
 					item: "https://www.pacdv.com/sounds/ambience_sounds/" + a
 				};
 			}),
+			music: ["Rolemusic/Rolemusic_-_Singles/Rolemusic_-_the_river.mp3","Rolemusic/Rolemusic_-_Singles/Rolemusic_-_Omou_matsu.mp3","sawsquarenoise/Towel_Defence_OST/sawsquarenoise_-_09_-_Towel_Defence_Sad_Ending.mp3","sawsquarenoise/Towel_Defence_OST/sawsquarenoise_-_10_-_Towel_Defence_Ending.mp3","sawsquarenoise/Towel_Defence_OST/sawsquarenoise_-_04_-_Towel_Defence_Ingame_Action.mp3","sawsquarenoise/Towel_Defence_OST/sawsquarenoise_-_08_-_Towel_Defence_Press_Roll.mp3","sawsquarenoise/Towel_Defence_OST/sawsquarenoise_-_07_-_Towel_Defence_Jingle_Win.mp3","sawsquarenoise/Towel_Defence_OST/sawsquarenoise_-_06_-_Towel_Defence_Jingle_Loose.mp3","sawsquarenoise/Towel_Defence_OST/sawsquarenoise_-_01_-_Towel_Defence_Splash_Screen.mp3","sawsquarenoise/Towel_Defence_OST/sawsquarenoise_-_05_-_Towel_Defence_Block_Bonus.mp3","sawsquarenoise/Towel_Defence_OST/sawsquarenoise_-_03_-_Towel_Defence_Ingame.mp3","sawsquarenoise/Towel_Defence_OST/sawsquarenoise_-_02_-_Towel_Defence_Comic.mp3","Rolemusic/Rolemusic_-_Singles/Rolemusic_-_Shaanti.mp3","Rolemusic/Rolemusic_-_Singles/Rolemusic_-_w1x.mp3","Creo/Creo_-_Singles/Creo_-_01_-_Place_on_Fire.mp3","Rolemusic/Rolemusic_-_Singles/Rolemusic_-_02_-_May.mp3","Rolemusic/Rolemusic_-_Singles/Rolemusic_-_Step_to_Space.mp3","Captive_Portal/Toy_Sounds_Vol_1/Captive_Portal_-_04_-_A_Candy_Addiction.mp3","Captive_Portal/Toy_Sounds_Vol_1/Captive_Portal_-_03_-_An_Example_For.mp3","Captive_Portal/Toy_Sounds_Vol_1/Captive_Portal_-_02_-_Me_As.mp3"
+			].map(function(m) {
+				return {
+					name: "freemusicarchive: " + m.split("-").pop().split(".")[0],
+					variety: "audio",
+					kind: "music",
+					item: "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/" + m
+				}
+			})
+		},
+		images: {
 			background: [216671, 966927, 2117937, 838981, 266643,
 				3847498, 220182, 235986, 1227511, 3255761, 1022692,
 				326311, 235994, 164005, 129733, 172289, 326333, 172292,
@@ -23,7 +35,7 @@ vu.media = {
 				name += " Texture (" + i + ")";
 				return {
 					name: name,
-					variety: "image",
+					variety: "background",
 					item: "https://images.pexels.com/photos/" + p + "/pexels-photo-" + p + ".jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
 				};
 			}),
@@ -53,6 +65,11 @@ vu.media = {
 			if (!(r.variety in rz))
 				rz[r.variety] = [];
 			rz[r.variety].push(r);
+			if (r.kind) {
+				if (!(r.kind in rz))
+					rz[r.kind] = [];
+				rz[r.kind].push(r);
+			}
 		}
 	},
 	init: function(cb) {
@@ -76,8 +93,12 @@ vu.media = {
 		CT.db.get("resource", function(rez) {
 			var rz = _.resources = {};
 			rez.forEach(_.initRes);
-			for (var v in _.extra)
-				rz[v] = (rz[v] || []).concat(_.extra[v]);
+			for (var sec of ["sounds", "images"]) {
+				for (var sub in _[sec]) {
+					rz[sec] = (rz[sec] || []).concat(_[sec][sub]);
+					rz[sub] = (rz[sub] || []).concat(_[sec][sub]);
+				}
+			}
 			loader();
 		}, null, null, null, null, null, null, "json");
 	},
@@ -96,6 +117,14 @@ vu.media = {
 			cb: cb
 		});
 	},
+	audprompt: function(cb, data) {
+		CT.modal.prompt({
+			prompt: "please select a clip",
+			style: "sound",
+			data: data,
+			cb: cb
+		});
+	},
 	recprompt: function(cb, hasRec) {
 		if (!hasRec) return cb("all");
 		CT.modal.choice({
@@ -104,21 +133,22 @@ vu.media = {
 			cb: cb
 		});
 	},
+	resourcer: function(cb, kind) {
+		return function(tx) {
+			if (tx.key) return cb(tx);
+			vu.core.v({
+				action: "resource",
+				url: tx.item,
+				name: tx.name,
+				variety: tx.variety,
+				kind: kind || tx.kind
+			}, cb);
+		};
+	},
 	texture: function(cb, variety, kind, reqkey) { // image, background, texture
 		var _ = vu.media._;
-		if (reqkey) {
-			var origcb = cb;
-			cb = function(tx) {
-				if (tx.key) return origcb(tx);
-				vu.core.v({
-					action: "resource",
-					kind: kind,
-					url: tx.item,
-					name: tx.name,
-					variety: tx.variety
-				}, origcb);
-			};
-		}
+		if (reqkey)
+			cb = vu.media.resourcer(cb, kind);
 		vu.media.init(function() {
 			var rz = _.resources, tz = _.textures;
 			if (kind) { // asset...
@@ -127,7 +157,6 @@ vu.media = {
 						return vu.media.txprompt(cb, tz[kind]);
 					vu.media.txprompt(cb, // assets (textures) first
 						tz.all.concat(rz.image).concat(rz.background));
-					
 				}, tz[kind]);
 			} else { // resource - image or background
 				vu.media.recprompt(function(subset) {
@@ -141,6 +170,21 @@ vu.media = {
 							rz.background.concat(rz.image).concat(tz.all));
 				}, rz[variety]);
 			}
+		});
+	},
+	audio: function(cb, kind, reqkey) { // music, ambient, event
+		var _ = vu.media._;
+		if (reqkey)
+			cb = vu.media.resourcer(cb, kind);
+		vu.media.init(function() {
+			var rz = _.resources, group = kind || "audio";
+			if (!rz[kind])
+				return vu.media.audprompt(cb, rz.sounds);
+			vu.media.recprompt(function(subset) {
+				if (subset != "all")
+					return vu.media.audprompt(cb, rz[group]);
+				vu.media.audprompt(cb, rz.sounds);
+			}, rz[group]);
 		});
 	},
 	swapper: function(target, cb) {
@@ -187,19 +231,18 @@ vu.media = {
 				delete obj[sel];
 		});
 	},
-	browse: function(variety, cb) {
+	browse: function(variety, cb, kind, reqkey) {
 		vu.media.fetch(variety, function(resources) {
 			if (["image", "background"].includes(variety))
-				return vu.media.texture(cb, variety);
+				return vu.media.texture(cb, variety, reqkey);
+			if (variety == "audio")
+				return vu.media.audio(cb, kind, reqkey);
 			if (!resources)
 				return alert("nothing yet -- add the first one!");
-			var oz = {
+			CT.modal.choice({
 				data: resources,
 				cb: cb
-			};
-			if (variety == "audio")
-				oz.style = "sound";
-			CT.modal.choice(oz);
+			});
 		});
 	},
 	viewer: function(node, opts, sel) {
