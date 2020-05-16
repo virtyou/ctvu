@@ -17,7 +17,8 @@ def response():
 			variety=cgi_get("variety"),
 			owner=cgi_get("owner"),
 			data=read_file(cgi_get("data")),
-			kind=cgi_get("kind")).get().data())
+			kind=cgi_get("kind"),
+			exalt=Resource).get().json())
 	if action == "room":
 		succeed(room(cgi_get("name"), cgi_get("owner"),
 			cgi_get("environment", required=False),
