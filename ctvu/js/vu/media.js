@@ -24,12 +24,12 @@ vu.media = {
 					item: "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/" + m
 				};
 			}),
-			event: ["Cartoon Chipmunk Riser Toy Sound Effect", "Cartoon Dizzy Fall A Sound Effect", "Cartoon Dizzy Fall B Sound Effect", "Cartoon Dizzy Rising A Sound Effect", "Cartoon Fail A Sound Effect", "Cartoon Fall A Sound Effect", "Cartoon Funny Rise A Sound Effect", "Cartoon Funny Rise B Sound Effect", "Cartoon Happy Trill A Sound Effect", "Cartoon Happy Trill B Sound Effect", "Cartoon Happy Trill Sound Effect", "Cartoon Jumpy B Sound Effect", "Cartoon Jumpy Sound Effect", "Cartoon Laser A Sound Effect", "Cartoon Riser A Sound Effect", "Cartoon Short Fall A Sound Effect", "Cartoon Short Fall B Sound Effect", "Cartoon Short Rise A Sound Effect", "Cartoon Short Rise B Sound Effect", "Cartoon Slip A Sound Effect", "Cartoon Slip B Sound Effect", "Cartoon Slip Sound Effect", "Cartoon Squirrely A Sound Effect", "Cartoon Squirrely B Sound Effect", "Cartoon Suspenseful Trill A Sound Effect", "Cartoon Suspenseful Trill B Sound Effect", "Cartoon Suspenseful Trill Sound Effect", "Cartoon Whistle Fall A Sound Effect", "Cartoon Whistle Fall B Sound Effect", "Cartoon Whistle Up Sound Effect", "Cartoon Zoink A Sound Effect"
+			fx: ["Cartoon Chipmunk Riser Toy Sound Effect", "Cartoon Dizzy Fall A Sound Effect", "Cartoon Dizzy Fall B Sound Effect", "Cartoon Dizzy Rising A Sound Effect", "Cartoon Fail A Sound Effect", "Cartoon Fall A Sound Effect", "Cartoon Funny Rise A Sound Effect", "Cartoon Funny Rise B Sound Effect", "Cartoon Happy Trill A Sound Effect", "Cartoon Happy Trill B Sound Effect", "Cartoon Happy Trill Sound Effect", "Cartoon Jumpy B Sound Effect", "Cartoon Jumpy Sound Effect", "Cartoon Laser A Sound Effect", "Cartoon Riser A Sound Effect", "Cartoon Short Fall A Sound Effect", "Cartoon Short Fall B Sound Effect", "Cartoon Short Rise A Sound Effect", "Cartoon Short Rise B Sound Effect", "Cartoon Slip A Sound Effect", "Cartoon Slip B Sound Effect", "Cartoon Slip Sound Effect", "Cartoon Squirrely A Sound Effect", "Cartoon Squirrely B Sound Effect", "Cartoon Suspenseful Trill A Sound Effect", "Cartoon Suspenseful Trill B Sound Effect", "Cartoon Suspenseful Trill Sound Effect", "Cartoon Whistle Fall A Sound Effect", "Cartoon Whistle Fall B Sound Effect", "Cartoon Whistle Up Sound Effect", "Cartoon Zoink A Sound Effect"
 			].map(function(e, i) {
 				return {
 					name: "fesliyanstudios: " + e,
 					variety: "audio",
-					kind: "event",
+					kind: "fx",
 					item: "https://www.fesliyanstudios.com/soundeffects-download.php?id=" + (i + 7001)
 				};
 			})
@@ -181,9 +181,9 @@ vu.media = {
 			}
 		});
 	},
-	audio: function(cb, kind, reqkey) { // music, ambient, event
+	audio: function(cb, kind, reqkey) { // music, ambient, fx
 		var _ = vu.media._;
-		kind = kind || "event";
+		kind = kind || "fx";
 		if (reqkey)
 			cb = vu.media.resourcer(cb, kind);
 		vu.media.init(function() {
@@ -275,7 +275,7 @@ vu.media = {
 			}, item, blurs = core.config.ctvu.blurs;
 
 		if (sel == "audio")
-			opts.kind = "event";
+			opts.kind = "fx";
 
 		// viewer (img/audio)
 		var viewer = CT.dom.div(null, "mt5");
