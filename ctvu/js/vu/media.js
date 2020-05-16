@@ -144,11 +144,31 @@ vu.media = {
 		});
 	},
 	swapper: function(target, cb) {
+		var up = function(tx) {
+			target.update({ texture: tx.item });
+			cb(tx.item);
+		};
 		return CT.dom.link("swap", function() {
-			vu.media.texture(function(tx) {
-				target.update({ texture: tx.item });
-				cb(tx.item);
-			}, null, target.opts.kind);
+			CT.modal.choice({
+				data: ["browse", "upload"],
+				cb: function(which) {
+					if (which == "browse")
+						return vu.media.texture(up,
+							null, target.opts.kind);
+					CT.modal.prompt({
+						style: "file",
+						cb: function(ctfile) {
+							ctfile.upload("/_vu", up, {
+								action: "asset",
+								name: ctfile.name(),
+								variety: "texture",
+								kind: target.opts.kind,
+								owner: user.core.get("key")
+							});
+						}
+					})
+				}
+			});
 		});
 	},
 	checkBoxGate: function(obj, sel, node) {
