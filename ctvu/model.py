@@ -3,8 +3,18 @@ from cantools import db
 class Resource(db.TimeStampedBase):
 	owners = db.ForeignKey(kind="member", repeated=True)
 	variety = db.String(choices=["image", "background", "audio", "video"])
+	kind = db.String(choices=["music", "ambient", "event"]) # audio
 	name = db.String()
+	url = db.String()
 	item = db.Binary(unique=True)
+
+	def json(self):
+		d = self.data()
+		d['item'] = self.path()
+		return d
+
+	def path(self):
+		return self.url or self.item.urlsafe()
 
 class Scene(db.TimeStampedBase):
 	owners = db.ForeignKey(kind="member", repeated=True)
