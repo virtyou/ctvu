@@ -1,16 +1,38 @@
 from cantools.web import respond, succeed, fail, cgi_get, read_file
-from ctone.spawners import person, thing, asset, room
+from ctone.spawners import person, thing, asset, room, exists
 from model import db, Member, Person, Room, Resource
 
 def response():
 	action = cgi_get("action", choices=["person", "import", "thing", "resource", "asset", "room", "ready", "share"])
 	if action == "resource":
-		url = cgi_get("url")
-		r = Resource.query(Resource.url == url).get()
-		if not r:
-			r = Resource(variety=cgi_get("variety"), url=url,
-				kind=cgi_get("kind"), name=cgi_get("name"))
+		key = cgi_get("key", required=False)
+		dkey = cgi_get("data", required=False)
+		data = dkey and read_file(dkey)
+		r = data and exists(data, Resource)
+		r and succeed(r.json())
+		if key:
+			r = db.get(key)
+			if r.item: # preserve original...
+				r = Resource(name=r.name + "_", kind=r.kind,
+					variety=r.variety, owners=r.owners)
+			r.item = data
 			r.put()
+			succeed(r.json())
+		name = cgi_get("name")
+		variety = cgi_get("variety")
+		kind = cgi_get("kind", required=False)
+		if data:
+			r = Resource(variety=variety,
+				owners=cgi_get("owners"),
+				name=name, kind=kind, item=data)
+			r.put()
+		else:
+			url = cgi_get("url")
+			r = Resource.query(Resource.url == url).get()
+			if not r:
+				r = Resource(variety=variety,
+					name=name, kind=kind, url=url)
+				r.put()
 		succeed(r.json())
 	if action == "asset":
 		succeed(asset(cgi_get("name"),
