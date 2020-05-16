@@ -172,10 +172,13 @@ vu.media = {
 				return vu.media.texture(cb, variety);
 			if (!resources)
 				return alert("nothing yet -- add the first one!");
-			CT.modal.choice({
+			var oz = {
 				data: resources,
 				cb: cb
-			})
+			};
+			if (variety == "audio")
+				oz.style = "sound";
+			CT.modal.choice(oz);
 		});
 	},
 	viewer: function(node, opts, sel) {
