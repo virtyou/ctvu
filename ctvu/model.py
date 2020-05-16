@@ -3,7 +3,7 @@ from cantools import db
 class Resource(db.TimeStampedBase):
 	owners = db.ForeignKey(kind="member", repeated=True)
 	variety = db.String(choices=["image", "background", "audio", "video"])
-	kind = db.String(choices=["music", "ambient", "event"]) # audio
+	kind = db.String() # audio[music,ambient,event] or tx
 	name = db.String()
 	url = db.String()
 	item = db.Binary(unique=True)
