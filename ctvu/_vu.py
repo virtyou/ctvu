@@ -22,8 +22,8 @@ def response():
 		variety = cgi_get("variety")
 		kind = cgi_get("kind", required=False)
 		if data:
-			r = Resource(variety=variety,
-				owners=cgi_get("owners"),
+			owners = cgi_get("owners", required=False) or [cgi_get("owner")]
+			r = Resource(variety=variety, owners=owners,
 				name=name, kind=kind, item=data)
 			r.put()
 		else:
