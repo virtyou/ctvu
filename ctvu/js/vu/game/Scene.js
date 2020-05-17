@@ -35,7 +35,10 @@ vu.game.Scene = CT.Class({
 			room: null,
 			props: {}, // TODO
 			actors: [],
-			scripts: {}
+			scripts: {},
+			fx: [],
+			music: [],
+			ambient: []
 		});
 		var a = this.adventure = opts.adventure,
 			s = this.state = a.state, osa = s.actors;
@@ -48,5 +51,10 @@ vu.game.Scene = CT.Class({
 			opts.description,
 			"(close this window to start!)"
 		], "centered kidvp"), this.load);
+		this.audio = new vu.audio.Controller({
+			fx: opts.fx,
+			music: opts.music,
+			ambient: opts.ambient
+		});
 	}
 });
