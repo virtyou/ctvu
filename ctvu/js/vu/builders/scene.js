@@ -104,7 +104,7 @@ vu.builders.scene = {
 							}
 						});
 					} else { // fx, music, ambient
-						vu.media.audio(function(aud) {
+						vu.media.swapper.audio(function(aud) {
 							if (!(aud.name in _.audio[stype])) {
 								var uobj = {
 									key: zcc.scene.key
