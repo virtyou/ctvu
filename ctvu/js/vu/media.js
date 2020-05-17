@@ -81,6 +81,34 @@ vu.media = {
 			}
 		}
 	},
+	prompt: {
+		tx: function(cb, data) {
+			CT.modal.prompt({
+				prompt: "please select a texture",
+				style: "icon",
+				recenter: true,
+				className: "basicpopup mosthigh galimg",
+				data: data,
+				cb: cb
+			});
+		},
+		aud: function(cb, data) {
+			CT.modal.prompt({
+				prompt: "please select a clip",
+				style: "sound",
+				data: data,
+				cb: cb
+			});
+		},
+		rec: function(cb, hasRec) {
+			if (!hasRec) return cb("all");
+			CT.modal.choice({
+				prompt: "want to see all options or just our recommendations?",
+				data: ["all", "recommendations"],
+				cb: cb
+			});
+		}
+	},
 	init: function(cb) {
 		var _ = vu.media._, loader = function() {
 			if (!(_.resources && _.textures)) return;
@@ -116,32 +144,6 @@ vu.media = {
 			cb(vu.media._.resources[variety]);
 		});
 	},
-	txprompt: function(cb, data) {
-		CT.modal.prompt({
-			prompt: "please select a texture",
-			style: "icon",
-			recenter: true,
-			className: "basicpopup mosthigh galimg",
-			data: data,
-			cb: cb
-		});
-	},
-	audprompt: function(cb, data) {
-		CT.modal.prompt({
-			prompt: "please select a clip",
-			style: "sound",
-			data: data,
-			cb: cb
-		});
-	},
-	recprompt: function(cb, hasRec) {
-		if (!hasRec) return cb("all");
-		CT.modal.choice({
-			prompt: "want to see all options or just our recommendations?",
-			data: ["all", "recommendations"],
-			cb: cb
-		});
-	},
 	resourcer: function(cb, kind) {
 		return function(tx) {
 			if (tx.key) return cb(tx);
@@ -161,21 +163,21 @@ vu.media = {
 		vu.media.init(function() {
 			var rz = _.resources, tz = _.textures;
 			if (kind) { // asset...
-				vu.media.recprompt(function(subset) {
+				vu.media.prompt.rec(function(subset) {
 					if (subset != "all")
-						return vu.media.txprompt(cb, tz[kind]);
-					vu.media.txprompt(cb, // assets (textures) first
+						return vu.media.prompt.tx(cb, tz[kind]);
+					vu.media.prompt.tx(cb, // assets (textures) first
 						tz.all.concat(rz.image).concat(rz.background));
 				}, tz[kind]);
 			} else { // resource - image or background
-				vu.media.recprompt(function(subset) {
+				vu.media.prompt.rec(function(subset) {
 					if (subset != "all")
-						return vu.media.txprompt(cb, rz[variety]);
+						return vu.media.prompt.tx(cb, rz[variety]);
 					if (variety == "image")
-						vu.media.txprompt(cb, // variety first
+						vu.media.prompt.tx(cb, // variety first
 							rz.image.concat(rz.background).concat(tz.all));
 					else // background
-						vu.media.txprompt(cb, // variety first
+						vu.media.prompt.tx(cb, // variety first
 							rz.background.concat(rz.image).concat(tz.all));
 				}, rz[variety]);
 			}
@@ -188,10 +190,10 @@ vu.media = {
 			cb = vu.media.resourcer(cb, kind);
 		vu.media.init(function() {
 			var rz = _.resources;
-			vu.media.recprompt(function(subset) {
+			vu.media.prompt.rec(function(subset) {
 				if (subset != "all")
-					return vu.media.audprompt(cb, rz[kind]);
-				vu.media.audprompt(cb, rz.audio);
+					return vu.media.prompt.aud(cb, rz[kind]);
+				vu.media.prompt.aud(cb, rz.audio);
 			}, rz[kind]);
 		});
 	},
