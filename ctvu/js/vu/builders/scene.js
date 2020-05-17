@@ -16,10 +16,12 @@ vu.builders.scene = {
 			});
 		},
 		step: function(cb, cur) {
-			var zcc = zero.core.current;
+			var zcc = zero.core.current, _ = vu.builders.scene._;
 			CT.modal.choice({
 				prompt: "please select a variety",
-				data: ["lights", "camera", "action", "text"].filter(function(st) { // +props,state
+				data: ["lights", "camera", "action",
+					"text", "fx", "music", "ambient"
+				].filter(function(st) { // +props,state
 					return !cur || !(st in cur);
 				}),
 				cb: function(stype) {
@@ -101,6 +103,21 @@ vu.builders.scene = {
 								cb({ text: msg });
 							}
 						});
+					} else { // fx, music, ambient
+						vu.media.audio(function(aud) {
+							if (!(aud.name in _.audio[stype])) {
+								var uobj = {
+									key: zcc.scene.key
+								};
+								_.audio.add(aud);
+								zcc.scene[stype].push(aud);
+								uobj[stype] = zcc.scene[stype].map(s => s.key);
+								vu.storage.edit(uobj);
+							}
+							var aobj = {};
+							aobj[stype] = aud.name;
+							cb(aobj);
+						}, stype, true);
 					}
 				}
 			});
@@ -148,9 +165,7 @@ vu.builders.scene = {
 							CT.dom.addContent(az, _.actor(person));
 							vu.storage.edit({
 								key: scene.key,
-								actors: scene.actors.map(function(a) {
-									return a.key;
-								})
+								actors: scene.actors.map(a => a.key)
 							});
 							zero.core.util.join(person);
 						}
@@ -216,7 +231,7 @@ vu.builders.scene = {
 				JSON.stringify(s).replace(/,/g, ",&#8203;")
 			], "bordered padded margined round", null, {
 				onclick: function() {
-					vu.game.util.step(s);
+					vu.game.util.step(s, null, null, _.audio);
 				}
 			});
 			return stpr;
@@ -238,7 +253,8 @@ vu.builders.scene = {
 							});
 						}),
 						CT.dom.button("play all", function() {
-							vu.game.util.script(scene.scripts[sname]);
+							vu.game.util.script(scene.scripts[sname],
+								null, null, _.audio);
 						})
 					], "abs ctr shiftup"),
 					stez
@@ -267,6 +283,11 @@ vu.builders.scene = {
 		var _ = vu.builders.scene._, selz = _.selectors,
 			snode = CT.dom.div(null, "right"), upscripts = _.upscripts;
 		zero.core.current.scene = scene;
+		_.audio = new vu.audio.Controller({
+			fx: scene.fx,
+			music: scene.music,
+			ambient: scene.ambient
+		});
 		CT.dom.setContent(selz.main, [
 			CT.dom.div(scene.name, "bigger"),
 			scene.description,
