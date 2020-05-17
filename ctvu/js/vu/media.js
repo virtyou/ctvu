@@ -107,6 +107,56 @@ vu.media = {
 				data: ["all", "recommendations"],
 				cb: cb
 			});
+		},
+		bu: function(cb) {
+			CT.modal.choice({
+				data: ["browse", "upload"],
+				cb: cb
+			});
+		},
+		file: function(cb, opts) {
+			CT.modal.prompt({
+				style: "file",
+				cb: function(ctfile) {
+					ctfile.upload("/_vu", cb, CT.merge(opts, {
+						name: ctfile.name()
+					}));
+				}
+			});
+		}
+	},
+	swapper: {
+		texture: function(target, cb) {
+			var up = function(tx) {
+				target.update({ texture: tx.item });
+				cb(tx.item);
+			};
+			return CT.dom.link("swap", function() {
+				vu.media.prompt.bu(function(which) {
+					if (which == "browse")
+						return vu.media.texture(up,
+							null, target.opts.kind);
+					vu.media.prompt.file(up, {
+						action: "asset",
+						variety: "texture",
+						kind: target.opts.kind,
+						owner: user.core.get("key")
+					});
+				});
+			});
+		},
+		audio: function(cb, kind, reqkey) {
+			vu.media.prompt.bu(function(which) {
+				if (which == "browse")
+					return vu.media.audio(cb,
+						kind, reqkey);
+				vu.media.prompt.file(cb, {
+					action: "resource",
+					variety: "audio",
+					kind: kind,
+					owner: user.core.get("key")
+				});
+			});
 		}
 	},
 	init: function(cb) {
@@ -195,34 +245,6 @@ vu.media = {
 					return vu.media.prompt.aud(cb, rz[kind]);
 				vu.media.prompt.aud(cb, rz.audio);
 			}, rz[kind]);
-		});
-	},
-	swapper: function(target, cb) {
-		var up = function(tx) {
-			target.update({ texture: tx.item });
-			cb(tx.item);
-		};
-		return CT.dom.link("swap", function() {
-			CT.modal.choice({
-				data: ["browse", "upload"],
-				cb: function(which) {
-					if (which == "browse")
-						return vu.media.texture(up,
-							null, target.opts.kind);
-					CT.modal.prompt({
-						style: "file",
-						cb: function(ctfile) {
-							ctfile.upload("/_vu", up, {
-								action: "asset",
-								name: ctfile.name(),
-								variety: "texture",
-								kind: target.opts.kind,
-								owner: user.core.get("key")
-							});
-						}
-					})
-				}
-			});
 		});
 	},
 	checkBoxGate: function(obj, sel, node) {
