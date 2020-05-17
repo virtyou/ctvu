@@ -20,8 +20,8 @@ vu.game.util = {
 		});
 		setTimeout(mod.hide, pause || 3000);
 	},
-	step: function(step, nextStep) {
-		var zcc = zero.core.current, r = zcc.room;
+	step: function(step, nextStep, state, audio) {
+		var zcc = zero.core.current, k, r = zcc.room;
 		if (step.lights) {
 			step.lights.forEach(function(val, i) {
 				r.lights[i][step.directive || "setIntensity"](val);
@@ -35,19 +35,22 @@ vu.game.util = {
 			r[step.prop][step.directive](step.direction);
 		if (step.state)
 			vu.game.util.upstate(state, step.state);
+		for (k of ["fx", "music", "ambient"])
+			if (step[k])
+				audio.play(k, step[k]);
 		if (step.actor)
 			zcc.people[step.actor][step.action || "say"](step.line, nextStep);
 		else
 			nextStep && nextStep();
 	},
-	script: function(script, cb, state) {
+	script: function(script, cb, state, audio) {
 		script = script.slice();
 		var step = script.shift();
 		if (!step)
 			return cb && cb();
 		vu.game.util.step(step, function() {
 			setTimeout(vu.game.util.script, step.pause || 0,
-				script, cb, state);
-		});
+				script, cb, state, audio);
+		}, state, audio);
 	}
 };
