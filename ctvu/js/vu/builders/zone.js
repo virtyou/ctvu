@@ -343,7 +343,7 @@ vu.builders.zone = {
 						"1-9 for gestures (0 to ungesture)",
 						"1-9 + SHIFT for dances (0 to undance)"
 					] : [
-						"move around with wasd",
+						"move around with arrow keys",
 						"press ENTER to save position"
 					]
 				]);
