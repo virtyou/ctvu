@@ -1,6 +1,5 @@
 vu.builders.Gear = CT.Class({
-	CLASSNAME: "vu.builders.Gear",
-	neutral: 1
+	CLASSNAME: "vu.builders.Gear"
 }, vu.menu.Body);
 
 vu.builders.gear = {
