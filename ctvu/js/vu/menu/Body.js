@@ -78,6 +78,9 @@ vu.menu.Body = CT.Class({
 			}
 			return content;
 		},
+		sing: function(prop) {
+			return prop.endsWith("s") ? prop.slice(0, -1) : prop;
+		},
 		peritem: function(k, v) {
 			var pobj = {};
 			pobj[k] = v;
@@ -86,9 +89,9 @@ vu.menu.Body = CT.Class({
 	},
 	neutral: 0,
 	initMain: function() {
-		var _ = this._, mprop = this.opts.main,
-			per = _.peritem, cur = zero.core.current,
-			sing = mprop.slice(0, -1), lm = this.loadMain;
+		var _ = this._, per = _.peritem, lm = this.loadMain,
+			cur = zero.core.current, mprop = this.opts.main,
+			sing = _.sing(mprop);
 		CT.modal.prompt({
 			prompt: "what's the new " + sing + "?",
 			cb: function(val) {
@@ -138,7 +141,7 @@ vu.menu.Body = CT.Class({
 		var _ = this._, selz = _.selectors,
 			person = zero.core.current.person,
 			gopts = person.opts[sname],
-			sing = sname.slice(0, -1),
+			sing = _.sing(sname),
 			item_opts = gopts[sitem] = gopts[sitem] || {},
 			modpart = item_opts[side] = item_opts[side] || {},
 			val, partnames, bname = side,
@@ -202,7 +205,7 @@ vu.menu.Body = CT.Class({
 		var _ = this._, selz = _.selectors,
 			person = zero.core.current.person,
 			gopts = person.opts[sname],
-			sing = sname.slice(0, -1),
+			sing = _.sing(sname),
 			capd = CT.parse.capitalize(sing),
 			apro = "active" + capd,
 			setr = this["set" + capd],
