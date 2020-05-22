@@ -82,6 +82,21 @@ vu.media = {
 		}
 	},
 	prompt: {
+		thing: function(cb, kind, part) {
+			var m = new zero.core.Menu({
+				items: Object.values(vu.storage.get(kind)),
+				onselect: function(thopts) {
+					m.close();
+
+// TODO: if !part, create one [w/ kind-based bone]
+
+					vu.storage.edit({
+						key: part.opts.key,
+						base: thopts.key
+					}, cb);
+				}
+			});
+		},
 		tx: function(cb, data) {
 			CT.modal.prompt({
 				prompt: "please select a texture",
