@@ -87,6 +87,7 @@ vu.menu.Body = CT.Class({
 			this.persist(pobj);
 		}
 	},
+	dimmed: false,
 	initMain: function() {
 		var _ = this._, per = _.peritem, lm = this.loadMain,
 			cur = zero.core.current, mprop = this.opts.main,
@@ -115,14 +116,14 @@ vu.menu.Body = CT.Class({
 		modpart.aura = null;
 	},
 	addPart: function(side, sub, modpart) {
-		var _c = CT.parse.capitalize,
+		var _c = CT.parse.capitalize, dimmed = this.dimmed,
 			neu = this.neutral, curl = this.curl,
 			pmod = zero.core[_c(side)] || zero.core[_c(sub)],
 			az = zero.base.aspects[sub || side];
 		if (pmod.parts) {
 			pmod.parts.forEach(function(part) {
 				modpart[part] = {};
-				Object.keys(az[part]).forEach(function(dim) {
+				dimmed && Object.keys(az[part]).forEach(function(dim) {
 					if (curl || (dim != "curl"))
 						modpart[part][dim] = neu;
 				});
@@ -131,7 +132,7 @@ vu.menu.Body = CT.Class({
 			this.bodmod(modpart);
 	},
 	setParts: function(sname, sitem, side, sub) {
-		var _ = this._, selz = _.selectors,
+		var _ = this._, selz = _.selectors, dimmed = this.dimmed,
 			person = zero.core.current.person,
 			gopts = person.opts[sname], sing = _.sing(sname),
 			item_opts = gopts[sitem] = gopts[sitem] || {},
@@ -148,9 +149,11 @@ vu.menu.Body = CT.Class({
 		CT.dom.setContent(selz[bname], partnames.length ? partnames.map(function(part) {
 			val = modpart[part];
 			return CT.dom.div([
-				Object.keys(val).map(function(axis) {
-					return modder(sname, sitem, val[axis], side, sub, part, axis, modpart);
-				})
+				dimmed ? Object.keys(val).map(function(axis) {
+					return modder(sname, sitem, val[axis],
+						side, sub, part, axis, modpart);
+				}) : modder(sname, sitem, val, side, sub,
+					part, null, modpart)
 			], "jblock pr10");
 		}) : "");
 		CT.dom.setContent(selz[bname + "_button"], partnames.length ? CT.dom.button("clear", function() {
