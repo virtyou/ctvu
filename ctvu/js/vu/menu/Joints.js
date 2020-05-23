@@ -1,6 +1,7 @@
 vu.menu.Joints = CT.Class({
 	CLASSNAME: "vu.menu.Joints",
 	neutral: 0,
+	dimmed: true,
 	bodmod: function(modpart) { // scale-oriented -- override in gesture
 		modpart.scale = {
 			width: 1,
