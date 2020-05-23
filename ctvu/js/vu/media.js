@@ -138,6 +138,22 @@ vu.media = {
 					}));
 				}
 			});
+		},
+		asset: function(cb, variety, kind) {
+			vu.media.prompt.file(cb, {
+				action: "asset",
+				variety: variety,
+				kind: kind,
+				owner: user.core.get("key")
+			});
+		},
+		resource: function(cb, variety, kind) {
+			vu.media.prompt.file(cb, {
+				action: "resource",
+				variety: variety,
+				kind: kind,
+				owner: user.core.get("key")
+			});
 		}
 	},
 	swapper: {
@@ -151,12 +167,8 @@ vu.media = {
 					if (which == "browse")
 						return vu.media.texture(up,
 							null, target.opts.kind);
-					vu.media.prompt.file(up, {
-						action: "asset",
-						variety: "texture",
-						kind: target.opts.kind,
-						owner: user.core.get("key")
-					});
+					vu.media.prompt.asset(up,
+						"texture", target.opts.kind);
 				});
 			});
 		},
@@ -165,12 +177,8 @@ vu.media = {
 				if (which == "browse")
 					return vu.media.audio(cb,
 						kind, reqkey);
-				vu.media.prompt.file(cb, {
-					action: "resource",
-					variety: "audio",
-					kind: kind,
-					owner: user.core.get("key")
-				});
+				vu.media.prompt.resource(cb,
+					"audio", kind);
 			});
 		}
 	},
