@@ -108,20 +108,71 @@ vu.menu.Body = CT.Class({
 		this.selector(this.opts.main);
 		this.loadExtras();
 	},
-	setJoints: function(sname, sitem, side, sub) {
-
-		/// ?????
-
+	modder: function(sname, sitem, val, side, sub, part, axis, modpart) {
+		return CT.dom.div(sname + " " + sitem + " " + val + " " + side + " " + sub + " " + part + " " + axis + " " + modpart);
+	},
+	setParts: function(sname, sitem, side, sub) {
+		var _ = this._, selz = _.selectors,
+			person = zero.core.current.person,
+			gopts = person.opts[sname],
+			sing = _.sing(sname),
+			item_opts = gopts[sitem] = gopts[sitem] || {},
+			modpart = item_opts[side] = item_opts[side] || {},
+			val, partnames, bname = side,
+			neu = this.neutral, curl = this.curl, bm = this.bodmod,
+			modder = this.modder, pset = this.setParts;
+		if (sub) {
+			bname += "_" + sub;
+			if (!item_opts[side][sub])
+				item_opts[side][sub] = {};
+			modpart = item_opts[side][sub]; // such as hand or arm
+		}
+		partnames = Object.keys(modpart);
+		CT.dom.setContent(selz[bname], partnames.length ? partnames.map(function(part) {
+			val = modpart[part];
+			return CT.dom.div([
+				Object.keys(val).map(function(axis) {
+					return modder(sname, sitem, val[axis], side, sub, part, axis, modpart);
+				})
+			], "jblock pr10");
+		}) : "");
+		CT.dom.setContent(selz[bname + "_button"], partnames.length ? CT.dom.button("clear", function() {
+			if (!confirm("really?"))
+				return;
+			person["un" + sing](null, side, sub);
+			if (sub) {
+				delete item_opts[side][sub];
+				if (!Object.keys(item_opts[side]).length)
+					delete item_opts[side];
+			} else
+				delete item_opts[side];
+			pset(sname, sitem, side, sub);
+		}) : CT.dom.button("add", function() {
+			var _c = CT.parse.capitalize,
+				pmod = zero.core[_c(side)] || zero.core[_c(sub)],
+				az = zero.base.aspects[sub || side];
+			if (pmod.parts) {
+				pmod.parts.forEach(function(part) {
+					modpart[part] = {};
+					Object.keys(az[part]).forEach(function(dim) {
+						if (curl || (dim != "curl"))
+							modpart[part][dim] = neu;
+					});
+				});
+			} else // body
+				bm(modpart);
+			pset(sname, sitem, side, sub);
+		}));
 	},
 	setItem: function(sname, sitem) {
-		var jset = this.setJoints, selz = this._.selectors;
+		var pset = this.setParts, selz = this._.selectors;
 		["left", "right"].forEach(function(side) {
 			["leg", "arm", "hand"].forEach(function(sub) {
-				jset(sname, sitem, side, sub);
+				pset(sname, sitem, side, sub);
 			});
 		});
-		jset(sname, sitem, "spine");
-		jset(sname, sitem, "body");
+		pset(sname, sitem, "spine");
+		pset(sname, sitem, "body");
 		CT.dom.setContent(selz[sname + "_button"], sitem);
 	},
 	selector: function(sname, onfocus) {
