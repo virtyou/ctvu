@@ -110,7 +110,7 @@ vu.menu.Body = CT.Class({
 		this.loadExtras();
 	},
 	modder: function(sname, sitem, val, side, sub, part, axis, modpart) {
-		return CT.dom.div(sname + " " + sitem + " " + val + " " + side + " " + sub + " " + part + " " + axis + " " + modpart);
+		return part;
 	},
 	bodmod: function(modpart) {
 		modpart.aura = null;
@@ -122,11 +122,14 @@ vu.menu.Body = CT.Class({
 			az = zero.base.aspects[sub || side];
 		if (pmod.parts) {
 			pmod.parts.forEach(function(part) {
-				modpart[part] = {};
-				dimmed && Object.keys(az[part]).forEach(function(dim) {
-					if (curl || (dim != "curl"))
-						modpart[part][dim] = neu;
-				});
+				if (dimmed) {
+					modpart[part] = {};
+					Object.keys(az[part]).forEach(function(dim) {
+						if (curl || (dim != "curl"))
+							modpart[part][dim] = neu;
+					});
+				} else
+					modpart[part] = neu;
 			});
 		} else // body
 			this.bodmod(modpart);
