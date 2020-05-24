@@ -9,35 +9,58 @@ vu.builders.Gear = CT.Class({
 	loadMain: function() {
 		this.setItem("gear", "worn", true);
 	},
+	canClear: function(modpart) {
+		if (!confirm("really?")) return false;
+		for (var sub in modpart)
+			if (modpart[sub])
+				vu.storage.edit(modpart[sub],
+					null, "delete", "key");
+		return true;
+	},
 	swapper: function(modpart, gtype, part, side, sub) {
-		if (modpart[part]) {
-			var tnode = CT.dom.div();
-			CT.db.one(modpart[part], function(fullp) {
-				CT.dom.setContent(tnode, fullp.name);
-			}, "json");
-			return [
-				tnode,
-				CT.dom.link("swap", function() {
-					// vu.media.....
-				}),
-				CT.dom.pad(),
-				CT.dom.link("adjust", function() {
-					// vu.media.....
-				})
-			];
-		} else {
-			return CT.dom.link("add", function() {
-				vu.media.prompt.thing(function(fullp) {
-					modpart[part] = fullp.key;
+		var per = zero.core.current.person,
+			peritem = this._.peritem, n = CT.dom.div();
+		var up = function() {
+			if (modpart[part]) {
+				var tnode = CT.dom.div();
+				CT.db.one(modpart[part], function(fullp) {
+					CT.dom.setContent(tnode, fullp.name);
+				}, "json");
+				CT.dom.setContent(n, [
+					tnode,
+					CT.dom.link("edit", function() {
+						CT.modal.choice({
+							data: ["swap", "adjust", "remove"],
+							cb: function(eopt) {
+								if (eopt == "remove") {
+									if (!confirm("really?")) return;
+									per.ungear(modpart[part]);
+									vu.storage.edit(modpart[part], null, "delete", "key");
+									modpart[part] = null;
+									up();
+								} else if (eopt == "swap") {
 
+								} else if (eopt == "adjust") {
 
-					debugger; // TODO: the actual thing.....
-
-
-				}, (gtype == "held") ? "held" : ("worn_" + part),
-					null, side, sub);
-			});
-		}
+								}
+							}
+						});
+					})
+				]);
+			} else {
+				CT.dom.setContent(n, CT.dom.link("add", function() {
+					vu.media.prompt.thing(function(fullp) {
+						modpart[part] = fullp.key;
+						per.gear(per.opts.gear);
+						peritem("gear", per.opts.gear);
+						up();
+					}, (gtype == "held") ? "held" : ("worn_" + part),
+						null, side, sub);
+				}));
+			}
+		};
+		up();
+		return n;
 	},
 	modder: function(sname, sitem, val, side, sub, part, axis, modpart) {
 		console.log(sname, sitem, val, side, sub, part, axis, modpart);
