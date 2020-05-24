@@ -71,6 +71,7 @@ vu.builders.item = {
 				_.asset(ctfile, "stripset");
 			});
 			selz.scale = CT.dom.div();
+			selz.rotation = CT.dom.div();
 			selz.texture.update = function(asset) {
 				thopts.texture = asset && asset.item;
 				if (asset && (_.item.texture != asset.key)) {
@@ -112,6 +113,11 @@ vu.builders.item = {
 						scale: [fval, fval, fval]
 					});
 				}, 0.2, 16, _.thing.scale().x, 0.01, "w1"));
+			};
+			selz.rotation.update = function() {
+				CT.dom.setContent(selz.rotation, CT.dom.range(function(val) {
+					_.thing.adjust("rotation", "y", parseFloat(val));
+				}, -Math.PI, Math.PI, 0, 0.01, "w1"));
 			};
 		},
 		getThings: function() {
@@ -209,11 +215,14 @@ vu.builders.item = {
 		}));
 	},
 	update: function() {
-		var _ = vu.builders.item._;
+		var _ = vu.builders.item._, selz = _.selectors;
 		if (_.thing)
 			_.thing.remove();
 		_.thing = new zero.core.Thing(CT.merge(_.thopts, {
-			onbuild: _.selectors.scale.update
+			onbuild: function() {
+				selz.scale.update();
+				selz.rotation.update();
+			}
 		}));
 		var oz = _.thing.opts;
 		zero.core.current.room.update({
@@ -248,6 +257,10 @@ vu.builders.item = {
 			CT.dom.div([
 				"Scale",
 				selz.scale
+			], "padded bordered round mb5"),
+			CT.dom.div([
+				"Rotation",
+				selz.rotation
 			], "padded bordered round")
 		];
 	}
