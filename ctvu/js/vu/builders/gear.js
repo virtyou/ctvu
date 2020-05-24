@@ -8,6 +8,8 @@ vu.builders.Gear = CT.Class({
 	},
 	loadMain: function() {
 		this.setItem("gear", "worn", true);
+		CT.dom.setContent(this._.selectors.held,
+			["right", "left"].map(this.hmodder));
 	},
 	canClear: function(modpart) {
 		if (!confirm("really?")) return false;
@@ -80,11 +82,17 @@ vu.builders.Gear = CT.Class({
 		return n;
 	},
 	modder: function(sname, sitem, val, side, sub, part, axis, modpart) {
-		console.log(sname, sitem, val, side, sub, part, axis, modpart);
 		return CT.dom.div([
 			part,
 			this.swapper(modpart, sitem, part, side, sub)
 		], "bordered padded margined round");
+	},
+	hmodder: function(side) {
+		var mp = zero.core.current.person.opts.gear.held,
+			n = this.modder("gear", "held", mp[side],
+				side, null, side, null, mp);
+		n.classList.add("inline-block");
+		return n;
 	}
 }, vu.menu.Body);
 
