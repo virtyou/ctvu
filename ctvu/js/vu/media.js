@@ -122,9 +122,11 @@ vu.media = {
 			else if (kind.startsWith("worn_")) {
 				if (part in bm)
 					bone = bm[part];
-				else if (bms)
+				else if (bms) {
 					bone = sub ? bms[sub][part] : bms[part];
-				else // aura...
+					if (sub == "hand")
+						bone = bone[0];
+				} else // aura...
 					bone = 0; // i guess
 			}
 			if (bone != undefined)
