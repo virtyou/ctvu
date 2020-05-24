@@ -82,6 +82,82 @@ vu.media = {
 		}
 	},
 	prompt: {
+		adjusters: function(cb, part, variety) {
+			var bz = { // move somewhere else
+				scale: {
+					min: 0.2,
+					max: 16
+				},
+				rotation: {
+					min: -Math.PI,
+					max: Math.PI
+				},
+				position: {
+					min: -30,
+					max: 30
+				}
+			}[variety], cur = part[variety](), upobj = {};
+			upobj[variety] = [cur.x, cur.y, cur.z];
+			CT.modal.modal(CT.dom.div([
+				part.name + " - " + variety,
+				["x", "y", "z"].map(function(axis, i) {
+					return [
+						axis,
+						CT.dom.range(function(val) {
+							var fval = upobj[variety][i] = parseFloat(val);
+							part.adjust(variety, axis, val);
+							cb(upobj);
+						}, bz.min, bz.max, cur[axis], 0.01, "w1")
+					];
+				})
+			], "centered padded"));
+		},
+		part: function(cb, kind, base, side, sub) { // worn/held!!
+			var bm = zero.core.current.person.body.bmap, oz = {
+				modelName: "part",
+				base: base.key
+			}, bms = side && bm[side], bone, part;
+			if (kind == "held")
+				bone = bms.arm.wrist;
+			else if (kind.startsWith("worn_")) {
+				part = kind.split("_").pop();
+				if (part in bm)
+					bone = bm[part];
+				else if (bms)
+					bone = sub ? bms[sub][part] : bms[part];
+				else // aura...
+					bone = 0; // i guess
+			}
+			if (bone != undefined)
+				oz.opts = { bone: bone };
+			vu.storage.edit(oz, cb);
+		},
+		thing: function(cb, kind, part, side, sub) {
+			var up = function(thopts) {
+				part ? vu.storage.edit({
+					key: part.opts.key,
+					base: thopts.key
+				}, cb) : vu.media.prompt.part(cb, kind,
+					thopts, side, sub);
+			}, imap = vu.storage.get(kind),
+				items = imap && Object.values(imap);
+			if (!items)
+				return alert("oops, nothing yet! add the first " + kind + " thing on the item page!");
+			if (false) { // fix 3d menus 1st...
+				var m = new zero.core.Menu({
+					items: items,
+					onselect: function(thopts) {
+						m.close();
+						up(thopts);
+					}
+				});
+			} else {
+				CT.modal.choice({
+					data: items,
+					cb: up
+				});
+			}
+		},
 		tx: function(cb, data) {
 			CT.modal.prompt({
 				prompt: "please select a texture",
@@ -123,6 +199,22 @@ vu.media = {
 					}));
 				}
 			});
+		},
+		ofile: function(cb, mtype, variety, kind) {
+			vu.media.prompt.file(cb, {
+				action: mtype,
+				variety: variety,
+				kind: kind,
+				owner: user.core.get("key")
+			});
+		},
+		asset: function(cb, variety, kind) {
+			vu.media.prompt.ofile(cb, "asset",
+				variety, kind);
+		},
+		resource: function(cb, variety, kind) {
+			vu.media.prompt.ofile(cb, "resource",
+				variety, kind);
 		}
 	},
 	swapper: {
@@ -136,12 +228,8 @@ vu.media = {
 					if (which == "browse")
 						return vu.media.texture(up,
 							null, target.opts.kind);
-					vu.media.prompt.file(up, {
-						action: "asset",
-						variety: "texture",
-						kind: target.opts.kind,
-						owner: user.core.get("key")
-					});
+					vu.media.prompt.asset(up,
+						"texture", target.opts.kind);
 				});
 			});
 		},
@@ -150,12 +238,8 @@ vu.media = {
 				if (which == "browse")
 					return vu.media.audio(cb,
 						kind, reqkey);
-				vu.media.prompt.file(cb, {
-					action: "resource",
-					variety: "audio",
-					kind: kind,
-					owner: user.core.get("key")
-				});
+				vu.media.prompt.resource(cb,
+					"audio", kind);
 			});
 		}
 	},

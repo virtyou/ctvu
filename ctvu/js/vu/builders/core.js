@@ -3,8 +3,10 @@ vu.builders.core = {
 		var pname = location.pathname.split("/").pop().split(".")[0],
 			_ = vu.builders[pname]._;
 		core.config.ctzero.room = vu.core.room();
-		if (pname == "item")
+		if (pname == "item") {
 			delete core.config.ctzero.room.texture;
+			delete core.config.ctzero.room.objects;
+		}
 		zero.core.util.init();
 		if (pname == "item")
 			zero.core.camera.move({ x: 0, y: 0, z: 200 });

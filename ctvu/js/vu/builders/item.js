@@ -4,7 +4,13 @@ vu.builders.item = {
 			"Binary", "BVH", "Collada", "DDS", "FBX", "GLTF", "HDRCubeTexture",
 			"KMZ", "MD2", "MMD", "MTL", "NRRD", "OBJ", "PCD", "PDB", "PlayCanvas",
 			"PLY", "PVR", "RGBE", "STL", "SVG", "TGA", "TTF", "UTF8", "VRML", "VTK"],
-		kinds: ["furnishing", "shell", "wallpaper", "poster", "portal", "clothing", "body", "head", "hair", "eye", "teeth", "teeth_top", "tongue", "facial", "beard", "accessory"],
+		kinds: ["furnishing", "shell", "wallpaper", "poster", "portal",
+			"clothing", "body", "head", "hair", "eye", "teeth", "teeth_top",
+			"tongue", "facial", "beard", "accessory","held"
+		].concat([
+			"aura", "pelvis", "lumbar", "ribs", "neck", "head", "finger",
+			"hip", "knee", "ankle", "toe", "shoulder", "elbow", "wrist"
+		].map(k => "worn_" + k)),
 		selectors: {},
 		formatted: function(ctfile) {
 			var _ = vu.builders.item._, selz = _.selectors;
@@ -64,6 +70,9 @@ vu.builders.item = {
 			selz.stripset = CT.file.dragdrop(function(ctfile) {
 				_.asset(ctfile, "stripset");
 			});
+			selz.dub = CT.dom.div();
+			selz.scale = CT.dom.div();
+			selz.rotation = CT.dom.div();
 			selz.texture.update = function(asset) {
 				thopts.texture = asset && asset.item;
 				if (asset && (_.item.texture != asset.key)) {
@@ -97,6 +106,29 @@ vu.builders.item = {
 				_.item.stripset = asset && asset.key;
 				CT.dom.setContent(selz.stripset_name, asset && _.download(asset.item, asset.name, asset.name));
 			};
+			selz.scale.update = function() {
+				CT.dom.setContent(selz.scale, CT.dom.range(function(val) {
+					var fval = parseFloat(val);
+					_.thing.scale(fval);
+					vu.storage.setOpts(_.item.key, {
+						scale: [fval, fval, fval]
+					});
+				}, 0.2, 16, _.thing.scale().x, 0.01, "w1"));
+			};
+			selz.rotation.update = function() {
+				CT.dom.setContent(selz.rotation, CT.dom.range(function(val) {
+					_.thing.adjust("rotation", "y", parseFloat(val));
+				}, -Math.PI, Math.PI, 0, 0.01, "w1"));
+			};
+			selz.dub.update = function() {
+				CT.dom.setContent(selz.dub, CT.dom.checkboxAndLabel("double sided",
+					_.thing.material.side == 2, null, null, null, function(cbox) {
+						var s = _.thing.material.side = cbox.checked ? 2 : 0;
+						vu.storage.setMaterial(_.item.key, {
+							side: s
+						});
+					}));
+			};
 		},
 		getThings: function() {
 			var _ = vu.builders.item._;
@@ -114,12 +146,15 @@ vu.builders.item = {
 			});
 		},
 		setItem: function(item) {
-			var _ = vu.builders.item._, selz = _.selectors, s, t;
+			var _ = vu.builders.item._, selz = _.selectors, s, t, o;
 			_.item = item;
 			_.sharer.update(item);
 			CT.dom.setContent(_.curname, item.name);
 			selz.name.value = _.thopts.name = item.name;
 			selz.kind.value = _.thopts.kind = item.kind;
+			_.thopts.scale = item.opts.scale || [1, 1, 1];
+			_.thopts.material = _.thopts.material || {};
+			_.thopts.material.side = item.material.side;
 			var assets = [];
 			if (item.stripset)
 				assets.push(item.stripset);
@@ -192,10 +227,16 @@ vu.builders.item = {
 		}));
 	},
 	update: function() {
-		var _ = vu.builders.item._;
+		var _ = vu.builders.item._, selz = _.selectors;
 		if (_.thing)
 			_.thing.remove();
-		_.thing = new zero.core.Thing(_.thopts);
+		_.thing = new zero.core.Thing(CT.merge(_.thopts, {
+			onbuild: function() {
+				selz.dub.update();
+				selz.scale.update();
+				selz.rotation.update();
+			}
+		}));
 		var oz = _.thing.opts;
 		zero.core.current.room.update({
 			texture: (oz.kind == "wallpaper") && oz.texture
@@ -218,13 +259,25 @@ vu.builders.item = {
 			CT.dom.div([
 				selz.texture_name,
 				"Texture",
-				selz.texture
+				selz.texture,
+				CT.dom.div([
+					"Paint Texture on Both Sides?",
+					selz.dub
+				], "padded bordered round mt5")
 			], "padded bordered round mb5"),
 			CT.dom.div([
 //				CT.dom.div(selz.format, "right"),
 				selz.stripset_name,
 				"Stripset",
 				selz.stripset
+			], "padded bordered round mb5"),
+			CT.dom.div([
+				"Scale",
+				selz.scale
+			], "padded bordered round mb5"),
+			CT.dom.div([
+				"Rotation",
+				selz.rotation
 			], "padded bordered round")
 		];
 	}

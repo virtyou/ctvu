@@ -11,16 +11,19 @@ CT.require("core");
 CT.require("user.core");
 CT.require("zero.core");
 CT.require("vu.core");
+CT.require("vu.media");
+CT.require("vu.controls");
 CT.require("vu.storage");
+CT.require("vu.menu.Body");
 CT.require("vu.builders.core");
-CT.require("vu.builders.vibe");
+CT.require("vu.builders.gear");
 
 CT.onload(function() {
 	CT.initCore();
 	vu.core.init();
 	vu.storage.init(function() {
 		// menu
-		CT.dom.setContent("menu", vu.builders.vibe.menu());
+		vu.builders.gear.menus();
 		// virtual world
 		vu.builders.core.init();
 	});

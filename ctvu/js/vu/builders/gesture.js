@@ -44,7 +44,7 @@ vu.builders.Gesture = CT.Class({
 		});
 		CT.dom.addContent(selz.dances, [selz.step, "Steps", selz.steps]);
 	}
-}, vu.menu.Body);
+}, vu.menu.Joints);
 
 vu.builders.gesture = {
 	menus: function() {

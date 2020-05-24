@@ -78,17 +78,21 @@ vu.menu.Body = CT.Class({
 			}
 			return content;
 		},
+		sing: function(prop) {
+			return prop.endsWith("s") ? prop.slice(0, -1) : prop;
+		},
 		peritem: function(k, v) {
 			var pobj = {};
 			pobj[k] = v;
 			this.persist(pobj);
 		}
 	},
-	neutral: 0,
+	dimmed: false,
+	neutral: null,
 	initMain: function() {
-		var _ = this._, mprop = this.opts.main,
-			per = _.peritem, cur = zero.core.current,
-			sing = mprop.slice(0, -1), lm = this.loadMain;
+		var _ = this._, per = _.peritem, lm = this.loadMain,
+			cur = zero.core.current, mprop = this.opts.main,
+			sing = _.sing(mprop);
 		CT.modal.prompt({
 			prompt: "what's the new " + sing + "?",
 			cb: function(val) {
@@ -106,44 +110,42 @@ vu.menu.Body = CT.Class({
 		this.selector(this.opts.main);
 		this.loadExtras();
 	},
-	bodmod: function(modpart) { // scale-oriented -- override in gesture
-		modpart.scale = {
-			width: 1,
-			height: 1,
-			depth: 1
-		};
+	modder: function(sname, sitem, val, side, sub, part, axis, modpart) {
+		return part;
 	},
-	constraints: function(side, sub, part, axis) {
-		return {
-			min: 0.1,
-			max: 2.0
-		};
+	bodmod: function(modpart) {
+		modpart.aura = null;
 	},
-	jointRange: function(sname, sitem, val, side, sub, part, axis, modpart) {
-		var constraints = this.constraints(side, sub, part, axis),
-			person = zero.core.current.person,
-			gopts = person.opts[sname],
-			per = this._.peritem;
-		return CT.dom.div([
-			axis ? CT.parse.toCaps([part, axis]).join(" ") : CT.parse.capitalize(part),
-			CT.dom.range(function(val) {
-				CT.log([side, sub, part, axis, ":", val].join(" "));
-				modpart[part][axis] = val / 100;
-				person[sname.slice(0, -1)](sitem);
-				per(sname, gopts);
-			}, constraints.min * 100, constraints.max * 100, 100 * (val || 0), 1, "w1")
-		], "w1 pr10");
+	addPart: function(side, sub, modpart) {
+		var _c = CT.parse.capitalize, dimmed = this.dimmed,
+			neu = this.neutral, curl = this.curl,
+			pmod = zero.core[_c(side)] || zero.core[_c(sub)],
+			az = zero.base.aspects[sub || side];
+		if (pmod.parts) {
+			pmod.parts.forEach(function(part) {
+				if (dimmed) {
+					modpart[part] = {};
+					Object.keys(az[part]).forEach(function(dim) {
+						if (curl || (dim != "curl"))
+							modpart[part][dim] = neu;
+					});
+				} else
+					modpart[part] = neu;
+			});
+		} else // body
+			this.bodmod(modpart);
 	},
-	setJoints: function(sname, sitem, side, sub) {
-		var _ = this._, selz = _.selectors,
-			person = zero.core.current.person,
-			gopts = person.opts[sname],
-			sing = sname.slice(0, -1),
+	canClear: function(modpart) {
+		return confirm("really?");
+	},
+	setParts: function(sname, sitem, side, sub) {
+		var _ = this._, selz = _.selectors, dimmed = this.dimmed,
+			person = zero.core.current.person, cc = this.canClear,
+			gopts = person.opts[sname], sing = _.sing(sname),
 			item_opts = gopts[sitem] = gopts[sitem] || {},
 			modpart = item_opts[side] = item_opts[side] || {},
-			val, partnames, bname = side,
-			neu = this.neutral, curl = this.curl, bm = this.bodmod,
-			jrange = this.jointRange, jset = this.setJoints;
+			val, partnames, bname = side, apart = this.addPart,
+			modder = this.modder, pset = this.setParts;
 		if (sub) {
 			bname += "_" + sub;
 			if (!item_opts[side][sub])
@@ -154,13 +156,15 @@ vu.menu.Body = CT.Class({
 		CT.dom.setContent(selz[bname], partnames.length ? partnames.map(function(part) {
 			val = modpart[part];
 			return CT.dom.div([
-				Object.keys(val).map(function(axis) {
-					return jrange(sname, sitem, val[axis], side, sub, part, axis, modpart);
-				})
+				dimmed ? Object.keys(val).map(function(axis) {
+					return modder(sname, sitem, val[axis],
+						side, sub, part, axis, modpart);
+				}) : modder(sname, sitem, val, side, sub,
+					part, null, modpart)
 			], "jblock pr10");
 		}) : "");
 		CT.dom.setContent(selz[bname + "_button"], partnames.length ? CT.dom.button("clear", function() {
-			if (!confirm("really?"))
+			if (!cc())
 				return;
 			person["un" + sing](null, side, sub);
 			if (sub) {
@@ -169,40 +173,32 @@ vu.menu.Body = CT.Class({
 					delete item_opts[side];
 			} else
 				delete item_opts[side];
-			jset(sname, sitem, side, sub);
+			pset(sname, sitem, side, sub);
 		}) : CT.dom.button("add", function() {
-			var _c = CT.parse.capitalize,
-				pmod = zero.core[_c(side)] || zero.core[_c(sub)],
-				az = zero.base.aspects[sub || side];
-			if (pmod.parts) {
-				pmod.parts.forEach(function(part) {
-					modpart[part] = {};
-					Object.keys(az[part]).forEach(function(dim) {
-						if (curl || (dim != "curl"))
-							modpart[part][dim] = neu;
-					});
-				});
-			} else // body
-				bm(modpart);
-			jset(sname, sitem, side, sub);
+			apart(side, sub, modpart);
+			pset(sname, sitem, side, sub);
 		}));
 	},
-	setItem: function(sname, sitem) {
-		var jset = this.setJoints, selz = this._.selectors;
+	setLimbs: function(sname, sitem) {
+		var pset = this.setParts;
 		["left", "right"].forEach(function(side) {
 			["leg", "arm", "hand"].forEach(function(sub) {
-				jset(sname, sitem, side, sub);
+				pset(sname, sitem, side, sub);
 			});
 		});
-		jset(sname, sitem, "spine");
-		jset(sname, sitem, "body");
-		CT.dom.setContent(selz[sname + "_button"], sitem);
+	},
+	setItem: function(sname, sitem, nobutt) {
+		var selz = this._.selectors;
+		this.setLimbs(sname, sitem);
+		this.setParts(sname, sitem, "spine");
+		this.setParts(sname, sitem, "body");
+		nobutt || CT.dom.setContent(selz[sname + "_button"], sitem);
 	},
 	selector: function(sname, onfocus) {
 		var _ = this._, selz = _.selectors,
 			person = zero.core.current.person,
 			gopts = person.opts[sname],
-			sing = sname.slice(0, -1),
+			sing = _.sing(sname),
 			capd = CT.parse.capitalize(sing),
 			apro = "active" + capd,
 			setr = this["set" + capd],
@@ -257,16 +253,21 @@ vu.menu.Body = CT.Class({
 		this.opts = opts = CT.merge(opts, {
 			main: null, // required! -> becomes top-left
 			secondary: null,
+			impex: true,
 			subs: {} // node map
 		});
-		opts.impex = [opts.main];
-		if (opts.secondary) {
-			opts.topright = opts.secondary;
-			opts.impex.push(opts.secondary);
-			_.menus[opts.secondary] = "topright";
-		}
 		opts.topleft = opts.main;
 		_.menus[opts.main] = "topleft";
+		if (opts.secondary) {
+			opts.topright = opts.secondary;
+			_.menus[opts.secondary] = "topright";
+		}
+		if (opts.impex){
+			opts.impex = [opts.main];
+			if (opts.secondary)
+				opts.impex.push(opts.secondary);
+		} else
+			opts.impex = [];
 		_.setup();
 		CT.dom.id("ctmain").className = "gpage"; // 33% gmenu exclusion
 		for (section in _.menus) {

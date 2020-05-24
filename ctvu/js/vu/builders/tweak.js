@@ -35,24 +35,14 @@ vu.builders.tweak = {
 			var htar;
 			var hmenu = function() {
 				has_menu = true;
-				var m = new zero.core.Menu({
-					items: Object.values(vu.storage.get("hair")),
-					onselect: function(hopts) {
-						CT.log(hopts.name);
-						m.close();
-						vu.storage.edit({
-							key: htar.opts.key,
-							base: hopts.key
-						}, function(hnew) {
-							person.head.detach("hair");
-							person.head.attach(hnew, function() {
-								registerHair();
-								onhair();
-							}, true);
-							has_menu = false;
-						});
-					}
-				});
+				vu.media.prompt.thing(function(hnew) {
+					person.head.detach("hair");
+					person.head.attach(hnew, function() {
+						registerHair();
+						onhair();
+					}, true);
+					has_menu = false;
+				}, "hair", htar);
 			};
 			var onhair = function() {
 				if (has_menu) return true;
