@@ -88,6 +88,7 @@ vu.menu.Body = CT.Class({
 		}
 	},
 	dimmed: false,
+	neutral: null,
 	initMain: function() {
 		var _ = this._, per = _.peritem, lm = this.loadMain,
 			cur = zero.core.current, mprop = this.opts.main,
@@ -134,9 +135,12 @@ vu.menu.Body = CT.Class({
 		} else // body
 			this.bodmod(modpart);
 	},
+	canClear: function(modpart) {
+		return confirm("really?");
+	},
 	setParts: function(sname, sitem, side, sub) {
 		var _ = this._, selz = _.selectors, dimmed = this.dimmed,
-			person = zero.core.current.person,
+			person = zero.core.current.person, cc = this.canClear,
 			gopts = person.opts[sname], sing = _.sing(sname),
 			item_opts = gopts[sitem] = gopts[sitem] || {},
 			modpart = item_opts[side] = item_opts[side] || {},
@@ -160,7 +164,7 @@ vu.menu.Body = CT.Class({
 			], "jblock pr10");
 		}) : "");
 		CT.dom.setContent(selz[bname + "_button"], partnames.length ? CT.dom.button("clear", function() {
-			if (!confirm("really?"))
+			if (!cc())
 				return;
 			person["un" + sing](null, side, sub);
 			if (sub) {
