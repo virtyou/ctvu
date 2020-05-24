@@ -82,18 +82,36 @@ vu.media = {
 		}
 	},
 	prompt: {
-		thing: function(cb, kind, part) {
+		part: function(cb, kind, base, side, sub) { // worn/held!!
+			var bm = zero.core.current.person.body.bmap, oz = {
+				modelName: "part",
+				base: base.key
+			}, bms = side && bm[side], bone, part;
+			if (kind == "held")
+				bone = bms.arm.wrist;
+			else if (kind.startsWith("worn_")) {
+				part = kind.split("_").pop();
+				if (part in bm)
+					bone = bm[part];
+				else if (bms)
+					bone = sub ? bms[sub][part] : bms[part];
+				else
+					debugger; // aura?
+			}
+			if (bone != undefined)
+				oz.opts = { bone: bone };
+			vu.storage.edit(oz, cb);
+		},
+		thing: function(cb, kind, part, side, sub) {
 			var m = new zero.core.Menu({
 				items: Object.values(vu.storage.get(kind)),
 				onselect: function(thopts) {
 					m.close();
-
-// TODO: if !part, create one [w/ kind-based bone]
-
-					vu.storage.edit({
+					part ? vu.storage.edit({
 						key: part.opts.key,
 						base: thopts.key
-					}, cb);
+					}, cb) : vu.media.prompt.part(cb, kind,
+						thopts, side, sub);
 				}
 			});
 		},
@@ -139,21 +157,21 @@ vu.media = {
 				}
 			});
 		},
-		asset: function(cb, variety, kind) {
+		ofile: function(cb, mtype, variety, kind) {
 			vu.media.prompt.file(cb, {
-				action: "asset",
+				action: mtype,
 				variety: variety,
 				kind: kind,
 				owner: user.core.get("key")
 			});
 		},
+		asset: function(cb, variety, kind) {
+			vu.media.prompt.ofile(cb, "asset",
+				variety, kind);
+		},
 		resource: function(cb, variety, kind) {
-			vu.media.prompt.file(cb, {
-				action: "resource",
-				variety: variety,
-				kind: kind,
-				owner: user.core.get("key")
-			});
+			vu.media.prompt.ofile(cb, "resource",
+				variety, kind);
 		}
 	},
 	swapper: {
