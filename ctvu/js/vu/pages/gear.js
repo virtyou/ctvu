@@ -1,5 +1,6 @@
 CT.require("CT.align");
 CT.require("CT.data");
+CT.require("CT.db");
 CT.require("CT.dom");
 CT.require("CT.layout");
 CT.require("CT.modal");
@@ -10,6 +11,7 @@ CT.require("core");
 CT.require("user.core");
 CT.require("zero.core");
 CT.require("vu.core");
+CT.require("vu.media");
 CT.require("vu.controls");
 CT.require("vu.storage");
 CT.require("vu.menu.Body");
