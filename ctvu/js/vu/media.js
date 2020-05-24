@@ -103,17 +103,27 @@ vu.media = {
 			vu.storage.edit(oz, cb);
 		},
 		thing: function(cb, kind, part, side, sub) {
-			var m = new zero.core.Menu({
-				items: Object.values(vu.storage.get(kind)),
-				onselect: function(thopts) {
-					m.close();
-					part ? vu.storage.edit({
-						key: part.opts.key,
-						base: thopts.key
-					}, cb) : vu.media.prompt.part(cb, kind,
-						thopts, side, sub);
-				}
-			});
+			var up = function(thopts) {
+				part ? vu.storage.edit({
+					key: part.opts.key,
+					base: thopts.key
+				}, cb) : vu.media.prompt.part(cb, kind,
+					thopts, side, sub);
+			}, items = Object.values(vu.storage.get(kind));
+			if (false) { // fix 3d menus 1st...
+				var m = new zero.core.Menu({
+					items: items,
+					onselect: function(thopts) {
+						m.close();
+						up(thopts);
+					}
+				});
+			} else {
+				CT.modal.choice({
+					data: items,
+					cb: up
+				});
+			}
 		},
 		tx: function(cb, data) {
 			CT.modal.prompt({
