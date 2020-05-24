@@ -95,8 +95,8 @@ vu.media = {
 					bone = bm[part];
 				else if (bms)
 					bone = sub ? bms[sub][part] : bms[part];
-				else
-					debugger; // aura?
+				else // aura...
+					bone = 0; // i guess
 			}
 			if (bone != undefined)
 				oz.opts = { bone: bone };
