@@ -9,7 +9,7 @@ vu.builders.Gear = CT.Class({
 	loadMain: function() {
 		this.setItem("gear", "worn", true);
 	},
-	swapper: function(modpart, part) {
+	swapper: function(modpart, gtype, part, side, sub) {
 		if (modpart[part]) {
 			var tnode = CT.dom.div();
 			CT.db.one(modpart[part], function(fullp) {
@@ -27,14 +27,23 @@ vu.builders.Gear = CT.Class({
 			];
 		} else {
 			return CT.dom.link("add", function() {
-				// vu.media.....
+				vu.media.prompt.thing(function(fullp) {
+					modpart[part] = fullp.key;
+
+
+					debugger; // TODO: the actual thing.....
+
+
+				}, (gtype == "held") ? "held" : ("worn_" + part),
+					null, side, sub);
 			});
 		}
 	},
 	modder: function(sname, sitem, val, side, sub, part, axis, modpart) {
+		console.log(sname, sitem, val, side, sub, part, axis, modpart);
 		return CT.dom.div([
 			part,
-			this.swapper(modpart, part)
+			this.swapper(modpart, sitem, part, side, sub)
 		], "bordered padded margined round");
 	}
 }, vu.menu.Body);
