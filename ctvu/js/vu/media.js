@@ -109,7 +109,10 @@ vu.media = {
 					base: thopts.key
 				}, cb) : vu.media.prompt.part(cb, kind,
 					thopts, side, sub);
-			}, items = Object.values(vu.storage.get(kind));
+			}, imap = vu.storage.get(kind),
+				items = imap && Object.values(imap);
+			if (!items)
+				return alert("oops, nothing yet! add the first " + kind + " thing on the item page!");
 			if (false) { // fix 3d menus 1st...
 				var m = new zero.core.Menu({
 					items: items,
