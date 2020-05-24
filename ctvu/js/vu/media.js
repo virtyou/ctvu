@@ -82,6 +82,36 @@ vu.media = {
 		}
 	},
 	prompt: {
+		adjusters: function(cb, part, variety) {
+			var bz = { // move somewhere else
+				scale: {
+					min: 0.2,
+					max: 16
+				},
+				rotation: {
+					min: -Math.PI,
+					max: Math.PI
+				},
+				position: {
+					min: -30,
+					max: 30
+				}
+			}[variety], cur = part[variety](), upobj = {};
+			upobj[variety] = [cur.x, cur.y, cur.z];
+			CT.modal.modal(CT.dom.div([
+				part.name + " - " + variety,
+				["x", "y", "z"].map(function(axis, i) {
+					return [
+						axis,
+						CT.dom.range(function(val) {
+							var fval = upobj[variety][i] = parseFloat(val);
+							part.adjust(variety, axis, val);
+							cb(upobj);
+						}, bz.min, bz.max, cur[axis], 0.01, "w1")
+					];
+				})
+			], "centered padded"));
+		},
 		part: function(cb, kind, base, side, sub) { // worn/held!!
 			var bm = zero.core.current.person.body.bmap, oz = {
 				modelName: "part",
