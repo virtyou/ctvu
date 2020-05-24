@@ -112,7 +112,7 @@ vu.media = {
 				})
 			], "centered padded"));
 		},
-		part: function(cb, kind, base, side, sub) { // worn/held!!
+		part: function(cb, kind, base, side, sub, part) { // worn/held!!
 			var bm = zero.core.current.person.body.bmap, oz = {
 				modelName: "part",
 				base: base.key
@@ -120,7 +120,6 @@ vu.media = {
 			if (kind == "held")
 				bone = bms.arm.wrist;
 			else if (kind.startsWith("worn_")) {
-				part = kind.split("_").pop();
 				if (part in bm)
 					bone = bm[part];
 				else if (bms)
@@ -132,13 +131,13 @@ vu.media = {
 				oz.opts = { bone: bone };
 			vu.storage.edit(oz, cb);
 		},
-		thing: function(cb, kind, part, side, sub) {
+		thing: function(cb, kind, part, side, sub, partname) {
 			var up = function(thopts) {
 				part ? vu.storage.edit({
 					key: part.opts.key,
 					base: thopts.key
 				}, cb) : vu.media.prompt.part(cb, kind,
-					thopts, side, sub);
+					thopts, side, sub, partname);
 			}, imap = vu.storage.get(kind),
 				items = imap && Object.values(imap);
 			if (!items)
