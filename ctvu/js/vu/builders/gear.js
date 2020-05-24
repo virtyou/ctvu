@@ -20,15 +20,20 @@ vu.builders.Gear = CT.Class({
 	swapper: function(modpart, gtype, part, side, sub) {
 		var per = zero.core.current.person,
 			peritem = this._.peritem, n = CT.dom.div();
+		var set = function(livepart) {
+			if (livepart.target) livepart = null; // is click event;
+			vu.media.prompt.thing(function(fullp) {
+				modpart[part] = fullp.key;
+				per.gear(per.opts.gear);
+				peritem("gear", per.opts.gear);
+				up();
+			}, (gtype == "held") ? "held" : ("worn_" + part),
+				livepart, side, sub);
+		};
 		var up = function() {
 			if (modpart[part]) {
-				var tnode = CT.dom.div();
 				CT.db.one(modpart[part], function(fullp) {
-					CT.dom.setContent(tnode, fullp.name);
-				}, "json");
-				CT.dom.setContent(n, [
-					tnode,
-					CT.dom.link("edit", function() {
+					CT.dom.setContent(n, CT.dom.link(fullp.name, function() {
 						CT.modal.choice({
 							data: ["swap", "adjust", "remove"],
 							cb: function(eopt) {
@@ -38,26 +43,17 @@ vu.builders.Gear = CT.Class({
 									vu.storage.edit(modpart[part], null, "delete", "key");
 									modpart[part] = null;
 									up();
-								} else if (eopt == "swap") {
-
-								} else if (eopt == "adjust") {
+								} else if (eopt == "swap")
+									set(per.body.gearmap[modpart[part]]);
+								else if (eopt == "adjust") {
 
 								}
 							}
 						});
-					})
-				]);
-			} else {
-				CT.dom.setContent(n, CT.dom.link("add", function() {
-					vu.media.prompt.thing(function(fullp) {
-						modpart[part] = fullp.key;
-						per.gear(per.opts.gear);
-						peritem("gear", per.opts.gear);
-						up();
-					}, (gtype == "held") ? "held" : ("worn_" + part),
-						null, side, sub);
-				}));
-			}
+					}));
+				}, "json");
+			} else
+				CT.dom.setContent(n, CT.dom.link("add", set));
 		};
 		up();
 		return n;
