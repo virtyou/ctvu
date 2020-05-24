@@ -30,6 +30,29 @@ vu.builders.Gear = CT.Class({
 			}, (gtype == "held") ? "held" : ("worn_" + part),
 				livepart, side, sub);
 		};
+		var adjusters = function(livepart, upthing) {
+			CT.modal.choice({
+				data: ["position", "rotation", "scale"],
+				cb: function(variety) {
+					vu.media.prompt.adjusters(function(upobj) {
+						vu.storage.setOpts(livepart.opts[upthing
+							? "thing_key" : "key"], upobj);
+					}, livepart, variety);
+				}
+			});
+		};
+		var adjust = function(livepart) {
+			if (livepart.opts.owners.includes(user.core.get("key"))) {
+				CT.modal.choice({
+					prompt: "adjust base (thing) or just this instance (part)?",
+					data: ["part", "thing"],
+					cb: function(resp) {
+						adjusters(livepart, resp == "thing");
+					}
+				});
+			} else
+				adjusters(livepart);
+		};
 		var up = function() {
 			if (modpart[part]) {
 				CT.db.one(modpart[part], function(fullp) {
@@ -43,11 +66,9 @@ vu.builders.Gear = CT.Class({
 									vu.storage.edit(modpart[part], null, "delete", "key");
 									modpart[part] = null;
 									up();
-								} else if (eopt == "swap")
-									set(per.body.gearmap[modpart[part]]);
-								else if (eopt == "adjust") {
-
-								}
+								} else
+									((eopt == "swap") ? set :
+										adjust)(per.body.gearmap[modpart[part]]);
 							}
 						});
 					}));
