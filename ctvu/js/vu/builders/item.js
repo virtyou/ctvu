@@ -64,6 +64,7 @@ vu.builders.item = {
 			selz.stripset = CT.file.dragdrop(function(ctfile) {
 				_.asset(ctfile, "stripset");
 			});
+			selz.scale = CT.dom.div();
 			selz.texture.update = function(asset) {
 				thopts.texture = asset && asset.item;
 				if (asset && (_.item.texture != asset.key)) {
@@ -97,6 +98,15 @@ vu.builders.item = {
 				_.item.stripset = asset && asset.key;
 				CT.dom.setContent(selz.stripset_name, asset && _.download(asset.item, asset.name, asset.name));
 			};
+			selz.scale.update = function() {
+				CT.dom.setContent(selz.scale, CT.dom.range(function(val) {
+					var fval = parseFloat(val);
+					_.thing.scale(fval);
+					vu.storage.setOpts(_.item.key, {
+						scale: [fval, fval, fval]
+					});
+				}, 0.2, 16, _.thing.scale().x, 0.01, "w1"));
+			};
 		},
 		getThings: function() {
 			var _ = vu.builders.item._;
@@ -114,12 +124,13 @@ vu.builders.item = {
 			});
 		},
 		setItem: function(item) {
-			var _ = vu.builders.item._, selz = _.selectors, s, t;
+			var _ = vu.builders.item._, selz = _.selectors, s, t, o;
 			_.item = item;
 			_.sharer.update(item);
 			CT.dom.setContent(_.curname, item.name);
 			selz.name.value = _.thopts.name = item.name;
 			selz.kind.value = _.thopts.kind = item.kind;
+			_.thopts.scale = item.opts.scale || [1, 1, 1];
 			var assets = [];
 			if (item.stripset)
 				assets.push(item.stripset);
@@ -195,7 +206,9 @@ vu.builders.item = {
 		var _ = vu.builders.item._;
 		if (_.thing)
 			_.thing.remove();
-		_.thing = new zero.core.Thing(_.thopts);
+		_.thing = new zero.core.Thing(CT.merge(_.thopts, {
+			onbuild: _.selectors.scale.update
+		}));
 		var oz = _.thing.opts;
 		zero.core.current.room.update({
 			texture: (oz.kind == "wallpaper") && oz.texture
@@ -225,6 +238,10 @@ vu.builders.item = {
 				selz.stripset_name,
 				"Stripset",
 				selz.stripset
+			], "padded bordered round mb5"),
+			CT.dom.div([
+				"Scale",
+				selz.scale
 			], "padded bordered round")
 		];
 	}
