@@ -29,7 +29,8 @@ vu.builders.Gear = CT.Class({
 				per.gear(per.opts.gear);
 				peritem("gear", per.opts.gear);
 				up();
-			}, (gtype == "held") ? "held" : ("worn_" + part),
+			}, (gtype == "held") ? "held" :
+				("worn_" + ((sub == "hand") ? "finger" : part)),
 				livepart, side, sub);
 		};
 		var adjusters = function(livepart, upthing) {
