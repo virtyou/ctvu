@@ -70,6 +70,7 @@ vu.builders.item = {
 			selz.stripset = CT.file.dragdrop(function(ctfile) {
 				_.asset(ctfile, "stripset");
 			});
+			selz.dub = CT.dom.div();
 			selz.scale = CT.dom.div();
 			selz.rotation = CT.dom.div();
 			selz.texture.update = function(asset) {
@@ -119,6 +120,15 @@ vu.builders.item = {
 					_.thing.adjust("rotation", "y", parseFloat(val));
 				}, -Math.PI, Math.PI, 0, 0.01, "w1"));
 			};
+			selz.dub.update = function() {
+				CT.dom.setContent(selz.dub, CT.dom.checkboxAndLabel("double sided",
+					_.thing.material.side == 2, null, null, null, function(cbox) {
+						var s = _.thing.material.side = cbox.checked ? 2 : 0;
+						vu.storage.setMaterial(_.item.key, {
+							side: s
+						});
+					}));
+			};
 		},
 		getThings: function() {
 			var _ = vu.builders.item._;
@@ -143,6 +153,8 @@ vu.builders.item = {
 			selz.name.value = _.thopts.name = item.name;
 			selz.kind.value = _.thopts.kind = item.kind;
 			_.thopts.scale = item.opts.scale || [1, 1, 1];
+			_.thopts.material = _.thopts.material || {};
+			_.thopts.material.side = item.material.side;
 			var assets = [];
 			if (item.stripset)
 				assets.push(item.stripset);
@@ -220,6 +232,7 @@ vu.builders.item = {
 			_.thing.remove();
 		_.thing = new zero.core.Thing(CT.merge(_.thopts, {
 			onbuild: function() {
+				selz.dub.update();
 				selz.scale.update();
 				selz.rotation.update();
 			}
@@ -246,7 +259,11 @@ vu.builders.item = {
 			CT.dom.div([
 				selz.texture_name,
 				"Texture",
-				selz.texture
+				selz.texture,
+				CT.dom.div([
+					"Paint Texture on Both Sides?",
+					selz.dub
+				], "padded bordered round mt5")
 			], "padded bordered round mb5"),
 			CT.dom.div([
 //				CT.dom.div(selz.format, "right"),
