@@ -9,7 +9,7 @@ vu.game.Scene = CT.Class({
 	script: function(sname) {
 		var oz = this.opts;
 		vu.game.util.script(oz.scripts[sname],
-			this.refresh, this.state);
+			this.refresh, this.state, this.audio);
 	},
 	start: function() {
 		var zcc = zero.core.current;
