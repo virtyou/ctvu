@@ -38,6 +38,7 @@ vu.game.Adventure = CT.Class({
 		s.inventory = s.inventory || [];
 		this.game = opts.game;
 		this.portals = opts.game.portals;
+		this.controls = new zero.core.Controls();
 		CT.modal.modal(CT.dom.div([
 			CT.dom.div(opts.game.name, "bigger"),
 			opts.game.description,
