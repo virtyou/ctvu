@@ -22,8 +22,8 @@ vu.builders.play = {
 				vu.controls.setMods(_.selectors.mods, _.emit);
 				_.controls = new zero.core.Controls({
 					cb: _.action,
-					moveCb: _.move,
-					target: person
+					target: person,
+					moveCb: vu.live.emit
 				});
 				cur.room.objects.forEach(_.clickreg);
 				zero.core.click.trigger(person.body);
@@ -80,10 +80,6 @@ vu.builders.play = {
 				action: action,
 				data: val
 			});
-		},
-		move: function() {
-			zero.core.current.person.body.setBob();
-			vu.live.emit();
 		},
 		portin: function(target, portinkey) {
 			var _ = vu.builders.play._, cur = zero.core.current;
