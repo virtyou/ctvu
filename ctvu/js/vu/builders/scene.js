@@ -152,9 +152,7 @@ vu.builders.scene = {
 				az = CT.dom.div(scene.actors.map(_.actor));
 			CT.dom.setContent(selz.actors, [
 				CT.dom.button("add", function() {
-					var akeys = scene.actors.map(function(a) {
-						return a.key;
-					});
+					var akeys = scene.actors.map(a => a.key);
 					CT.modal.choice({
 						prompt: "please select an actor",
 						data: vu.storage.get("people").filter(function(p) {
@@ -172,6 +170,54 @@ vu.builders.scene = {
 					});
 				}, "abs ctr shiftup"),
 				az
+			]);
+		},
+		prop: function(p) {
+			var zcc = zero.core.current, scene = zcc.scene,
+				pobj = scene.props[p.name] = scene.props[p.name] || { name: p.name };
+			return CT.dom.div([
+				p.name,
+				CT.dom.smartField({
+					isTA: true,
+					classname: "w1",
+					value: pobj.description,
+					blurs: ["enter a short description", "describe this prop"],
+					cb: function(desc) {
+						pobj.description = desc.trim();
+						vu.storage.edit({
+							key: scene.key,
+							props: scene.props
+						});
+					}
+				})
+			], "bordered padded margined round", null, {
+				onclick: function() {
+					zero.core.camera.follow(zcc.room[p.name]);
+				}
+			});
+		},
+		props: function() {
+			var _ = vu.builders.scene._, selz = _.selectors,
+				zcc = zero.core.current, scene = zcc.scene,
+				prop, pvalz = Object.values(scene.props),
+				pz = CT.dom.div(pvalz.map(_.prop));
+			CT.dom.setContent(selz.props, [
+				CT.dom.button("add", function() {
+					var pkeys = pvalz.map(p => p.key),
+						data = zcc.room.objects.filter(function(p) {
+							return !pkeys.includes(p.key);
+						});
+					data.length ? CT.modal.choice({
+						prompt: "please select a prop",
+						data: data,
+						cb: function(furn) {
+							zero.core.camera.follow(furn);
+							CT.dom.addContent(pz, _.prop(furn));
+						}
+					}) : alert("add something on the zone page!");
+				}, "right"),
+				"Props",
+				pz
 			]);
 		},
 		shifter: function(stpr, dir) {
@@ -264,6 +310,7 @@ vu.builders.scene = {
 		backstage: function() {
 			var _ = vu.builders.scene._, selz = _.selectors,
 				zcc = zero.core.current, scene = zcc.scene;
+			_.props();
 			_.actors();
 			zcc.room.setFriction(false); // for positioning......
 			vu.controls.initCamera(selz.cameras);
@@ -274,7 +321,6 @@ vu.builders.scene = {
 					}, 0, 100, light.opts.intensity * 100, 1, "w1 block");
 				}), "noflow"),
 				CT.dom.br(),
-				"Props [TODO]",
 				selz.props
 			]);
 		}
