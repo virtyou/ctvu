@@ -1,5 +1,17 @@
 vu.game.Scene = CT.Class({
 	CLASSNAME: "vu.game.Scene",
+	menus: {
+		prop: function(prop) {
+			var zc = zero.core, cam = zc.camera,
+				men = vu.core.menu(prop.name, "bottom",
+					this.opts.props[prop.name].description, null, function() {
+						men.hide();
+						cam.follow(zc.current.person.body);
+					});
+			men.show();
+			cam.follow(prop);
+		}
+	},
 	refresh: function() {
 		this.log("refresh");
 		// state has probs been updated > TODO:
@@ -16,7 +28,15 @@ vu.game.Scene = CT.Class({
 		zcc.person = zcc.people[this.player.name];
 		this.adventure.controls.setTarget(zcc.person);
 		zcc.room.setBounds();
+		for (var prop in this.opts.props)
+			this.regProp(zcc.room[prop]);
 		this.script("start");
+	},
+	regProp: function(prop) {
+		var pmen = this.menus.prop;
+		zero.core.click.register(prop, function() {
+			pmen(prop);
+		});
 	},
 	unload: function() {
 		// get rid of room / people!
