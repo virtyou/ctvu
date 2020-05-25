@@ -3,8 +3,9 @@ vu.game.Scene = CT.Class({
 	menus: {
 		prop: function(prop) {
 			var zc = zero.core, cam = zc.camera,
+				propts = this.opts.props[prop.name],
 				men = vu.core.menu(prop.name, "bottom",
-					this.opts.props[prop.name].description, null, function() {
+					propts.description, null, function() {
 						men.hide();
 						cam.follow(zc.current.person.body);
 					});
