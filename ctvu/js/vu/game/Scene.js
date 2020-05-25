@@ -14,6 +14,8 @@ vu.game.Scene = CT.Class({
 	start: function() {
 		var zcc = zero.core.current;
 		zcc.person = zcc.people[this.player.name];
+		this.adventure.controls.setTarget(zcc.person);
+		zcc.room.setBounds();
 		this.script("start");
 	},
 	unload: function() {
