@@ -377,6 +377,8 @@ vu.builders.scene = {
 		]);
 		_.steps();
 
+		if (!Object.keys(scene.scripts).length)
+			scene.scripts.start = [];
 		vu.core.fieldList(selz.scripts, Object.keys(scene.scripts), null, function(v) {
 			var f = CT.dom.field(null, v);
 			if (v) {
