@@ -60,34 +60,40 @@ vu.controls = {
 			CT.dom.setContent(node, butt);
 		}
 	},
-	setTriggers: function(node, cb) {
-		var person = zero.core.current.person,
-			responses = person.opts.responses,
+	setTriggers: function(node, cb, person) {
+		person = person || zero.core.current.person;
+		var responses = person.opts.responses,
 			triggers = person.brain.triggers,
 			trigz = CT.data.uniquify(Object.keys(responses).concat(Object.keys(triggers))),
-			vibez = person.vibe.opts.vibes;
-		CT.dom.setContent(node, [
-			trigz.map(function(trig) {
-				return CT.dom.div(trig, "bordered padded margined inline-block hoverglow", null, {
-					onclick: function(e) {
-						person.respond(trig);
-						vu.controls.setTriggers(node);
-						e.stopPropagation();
-						cb && cb("trigger", trig);
-					}
-				});
-			}),
-			"Vibes",
-			Object.keys(vibez).map(function(vibe) {
-				return CT.dom.div(vibe, "bordered padded margined inline-block hoverglow", null, {
-					onclick: function(e) {
-						person.vibe.update(vibe);
-						e.stopPropagation();
-						cb && cb("vibe", vibe);
-					}
-				});
-			})
-		]);
+			vibez = person.vibe.opts.vibes, content = [],
+			isgame = location.pathname == "/vu/adventure.html";
+		if (isgame)
+			CT.data.remove(trigz, "unintelligible");
+		content.push(trigz.map(function(trig) {
+			return CT.dom.div(trig, "bordered padded margined inline-block hoverglow", null, {
+				onclick: function(e) {
+					person.respond(trig);
+					vu.controls.setTriggers(node, cb, person);
+					e.stopPropagation();
+					cb && cb("trigger", trig);
+				}
+			});
+		}));
+		if (!isgame) {
+			content = content.concat([
+				"Vibes",
+				Object.keys(vibez).map(function(vibe) {
+					return CT.dom.div(vibe, "bordered padded margined inline-block hoverglow", null, {
+						onclick: function(e) {
+							person.vibe.update(vibe);
+							e.stopPropagation();
+							cb && cb("vibe", vibe);
+						}
+					});
+				})
+			]);
+		}
+		CT.dom.setContent(node, content);
 	},
 	setGestures: function(node, cb) {
 		var person = zero.core.current.person,
