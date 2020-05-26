@@ -73,8 +73,10 @@ vu.game.Scene = CT.Class({
 	},
 	load: function() {
 		var oz = this.opts, cfg = core.config.ctzero, p;
-		for (p of oz.actors)
+		for (p of oz.actors) {
 			p.grippy = false;
+			p.positioners = this.state.actors[p.name].positioners;
+		}
 		cfg.room = oz.room;
 		cfg.people = oz.actors.concat([this.player]);
 		zero.core.util.init(null, this.start);
