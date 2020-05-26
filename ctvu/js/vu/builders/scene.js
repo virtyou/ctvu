@@ -15,6 +15,22 @@ vu.builders.scene = {
 				scripts: scene.scripts
 			});
 		},
+		upstate: function() {
+			var g = zero.core.current.scene.game;
+			vu.storage.edit({
+				key: g.key,
+				initial: g.initial
+			});
+		},
+		state: function(ofScene, sub) {
+			var i = zero.core.current.scene.game.initial;
+			if (!ofScene) return i;
+			if (!i.scenes) i.scenes = {};
+			if (!i.scenes[ofScene]) i.scenes[ofScene] = {};
+			if (!sub) return i.scenes[ofScene];
+			if (!i.scenes[ofScene][sub]) i.scenes[ofScene][sub] = {};
+			return i.scenes[ofScene][sub];
+		},
 		step: function(cb, cur) {
 			var zcc = zero.core.current, _ = vu.builders.scene._;
 			CT.modal.choice({
@@ -123,17 +139,12 @@ vu.builders.scene = {
 			});
 		},
 		actor: function(a) {
-			var zcc = zero.core.current, pz = zcc.people,
-				r = zcc.room, g = zcc.scene.game, bod = pz[a.name].body,
-				az = g.initial.actors = g.initial.actors || {};
+			var _ = vu.builders.scene._, zcc = zero.core.current,
+				gup = _.upstate, state = _.state(),
+				az = state.actors = state.actors || {},
+				r = zcc.room, bod = zcc.people[a.name].body;
 			az[a.name] = az[a.name] || {};
 			az[a.name].positioners = az[a.name].positioners || {};
-			var gup = function() {
-				vu.storage.edit({
-					key: g.key,
-					initial: g.initial
-				});
-			};
 			return CT.dom.div([
 				a.name,
 				CT.dom.smartField({
@@ -252,17 +263,10 @@ vu.builders.scene = {
 			]);
 		},
 		item: function(iopts) { // also creates/places thing!!
-			var zcc = zero.core.current, r = zcc.room, s = zcc.scene,
-				g = s.game, si = g.initial.scenes[s.name].items,
+			var r = zero.core.current.room,
+				gup = vu.builders.scene._.upstate,
 				item = new zero.core.Thing(CT.merge(iopts,
 					vu.storage.get("held")[iopts.name]));
-
-			var gup = function() {
-				vu.storage.edit({
-					key: g.key,
-					initial: g.initial
-				});
-			};
 			return CT.dom.div([
 				item.name,
 				CT.dom.smartField({
@@ -298,10 +302,8 @@ vu.builders.scene = {
 		},
 		items: function() {
 			var _ = vu.builders.scene._, selz = _.selectors,
-				zcc = zero.core.current, s = zcc.scene, g = s.game,
-				sz = g.initial.scenes = g.initial.scenes || {},
-				ss = sz[s.name] = sz[s.name] || {},
-				si = ss.items = ss.items || {},
+				zcc = zero.core.current,
+				si = _.state(zcc.scene.name, "items"),
 				iz = CT.dom.div(Object.values(si).map(_.item));
 			CT.dom.setContent(selz.items, [
 				CT.dom.button("add", function() {
@@ -320,6 +322,28 @@ vu.builders.scene = {
 				"Items",
 				iz
 			]);
+		},
+		lights: function() {
+			var _ = vu.builders.scene._, selz = _.selectors,
+				zcc = zero.core.current, scene = zcc.scene,
+				lz = zcc.room.lights, state = _.state(scene.name);
+			if (state.lights) {
+				lz.forEach(function(l, i) {
+					l.setIntensity(state.lights[i]);
+				});
+			}
+			CT.dom.setContent(selz.lights, CT.dom.div([
+				"Lights",
+				CT.dom.div(lz.map(function(light, i) {
+					return CT.dom.range(function(val) {
+						light.setIntensity(parseInt(val) / 100);
+					}, 0, 100, light.opts.intensity * 100, 1, "w1 block");
+				}), "noflow"),
+				CT.dom.button("set initial lighting", function() {
+					state.lights = zcc.room.lights.map(l => l.opts.intensity);
+					_.upstate();
+				}, "w1")
+			], "pt10"));
 		},
 		shifter: function(stpr, dir) {
 			var _ = vu.builders.scene._, zcc = zero.core.current,
@@ -407,25 +431,6 @@ vu.builders.scene = {
 					stez
 				]);
 			};
-		},
-		lights: function() {
-			var _ = vu.builders.scene._, selz = _.selectors,
-				zcc = zero.core.current, scene = zcc.scene;
-			CT.dom.setContent(selz.lights, CT.dom.div([
-				"Lights",
-				CT.dom.div(zcc.room.lights.map(function(light) {
-					return CT.dom.range(function(val) {
-						light.setIntensity(parseInt(val) / 100);
-					}, 0, 100, light.opts.intensity * 100, 1, "w1 block");
-				}), "noflow"),
-				CT.dom.button("set initial lighting", function() {
-
-
-					// TODO: actual save ;)
-
-
-				}, "w1")
-			], "pt10"));
 		},
 		backstage: function() {
 			var _ = vu.builders.scene._, selz = _.selectors,
