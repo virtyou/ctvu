@@ -127,6 +127,13 @@ vu.builders.scene = {
 				r = zcc.room, g = zcc.scene.game, bod = pz[a.name].body;
 				az = g.initial.actors = g.initial.actors || {};
 			az[a.name] = az[a.name] || {};
+			az[a.name].positioners = az[a.name].positioners || {};
+			var gup = function() {
+				vu.storage.edit({
+					key: g.key,
+					initial: g.initial
+				});
+			};
 			return CT.dom.div([
 				a.name,
 				CT.dom.smartField({
@@ -137,10 +144,7 @@ vu.builders.scene = {
 					blurs: ["enter a short description", "describe this person"],
 					cb: function(desc) {
 						az[a.name].description = desc.trim();
-						vu.storage.edit({
-							key: g.key,
-							initial: g.initial
-						});
+						gup();
 					}
 				}),
 				CT.dom.div([
@@ -160,7 +164,13 @@ vu.builders.scene = {
 					CT.dom.range(function(val) {
 						bod.springs.orientation.target = parseInt(val);
 					}, -3, 3, 0/*?*/, 1, "w1 block")
-				], "bordered padded margined round")
+				], "bordered padded margined round"),
+				CT.dom.button("set initial position", function() {
+					var posz = az[a.name].positioners
+					for (axis of ["weave", "slide", "orientation"])
+						az[a.name].positioners[axis] = bod.springs[axis].target;
+					gup();
+				}, "w1")
 			], "bordered padded margined round inline-block", null, {
 				onclick: function() {
 					zero.core.camera.follow(bod);
@@ -405,10 +415,12 @@ vu.builders.scene = {
 		vu.builders.scene.build();
 	},
 	build: function() {
-		var cfg = core.config.ctzero,
+		var cfg = core.config.ctzero, pobj,
 			scene = zero.core.current.scene;
 		cfg.room = scene.room;
 		cfg.people = scene.actors;
+		for (pobj of cfg.people)
+			pobj.positioners = scene.game.initial.actors[pobj.name].positioners;
 		zero.core.util.init(null, vu.builders.scene._.backstage);
 	},
 	setup: function() {
