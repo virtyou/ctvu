@@ -178,14 +178,15 @@ vu.builders.scene = {
 						data: vu.storage.get("people").filter(function(p) {
 							return !akeys.includes(p.key);
 						}),
-						cb: function(person) {
-							scene.actors.push(person);
-							CT.dom.addContent(az, _.actor(person));
+						cb: function(perobj) {
+							scene.actors.push(perobj);
 							vu.storage.edit({
 								key: scene.key,
 								actors: scene.actors.map(a => a.key)
 							});
-							zero.core.util.join(person);
+							zero.core.util.join(perobj, function(person) {
+								CT.dom.addContent(az, _.actor(perobj));
+							});
 						}
 					});
 				}, "abs ctr shiftup"),
