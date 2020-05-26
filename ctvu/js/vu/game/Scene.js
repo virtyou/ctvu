@@ -58,10 +58,14 @@ vu.game.Scene = CT.Class({
 	},
 	start: function() {
 		var zcc = zero.core.current, pers, prop,
-			men = this.menus, rc = this._.regClick;
+			men = this.menus, rc = this._.regClick,
+			slz = this.state.scenes[this.opts.name].lights;
 		zcc.person = zcc.people[this.player.name];
 		this.adventure.controls.setTarget(zcc.person);
 		zcc.room.setBounds();
+		slz && zcc.room.lights.forEach(function(l, i) {
+			l.setIntensity(slz[i]);
+		});
 		for (pers in zcc.people)
 			rc(zcc.people[pers], men.person);
 		for (prop in this.opts.props)
