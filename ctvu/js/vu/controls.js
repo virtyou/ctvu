@@ -49,7 +49,7 @@ vu.controls = {
 			var butt = CT.dom.button("far", function(e) {
 				if (butt.innerHTML == "far") {
 					butt.innerHTML = "near";
-					zero.core.camera.move({ z: 280 });
+					zero.core.camera.move({ z: 480 });
 				} else {
 					butt.innerHTML = "far";
 					zero.core.camera.move({ z: 120 });
