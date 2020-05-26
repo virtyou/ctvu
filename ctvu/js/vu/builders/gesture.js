@@ -26,6 +26,10 @@ vu.builders.Gesture = CT.Class({
 			per({ dances: dopts });
 		};
 		vu.core.fieldList(selz.steps, dopts[dname].steps);
+		CT.dom.setContent(selz.interval, CT.dom.range(function(val) {
+			dopts[dname].interval = val;
+			per({ dances: dopts });
+		}, 300, 3000, dopts[dname].interval || 1000, 50, "w1"));
 		CT.dom.setContent(selz.step, dname);
 	},
 	loadExtras: function() {
@@ -42,7 +46,10 @@ vu.builders.Gesture = CT.Class({
 		this.selector("dances", function(v) {
 			curDance = v;
 		});
-		CT.dom.addContent(selz.dances, [selz.step, "Steps", selz.steps]);
+		CT.dom.addContent(selz.dances, [
+			CT.dom.div(["Interval", selz.interval], "pt10 noflow"),
+			selz.step, "Steps", selz.steps
+		]);
 	}
 }, vu.menu.Joints);
 
@@ -53,7 +60,8 @@ vu.builders.gesture = {
 			secondary: "dances",
 			subs: {
 				"step": CT.dom.div(null, "right"),
-				"steps": CT.dom.div()
+				"steps": CT.dom.div(),
+				"interval": CT.dom.div()
 			}
 		});
 	}
