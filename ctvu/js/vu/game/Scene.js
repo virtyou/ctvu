@@ -88,6 +88,7 @@ vu.game.Scene = CT.Class({
 	},
 	load: function() {
 		var oz = this.opts, cfg = core.config.ctzero, p;
+		this.player.gear = this.state.inventory.gear;
 		for (p of oz.actors) {
 			p.grippy = false;
 			p.positioners = this.state.actors[p.name].positioners;

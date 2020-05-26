@@ -35,7 +35,10 @@ vu.game.Adventure = CT.Class({
 		this.player = opts.player;
 		var s = this.state = opts.state;
 		s.actors = s.actors || {};
-		s.inventory = s.inventory || [];
+		s.inventory = s.inventory || {
+			bag: [],
+			gear: {}
+		};
 		this.game = opts.game;
 		this.portals = opts.game.portals;
 		this.controls = new zero.core.Controls();
