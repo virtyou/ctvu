@@ -5,17 +5,24 @@ vu.game.Scene = CT.Class({
 			zero.core.click.register(target.body || target, function() {
 				cb(target);
 			});
+		},
+		menu: function(name, info) {
+			var _ = this._, zc = zero.core;
+			if (_.infomenu)
+				_.infomenu.set([name, info]);
+			else {
+				_.infomenu = vu.core.menu(name, "bottom", info, null, function() {
+					_.infomenu.hide();
+					zc.camera.follow(zc.current.person.body);
+				});
+			}
+			return _.infomenu;
 		}
 	},
 	menus: {
 		info: function(name, info, thing) {
-			var zc = zero.core, cam = zc.camera,
-				men = vu.core.menu(name, "bottom", info, null, function() {
-					men.hide();
-					cam.follow(zc.current.person.body);
-				});
-			men.show();
-			cam.follow(thing);
+			this._.menu(name, info).show();
+			zero.core.camera.follow(thing);
 		},
 		prop: function(prop) {
 			this.menus.info(prop.name,
