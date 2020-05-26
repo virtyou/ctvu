@@ -17,6 +17,14 @@ vu.game.Scene = CT.Class({
 				});
 			}
 			return _.infomenu;
+		},
+		upper: function(variety, name) {
+			this.log("upper():", variety, name);
+		},
+		convo: function(person) {
+			var n = CT.dom.div();
+			vu.controls.setTriggers(n, this._.upper, person);
+			return n;
 		}
 	},
 	menus: {
@@ -29,9 +37,12 @@ vu.game.Scene = CT.Class({
 				this.opts.props[prop.name].description, prop);
 		},
 		person: function(person) {
-			this.menus.info(person.name, person == zero.core.current.person
-				? "it's you!" : this.state.actors[person.name].description,
-				person.body);
+			var zcc = zero.core.current,
+				aopts = this.state.actors[person.name];
+			this.menus.info(person.name, person == zcc.person
+				? "it's you!" : [
+					aopts.description, this._.convo(person)
+				], person.body);
 		}
 	},
 	refresh: function() {
