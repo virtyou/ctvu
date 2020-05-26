@@ -125,17 +125,18 @@ vu.builders.scene = {
 		actor: function(a) {
 			var zcc = zero.core.current, pz = zcc.people,
 				r = zcc.room, g = zcc.scene.game, bod = pz[a.name].body;
-				az = g.initial.actors = g.initial.actors || {},
-				astate = az[a.name] = az[a.name] || {};
+				az = g.initial.actors = g.initial.actors || {};
+			az[a.name] = az[a.name] || {};
 			return CT.dom.div([
 				a.name,
 				CT.dom.smartField({
 					isTA: true,
+					noBreak: true,
 					classname: "w1",
-					value: astate.description,
+					value: az[a.name].description,
 					blurs: ["enter a short description", "describe this person"],
 					cb: function(desc) {
-						astate.description = desc.trim();
+						az[a.name].description = desc.trim();
 						vu.storage.edit({
 							key: g.key,
 							initial: g.initial
