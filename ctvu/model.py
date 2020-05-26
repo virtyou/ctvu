@@ -28,6 +28,9 @@ class Scene(db.TimeStampedBase):
 	music = db.ForeignKey(kind=Resource, repeated=True)
 	ambient = db.ForeignKey(kind=Resource, repeated=True)
 
+	def game(self):
+		return Game.query(Game.scenes.contains(self.key.urlsafe())).get()
+
 	def json(self):
 		return {
 			"key": self.id(),
@@ -41,6 +44,11 @@ class Scene(db.TimeStampedBase):
 			"music": [m.json() for m in db.get_multi(self.music)],
 			"ambient": [a.json() for a in db.get_multi(self.ambient)]
 		}
+
+	def json_plus(self):
+		d = self.json()
+		d['game'] = self.game().json()
+		return d
 
 class Game(db.TimeStampedBase):
 	owners = db.ForeignKey(kind="member", repeated=True)
