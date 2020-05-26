@@ -123,28 +123,48 @@ vu.builders.scene = {
 			});
 		},
 		actor: function(a) {
-			var zcc = zero.core.current, pz = zcc.people, r = zcc.room;
+			var zcc = zero.core.current, pz = zcc.people,
+				r = zcc.room, g = zcc.scene.game, bod = pz[a.name].body;
+				az = g.initial.actors = g.initial.actors || {},
+				astate = az[a.name] = az[a.name] || {};
 			return CT.dom.div([
 				a.name,
+				CT.dom.smartField({
+					isTA: true,
+					classname: "w1",
+					value: astate.description,
+					blurs: ["enter a short description", "describe this person"],
+					cb: function(desc) {
+						astate.description = desc.trim();
+						vu.storage.edit({
+							key: g.key,
+							initial: g.initial
+						});
+					}
+				}),
 				CT.dom.div([
 					"weave",
 					CT.dom.range(function(val) {
-						pz[a.name].body.springs.weave.target = parseInt(val);
+						bod.springs.weave.target = parseInt(val);
 					}, r.bounds.min.x, r.bounds.max.x, 0/*?*/, 1, "w1 block")
 				], "bordered padded margined round"),
 				CT.dom.div([
 					"slide",
 					CT.dom.range(function(val) {
-						pz[a.name].body.springs.slide.target = parseInt(val);
+						bod.springs.slide.target = parseInt(val);
 					}, r.bounds.min.z, r.bounds.max.z, 0/*?*/, 1, "w1 block")
 				], "bordered padded margined round"),
 				CT.dom.div([
 					"orientation",
 					CT.dom.range(function(val) {
-						pz[a.name].body.springs.orientation.target = parseInt(val);
+						bod.springs.orientation.target = parseInt(val);
 					}, -3, 3, 0/*?*/, 1, "w1 block")
 				], "bordered padded margined round")
-			], "bordered padded margined round inline-block");
+			], "bordered padded margined round inline-block", null, {
+				onclick: function() {
+					zero.core.camera.follow(bod);
+				}
+			});
 		},
 		actors: function() {
 			var _ = vu.builders.scene._, selz = _.selectors,
@@ -401,7 +421,7 @@ vu.builders.scene = {
 		selz.props = CT.dom.div();
 		selz.lights = CT.dom.div();
 		selz.cameras = CT.dom.div(null, "centered");
-		CT.db.one(skey, vu.builders.scene.load, "json");
+		CT.db.one(skey, vu.builders.scene.load, "json_plus");
 	},
 	menus: function() {
 		var section, _ = vu.builders.scene._, selz = _.selectors;
