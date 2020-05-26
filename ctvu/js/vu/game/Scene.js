@@ -1,16 +1,30 @@
 vu.game.Scene = CT.Class({
 	CLASSNAME: "vu.game.Scene",
+	_: {
+		regClick: function(target, cb) {
+			zero.core.click.register(target.body || target, function() {
+				cb(target);
+			});
+		}
+	},
 	menus: {
-		prop: function(prop) {
+		info: function(name, info, thing) {
 			var zc = zero.core, cam = zc.camera,
-				propts = this.opts.props[prop.name],
-				men = vu.core.menu(prop.name, "bottom",
-					propts.description, null, function() {
-						men.hide();
-						cam.follow(zc.current.person.body);
-					});
+				men = vu.core.menu(name, "bottom", info, null, function() {
+					men.hide();
+					cam.follow(zc.current.person.body);
+				});
 			men.show();
-			cam.follow(prop);
+			cam.follow(thing);
+		},
+		prop: function(prop) {
+			this.menus.info(prop.name,
+				this.opts.props[prop.name].description, prop);
+		},
+		person: function(person) {
+			this.menus.info(person.name, person == zero.core.current.person
+				? "it's you!" : this.state.actors[person.name].description,
+				person.body);
 		}
 	},
 	refresh: function() {
@@ -25,19 +39,16 @@ vu.game.Scene = CT.Class({
 			this.refresh, this.state, this.audio);
 	},
 	start: function() {
-		var zcc = zero.core.current;
+		var zcc = zero.core.current, pers, prop,
+			men = this.menus, rc = this._.regClick;
 		zcc.person = zcc.people[this.player.name];
 		this.adventure.controls.setTarget(zcc.person);
 		zcc.room.setBounds();
-		for (var prop in this.opts.props)
-			this.regProp(zcc.room[prop]);
+		for (pers in zcc.people)
+			rc(zcc.people[pers], men.person);
+		for (prop in this.opts.props)
+			rc(zcc.room[prop], men.prop);
 		this.script("start");
-	},
-	regProp: function(prop) {
-		var pmen = this.menus.prop;
-		zero.core.click.register(prop, function() {
-			pmen(prop);
-		});
 	},
 	unload: function() {
 		// get rid of room / people!
