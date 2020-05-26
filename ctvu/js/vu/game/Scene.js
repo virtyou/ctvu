@@ -25,12 +25,20 @@ vu.game.Scene = CT.Class({
 			var n = CT.dom.div();
 			vu.controls.setTriggers(n, this._.upper, person);
 			return n;
+		},
+		item: function(iopts, onbuild) {
+			return new zero.core.Thing(CT.merge(iopts, {
+				onbuild: onbuild
+			}, vu.storage.get("held")[iopts.name]));
 		}
 	},
 	menus: {
 		info: function(name, info, thing) {
 			this._.menu(name, info).show();
 			zero.core.camera.follow(thing);
+		},
+		item: function(item) {
+			this.menus.info(item.name, item.opts.description, item);
 		},
 		prop: function(prop) {
 			this.menus.info(prop.name,
@@ -57,9 +65,10 @@ vu.game.Scene = CT.Class({
 			this.refresh, this.state, this.audio);
 	},
 	start: function() {
-		var zcc = zero.core.current, pers, prop,
-			men = this.menus, rc = this._.regClick,
-			slz = this.state.scenes[this.opts.name].lights;
+		var zcc = zero.core.current, pers, prop, item,
+			men = this.menus, _ = this._, rc = _.regClick,
+			state = this.state.scenes[this.opts.name],
+			slz = state.lights, items = state.items;
 		zcc.person = zcc.people[this.player.name];
 		this.adventure.controls.setTarget(zcc.person);
 		zcc.room.setBounds();
@@ -70,6 +79,8 @@ vu.game.Scene = CT.Class({
 			rc(zcc.people[pers], men.person);
 		for (prop in this.opts.props)
 			rc(zcc.room[prop], men.prop);
+		for (item in items)
+			_.item(items[item], i => rc(i, men.item));
 		this.script("start");
 	},
 	unload: function() {
