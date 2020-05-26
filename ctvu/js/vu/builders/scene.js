@@ -142,7 +142,7 @@ vu.builders.scene = {
 			var _ = vu.builders.scene._, zcc = zero.core.current,
 				gup = _.upstate, state = _.state(),
 				az = state.actors = state.actors || {},
-				r = zcc.room, bod = zcc.people[a.name].body;
+				r = zcc.room, sz = zcc.people[a.name].body.springs;
 			az[a.name] = az[a.name] || {};
 			az[a.name].positioners = az[a.name].positioners || {};
 			return CT.dom.div([
@@ -161,20 +161,23 @@ vu.builders.scene = {
 				CT.dom.div([
 					"weave",
 					CT.dom.range(function(val) {
-						bod.springs.weave.target = parseInt(val);
-					}, r.bounds.min.x, r.bounds.max.x, 0/*?*/, 1, "w1 block")
+						sz.weave.target = parseInt(val);
+					}, r.bounds.min.x, r.bounds.max.x,
+						sz.weave.target, 1, "w1 block")
 				], "bordered padded margined round"),
 				CT.dom.div([
 					"slide",
 					CT.dom.range(function(val) {
-						bod.springs.slide.target = parseInt(val);
-					}, r.bounds.min.z, r.bounds.max.z, 0/*?*/, 1, "w1 block")
+						sz.slide.target = parseInt(val);
+					}, r.bounds.min.z, r.bounds.max.z,
+						sz.slide.target, 1, "w1 block")
 				], "bordered padded margined round"),
 				CT.dom.div([
 					"orientation",
 					CT.dom.range(function(val) {
-						bod.springs.orientation.target = parseInt(val);
-					}, -3, 3, 0/*?*/, 1, "w1 block")
+						sz.orientation.target = parseInt(val);
+					}, -Math.PI, Math.PI,
+						sz.orientation.target, 1, "w1 block")
 				], "bordered padded margined round"),
 				CT.dom.button("set initial position", function() {
 					var posz = az[a.name].positioners
