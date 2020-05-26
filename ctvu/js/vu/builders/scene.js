@@ -4,7 +4,7 @@ vu.builders.scene = {
 		menus: {
 			cameras: "top",
 			main: "topleft",
-			lights: "topright",
+			props: "topright",
 			steps: "bottomleft",
 			actors: "bottomright"
 		},
@@ -124,7 +124,7 @@ vu.builders.scene = {
 		},
 		actor: function(a) {
 			var zcc = zero.core.current, pz = zcc.people,
-				r = zcc.room, g = zcc.scene.game, bod = pz[a.name].body;
+				r = zcc.room, g = zcc.scene.game, bod = pz[a.name].body,
 				az = g.initial.actors = g.initial.actors || {};
 			az[a.name] = az[a.name] || {};
 			az[a.name].positioners = az[a.name].positioners || {};
@@ -247,9 +247,78 @@ vu.builders.scene = {
 							CT.dom.addContent(pz, _.prop(furn));
 						}
 					}) : alert("add something on the zone page!");
-				}, "right"),
-				"Props",
+				}, "abs ctr shiftup"),
 				pz
+			]);
+		},
+		item: function(iopts) { // also creates/places thing!!
+			var zcc = zero.core.current, r = zcc.room, s = zcc.scene,
+				g = s.game, si = g.initial.scenes[s.name].items,
+				item = new zero.core.Thing(CT.merge(iopts,
+					vu.storage.get("held")[iopts.name]));
+
+			var gup = function() {
+				vu.storage.edit({
+					key: g.key,
+					initial: g.initial
+				});
+			};
+			return CT.dom.div([
+				item.name,
+				CT.dom.smartField({
+					isTA: true,
+					noBreak: true,
+					classname: "w1",
+					value: iopts.description,
+					blurs: ["enter a short description", "describe this person"],
+					cb: function(desc) {
+						iopts.description = desc.trim();
+						gup();
+					}
+				}),
+				["x", "y", "z"].map(function(dim, i) {
+					return CT.dom.div([
+						dim,
+						CT.dom.range(function(val) {
+							item.adjust("position", dim, parseInt(val));
+						}, r.bounds.min[dim], r.bounds.max[dim],
+							iopts.position[i], 1, "w1 block")
+					], "bordered padded margined round");
+				}),
+				CT.dom.button("set initial position", function() {
+					var pos = item.position();
+					iopts.position = [pos.x, pos.y, pos.z];
+					gup();
+				}, "w1")
+			], "bordered padded margined round", null, {
+				onclick: function() {
+					zero.core.camera.follow(item);
+				}
+			});
+		},
+		items: function() {
+			var _ = vu.builders.scene._, selz = _.selectors,
+				zcc = zero.core.current, s = zcc.scene, g = s.game,
+				sz = g.initial.scenes = g.initial.scenes || {},
+				ss = sz[s.name] = sz[s.name] || {},
+				si = ss.items = ss.items || {},
+				iz = CT.dom.div(Object.values(si).map(_.item));
+			CT.dom.setContent(selz.items, [
+				CT.dom.button("add", function() {
+					CT.modal.choice({
+						prompt: "please select an item",
+						data: Object.keys(vu.storage.get("held")),
+						cb: function(iname) {
+							si[iname] = {
+								name: iname,
+								position: [0, 0, 0]
+							};
+							CT.dom.addContent(iz, _.item(si[iname]));
+						}
+					})
+				}, "right"),
+				"Items",
+				iz
 			]);
 		},
 		shifter: function(stpr, dir) {
@@ -339,22 +408,36 @@ vu.builders.scene = {
 				]);
 			};
 		},
-		backstage: function() {
+		lights: function() {
 			var _ = vu.builders.scene._, selz = _.selectors,
 				zcc = zero.core.current, scene = zcc.scene;
-			_.props();
-			_.actors();
-			zcc.room.setFriction(false); // for positioning......
-			vu.controls.initCamera(selz.cameras);
-			CT.dom.setContent(selz.lights, [
+			CT.dom.setContent(selz.lights, CT.dom.div([
+				"Lights",
 				CT.dom.div(zcc.room.lights.map(function(light) {
 					return CT.dom.range(function(val) {
 						light.setIntensity(parseInt(val) / 100);
 					}, 0, 100, light.opts.intensity * 100, 1, "w1 block");
 				}), "noflow"),
-				CT.dom.br(),
-				selz.props
-			]);
+				CT.dom.button("set initial lighting", function() {
+
+
+					// TODO: actual save ;)
+
+
+				}, "w1")
+			], "pt10"));
+		},
+		backstage: function() {
+			var _ = vu.builders.scene._, selz = _.selectors,
+				zcc = zero.core.current, scene = zcc.scene;
+			_.props();
+			_.items();
+			_.lights();
+			_.actors();
+			zcc.room.setFriction(false); // for positioning......
+			vu.controls.initCamera(selz.cameras);
+			CT.dom.addContent(selz.props, selz.items);
+			CT.dom.addContent(selz.main, selz.lights);
 		}
 	},
 	load: function(scene) {
@@ -435,6 +518,7 @@ vu.builders.scene = {
 		selz.steps = CT.dom.div();
 		selz.actors = CT.dom.div();
 		selz.props = CT.dom.div();
+		selz.items = CT.dom.div();
 		selz.lights = CT.dom.div();
 		selz.cameras = CT.dom.div(null, "centered");
 		CT.db.one(skey, vu.builders.scene.load, "json_plus");
