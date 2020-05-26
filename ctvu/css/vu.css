@@ -230,11 +230,13 @@ img.right.h30p.up5 {
 
 .gmenu.steps {
 	min-width: 200px;
-	max-width: calc(100% - 410px);
+/*	max-width: calc(100% - 410px);*/
+	max-width: 50%;
 }
 .gmenu.actors {
 	min-width: 110px;
-	max-width: 416px;
+/*	max-width: 416px;*/
+	max-width: 50%;
 }
 .gmenu.body {
 	margin-left: 235px;
