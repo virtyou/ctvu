@@ -39,7 +39,7 @@ vu.game.util = {
 			if (step[k])
 				audio.play(k, step[k]);
 		if (step.actor)
-			zcc.people[step.actor][step.action || "say"](step.line, nextStep);
+			zcc.people[step.actor][step.action || "say"](step.line, nextStep, true);
 		else
 			nextStep && nextStep();
 	},
