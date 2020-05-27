@@ -93,7 +93,7 @@ vu.builders.scene = {
 					} else if (stype == "camera") {
 						CT.modal.choice({
 							prompt: "please select an angle",
-							data: ["behind", "pov", "rotate",
+							data: ["behind", "pov", "cycle",
 								"0", "1", "2", "3", "4", "5", "6", "7", "8"],
 							cb: function(angle) {
 								cb({ camera: angle });
