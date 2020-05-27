@@ -140,9 +140,9 @@ vu.builders.scene = {
 		},
 		actor: function(a) {
 			var _ = vu.builders.scene._, zcc = zero.core.current,
-				gup = _.upstate, state = _.state(),
+				gup = _.upstate, state = _.state(), r = zcc.room,
 				az = state.actors = state.actors || {},
-				r = zcc.room, sz = zcc.people[a.name].body.springs;
+				bod = zcc.people[a.name].body, sz = bod.springs;
 			az[a.name] = az[a.name] || {};
 			az[a.name].positioners = az[a.name].positioners || {};
 			return CT.dom.div([
@@ -182,7 +182,7 @@ vu.builders.scene = {
 				CT.dom.button("set initial position", function() {
 					var posz = az[a.name].positioners
 					for (axis of ["weave", "slide", "orientation"])
-						az[a.name].positioners[axis] = bod.springs[axis].target;
+						az[a.name].positioners[axis] = sz[axis].target;
 					gup();
 				}, "w1")
 			], "bordered padded margined round inline-block", null, {
