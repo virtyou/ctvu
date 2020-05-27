@@ -36,12 +36,20 @@ vu.builders.scene = {
 			CT.modal.choice({
 				prompt: "please select a variety",
 				data: ["lights", "camera", "action",
-					"text", "fx", "music", "ambient"
+					"text", "fx", "music", "ambient", "pause"
 				].filter(function(st) { // +props,state
 					return !cur || !(st in cur);
 				}),
 				cb: function(stype) {
-					if (stype == "action") {
+					if (stype == "pause") {
+						CT.modal.prompt({
+							prompt: "0.25 to five seconds",
+							style: "number",
+							cb: function(val) {
+								cb({ pause: val * 1000 });
+							}
+						});
+					} else if (stype == "action") {
 						CT.modal.choice({
 							prompt: "please select an actor",
 							data: zcc.scene.actors,
