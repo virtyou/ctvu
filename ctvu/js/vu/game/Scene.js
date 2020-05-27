@@ -20,6 +20,8 @@ vu.game.Scene = CT.Class({
 		},
 		upper: function(variety, name) {
 			this.log("upper():", variety, name);
+			if (name in this.opts.scripts)
+				this.script(name);
 		},
 		convo: function(person) {
 			var n = CT.dom.div();
