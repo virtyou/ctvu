@@ -38,9 +38,11 @@ vu.game.util = {
 		for (k of ["fx", "music", "ambient"])
 			if (step[k])
 				audio.play(k, step[k]);
-		if (step.actor)
+		if (step.actor) {
 			zcc.people[step.actor][step.action || "say"](step.line, nextStep, true);
-		else
+			if (step.action == "respond")
+				zcc.people[step.actor].click();
+		} else
 			nextStep && nextStep();
 	},
 	script: function(script, cb, state, audio) {
