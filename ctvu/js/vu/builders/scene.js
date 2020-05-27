@@ -72,12 +72,24 @@ vu.builders.scene = {
 											});
 										} else if (action == "approach") {
 											CT.modal.choice({
-												prompt: "please select a target",
-												data: zcc.scene.actors.filter(function(a) {
-													return a.name != actor.name;
-												}),
-												cb: function(target) {
-													act(target.name);
+												data: ["player", "actor", "furnishing"],
+												cb: function(cat) {
+													if (cat == "player")
+														return act("player");
+													var data;
+													if (cat == "actor") {
+														data = zcc.scene.actors.filter(function(a) {
+															return a.name != actor.name;
+														});
+													} else // furnishing
+														data = Object.values(zcc.room.objects);
+													CT.modal.choice({
+														prompt: "please select a target",
+														data: data,
+														cb: function(target) {
+															act(target.name);
+														}
+													});
 												}
 											});
 										} else {
