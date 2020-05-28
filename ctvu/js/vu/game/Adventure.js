@@ -3,6 +3,12 @@ vu.game.Adventure = CT.Class({
 	_: {
 		scenes: {}
 	},
+	reset: function() {
+		// TODO: ungear!
+		this.setState(this.game.initial);
+		this.upstate();
+		zero.core.current.scene.script("start");
+	},
 	upstate: function() {
 		vu.storage.edit({
 			key: this.opts.key,
@@ -25,6 +31,16 @@ vu.game.Adventure = CT.Class({
 			}, "json");
 		}
 	},
+	setState: function(state) {
+		var s = this.state = JSON.parse(JSON.stringify(state)); // ugh
+		s.script = s.script || "start";
+		s.story = s.story || [];
+		s.actors = s.actors || {};
+		s.inventory = s.inventory || {
+			bag: [],
+			gear: {}
+		};
+	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
 			player: null,
@@ -41,18 +57,11 @@ vu.game.Adventure = CT.Class({
 		});
 		zero.core.current.adventure = this;
 		this.player = opts.player;
-		var s = this.state = opts.state;
-		s.script = s.script || "start";
-		s.story = s.story || [];
-		s.actors = s.actors || {};
-		s.inventory = s.inventory || {
-			bag: [],
-			gear: {}
-		};
+		this.setState(opts.state);
 		this.game = opts.game;
 		this.portals = opts.game.portals;
 		this.menus = new vu.menu.Game({
-			state: s
+			state: this.state
 		});
 		this.controls = new zero.core.Controls();
 		CT.modal.modal(CT.dom.div([
