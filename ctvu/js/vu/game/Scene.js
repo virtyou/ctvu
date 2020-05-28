@@ -55,11 +55,20 @@ vu.game.Scene = CT.Class({
 				], person.body);
 		}
 	},
-	refresh: function() {
-		this.log("refresh");
-		// state has probs been updated > TODO:
+	refresh: function(altered) {
+		this.log("refresh", altered.story, altered.state);
+		if (altered.story || altered.state) {
+			if (altered.story) {
+				// update story node
+			}
+			if (altered.state) {
+				// ...
+			}
+			this.adventure.upstate();
+		}
+		// TODO:
 		// - check victory/defeat conditions
-		// - if multi, ws push; always update db
+		// - if multi, ws push
 	},
 	script: function(sname) {
 		var oz = this.opts;
@@ -83,7 +92,7 @@ vu.game.Scene = CT.Class({
 			rc(zcc.room[prop], men.prop);
 		for (item in items)
 			_.item(items[item], i => rc(i, men.item));
-		this.script("start");
+		this.script(this.state.script);
 	},
 	unload: function() {
 		// get rid of room / people!
