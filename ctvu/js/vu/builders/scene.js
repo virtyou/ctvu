@@ -35,8 +35,8 @@ vu.builders.scene = {
 			var zcc = zero.core.current, _ = vu.builders.scene._;
 			CT.modal.choice({
 				prompt: "please select a variety",
-				data: ["lights", "camera", "action",
-					"text", "fx", "music", "ambient", "pause"
+				data: ["lights", "camera", "action", "pause",
+					"text", "story", "fx", "music", "ambient"
 				].filter(function(st) { // +props,state
 					return !cur || !(st in cur);
 				}),
@@ -137,6 +137,14 @@ vu.builders.scene = {
 							isTA: true,
 							cb: function(msg) {
 								cb({ text: msg });
+							}
+						});
+					} else if (style == "story") {
+						CT.modal.prompt({
+							prompt: "what's the story?",
+							isTA: true,
+							cb: function(msg) {
+								cb({ story: msg });
 							}
 						});
 					} else { // fx, music, ambient
