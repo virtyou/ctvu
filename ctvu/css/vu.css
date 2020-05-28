@@ -216,12 +216,6 @@ img.right.h30p.up5 {
 	max-height: 129px;
 }
 
-.gmenu.collapsed {
-	max-height: 36px;
-	max-width: 136px;
-	overflow: hidden;
-}
-
 .gmenu.run_home {
 	margin-right: 180px;
 }
@@ -245,6 +239,19 @@ img.right.h30p.up5 {
 }
 .gmenu.body {
 	margin-left: 235px;
+}
+
+.gmenu.story {
+	max-height: 50%;
+	max-width: 30%;
+	overflow: auto;
+	white-space: normal;
+}
+
+.gmenu.collapsed {
+	max-height: 36px;
+	max-width: 136px;
+	overflow: hidden;
 }
 
 .screentext {
