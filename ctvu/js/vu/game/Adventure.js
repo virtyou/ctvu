@@ -50,11 +50,17 @@ vu.game.Adventure = CT.Class({
 		};
 		this.game = opts.game;
 		this.portals = opts.game.portals;
+		this.menus = new vu.menu.Game({
+			state: s
+		});
 		this.controls = new zero.core.Controls();
 		CT.modal.modal(CT.dom.div([
 			CT.dom.div(opts.game.name, "bigger"),
 			opts.game.description,
-			"(close this window to start!)"
-		], "centered kidvp"), this.setScene);
+			"(click this window to start!)"
+		], "centered kidvp"), this.setScene, {
+			noClose: true,
+			transition: "fade"
+		}, true);
 	}
 });
