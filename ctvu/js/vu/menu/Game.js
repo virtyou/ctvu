@@ -12,9 +12,14 @@ vu.menu.Game = CT.Class({
 				sel.modal.node.classList[sel._collapsed ? "add" : "remove"]("collapsed");
 			};
 		},
-		upper: function(variety, name) {
-			var scene = zero.core.current.scene;
-			this.log("upper():", variety, name);
+		upper: function(variety, name, person) {
+			var zcc = zero.core.current, scene = zcc.scene,
+				astate = this.state.actors[person.name];
+			this.log("upper():", person.name, variety, name);
+			if (astate.vibe != person.vibe.current) {
+				astate.vibe = person.vibe.current;
+				zcc.adventure.upstate();
+			}
 			if (name in scene.opts.scripts)
 				scene.script(name);
 		},
@@ -23,19 +28,19 @@ vu.menu.Game = CT.Class({
 			vu.controls.setTriggers(n, this._.upper, person);
 			return n;
 		},
-		basic: function(name, side, info, cb) {
+		basic: function(name, side, info, cb, header) {
 			return vu.core.menu(name, side, info,
-				null, cb || this._.collapse(name));
+				header, cb || this._.collapse(name));
 		},
 		info: function(name, info) {
 			var _ = this._, zc = zero.core;
 			if (_.infomenu)
 				_.infomenu.set([name, info]);
 			else {
-				_.infomenu = _.basic(name, "bottom", info, function() {
+				_.infomenu = _.basic("info", "bottom", info, function() {
 					_.infomenu.hide();
 					zc.camera.follow(zc.current.person.body);
-				});
+				}, name);
 			}
 			return _.infomenu;
 		},
@@ -45,14 +50,31 @@ vu.menu.Game = CT.Class({
 		}
 	},
 	story: function() {
-		var sel = this._.selectors.story,
+		var sel = this._.selectors.story, s = this.state,
 			mod = sel.modal, snode = mod.node;
-		CT.dom.setContent(sel, this.state.story);
+		CT.dom.setContent(sel, [
+			CT.dom.button("state", function() {
+				CT.modal.modal([
+					CT.dom.div("known state", "big centered"),
+					Object.keys(s.actors).map(function(a) {
+						return CT.dom.div([
+							CT.dom.div(a, "bold"),
+							Object.keys(s.actors[a]).filter(p => p != "positioners").map(function(p) {
+								return p + ": " + s.actors[a][p];
+							})
+						], "bordered padded margined round");
+					})
+				]);
+			}, "abs ctr shiftup"),
+			s.story
+		]);
 		mod.show();
 		if (snode.classList.contains("collapsed"))
 			snode.classList.remove("collapsed");
-		setTimeout(function() {
-			sel.firstChild.lastChild.scrollIntoView({ behavior: "smooth" });
+		setTimeout(function() { // TODO: fix this!!
+			sel.firstChild.lastChild.lastChild.scrollIntoView({
+				behavior: "smooth"
+			});
 		}, 500);
 	},
 	info: function(name, info, thing) {
