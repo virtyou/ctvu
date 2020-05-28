@@ -6,53 +6,10 @@ vu.game.Scene = CT.Class({
 				cb(target);
 			});
 		},
-		menu: function(name, info) {
-			var _ = this._, zc = zero.core;
-			if (_.infomenu)
-				_.infomenu.set([name, info]);
-			else {
-				_.infomenu = vu.core.menu(name, "bottom", info, null, function() {
-					_.infomenu.hide();
-					zc.camera.follow(zc.current.person.body);
-				});
-			}
-			return _.infomenu;
-		},
-		upper: function(variety, name) {
-			this.log("upper():", variety, name);
-			if (name in this.opts.scripts)
-				this.script(name);
-		},
-		convo: function(person) {
-			var n = CT.dom.div();
-			vu.controls.setTriggers(n, this._.upper, person);
-			return n;
-		},
 		item: function(iopts, onbuild) {
 			return new zero.core.Thing(CT.merge(iopts, {
 				onbuild: onbuild
 			}, vu.storage.get("held")[iopts.name]));
-		}
-	},
-	menus: {
-		info: function(name, info, thing) {
-			this._.menu(name, info).show();
-			zero.core.camera.follow(thing);
-		},
-		item: function(item) {
-			this.menus.info(item.name, item.opts.description, item);
-		},
-		prop: function(prop) {
-			this.menus.info(prop.name,
-				this.opts.props[prop.name].description, prop);
-		},
-		person: function(person) {
-			var zcc = zero.core.current,
-				aopts = this.state.actors[person.name];
-			this.menus.info(person.name, person == zcc.person
-				? "it's you!" : [
-					aopts.description, this._.convo(person)
-				], person.body);
 		}
 	},
 	refresh: function(altered) {
@@ -74,6 +31,10 @@ vu.game.Scene = CT.Class({
 		var oz = this.opts;
 		vu.game.util.script(oz.scripts[sname],
 			this.refresh, this.state, this.audio);
+		if (sname != this.state.script) {
+			this.state.script = sname;
+			this.adventure.upstate();
+		}
 	},
 	start: function() {
 		var zcc = zero.core.current, pers, prop, item,
@@ -123,6 +84,7 @@ vu.game.Scene = CT.Class({
 		});
 		var a = this.adventure = opts.adventure,
 			s = this.state = a.state, osa = s.actors;
+		this.menus = a.menus;
 		this.player = a.player;
 		opts.actors.forEach(function(p) {
 			osa[p.name] = osa[p.name] || {};
@@ -130,8 +92,11 @@ vu.game.Scene = CT.Class({
 		CT.modal.modal(CT.dom.div([
 			CT.dom.div(opts.name, "bigger"),
 			opts.description,
-			"(close this window to start!)"
-		], "centered kidvp"), this.load);
+			"(click this window to start!)"
+		], "centered kidvp"), this.load, {
+			noClose: true,
+			transition: "fade"
+		}, true);
 		this.audio = new vu.audio.Controller({
 			fx: opts.fx,
 			music: opts.music,
