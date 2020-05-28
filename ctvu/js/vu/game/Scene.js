@@ -32,8 +32,9 @@ vu.game.Scene = CT.Class({
 		}
 	},
 	start: function() {
-		var zcc = zero.core.current, pers, prop, item,
-			men = this.menus, _ = this._, rc = _.regClick,
+		var _ = this._, zcc = zero.core.current,
+			rc = _.regClick, pers, prop, item,
+			men = this.menus, tsa = this.state.actors,
 			state = this.state.scenes[this.opts.name],
 			slz = state.lights, items = state.items;
 		zcc.person = zcc.people[this.player.name];
@@ -42,8 +43,11 @@ vu.game.Scene = CT.Class({
 		slz && zcc.room.lights.forEach(function(l, i) {
 			l.setIntensity(slz[i]);
 		});
-		for (pers in zcc.people)
+		for (pers in zcc.people) {
 			rc(zcc.people[pers], men.person);
+			if (tsa[pers] && tsa[pers].vibe)
+				zcc.people[pers].vibe.update(tsa[pers].vibe);
+		}
 		for (prop in this.opts.props)
 			rc(zcc.room[prop], men.prop);
 		for (item in items)
