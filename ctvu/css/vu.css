@@ -5,6 +5,7 @@ html, body {
 
 body {
 	color: white;
+	position: fixed;
 	overflow: hidden;
 	background: black;
 	font-family: monospace;
