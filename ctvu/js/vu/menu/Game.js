@@ -41,17 +41,20 @@ vu.menu.Game = CT.Class({
 			return _.infomenu;
 		},
 		setup: function() {
-			this._.selectors.story = CT.dom.div(null, "kidvp");
+			this._.selectors.story = CT.dom.div(null,
+				"scrolly kidvp mt5 hm400p");
 		}
 	},
 	story: function() {
-		var _ = this._, selz = _.selectors,
-			mod = selz.story.modal, snode = mod.node;
-		CT.dom.setContent(selz.story, this.state.story);
+		var sel = this._.selectors.story,
+			mod = sel.modal, snode = mod.node;
+		CT.dom.setContent(sel, this.state.story);
 		mod.show();
 		if (snode.classList.contains("collapsed"))
 			snode.classList.remove("collapsed");
-		// TODO: scroll to bottom!
+		setTimeout(function() {
+			sel.firstChild.lastChild.scrollIntoView({ behavior: "smooth" });
+		}, 500);
 	},
 	info: function(name, info, thing) {
 		this._.info(name, info).show();
