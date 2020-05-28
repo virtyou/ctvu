@@ -6,8 +6,7 @@ vu.menu.Game = CT.Class({
 			story: "bottomleft"
 		},
 		collapse: function(section) {
-			var _ = this._, selz = _.selectors,
-				sel = selz[section];
+			var sel = this._.selectors[section];
 			return function() {
 				sel._collapsed = !sel._collapsed;
 				sel.modal.node.classList[sel._collapsed ? "add" : "remove"]("collapsed");
