@@ -217,7 +217,9 @@ img.right.h30p.up5 {
 }
 
 .gmenu.collapsed {
-	max-height: 60px;
+	max-height: 36px;
+	max-width: 136px;
+	overflow: hidden;
 }
 
 .gmenu.run_home {
