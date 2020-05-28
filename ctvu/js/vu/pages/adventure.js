@@ -16,6 +16,7 @@ CT.require("vu.audio");
 CT.require("vu.storage");
 CT.require("vu.controls");
 CT.require("vu.game");
+CT.require("vu.menu.Game");
 CT.require("vu.builders.adventure");
 
 CT.onload(function() {
