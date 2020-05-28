@@ -3,8 +3,8 @@ vu.game.util = {
 		var k, v, p, zcc = zero.core.current;
 		for (k in ups) {
 			v = ups[k];
-			if (k == "inventory")
-				state.inventory.push(v);
+			if (k == "inventory") // hmmm.....
+				state.inventory.bag.push(v);
 			else if (k in zcc.people)
 				for (p in v)
 					state.actors[k][p] = v;
@@ -31,6 +31,10 @@ vu.game.util = {
 			altered.story = true;
 			vu.game.util.text(step.text, step.pause);
 			state && state.story.push(step.text);
+		}
+		if (step.story) {
+			altered.story = true;
+			state && state.story.push(step.story);
 		}
 		if (step.camera)
 			zero.core.camera.angle(step.camera);
