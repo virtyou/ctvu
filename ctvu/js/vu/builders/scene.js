@@ -35,8 +35,8 @@ vu.builders.scene = {
 			var zcc = zero.core.current, _ = vu.builders.scene._;
 			CT.modal.choice({
 				prompt: "please select a variety",
-				data: ["lights", "camera", "action", "pause",
-					"text", "story", "fx", "music", "ambient"
+				data: ["lights", "camera", "action", "state", "story",
+					"text", "pause", "fx", "music", "ambient"
 				].filter(function(st) { // +props,state
 					return !cur || !(st in cur);
 				}),
@@ -139,12 +139,58 @@ vu.builders.scene = {
 								cb({ text: msg });
 							}
 						});
-					} else if (style == "story") {
+					} else if (stype == "story") {
 						CT.modal.prompt({
 							prompt: "what's the story?",
 							isTA: true,
 							cb: function(msg) {
 								cb({ story: msg });
+							}
+						});
+					} else if (stype == "state") {
+						var sgia = zcc.scene.game.initial.actors;
+						CT.modal.choice({
+							prompt: "please select an actor",
+							data: zcc.scene.actors.map(a => a.name),
+							cb: function(actor) {
+								CT.modal.choice({
+									prompt: "what's changing?",
+									data: [
+										"new property with initial state",
+										"new property without initial state"
+									].concat(Object.keys(sgia[actor]).filter(p => p != "positioners")),
+									cb: function(prop) {
+										var getval = function(prop) {
+											CT.modal.prompt({
+												prompt: "what's the new value?",
+												cb: function(val) {
+													var sobj = {};
+													sobj[actor] = {};
+													sobj[actor][prop] = val;
+													cb({ state: sobj });
+												}
+											});
+										};
+										if (prop.startsWith("new property")) {
+											CT.modal.prompt({
+												prompt: "ok, what's the new property?",
+												cb: function(prop) {
+													if (prop.includes("without"))
+														return getval(prop);
+													CT.modal.prompt({
+														prompt: "what's the initial value (value _prior to_ current step!)?",
+														cb: function(ival) {
+															sgia[actor][prop] = ival;
+															_.upstate();
+															getval(prop);
+														}
+													});
+												}
+											});
+										} else
+											getval(prop);
+									}
+								});
 							}
 						});
 					} else { // fx, music, ambient
