@@ -75,7 +75,7 @@ vu.controls = {
 					person.respond(trig);
 					vu.controls.setTriggers(node, cb, person);
 					e.stopPropagation();
-					cb && cb("trigger", trig);
+					cb && cb("trigger", trig, person);
 				}
 			});
 		}));
