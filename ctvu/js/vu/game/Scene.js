@@ -15,11 +15,7 @@ vu.game.Scene = CT.Class({
 	refresh: function(altered) {
 		this.log("refresh", altered.story, altered.state);
 		if (altered.story || altered.state) {
-			if (altered.story)
-				this.menus.story();
-			if (altered.state) {
-				// ...
-			}
+			altered.story && this.menus.story();
 			this.adventure.upstate();
 		}
 		// TODO:
