@@ -1,11 +1,24 @@
 vu.game.Adventure = CT.Class({
 	CLASSNAME: "vu.game.Adventure",
 	_: {
-		scenes: {}
+		scenes: {},
+		setState: function(state) {
+			var s = this.state = state;
+			s.script = s.script || "start";
+			s.story = s.story || [];
+			s.actors = s.actors || {};
+			s.inventory = s.inventory || {
+				bag: [],
+				gear: {}
+			};
+		}
 	},
 	reset: function() {
 		// TODO: ungear!
-		this.setState(this.game.initial);
+		var prop, gi = this.game.initial;
+		for (var prop in this.state) // meh
+			this.state[prop] = gi[prop] && JSON.parse(JSON.stringify(gi[prop]));
+		this._.setState(this.state);
 		this.upstate();
 		zero.core.current.scene.script("start");
 	},
@@ -31,16 +44,6 @@ vu.game.Adventure = CT.Class({
 			}, "json");
 		}
 	},
-	setState: function(state) {
-		var s = this.state = JSON.parse(JSON.stringify(state)); // ugh
-		s.script = s.script || "start";
-		s.story = s.story || [];
-		s.actors = s.actors || {};
-		s.inventory = s.inventory || {
-			bag: [],
-			gear: {}
-		};
-	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
 			player: null,
@@ -57,7 +60,7 @@ vu.game.Adventure = CT.Class({
 		});
 		zero.core.current.adventure = this;
 		this.player = opts.player;
-		this.setState(opts.state);
+		this._.setState(opts.state);
 		this.game = opts.game;
 		this.portals = opts.game.portals;
 		this.menus = new vu.menu.Game({
