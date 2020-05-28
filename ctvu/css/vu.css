@@ -242,14 +242,13 @@ img.right.h30p.up5 {
 }
 
 .gmenu.story {
-	max-height: 50%;
 	max-width: 30%;
-	overflow: auto;
+	max-height: 50%;
 	white-space: normal;
 }
 
 .gmenu.collapsed {
-	max-height: 36px;
+	max-height: 32px;
 	max-width: 136px;
 	overflow: hidden;
 }
