@@ -247,6 +247,11 @@ img.right.h30p.up5 {
 	white-space: normal;
 }
 
+.gmenu.info {
+	max-width: 50%;
+	white-space: normal;
+}
+
 .gmenu.collapsed {
 	max-height: 32px;
 	max-width: 136px;
