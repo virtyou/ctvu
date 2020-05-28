@@ -55,6 +55,11 @@ vu.menu.Game = CT.Class({
 		CT.dom.setContent(sel, [
 			CT.dom.button("state", function() {
 				CT.modal.modal([
+					CT.dom.button("reset", function() {
+						if (!(confirm("are you sure you want to start over?") && confirm("really delete all your progress?")))
+							return;
+						zero.core.current.adventure.reset();
+					}, "abs ctl shiftup"),
 					CT.dom.div("known state", "big centered"),
 					Object.keys(s.actors).map(function(a) {
 						return CT.dom.div([
@@ -64,7 +69,7 @@ vu.menu.Game = CT.Class({
 							})
 						], "bordered padded margined round");
 					})
-				]);
+				], null, null, true);
 			}, "abs ctr shiftup"),
 			s.story
 		]);
