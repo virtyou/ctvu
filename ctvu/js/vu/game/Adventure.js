@@ -39,6 +39,7 @@ vu.game.Adventure = CT.Class({
 				defeat: {}
 			}
 		});
+		zero.core.current.adventure = this;
 		this.player = opts.player;
 		var s = this.state = opts.state;
 		s.script = s.script || "start";
