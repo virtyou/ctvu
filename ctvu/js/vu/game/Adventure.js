@@ -3,9 +3,16 @@ vu.game.Adventure = CT.Class({
 	_: {
 		scenes: {}
 	},
+	upstate: function() {
+		vu.storage.edit({
+			key: this.opts.key,
+			state: this.state
+		});
+	},
 	setScene: function(key) {
 		var _ = this._, thaz = this, zcc = zero.core.current;
-		key = key || this.game.scenes[0];
+		key = key || this.state.scene || this.game.scenes[0];
+		this.state.scene = key;
 		if (zcc.scene)
 			zcc.scene.unload();
 		if (key in _.scenes)
@@ -34,6 +41,8 @@ vu.game.Adventure = CT.Class({
 		});
 		this.player = opts.player;
 		var s = this.state = opts.state;
+		s.script = s.script || "start";
+		s.story = s.story || [];
 		s.actors = s.actors || {};
 		s.inventory = s.inventory || {
 			bag: [],
