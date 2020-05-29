@@ -24,6 +24,10 @@ vu.menu.Game = CT.Class({
 				scene.script(name);
 		},
 		convo: function(person) {
+			setTimeout(function() { // ... meh
+//				person.look(zero.core.camera);
+				zero.core.camera.angle("front", person.name, "lookHigh");
+			});
 			var n = CT.dom.div();
 			vu.controls.setTriggers(n, this._.upper, person);
 			return n;
