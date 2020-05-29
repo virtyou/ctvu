@@ -479,7 +479,7 @@ vu.builders.scene = {
 				JSON.stringify(s).replace(/,/g, ",&#8203;")
 			], "bordered padded margined round", null, {
 				onclick: function() {
-					vu.game.util.step(s, null, null, _.audio);
+					vu.game.util.step(s, null, null, _.audio, {});
 				}
 			});
 			return stpr;
