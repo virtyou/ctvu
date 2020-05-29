@@ -57,6 +57,10 @@ vu.builders.game = {
 				}
 			});
 		},
+		play: function() {
+			location = "/vu/adventure.html#" +
+				vu.builders.game._.cur.key;
+		},
 		linx: function() {
 			var _ = vu.builders.game._;
 			_.sharer = vu.core.sharer();
@@ -67,6 +71,8 @@ vu.builders.game = {
 					CT.dom.pad(),
 					_.curname
 				], [
+					CT.dom.link("play", _.play),
+					CT.dom.pad(),
 					CT.dom.link("swap", _.swap),
 					CT.dom.pad(),
 					_.sharer
@@ -96,6 +102,7 @@ vu.builders.game = {
 	},
 	load: function(game) {
 		var _ = vu.builders.game._;
+		_.cur = game;
 		_.sharer.update(game);
 		CT.dom.setContent(_.curname, game.name);
 		CT.dom.setContent("ctmain", [
