@@ -37,7 +37,7 @@ vu.game.util = {
 			state && state.story.push(step.story);
 		}
 		if (step.camera)
-			zero.core.camera.angle(step.camera);
+			zero.core.camera.angle(step.camera, step.target);
 		if (step.prop)
 			r[step.prop][step.directive](step.direction);
 		if (state && step.state) {
