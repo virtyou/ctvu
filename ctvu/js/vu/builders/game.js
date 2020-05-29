@@ -43,6 +43,35 @@ vu.builders.game = {
 		},
 		conditions: function(game) {
 
+		},
+		swap: function() {
+			var g = vu.builders.game;
+			CT.modal.choice({
+				prompt: "please select a game",
+				data: ["new game"].concat(g._.games),
+				cb: function(game) {
+					if (game == "new game")
+						g.create();
+					else
+						g.load(game);
+				}
+			});
+		},
+		linx: function() {
+			var _ = vu.builders.game._;
+			_.sharer = vu.core.sharer();
+			_.curname = CT.dom.span(null, "bold");
+			return CT.dom.div([
+				[
+					CT.dom.span("viewing:"),
+					CT.dom.pad(),
+					_.curname
+				], [
+					CT.dom.link("swap", _.swap),
+					CT.dom.pad(),
+					_.sharer
+				]
+			], "left shiftall");
 		}
 	},
 	create: function(ctype, cb, extras) {
@@ -67,6 +96,8 @@ vu.builders.game = {
 	},
 	load: function(game) {
 		var _ = vu.builders.game._;
+		_.sharer.update(game);
+		CT.dom.setContent(_.curname, game.name);
 		CT.dom.setContent("ctmain", [
 			CT.dom.div([
 				"name",
@@ -79,7 +110,6 @@ vu.builders.game = {
 							key: game.key,
 							name: val
 						});
-
 					}
 				})
 			], "bordered padded margined round"),
@@ -95,7 +125,6 @@ vu.builders.game = {
 							key: game.key,
 							description: val
 						});
-
 					}
 				})
 			], "bordered padded margined round"),
@@ -121,17 +150,14 @@ vu.builders.game = {
 		]);
 	},
 	init: function() {
+		var g = vu.builders.game, _ = g._;
+		CT.dom.addContent("ctheader", _.linx());
 		CT.db.get("game", function(games) {
-			CT.modal.choice({
-				prompt: "please select a game",
-				data: ["new game"].concat(games),
-				cb: function(game) {
-					if (game == "new game")
-						vu.builders.game.create();
-					else
-						vu.builders.game.load(game);
-				}
-			});
+			_.games = games;
+			if (games.length)
+				g.load(games[0]);
+			else
+				g.create();
 		}, null, null, null, {
 			owners: {
 				comparator: "contains",
