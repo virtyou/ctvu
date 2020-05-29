@@ -113,10 +113,16 @@ vu.builders.scene = {
 					} else if (stype == "camera") {
 						CT.modal.choice({
 							prompt: "please select an angle",
-							data: ["behind", "pov", "cycle",
+							data: ["front", "behind", "pov", "cycle",
 								"0", "1", "2", "3", "4", "5", "6", "7", "8"],
 							cb: function(angle) {
-								cb({ camera: angle });
+								CT.modal.choice({
+									prompt: "please select a target",
+									data: ["player"].concat(zcc.scene.actors.map(a => a.name)),
+									cb: function(target) {
+										cb({ camera: angle, target: target });
+									}
+								});
 							}
 						});
 					} else if (stype == "lights") {
