@@ -11,15 +11,35 @@ vu.game.Adventure = CT.Class({
 				bag: [],
 				gear: {}
 			};
+		},
+		reset: function() {
+			// TODO: ungear!
+			var prop, gi = this.game.initial;
+			for (var prop of CT.data.uniquify(Object.keys(this.state).concat(Object.keys(gi))))
+				this.state[prop] = gi[prop] && JSON.parse(JSON.stringify(gi[prop]));
+			this._.setState(this.state);
+			this.upstate();
+		},
+		initState: function() {
+			var _ = this._, oz = this.opts;
+			this.state = {};
+			if (oz.state.story) {
+				CT.modal.choice({
+					prompt: "resume adventure or start over?",
+					data: ["resume", "restart"],
+					cb: function(decision) {
+						if (decision == "restart" && confirm("are you sure you want to lose your progress?"))
+							_.reset();
+						else
+							_.setState(oz.state);
+					}
+				});
+			} else
+				_.setState(oz.state);
 		}
 	},
 	reset: function() {
-		// TODO: ungear!
-		var prop, gi = this.game.initial;
-		for (var prop in this.state) // meh
-			this.state[prop] = gi[prop] && JSON.parse(JSON.stringify(gi[prop]));
-		this._.setState(this.state);
-		this.upstate();
+		this._.reset();
 		zero.core.current.scene.script("start");
 	},
 	upstate: function() {
@@ -59,8 +79,8 @@ vu.game.Adventure = CT.Class({
 			}
 		});
 		zero.core.current.adventure = this;
+		this._.initState();
 		this.player = opts.player;
-		this._.setState(opts.state);
 		this.game = opts.game;
 		this.portals = opts.game.portals;
 		this.menus = new vu.menu.Game({
