@@ -5,6 +5,7 @@ vu.menu.Game = CT.Class({
 		menus: {
 			story: "bottomleft"
 		},
+		interactionals: {},
 		collapse: function(section) {
 			var sel = this._.selectors[section];
 			return function() {
@@ -23,11 +24,28 @@ vu.menu.Game = CT.Class({
 			if (name in scene.opts.scripts)
 				scene.script(name);
 		},
+		hider: function(menu, cambak) {
+			var zc = zero.core, iz = this._.interactionals;
+			return function() {
+				iz[menu].hide();
+				cambak && zc.camera.follow(zc.current.person.body);
+			};
+		},
+		sayer: function(statement, person) {
+			var _ = this._, zc = zero.core, iz = _.interactionals,
+				s = CT.dom.div(statement, "biggest");
+			if (iz.say)
+				iz.say.set([person.name, s]);
+			else
+				iz.say = _.basic(person.name, "top", s, _.hider("say"));
+			iz.say.show("ctmain");
+		},
 		convo: function(person) {
 			setTimeout(function() { // ... meh
 //				person.look(zero.core.camera);
 				zero.core.camera.angle("front", person.name, "lookHigh");
 			});
+			person.onsay(this._.sayer);
 			var n = CT.dom.div();
 			vu.controls.setTriggers(n, this._.upper, person);
 			return n;
@@ -37,16 +55,13 @@ vu.menu.Game = CT.Class({
 				header, cb || this._.collapse(name));
 		},
 		info: function(name, info) {
-			var _ = this._, zc = zero.core;
-			if (_.infomenu)
-				_.infomenu.set([name, info]);
-			else {
-				_.infomenu = _.basic("info", "bottom", info, function() {
-					_.infomenu.hide();
-					zc.camera.follow(zc.current.person.body);
-				}, name);
-			}
-			return _.infomenu;
+			var _ = this._, zc = zero.core, iz = _.interactionals;
+			if (iz.info)
+				iz.info.set([name, info]);
+			else
+				iz.info = _.basic("info", "bottom",
+					info, _.hider("info", true), name);
+			return iz.info;
 		},
 		setup: function() {
 			this._.selectors.story = CT.dom.div(null,
