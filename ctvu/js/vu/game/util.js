@@ -7,7 +7,7 @@ vu.game.util = {
 				state.inventory.bag.push(v);
 			else if (k in zcc.people)
 				for (p in v)
-					state.actors[k][p] = v;
+					state.actors[k][p] = v[p];
 			else
 				state[k] = v;
 		}
