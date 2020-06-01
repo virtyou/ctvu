@@ -116,6 +116,8 @@ vu.builders.scene = {
 							data: ["front", "behind", "pov", "cycle",
 								"0", "1", "2", "3", "4", "5", "6", "7", "8"],
 							cb: function(angle) {
+								if (!["front", "behind", "pov"].includes(angle))
+									return cb({ camera: angle });
 								CT.modal.choice({
 									prompt: "please select a target",
 									data: ["player"].concat(zcc.scene.actors.map(a => a.name)),
