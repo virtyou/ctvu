@@ -109,7 +109,7 @@ vu.builders.zone = {
 			}, setP = function() {
 				if (door.opts.portals.outgoing) {
 					CT.db.one(door.opts.portals.outgoing.target, function(target) {
-						if (target.owners) // room     ??? is this right?
+						if (target.kind != "portal")
 							name = target.name + " (pending)";
 						else
 							name = CT.data.get(target.parent).name + " (" + target.name + ")";
