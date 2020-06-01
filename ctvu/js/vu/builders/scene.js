@@ -458,6 +458,7 @@ vu.builders.scene = {
 							if (etype == "remove entirely") {
 								CT.data.remove(zcc.scene.scripts[zcc.script], s);
 								_.upscripts();
+								stpr.remove();
 							} else if (etype == "add something") {
 								_.step(function(upz) {
 									for (k in upz)
