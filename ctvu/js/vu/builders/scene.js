@@ -522,6 +522,7 @@ vu.builders.scene = {
 			_.items();
 			_.lights();
 			_.actors();
+			zcc.room.setBounds();
 			zcc.room.setFriction(false); // for positioning......
 			vu.controls.initCamera(selz.cameras);
 			CT.dom.addContent(selz.props, selz.items);
