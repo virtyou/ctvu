@@ -121,6 +121,9 @@ vu.builders.item = {
 				}, -Math.PI, Math.PI, 0, 0.01, "w1"));
 			};
 			selz.dub.update = function() {
+				if (!_.thing.material)
+					return CT.dom.hide(selz.dub);
+				CT.dom.show(selz.dub);
 				CT.dom.setContent(selz.dub, CT.dom.checkboxAndLabel("double sided",
 					_.thing.material.side == 2, null, null, null, function(cbox) {
 						var s = _.thing.material.side = cbox.checked ? 2 : 0;
