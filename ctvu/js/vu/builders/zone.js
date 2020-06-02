@@ -511,12 +511,19 @@ vu.builders.zone = {
 			selz.shininess = CT.dom.div();
 			selz.shininess.update = function() {
 				obj = furn || zero.core.current.room;
+				if (!obj.thring)
+					return CT.dom.hide(selz.shininess.full);
+				CT.dom.show(selz.shininess.full);
 				CT.dom.setContent(selz.shininess, CT.dom.range(function(val) {
 					val = parseInt(val);
 					obj.opts.material.shininess = obj.thring.material.shininess = val;
 					vu.storage.setMaterial(obj.opts.key, { shininess: val });
 				}, 0, 150, obj.thring.material.shininess || 30, 1, "w1"));
 			};
+			selz.shininess.full = CT.dom.div([
+				"Shininess",
+				selz.shininess
+			], "topbordered padded margined");
 
 			if (furn) {
 				selz.color.update();
@@ -533,10 +540,7 @@ vu.builders.zone = {
 					"Specular",
 					selz.specular
 				], "topbordered padded margined"),
-				CT.dom.div([
-					"Shininess",
-					selz.shininess
-				], "topbordered padded margined")
+				selz.shininess.full
 			];
 		},
 		lightup: function(color, lnum) {
