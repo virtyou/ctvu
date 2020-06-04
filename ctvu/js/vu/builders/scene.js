@@ -331,9 +331,9 @@ vu.builders.scene = {
 				pz = CT.dom.div(pvalz.map(_.prop));
 			CT.dom.setContent(selz.props, [
 				CT.dom.button("add", function() {
-					var pkeys = pvalz.map(p => p.key),
+					var pnames = pvalz.map(p => p.name),
 						data = zcc.room.objects.filter(function(p) {
-							return !pkeys.includes(p.key);
+							return p.opts.kind == "furnishing" && !pnames.includes(p.name);
 						});
 					data.length ? CT.modal.choice({
 						prompt: "please select a prop",
