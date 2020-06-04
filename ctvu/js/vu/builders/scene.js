@@ -8,20 +8,6 @@ vu.builders.scene = {
 			steps: "bottomleft",
 			actors: "bottomright"
 		},
-		upscripts: function() {
-			var scene = zero.core.current.scene;
-			vu.storage.edit({
-				key: scene.key,
-				scripts: scene.scripts
-			});
-		},
-		upstate: function() {
-			var g = zero.core.current.scene.game;
-			vu.storage.edit({
-				key: g.key,
-				initial: g.initial
-			});
-		},
 		state: function(ofScene, sub) {
 			var i = zero.core.current.scene.game.initial;
 			if (!ofScene) return i;
@@ -31,198 +17,9 @@ vu.builders.scene = {
 			if (!i.scenes[ofScene][sub]) i.scenes[ofScene][sub] = {};
 			return i.scenes[ofScene][sub];
 		},
-		step: function(cb, cur) {
-			var zcc = zero.core.current, _ = vu.builders.scene._;
-			CT.modal.choice({
-				prompt: "please select a variety",
-				data: ["lights", "camera", "action", "state", "story",
-					"text", "pause", "fx", "music", "ambient"
-				].filter(function(st) { // +props,state
-					return !cur || !(st in cur);
-				}),
-				cb: function(stype) {
-					if (stype == "pause") {
-						CT.modal.prompt({
-							prompt: "0.25 to five seconds",
-							style: "number",
-							cb: function(val) {
-								cb({ pause: val * 1000 });
-							}
-						});
-					} else if (stype == "action") {
-						CT.modal.choice({
-							prompt: "please select an actor",
-							data: zcc.scene.actors,
-							cb: function(actor) {
-								CT.modal.choice({
-									prompt: "please select an action",
-									data: ["say", "respond", "move", "approach"],
-									cb: function(action) {
-										var act = function(line) {
-											cb({
-												actor: actor.name,
-												action: action,
-												line: line
-											});
-										};
-										if (action == "move") {
-											CT.modal.choice({
-												prompt: "please adjust " + actor.name + "'s position and orientation, and click 'ready' to save. click 'cancel' to abort.",
-												data: ["ready", "cancel"],
-												cb: function(resp) {
-													var pbs = zcc.people[actor.name].body.springs;
-													(resp == "ready") && act({
-														weave: pbs.weave.target,
-														slide: pbs.slide.target,
-														orientation: pbs.orientation.target
-													});
-												}
-											});
-										} else if (action == "approach") {
-											CT.modal.choice({
-												data: ["player", "actor", "furnishing"],
-												cb: function(cat) {
-													if (cat == "player")
-														return act("player");
-													var data;
-													if (cat == "actor") {
-														data = zcc.scene.actors.filter(function(a) {
-															return a.name != actor.name;
-														});
-													} else // furnishing
-														data = Object.values(zcc.room.objects);
-													CT.modal.choice({
-														prompt: "please select a target",
-														data: data,
-														cb: function(target) {
-															act(target.name);
-														}
-													});
-												}
-											});
-										} else {
-											CT.modal.prompt({
-												prompt: "what's the line?",
-												cb: act
-											})
-										}
-									}
-								})
-							}
-						});
-					} else if (stype == "camera") {
-						CT.modal.choice({
-							prompt: "please select an angle",
-							data: ["front", "behind", "pov", "cycle",
-								"0", "1", "2", "3", "4", "5", "6", "7", "8"],
-							cb: function(angle) {
-								if (!["front", "behind", "pov"].includes(angle))
-									return cb({ camera: angle });
-								CT.modal.choice({
-									prompt: "please select a target",
-									data: ["player"].concat(zcc.scene.actors.map(a => a.name)),
-									cb: function(target) {
-										cb({ camera: angle, target: target });
-									}
-								});
-							}
-						});
-					} else if (stype == "lights") {
-						CT.modal.choice({
-							prompt: "please adjust the lighting, and click 'ready' to save. click 'cancel' to abort.",
-							data: ["ready", "cancel"],
-							cb: function(resp) {
-								(resp == "ready") && cb({
-									lights: zcc.room.lights.map(function(light) {
-										return light.opts.intensity;
-									})
-								});
-							}
-						});
-					} else if (stype == "text") {
-						CT.modal.prompt({
-							prompt: "what should it say?",
-							isTA: true,
-							cb: function(msg) {
-								cb({ text: msg });
-							}
-						});
-					} else if (stype == "story") {
-						CT.modal.prompt({
-							prompt: "what's the story?",
-							isTA: true,
-							cb: function(msg) {
-								cb({ story: msg });
-							}
-						});
-					} else if (stype == "state") {
-						var sgia = zcc.scene.game.initial.actors;
-						CT.modal.choice({
-							prompt: "please select an actor",
-							data: zcc.scene.actors.map(a => a.name),
-							cb: function(actor) {
-								CT.modal.choice({
-									prompt: "what's changing?",
-									data: [
-										"new property with initial state",
-										"new property without initial state"
-									].concat(Object.keys(sgia[actor]).filter(p => p != "positioners")),
-									cb: function(prop) {
-										var getval = function(prop) {
-											CT.modal.prompt({
-												prompt: "what's the new value?",
-												cb: function(val) {
-													var sobj = {};
-													sobj[actor] = {};
-													sobj[actor][prop] = val;
-													cb({ state: sobj });
-												}
-											});
-										};
-										if (prop.startsWith("new property")) {
-											CT.modal.prompt({
-												prompt: "ok, what's the new property?",
-												cb: function(prop) {
-													if (prop.includes("without"))
-														return getval(prop);
-													CT.modal.prompt({
-														prompt: "what's the initial value (value _prior to_ current step!)?",
-														cb: function(ival) {
-															sgia[actor][prop] = ival;
-															_.upstate();
-															getval(prop);
-														}
-													});
-												}
-											});
-										} else
-											getval(prop);
-									}
-								});
-							}
-						});
-					} else { // fx, music, ambient
-						vu.media.swapper.audio(function(aud) {
-							if (!(aud.name in _.audio[stype])) {
-								var uobj = {
-									key: zcc.scene.key
-								};
-								_.audio.add(aud);
-								zcc.scene[stype].push(aud);
-								uobj[stype] = zcc.scene[stype].map(s => s.key);
-								vu.storage.edit(uobj);
-							}
-							var aobj = {};
-							aobj[stype] = aud.name;
-							cb(aobj);
-						}, stype, true);
-					}
-				}
-			});
-		},
 		actor: function(a) {
 			var _ = vu.builders.scene._, zcc = zero.core.current,
-				gup = _.upstate, state = _.state(), r = zcc.room,
+				gup = vu.game.step.upstate, state = _.state(), r = zcc.room,
 				az = state.actors = state.actors || {},
 				bod = zcc.people[a.name].body, sz = bod.springs;
 			az[a.name] = az[a.name] || {};
@@ -349,7 +146,7 @@ vu.builders.scene = {
 		},
 		item: function(iopts) { // also creates/places thing!!
 			var r = zero.core.current.room,
-				gup = vu.builders.scene._.upstate,
+				gup = vu.game.step.upstate,
 				item = new zero.core.Thing(CT.merge(iopts,
 					vu.storage.get("held")[iopts.name]));
 			return CT.dom.div([
@@ -426,97 +223,9 @@ vu.builders.scene = {
 				}), "noflow"),
 				CT.dom.button("set initial lighting", function() {
 					state.lights = zcc.room.lights.map(l => l.opts.intensity);
-					_.upstate();
+					vu.game.step.upstate();
 				}, "w1")
 			], "pt10"));
-		},
-		shifter: function(stpr, dir) {
-			var _ = vu.builders.scene._, zcc = zero.core.current,
-				arr = zcc.scene.scripts[zcc.script],
-				i = CT.dom.childNum(stpr),
-				el = arr.splice(i, 1)[0];
-			if (dir == "up") {
-				arr.splice(i - 1, 0, el);
-				stpr.parentNode.insertBefore(stpr, stpr.previousSibling);
-			} else {
-				arr.splice(i + 1, 0, el);
-				if (stpr.nextSibling.nextSibling)
-					stpr.parentNode.insertBefore(stpr, stpr.nextSibling.nextSibling);
-				else
-					stpr.parentNode.appendChild(stpr);
-			}
-			_.upscripts();
-		},
-		stepper: function(s) {
-			var _ = vu.builders.scene._, zcc = zero.core.current, k;
-			var stpr = CT.dom.div([
-				CT.dom.button("edit", function() {
-					CT.modal.choice({
-						prompt: "how would you like to modify this step?",
-						data: ["add something", "remove entirely", "shift"],
-						cb: function(etype) {
-							if (etype == "remove entirely") {
-								CT.data.remove(zcc.scene.scripts[zcc.script], s);
-								_.upscripts();
-								stpr.remove();
-							} else if (etype == "add something") {
-								_.step(function(upz) {
-									for (k in upz)
-										s[k] = upz[k];
-									CT.dom.replace(stpr, _.stepper(s));
-									_.upscripts();
-								}, s);
-							} else { // shift
-								if (stpr.nextSibling && stpr.previousSibling) {
-									CT.modal.choice({
-										prompt: "which direction?",
-										data: ["up", "down"],
-										cb: function(dir) {
-											_.shifter(stpr, dir);
-										}
-									});
-								} else if (stpr.nextSibling)
-									_.shifter(stpr, "down");
-								else if (stpr.previousSibling)
-									_.shifter(stpr, "up");
-								else
-									alert("nowhere to shift! first, add another step!");
-							}
-						}
-					});
-				}, "right"),
-				JSON.stringify(s).replace(/,/g, ",&#8203;")
-			], "bordered padded margined round", null, {
-				onclick: function() {
-					vu.game.util.step(s, null, null, _.audio, {});
-				}
-			});
-			return stpr;
-		},
-		steps: function() {
-			var _ = vu.builders.scene._, selz = _.selectors,
-				scene = zero.core.current.scene;
-			selz.steps.refresh = function(sname) {
-				zero.core.current.script = sname;
-				var stez = CT.dom.div(scene.scripts[sname].map(_.stepper),
-					"nonowrap");
-				CT.dom.setContent(selz.steps, [
-					CT.dom.div([
-						CT.dom.button("add step", function() {
-							_.step(function(step) {
-								CT.dom.addContent(stez, _.stepper(step));
-								scene.scripts[sname].push(step);
-								_.upscripts();
-							});
-						}),
-						CT.dom.button("play all", function() {
-							vu.game.util.script(scene.scripts[sname],
-								null, null, _.audio);
-						})
-					], "abs ctr shiftup"),
-					stez
-				]);
-			};
 		},
 		backstage: function() {
 			var _ = vu.builders.scene._, selz = _.selectors,
@@ -534,7 +243,8 @@ vu.builders.scene = {
 	},
 	load: function(scene) {
 		var _ = vu.builders.scene._, selz = _.selectors,
-			snode = CT.dom.div(null, "right"), upscripts = _.upscripts;
+			snode = CT.dom.div(null, "right"),
+			upscripts = vu.game.step.upscripts;
 		zero.core.current.scene = scene;
 		_.audio = new vu.audio.Controller({
 			fx: scene.fx,
@@ -550,7 +260,9 @@ vu.builders.scene = {
 			"Scripts",
 			selz.scripts
 		]);
-		_.steps();
+		vu.game.step.setSels(selz);
+		vu.game.step.setAudio(_.audio);
+		vu.game.step.steps();
 
 		if (!Object.keys(scene.scripts).length)
 			scene.scripts.start = [];
