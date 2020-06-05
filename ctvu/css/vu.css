@@ -240,6 +240,7 @@ img.right.h30p.up5 {
 	max-width: 70%;
 }
 .gmenu.props {
+	min-width: 100px;
 	max-height: calc(100% - 350px);
 }
 .gmenu.body {
