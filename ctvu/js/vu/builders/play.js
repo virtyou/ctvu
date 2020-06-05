@@ -81,53 +81,13 @@ vu.builders.play = {
 				data: val
 			});
 		},
-		portin: function(target, portinkey) {
-			var _ = vu.builders.play._, cur = zero.core.current;
-			Object.values(cur.people).forEach(function(person) {
-				if (!vu.core.ischar(person.opts.key))
-					person.remove();
-			});
-			zero.core.util.room(CT.merge({
-				onbuild: function(room) {
-					_.emit("inject", portinkey);
-					room.cut();
-					room.objects.forEach(_.clickreg);
-				}
-			}, CT.data.get(target || CT.storage.get("room"))));
-			CT.pubsub.subscribe(cur.room.opts.key);
-			_.selectors.run_home.modal[vu.core.isroom(cur.room.opts.key)
-				? "hide" : "show"]("ctmain");
-		},
-		port: function(target, portout, portin) {
-			var _ = vu.builders.play._, cur = zero.core.current;
-			_.emit("eject", portout);
-			CT.pubsub.unsubscribe(cur.room.opts.key);
-			setTimeout(_.portin, 500, target, portin);
-		},
 		action: function() {
-			var _ = vu.builders.play._,
-				cur = zero.core.current, person = cur.person,
-				pos = person.body.group.position, hit = false;
-			cur.room.objects.filter(function(obj) {
-				var o = obj.opts, og = o.portals && o.portals.outgoing;
-				return og && og.target;
-			}).forEach(function(portal) {
-				if (hit) return;
-				var dist = portal.position().distanceTo(pos);
-				CT.log(portal.name + " " + dist);
-				if (dist < 100) {
-					hit = true;
-					CT.db.one(portal.opts.portals.outgoing.target, function(target) {
-						if (target.kind != "portal")
-							person.say("this door is locked");
-						else
-							_.port(target.parent, portal.opts.key, target.key);
-					}, "json");
-				}
-			});
+			// TODO: other actions.....
+			vu.portal.check();
 		},
 		setup: function() {
 			var _ = vu.builders.play._, selz = _.selectors,
+				cur = zero.core.current,
 				popts = _.opts = vu.storage.get("person") || _.opts;
 			_.raw = vu.core.person(popts);
 			selz.cameras = CT.dom.div(null, "centered");
@@ -137,6 +97,18 @@ vu.builders.play = {
 			selz.chat = _.chatterbox();
 			selz.info = CT.dom.div();
 			selz.mods = CT.dom.div();
+			vu.portal.on("eject", function(portout) {
+				_.emit("eject", portout);
+				CT.pubsub.unsubscribe(cur.room.opts.key);
+			});
+			vu.portal.on("inject", function(portinkey) {
+				_.emit("inject", portinkey);
+			});
+			vu.portal.on("portin", function() {
+				CT.pubsub.subscribe(cur.room.opts.key);
+				selz.run_home.modal[vu.core.isroom(cur.room.opts.key)
+					? "hide" : "show"]("ctmain");
+			});
 		},
 		chatterbox: function() {
 			var out = CT.dom.div(null, "out"), say = function(val, e) {
