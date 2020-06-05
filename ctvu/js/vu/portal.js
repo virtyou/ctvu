@@ -3,20 +3,13 @@ vu.portal = {
 	on: function(emission, cb) {
 		vu.portal._[emission] = cb;
 	},
-	portin: function(target, portinkey) {
+	portin: function(target, portin) {
 		var _ = vu.portal._, cur = zero.core.current;
 		Object.values(cur.people).forEach(function(person) {
 			if (!vu.core.ischar(person.opts.key))
 				person.remove();
 		});
-		zero.core.util.room(CT.merge({
-			onbuild: function(room) {
-				_.inject && _.inject(portinkey);
-				room.cut();
-				room.objects.forEach(_.clickreg);
-			} // hm revisit below...
-		}, CT.data.get(target || CT.storage.get("room"))));
-		_.portin && _.portin();
+		_.inject && _.inject(target, portin);
 	},
 	port: function(target, portout, portin) {
 		var vp = vu.portal, _ = vp._;

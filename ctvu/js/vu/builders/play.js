@@ -101,10 +101,14 @@ vu.builders.play = {
 				_.emit("eject", portout);
 				CT.pubsub.unsubscribe(cur.room.opts.key);
 			});
-			vu.portal.on("inject", function(portinkey) {
-				_.emit("inject", portinkey);
-			});
-			vu.portal.on("portin", function() {
+			vu.portal.on("inject", function(target, portin) {
+				zero.core.util.room(CT.merge({
+					onbuild: function(room) {
+						_.emit("inject", portin);
+						room.cut();
+						room.objects.forEach(_.clickreg);
+					} // hm revisit below...
+				}, CT.data.get(target || CT.storage.get("room"))));
 				CT.pubsub.subscribe(cur.room.opts.key);
 				selz.run_home.modal[vu.core.isroom(cur.room.opts.key)
 					? "hide" : "show"]("ctmain");
