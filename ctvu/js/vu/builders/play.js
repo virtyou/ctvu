@@ -93,7 +93,8 @@ vu.builders.play = {
 			selz.cameras = CT.dom.div(null, "centered");
 			selz.triggers = CT.dom.div();
 			selz.gestures = CT.dom.div();
-			selz.run_home = CT.dom.img("/img/vu/home.png", null, function() { _.port(); });
+			selz.run_home = CT.dom.img("/img/vu/home.png", null,
+				function() { vu.portal.port(); });
 			selz.chat = _.chatterbox();
 			selz.info = CT.dom.div();
 			selz.mods = CT.dom.div();
@@ -107,7 +108,7 @@ vu.builders.play = {
 						_.emit("inject", portin);
 						room.cut();
 						room.objects.forEach(_.clickreg);
-					} // hm revisit below...
+					}
 				}, CT.data.get(target || CT.storage.get("room"))));
 				CT.pubsub.subscribe(cur.room.opts.key);
 				selz.run_home.modal[vu.core.isroom(cur.room.opts.key)
