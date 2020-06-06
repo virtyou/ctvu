@@ -5,9 +5,11 @@ vu.builders.scene = {
 			cameras: "top",
 			main: "topleft",
 			props: "topright",
+			portals: "topright",
 			steps: "bottomleft",
 			actors: "bottomright"
 		},
+		swappers: ["props", "portals"],
 		state: function(ofScene, sub) {
 			var i = zero.core.current.scene.game.initial;
 			if (!ofScene) return i;
@@ -97,6 +99,55 @@ vu.builders.scene = {
 				az
 			]);
 		},
+		portal: function(p) {
+			var _ = vu.builders.scene._, zcc = zero.core.current,
+				scene = zcc.scene, ports = _.state(scene.name, "portals"),
+				pobj = ports[p.name] = ports[p.name] || { name: p.name };
+			return CT.dom.div([
+				p.name,
+				CT.dom.smartField({
+					isTA: true,
+					classname: "w1",
+					value: pobj.description,
+					blurs: ["enter a short description", "describe this portal"],
+					cb: function(desc) {
+						pobj.description = desc.trim();
+						vu.storage.edit({
+							key: scene.key,
+							props: scene.props
+						});
+					}
+				})
+			], "bordered padded margined round", null, {
+				onclick: function() {
+					zero.core.camera.follow(zcc.room[p.name]);
+				}
+			});
+		},
+		portals: function() {
+			var _ = vu.builders.scene._, selz = _.selectors,
+				zcc = zero.core.current,
+				ports = _.state(zcc.scene.name, "portals"),
+				pvals = Object.values(ports),
+				pz = CT.dom.div(pvals.map(_.portal));
+			CT.dom.setContent(selz.portals, [
+				CT.dom.button("add", function() {
+					var pnames = pvalz.map(p => p.name),
+						data = zcc.room.objects.filter(function(p) {
+							return p.opts.kind == "portal" && !pnames.includes(p.name);
+						});
+					data.length ? CT.modal.choice({
+						prompt: "please select a portal",
+						data: data,
+						cb: function(port) {
+							zero.core.camera.follow(port);
+							CT.dom.addContent(pz, _.portal(port));
+						}
+					}) : alert("add one on the zone page!");
+				}, "abs ctr shiftup"),
+				pz
+			]);
+		},
 		prop: function(p) {
 			var zcc = zero.core.current, scene = zcc.scene,
 				pobj = scene.props[p.name] = scene.props[p.name] || { name: p.name };
@@ -124,7 +175,7 @@ vu.builders.scene = {
 		props: function() {
 			var _ = vu.builders.scene._, selz = _.selectors,
 				zcc = zero.core.current, scene = zcc.scene,
-				prop, pvalz = Object.values(scene.props),
+				pvalz = Object.values(scene.props),
 				pz = CT.dom.div(pvalz.map(_.prop));
 			CT.dom.setContent(selz.props, [
 				CT.dom.button("add", function() {
@@ -234,11 +285,25 @@ vu.builders.scene = {
 			_.items();
 			_.lights();
 			_.actors();
+			_.portals();
 			zcc.room.setBounds();
 			zcc.room.setFriction(false); // for positioning......
 			vu.controls.initCamera(selz.cameras);
 			CT.dom.addContent(selz.props, selz.items);
 			CT.dom.addContent(selz.main, selz.lights);
+		},
+		swap: function() {
+			var _ = vu.builders.scene._, selz = _.selectors;
+			_.swappers.forEach(function(section) {
+				selz[section].modal.showHide("ctmain");
+			});
+		},
+		head: function(section) {
+			var n = CT.dom.node(CT.parse.key2title(section)),
+				_ = vu.builders.scene._;
+			if (_.swappers.indexOf(section) != -1)
+				n.onclick = _.swap;
+			return n;
 		}
 	},
 	load: function(scene) {
@@ -324,6 +389,7 @@ vu.builders.scene = {
 		selz.props = CT.dom.div();
 		selz.items = CT.dom.div();
 		selz.lights = CT.dom.div();
+		selz.portals = CT.dom.div();
 		selz.cameras = CT.dom.div(null, "centered");
 		CT.db.one(skey, vu.builders.scene.load, "json_plus");
 	},
@@ -332,8 +398,8 @@ vu.builders.scene = {
 		vu.builders.scene.setup();
 		for (section in _.menus) {
 			selz[section].modal = vu.core.menu(section,
-				_.menus[section], selz[section]);
-			selz[section].modal.show("ctmain");
+				_.menus[section], selz[section], _.head(section));
+			(section == "portals") || selz[section].modal.show("ctmain");
 		}
 	}
 };
