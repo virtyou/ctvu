@@ -708,7 +708,7 @@ vu.builders.zone = {
 		},
 		swap: function() {
 			var _ = vu.builders.zone._, selz = _.selectors;
-			vu.builders.zone._.swappers.forEach(function(section) {
+			_.swappers.forEach(function(section) {
 				selz[section].modal.showHide("ctmain");
 			});
 		},
