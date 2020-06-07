@@ -100,27 +100,31 @@ vu.builders.scene = {
 			]);
 		},
 		portswap: function(p, cb) {
-			var up = function(target) {
-				if (target)
-					p.target = target.key;
-				else
-					delete p.target;
-				vu.game.step.upstate();
-				cb();
-			};
-			CT.db.multi(zero.core.current.scene.game.scenes, function(scenes) {
-				CT.modal.choice({
-					prompt: "which scene should this portal initially link to?",
-					data: ["no initial linkage"].concat(scenes),
-
-					// TODO: filter scenes based on portal target room
-
-					cb: function(selection) {
-						up((selection != "no initial linkage")
-							&& selection);
-					}
-				});
-			});
+			var zcc = zero.core.current, rscenes,
+				og = zcc.room[p.name].opts.portals.outgoing;
+			if (!og)
+				return alert("this portal doesn't go anywhere!");
+			CT.db.one(og.target, function(door) {
+				if (door.kind != "portal")
+					return alert("this portal's destination has not been confirmed!");
+				CT.db.multi(zcc.scene.game.scenes, function(scenes) {
+					rscenes = scenes.filter(s => s.room == door.parent);
+					if (!rscenes.length)
+						return alert("no scenes in that room :(");
+					CT.modal.choice({
+						prompt: "which scene should this portal initially link to?",
+						data: ["no initial linkage"].concat(rscenes),
+						cb: function(target) {
+							if (target == "no initial linkage")
+								delete p.target;
+							else
+								p.target = target.key;
+							vu.game.step.upstate();
+							cb();
+						}
+					});
+				}, "json");
+			}, "json");
 		},
 		linkage: function(p) {
 			var linkage = CT.dom.div(), swap = function() {
