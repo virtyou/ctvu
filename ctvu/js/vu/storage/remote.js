@@ -45,19 +45,24 @@ vu.storage.remote = {
 		return !!vu.core._udata[ent_type];
 	},
 	get: function(ent_type) {
-		if (ent_type == "person")
-			return vu.core._udata.person;
-		else if (ent_type == "people")
-			return vu.core._udata.people;
-		else if (ent_type == "room")
-			return vu.core._udata.room;
-		else if (ent_type == "rooms")
-			return vu.core._udata.rooms;
-		else if (ent_type == "allrooms")
-			return vu.core._allrooms;
-		else if (ent_type in vu.storage._extras)
-			return vu.storage._extras[ent_type];
+		var vc = vu.core, vcu = vc._udata,
+			ex = vu.storage._extras;
+		if (vcu) {
+			if (ent_type == "person")
+				return vcu.person;
+			else if (ent_type == "people")
+				return vcu.people;
+			else if (ent_type == "room")
+				return vcu.room;
+			else if (ent_type == "rooms")
+				return vcu.rooms;
+		}
+		if (ent_type == "allrooms")
+			return vc._allrooms;
+		else if (ex && ent_type in ex)
+			return ex[ent_type];
 //		return CT.db.get(key);
+		CT.log("vu.storage.get() unable to find: " + ent_type);
 	},
 	_readys: 0,
 	_ready: function(cb, rcount) {

@@ -18,6 +18,8 @@ CT.require("vu.audio");
 CT.require("vu.storage");
 CT.require("vu.controls");
 CT.require("vu.game.util");
+CT.require("vu.game.step");
+CT.require("vu.game.stepper");
 CT.require("vu.builders.scene");
 
 CT.onload(function() {

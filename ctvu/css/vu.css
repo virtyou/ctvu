@@ -239,7 +239,8 @@ img.right.h30p.up5 {
 /*	max-width: 416px;*/
 	max-width: 70%;
 }
-.gmenu.props {
+.gmenu.props, .gmenu.portals {
+	min-width: 115px;
 	max-height: calc(100% - 350px);
 }
 .gmenu.body {

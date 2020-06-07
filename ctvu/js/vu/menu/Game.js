@@ -14,15 +14,14 @@ vu.menu.Game = CT.Class({
 			};
 		},
 		upper: function(variety, name, person) {
-			var zcc = zero.core.current, scene = zcc.scene,
+			var zcc = zero.core.current,
 				astate = this.state.actors[person.name];
 			this.log("upper():", person.name, variety, name);
 			if (astate.vibe != person.vibe.current) {
 				astate.vibe = person.vibe.current;
 				zcc.adventure.upstate();
 			}
-			if (name in scene.opts.scripts)
-				scene.script(name);
+			zcc.scene.script(name);
 		},
 		hider: function(menu, cambak) {
 			var zc = zero.core, iz = this._.interactionals;
@@ -108,9 +107,14 @@ vu.menu.Game = CT.Class({
 	item: function(item) {
 		this.info(item.name, item.opts.description, item);
 	},
+	portal: function(portal) {
+		var scene = zero.core.current.scene.name,
+			portals = this.state.scenes[scene].portals;
+		this.info(portal.name, portals[portal.name].description, portal);
+	},
 	prop: function(prop) {
-		this.info(prop.name,
-			this.opts.props[prop.name].description, prop);
+		var props = zero.core.current.scene.opts.props;
+		this.info(prop.name, props[prop.name].description, prop);
 	},
 	person: function(person) {
 		var zcc = zero.core.current,

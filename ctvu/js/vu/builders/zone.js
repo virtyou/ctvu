@@ -285,8 +285,11 @@ vu.builders.zone = {
 			var _ = vu.builders.zone._;
 			if (kind == "screen")
 				return _.part(null, "screen", cb);
+			var options = vu.storage.get(kind);
+			if (!options)
+				return alert("add something on the item page!");
 			CT.modal.choice({
-				data: Object.values(vu.storage.get(kind)),
+				data: Object.values(options),
 				cb: function(thing) {
 					_.part(thing, kind, cb);
 				}
@@ -705,7 +708,7 @@ vu.builders.zone = {
 		},
 		swap: function() {
 			var _ = vu.builders.zone._, selz = _.selectors;
-			vu.builders.zone._.swappers.forEach(function(section) {
+			_.swappers.forEach(function(section) {
 				selz[section].modal.showHide("ctmain");
 			});
 		},
