@@ -8,7 +8,8 @@ vu.game.Scene = CT.Class({
 		},
 		item: function(iopts, onbuild) {
 			return new zero.core.Thing(CT.merge(iopts, {
-				onbuild: onbuild
+				onbuild: onbuild,
+				scene: zero.core.current.room.group
 			}, vu.storage.get("held")[iopts.name]));
 		},
 		action: function() { // TODO: other actions...
@@ -40,12 +41,16 @@ vu.game.Scene = CT.Class({
 			men = this.menus, tsa = this.state.actors,
 			state = this.state.scenes[this.name],
 			slz = state.lights, items = state.items,
-			portals = state.portals;
+			portals = state.portals, adv = this.adventure;
 		zcc.person = zcc.people[this.player.name];
-		this.adventure.controls.setCb(_.action);
-		this.adventure.controls.setTarget(zcc.person);
+		adv.controls.setCb(_.action);
+		adv.controls.setTarget(zcc.person);
 		vu.portal.on("filter", function(obj) {
 			return obj.name in portals;
+		});
+		vu.portal.on("inject", function(troom, pkey) {
+			zcc.injector = pkey;
+			adv.setScene(portals[vu.portal.ejector.name].target);
 		});
 		zcc.room.setBounds();
 		slz && zcc.room.lights.forEach(function(l, i) {
@@ -65,19 +70,35 @@ vu.game.Scene = CT.Class({
 		this.script(this.state.script);
 	},
 	unload: function() {
-		// get rid of room / people!
+		// people removed by vu.portal.portin()
+		// everything else is on the room right...?
+		var zcc = zero.core.current;
+		zcc.room.remove();
+		delete zcc.room;
 	},
 	load: function() {
-		var oz = this.opts, cfg = core.config.ctzero, p;
+		var oz = this.opts, cfg = core.config.ctzero, p,
+			zc = zero.core, zcc = zc.current, start = this.start;
 		this.player.gear = this.state.inventory.gear;
 		for (p of oz.actors) {
 			p.grippy = false;
 			p.positioners = this.state.actors[p.name].positioners;
 		}
 		cfg.room = oz.room;
-		cfg.people = oz.actors.concat([this.player]);
-		zero.core.util.init(null, this.start);
-		zero.core.current.scene = this;
+		cfg.people = oz.actors;
+
+		if (zcc.scene) {
+			zc.util.refresh(function(lastp, room) {
+				zcc.people[zcc.person.name] = zcc.person;
+				vu.portal.arrive(zcc.injector &&
+					zero.core.Thing.get(zcc.injector));
+				start();
+			});
+		} else {
+			cfg.people.push(this.player);
+			zc.util.init(null, start);
+		}
+		zcc.scene = this;
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
