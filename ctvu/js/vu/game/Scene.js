@@ -52,7 +52,7 @@ vu.game.Scene = CT.Class({
 		});
 		vu.portal.on("inject", function(troom, pkey) {
 			zcc.injector = pkey;
-			adv.setScene(portals[vu.portal.ejector.name].target);
+			adv.scene(portals[vu.portal.ejector.name].target);
 		});
 		zcc.room.setBounds();
 		slz && zcc.room.lights.forEach(function(l, i) {
@@ -87,7 +87,7 @@ vu.game.Scene = CT.Class({
 			p.positioners = this.state.actors[p.name].positioners;
 		}
 		cfg.room = oz.room;
-		cfg.people = oz.actors;
+		cfg.people = oz.actors.slice();
 
 		if (zcc.scene) {
 			zc.util.refresh(function(lastp, room) {
