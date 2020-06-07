@@ -67,7 +67,9 @@ vu.game.util = {
 					state.scenes[zcc.scene.name].portals[step.scene.portal].target = step.scene.target;
 				} else { // direct
 					zcc.injector = null;
-					zcc.adventure.scene(step.scene);
+					zcc.room.eject(zcc.person);
+					setTimeout(zcc.adventure.scene,
+						500, step.scene);
 				}
 			}
 		}
