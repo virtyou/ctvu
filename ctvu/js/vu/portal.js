@@ -27,12 +27,16 @@ vu.portal = {
 		zcc.room.cut();
 		person.watch(false, true);
 	},
-	portin: function(target, portin) {
-		var _ = vu.portal._, cur = zero.core.current;
+	depart: function() {
+		var cur = zero.core.current;
 		Object.values(cur.people).forEach(function(person) {
 			if (person != cur.person)
 				person.remove();
 		});
+	},
+	portin: function(target, portin) {
+		var _ = vu.portal._;
+		vu.portal.depart();
 		_.inject(target, portin);
 	},
 	port: function(target, portout, portin) {
