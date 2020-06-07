@@ -10,6 +10,9 @@ vu.game.Scene = CT.Class({
 			return new zero.core.Thing(CT.merge(iopts, {
 				onbuild: onbuild
 			}, vu.storage.get("held")[iopts.name]));
+		},
+		action: function() { // TODO: other actions...
+			vu.portal.check();
 		}
 	},
 	refresh: function(altered) {
@@ -39,7 +42,11 @@ vu.game.Scene = CT.Class({
 			slz = state.lights, items = state.items,
 			portals = state.portals;
 		zcc.person = zcc.people[this.player.name];
+		this.adventure.controls.setCb(_.action);
 		this.adventure.controls.setTarget(zcc.person);
+		vu.portal.on("filter", function(obj) {
+			return obj.name in portals;
+		});
 		zcc.room.setBounds();
 		slz && zcc.room.lights.forEach(function(l, i) {
 			l.setIntensity(slz[i]);
