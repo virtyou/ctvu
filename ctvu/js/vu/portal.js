@@ -1,19 +1,17 @@
 vu.portal = {
 	_: {
 		inject: function(troom, pkey) { // join
-			var zcc = zero.core.current, person = zcc.person;
 			zero.core.util.room(CT.merge({
 				onbuild: function(room) {
-					room.inject(person,
-						pkey && zero.core.Thing.get(pkey));
-					room.cut();
-					person.watch(false, true);
+					vu.portal.arrive(pkey &&
+						zero.core.Thing.get(pkey));
 				}
 			}, CT.data.get(troom || CT.storage.get("room"))));
 		},
 		eject: function(pkey) { // leave
 			var zcc = zero.core.current, person = zcc.person;
-			zcc.room.eject(person, pkey && zero.core.Thing.get(pkey));
+			vu.portal.ejector = pkey && zero.core.Thing.get(pkey);
+			zcc.room.eject(person, vu.portal.ejector);
 		},
 		filter: function(obj) {
 			var o = obj.opts, og = o.portals && o.portals.outgoing;
@@ -22,6 +20,12 @@ vu.portal = {
 	},
 	on: function(emission, cb) {
 		vu.portal._[emission] = cb;
+	},
+	arrive: function(portal) {
+		var zcc = zero.core.current, person = zcc.person;
+		zcc.room.inject(person, portal);
+		zcc.room.cut();
+		person.watch(false, true);
 	},
 	portin: function(target, portin) {
 		var _ = vu.portal._, cur = zero.core.current;
