@@ -63,7 +63,11 @@ class Game(db.TimeStampedBase):
 	live = db.Boolean(default=False) # games page list
 
 	def json(self):
-		return self.data()
+		d = self.data()
+		sm = d['scenemap'] = {}
+		for s in db.get_multi(self.scenes):
+			sm[s.name] = s.key.urlsafe()
+		return d
 
 # TODO: support multi (owners[] etc)
 class Adventure(db.TimeStampedBase):
@@ -79,6 +83,6 @@ class Adventure(db.TimeStampedBase):
 		return {
 			"key": self.id(),
 			"state": self.state,
-			"game": self.game.get().data(),
+			"game": self.game.get().json(),
 			"player": self.player.get().json()
 		}
