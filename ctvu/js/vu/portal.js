@@ -7,7 +7,6 @@ vu.portal = {
 					room.inject(person,
 						pkey && zero.core.Thing.get(pkey));
 					room.cut();
-					person.body.show();
 					person.watch(false, true);
 				}
 			}, CT.data.get(troom || CT.storage.get("room"))));
