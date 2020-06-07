@@ -99,6 +99,43 @@ vu.builders.scene = {
 				az
 			]);
 		},
+		portswap: function(p, cb) {
+			var up = function(target) {
+				if (target)
+					p.target = target.key;
+				else
+					delete p.target;
+				vu.game.step.upstate();
+				cb();
+			};
+			CT.db.multi(zero.core.current.scene.game.scenes, function(scenes) {
+				CT.modal.choice({
+					prompt: "which scene should this portal initially link to?",
+					data: ["no initial linkage"].concat(scenes),
+
+					// TODO: filter scenes based on portal target room
+
+					cb: function(selection) {
+						up((selection != "no initial linkage")
+							&& selection);
+					}
+				});
+			});
+		},
+		linkage: function(p) {
+			var linkage = CT.dom.div(), swap = function() {
+				vu.builders.scene._.portswap(p, linkage.update);
+			};
+			linkage.update = function() {
+				CT.dom.setContent(linkage, CT.dom.link(p.target ?
+					CT.data.get(p.target).name : "link portal to scene", swap));
+			};
+			linkage.update();
+			return CT.dom.div([
+				"Scene Linkage",
+				linkage
+			], "bordered padded margined round");
+		},
 		portal: function(p) {
 			var _ = vu.builders.scene._, zcc = zero.core.current,
 				scene = zcc.scene, ports = _.state(scene.name, "portals"),
@@ -112,12 +149,10 @@ vu.builders.scene = {
 					blurs: ["enter a short description", "describe this portal"],
 					cb: function(desc) {
 						pobj.description = desc.trim();
-						vu.storage.edit({
-							key: scene.key,
-							props: scene.props
-						});
+						vu.game.step.upstate();
 					}
-				})
+				}),
+				_.linkage(pobj)
 			], "bordered padded margined round", null, {
 				onclick: function() {
 					zero.core.camera.follow(zcc.room[p.name]);
