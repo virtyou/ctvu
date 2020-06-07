@@ -1,6 +1,6 @@
 vu.game.step = {
 	_: {
-		varieties: ["lights", "camera", "action", "state",
+		varieties: ["lights", "camera", "action", "state", "scene",
 			"story", "text", "pause", "fx", "music", "ambient"]
 	},
 	setAudio: function(aud) {
@@ -28,7 +28,6 @@ vu.game.step = {
 		CT.modal.choice({
 			prompt: "please select a variety",
 			data: vu.game.step._.varieties.filter(function(st) {
-				// +props,state
 				return !cur || !(st in cur);
 			}),
 			cb: function(stype) {
