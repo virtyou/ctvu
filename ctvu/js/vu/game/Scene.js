@@ -33,10 +33,11 @@ vu.game.Scene = CT.Class({
 	},
 	start: function() {
 		var _ = this._, zcc = zero.core.current,
-			rc = _.regClick, pers, prop, item,
+			rc = _.regClick, pers, prop, item, portal,
 			men = this.menus, tsa = this.state.actors,
-			state = this.state.scenes[this.opts.name],
-			slz = state.lights, items = state.items;
+			state = this.state.scenes[this.name],
+			slz = state.lights, items = state.items,
+			portals = state.portals;
 		zcc.person = zcc.people[this.player.name];
 		this.adventure.controls.setTarget(zcc.person);
 		zcc.room.setBounds();
@@ -50,6 +51,8 @@ vu.game.Scene = CT.Class({
 		}
 		for (prop in this.opts.props)
 			rc(zcc.room[prop], men.prop);
+		for (portal in portals)
+			rc(zcc.room[portal], men.portal);
 		for (item in items)
 			_.item(items[item], i => rc(i, men.item));
 		this.script(this.state.script);
@@ -83,6 +86,7 @@ vu.game.Scene = CT.Class({
 		});
 		var a = this.adventure = opts.adventure,
 			s = this.state = a.state, osa = s.actors;
+		this.name = opts.name;
 		this.menus = a.menus;
 		this.player = a.player;
 		opts.actors.forEach(function(p) {
