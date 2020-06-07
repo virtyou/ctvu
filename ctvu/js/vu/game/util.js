@@ -37,7 +37,8 @@ vu.game.util = {
 		setTimeout(mod.hide, pause || 3000);
 	},
 	step: function(step, nextStep, state, audio, altered) {
-		var zcc = zero.core.current, k, r = zcc.room;
+		var zcc = zero.core.current, k,
+			r = zcc.room, cam = zero.core.camera;
 		if (step.lights) {
 			step.lights.forEach(function(val, i) {
 				r.lights[i][step.directive || "setIntensity"](val);
@@ -53,7 +54,7 @@ vu.game.util = {
 			state && state.story.push(step.story);
 		}
 		if (step.camera)
-			zero.core.camera.angle(step.camera, step.target);
+			cam.angle(step.camera, step.target);
 		if (step.prop)
 			r[step.prop][step.directive](step.direction);
 		if (state) {
@@ -66,10 +67,16 @@ vu.game.util = {
 					altered.state = true;
 					state.scenes[zcc.scene.name].portals[step.scene.portal].target = step.scene.target;
 				} else { // direct
-					zcc.injector = null;
-					zcc.room.eject(zcc.person);
-					setTimeout(zcc.adventure.scene,
-						500, step.scene);
+					cam.perspective();
+					zcc.person.watch(false, true);
+					setTimeout(function() {
+						zcc.injector = null;
+						zcc.room.eject(zcc.person);
+						setTimeout(function() {
+							vu.portal.depart();
+							zcc.adventure.scene(step.scene);
+						}, 500);
+					}, 500);
 				}
 			}
 		}
