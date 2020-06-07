@@ -2,8 +2,8 @@ vu.game.Adventure = CT.Class({
 	CLASSNAME: "vu.game.Adventure",
 	_: {
 		scenes: {},
-		setState: function(state) {
-			var s = this.state = state;
+		setState: function() {
+			var s = this.state;
 			s.script = s.script || "start";
 			s.story = s.story || [];
 			s.actors = s.actors || {};
@@ -15,14 +15,14 @@ vu.game.Adventure = CT.Class({
 		reset: function() {
 			// TODO: ungear!
 			var prop, gi = this.game.initial;
-			for (var prop of CT.data.uniquify(Object.keys(this.state).concat(Object.keys(gi))))
+			for (prop of CT.data.uniquify(Object.keys(this.state).concat(Object.keys(gi))))
 				this.state[prop] = gi[prop] && JSON.parse(JSON.stringify(gi[prop]));
-			this._.setState(this.state);
+			this._.setState();
 			this.upstate();
 		},
 		initState: function() {
 			var _ = this._, oz = this.opts;
-			this.state = {};
+			this.state = oz.state;
 			if (oz.state.story) {
 				CT.modal.choice({
 					prompt: "resume adventure or start over?",
@@ -31,11 +31,11 @@ vu.game.Adventure = CT.Class({
 						if (decision == "restart" && confirm("are you sure you want to lose your progress?"))
 							_.reset();
 						else
-							_.setState(oz.state);
+							_.setState();
 					}
 				});
 			} else
-				_.setState(oz.state);
+				_.setState();
 		}
 	},
 	reset: function() {
