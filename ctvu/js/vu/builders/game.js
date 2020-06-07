@@ -8,8 +8,7 @@ vu.builders.game = {
 				"room: " + s.room.name,
 				"actors: " + s.actors.map(function(a) {
 					return a.name;
-				}).join(", "),
-				"portal linkages!!!!!"
+				}).join(", ")
 			], "bordered padded margined round");
 		},
 		scenes: function(game) {
