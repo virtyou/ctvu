@@ -123,7 +123,7 @@ vu.builders.scene = {
 							cb();
 						}
 					});
-				}, "json");
+				});
 			}, "json");
 		},
 		linkage: function(p) {
@@ -167,8 +167,8 @@ vu.builders.scene = {
 			var _ = vu.builders.scene._, selz = _.selectors,
 				zcc = zero.core.current,
 				ports = _.state(zcc.scene.name, "portals"),
-				pvals = Object.values(ports),
-				pz = CT.dom.div(pvals.map(_.portal));
+				pvalz = Object.values(ports),
+				pz = CT.dom.div(pvalz.map(_.portal));
 			CT.dom.setContent(selz.portals, [
 				CT.dom.button("add", function() {
 					var pnames = pvalz.map(p => p.name),
