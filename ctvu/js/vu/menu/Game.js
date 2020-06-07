@@ -14,15 +14,14 @@ vu.menu.Game = CT.Class({
 			};
 		},
 		upper: function(variety, name, person) {
-			var zcc = zero.core.current, scene = zcc.scene,
+			var zcc = zero.core.current,
 				astate = this.state.actors[person.name];
 			this.log("upper():", person.name, variety, name);
 			if (astate.vibe != person.vibe.current) {
 				astate.vibe = person.vibe.current;
 				zcc.adventure.upstate();
 			}
-			if (name in scene.opts.scripts)
-				scene.script(name);
+			zcc.scene.script(name);
 		},
 		hider: function(menu, cambak) {
 			var zc = zero.core, iz = this._.interactionals;

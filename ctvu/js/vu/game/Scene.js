@@ -28,6 +28,8 @@ vu.game.Scene = CT.Class({
 	},
 	script: function(sname) {
 		var oz = this.opts;
+		if (!(sname in oz.scripts))
+			return this.log("script() - no match:", sname);
 		vu.game.util.script(oz.scripts[sname],
 			this.refresh, this.state, this.audio);
 		if (sname != this.state.script) {
