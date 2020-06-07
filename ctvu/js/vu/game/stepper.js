@@ -1,5 +1,55 @@
 vu.game.stepper = {
-	_: {},
+	_: {
+		swap: function(cb) {
+			var zcc = zero.core.current, c = zcc.scene,
+				scenes = Object.keys(c.game.initial.scenes);
+			CT.modal.choice({
+				prompt: "please select a scene",
+				data: scenes.filter(s => s != c.name),
+				cb: function(scene) {
+					cb({ scene: scene });
+				}
+			});
+		},
+		link: function(cb) {
+			var zcc = zero.core.current, s = zcc.scene, sobj = {},
+				portals = s.game.initial.scenes[s.name].portals;
+			CT.modal.choice({
+				prompt: "please select a portal",
+				data: Object.values(portals),
+				cb: function(portal) {
+					sobj = { portal: portal.name };
+					vu.game.util.sports(portal, function(rscenes) {
+						CT.modal.choice({
+							prompt: "please select a scene",
+							data: ["none (locked)"].concat(rscenes),
+							cb: function(target) {
+								if (target != "none (locked)")
+									sobj.target = target.name;
+								cb({ scene: sobj });
+							}
+						});
+					});
+				}
+			})
+		}
+	},
+	scene: function(cb) {
+		var zcc = zero.core.current,
+			s = zcc.scene, opts = ["swap scenes"];
+		if (Object.keys(s.game.initial.scenes[s.name].portals).length)
+			opts.push("link portal to scene");
+		var dosel = function(sel) {
+			vu.game.stepper._[sel.slice(0, 4)](cb);
+		};
+		if (opts.length == 1)
+			return dosel(opts[0]);
+		CT.modal.choice({
+			prompt: "switch scenes or update portal->scene linkage?",
+			data: opts,
+			cb: dosel
+		});
+	},
 	setAudio: function(aud) {
 		vu.game.stepper._.audio = aud;
 	},
