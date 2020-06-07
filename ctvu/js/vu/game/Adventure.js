@@ -64,6 +64,10 @@ vu.game.Adventure = CT.Class({
 			}, "json");
 		}
 	},
+	scene: function(name) {
+		this.state.script = "start";
+		this.setScene(this.scenemap[name]);
+	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
 			player: null,
@@ -72,6 +76,7 @@ vu.game.Adventure = CT.Class({
 				name: "game title",
 				description: "game description",
 				scenes: [], // keys
+				scenemap: {}, // name->key
 				portals: {},
 				initial: {},
 				victory: {},
@@ -82,6 +87,7 @@ vu.game.Adventure = CT.Class({
 		this._.initState();
 		this.player = opts.player;
 		this.game = opts.game;
+		this.scenemap = opts.game.scenemap;
 		this.portals = opts.game.portals;
 		this.menus = new vu.menu.Game({
 			state: this.state
