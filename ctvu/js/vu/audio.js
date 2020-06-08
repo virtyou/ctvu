@@ -10,10 +10,12 @@ vu.audio.Controller = CT.Class({
 			}
 		},
 		players: function() {
+			var kind, player;
 			this.players = {};
-			for (var kind in this.opts) {
-				this.players[kind] = CT.dom.audio();
-				document.body.appendChild(this.players[kind]);
+			for (kind in this.opts) {
+				player = this.players[kind] = CT.dom.audio();
+				player.volume = core.config.ctvu.volumes[kind];
+				document.body.appendChild(player);
 			}
 		}
 	},
