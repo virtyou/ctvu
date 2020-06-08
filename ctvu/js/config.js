@@ -29,6 +29,11 @@
         "environments": ["one.scrolly", "one.techno", "one.box", "one.kidroom"],
         "avatars": ["one.body.sassy", "one.body.kid"]
     },
+    "volumes": {
+        "fx": 0.8,
+        "music": 0.5,
+        "ambient": 0.5
+    },
     "builders": {
         "talk": {
             "help": {
