@@ -39,19 +39,14 @@ vu.game.Scene = CT.Class({
 	},
 	start: function() {
 		var _ = this._, zcc = zero.core.current,
-			cam = zero.core.camera, rc = _.regClick,
-			pers, prop, item, portal,
+			rc = _.regClick, pers, prop, item, portal,
 			men = this.menus, tsa = this.state.actors,
 			state = this.state.scenes[this.name],
 			slz = state.lights, items = state.items,
 			portals = state.portals, adv = this.adventure;
 		zcc.person = zcc.people[this.player.name];
 		adv.controls.setCb(_.action);
-		adv.controls.setTarget(zcc.person);
-		CT.key.on("UP", az => cam.zoom(-50));
-		CT.key.on("DOWN", az => cam.zoom(50));
-		CT.key.on("RIGHT", cam.cut);
-		CT.key.on("LEFT", az => cam.cut(true));
+		adv.controls.setTarget(zcc.person, true);
 		vu.portal.on("filter", function(obj) {
 			return obj.name in portals;
 		});
