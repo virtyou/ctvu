@@ -35,8 +35,6 @@ vu.controls = {
 					CT.dom.div(tbutts, "right up20"),
 					CT.dom.div(bcams.concat(room.cameras.map(function(cam, i) {
 						return CT.dom.button("cam " + i, function(e) {
-							zero.core.camera.setSprings(20);
-							zero.core.camera.perspective();
 							room.cut(i);
 							e.stopPropagation();
 						});
