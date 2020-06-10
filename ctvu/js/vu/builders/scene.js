@@ -367,7 +367,7 @@ vu.builders.scene = {
 					CT.dom.setContent(snode, f._trigger);
 					selz.steps.refresh(f._trigger);
 				};
-				f.onkeyup = function() {
+				CT.dom.inputEnterCallback(f, function() {
 					if (f.value) {
 						f.value = f.value.toLowerCase();
 						scene.scripts[f.value] = scene.scripts[f._trigger];
@@ -377,7 +377,7 @@ vu.builders.scene = {
 						upscripts();
 					} else
 						f.value = f._trigger; // meh
-				};
+				});
 			} else {
 				f.onkeyup = function() { f.value = f.value.toLowerCase() };
 			}
