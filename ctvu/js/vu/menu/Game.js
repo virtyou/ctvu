@@ -3,7 +3,8 @@ vu.menu.Game = CT.Class({
 	_: {
 		selectors: {},
 		menus: {
-			story: "bottomleft"
+			story: "bottomleft",
+			camera: "bottomright"
 		},
 		interactionals: {},
 		collapse: function(section) {
@@ -63,8 +64,22 @@ vu.menu.Game = CT.Class({
 			return iz.info;
 		},
 		setup: function() {
-			this._.selectors.story = CT.dom.div(null,
-				"scrolly kidvp mt5 hm400p");
+			var _ = this._, selz = _.selectors, cam = zero.core.camera;
+			selz.story = CT.dom.div(null, "scrolly kidvp mt5 hm400p");
+			selz.camera = CT.dom.div();
+			selz.camera.update = function() {
+				CT.dom.setContent(selz.camera, [
+					CT.dom.div(cam.current, "abs ctr shiftup yellow small mr5"),
+					["behind", "pov", cam.cyclabel()].map(function(p) {
+						return CT.dom.button(p, function(e) {
+							cam.angle(p);
+							e.stopPropagation();
+						});
+					})
+				]);
+				selz.camera.modal.show();
+			};
+			cam.onchange(selz.camera.update);
 		}
 	},
 	story: function() {
