@@ -39,6 +39,51 @@ vu.game.stepper = {
 				data: zero.core.current.scene.actors,
 				cb: cb
 			});
+		},
+		state: function(cb, ptxt, vtxt) {
+			var zcc = zero.core.current, actor,
+				sgia = zcc.scene.game.initial.actors;
+			vu.game.stepper._.actor(function(person) {
+				actor = person.name;
+				CT.modal.choice({
+					prompt: ptxt || "what's changing?",
+					data: [
+						"new property with initial state",
+						"new property without initial state"
+					].concat(Object.keys(sgia[actor]).filter(p => p != "positioners")),
+					cb: function(prop) {
+						var getval = function(prop) {
+							CT.modal.prompt({
+								prompt: vtxt || "what's the new value?",
+								cb: function(val) {
+									var sobj = {};
+									sobj[actor] = {};
+									sobj[actor][prop] = val;
+									cb({ state: sobj });
+								}
+							});
+						};
+						if (prop.startsWith("new property")) {
+							CT.modal.prompt({
+								prompt: "ok, what's the new property?",
+								cb: function(prop) {
+									if (prop.includes("without"))
+										return getval(prop);
+									CT.modal.prompt({
+										prompt: "what's the initial value (value _prior to_ current step!)?",
+										cb: function(ival) {
+											sgia[actor][prop] = ival;
+											vu.game.step.upstate();
+											getval(prop);
+										}
+									});
+								}
+							});
+						} else
+							getval(prop);
+					}
+				});
+			});
 		}
 	},
 	scene: function(cb) {
@@ -164,10 +209,15 @@ vu.game.stepper = {
 	logic: function(cb) {
 		CT.modal.choice({
 			prompt: "what kind of logic gate?",
-			data: ["emotions", "gear"],
+			data: ["actor", "gear"],
 			cb: function(kind) {
-				if (kind == "emotions") {
-
+				if (kind == "actor") {
+					vu.game.stepper._.state(function(sobj) {
+						cb({ logic: sobj.state });
+					}, "what property should we check?",
+						"what value are we looking for?");
+				} else { // gear
+					
 				}
 			}
 		});
@@ -191,49 +241,7 @@ vu.game.stepper = {
 		});
 	},
 	state: function(cb) {
-		var zcc = zero.core.current, actor,
-			sgia = zcc.scene.game.initial.actors;
-		vu.game.stepper._.actor(function(person) {
-			actor = person.name;
-			CT.modal.choice({
-				prompt: "what's changing?",
-				data: [
-					"new property with initial state",
-					"new property without initial state"
-				].concat(Object.keys(sgia[actor]).filter(p => p != "positioners")),
-				cb: function(prop) {
-					var getval = function(prop) {
-						CT.modal.prompt({
-							prompt: "what's the new value?",
-							cb: function(val) {
-								var sobj = {};
-								sobj[actor] = {};
-								sobj[actor][prop] = val;
-								cb({ state: sobj });
-							}
-						});
-					};
-					if (prop.startsWith("new property")) {
-						CT.modal.prompt({
-							prompt: "ok, what's the new property?",
-							cb: function(prop) {
-								if (prop.includes("without"))
-									return getval(prop);
-								CT.modal.prompt({
-									prompt: "what's the initial value (value _prior to_ current step!)?",
-									cb: function(ival) {
-										sgia[actor][prop] = ival;
-										vu.game.step.upstate();
-										getval(prop);
-									}
-								});
-							}
-						});
-					} else
-						getval(prop);
-				}
-			});
-		});
+		vu.game.stepper._.state(cb);
 	},
 	audio: function(stype, cb) { // fx, music, ambient
 		var zcc = zero.core.current, _ = vu.game.stepper._;
