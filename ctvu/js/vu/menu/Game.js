@@ -120,7 +120,19 @@ vu.menu.Game = CT.Class({
 		zero.core.camera.follow(thing);
 	},
 	item: function(item) {
-		this.info(item.name, item.opts.description, item);
+		var zcc = zero.core.current,
+			msg = "you get a " + item.name;
+		this.info(item.name, [
+			item.opts.description,
+			CT.dom.button("get", function() {
+				zcc.person.get(item, function() {
+					vu.game.util.text(msg);
+					// add to state.inventory.gear{} / story
+					// rm from state.scenes[s].items
+					//zcc.adventure.upstate();
+				});
+			}, "w1 mv5")
+		], item);
 	},
 	portal: function(portal) {
 		var scene = zero.core.current.scene.name,
