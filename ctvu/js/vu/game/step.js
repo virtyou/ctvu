@@ -1,7 +1,8 @@
 vu.game.step = {
 	_: {
-		varieties: ["lights", "camera", "action", "state", "scene",
-			"story", "text", "pause", "fx", "music", "ambient"]
+		varieties: ["lights", "camera", "action",
+			"state", "scene", "story", "text", "logic",
+			"pause", "fx", "music", "ambient"]
 	},
 	setAudio: function(aud) {
 		vu.game.step._.audio = aud;
