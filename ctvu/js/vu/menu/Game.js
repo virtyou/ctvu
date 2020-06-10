@@ -120,16 +120,17 @@ vu.menu.Game = CT.Class({
 		zero.core.camera.follow(thing);
 	},
 	item: function(item) {
-		var zcc = zero.core.current,
-			msg = "you get a " + item.name;
+		var zcc = zero.core.current, per = zcc.person,
+			state = this.state, msg = "you get a " + item.name;
 		this.info(item.name, [
 			item.opts.description,
 			CT.dom.button("get", function() {
-				zcc.person.get(item, function() {
+				per.get(item, function() {
 					vu.game.util.text(msg);
-					// add to state.inventory.gear{} / story
-					// rm from state.scenes[s].items
-					//zcc.adventure.upstate();
+					state.story.push(msg);
+					state.inventory.gear.held = per.opts.gear.held;
+					delete state.scenes[zcc.scene.name].items[item.name];
+					zcc.adventure.upstate();
 				});
 			}, "w1 mv5")
 		], item);
