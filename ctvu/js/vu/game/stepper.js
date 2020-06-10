@@ -32,6 +32,13 @@ vu.game.stepper = {
 					});
 				}
 			})
+		},
+		actor: function(cb) {
+			CT.modal.choice({
+				prompt: "please select an actor",
+				data: zero.core.current.scene.actors,
+				cb: cb
+			});
 		}
 	},
 	scene: function(cb) {
@@ -64,65 +71,61 @@ vu.game.stepper = {
 	},
 	action: function(cb) {
 		var zcc = zero.core.current;
-		CT.modal.choice({
-			prompt: "please select an actor",
-			data: zcc.scene.actors,
-			cb: function(actor) {
-				CT.modal.choice({
-					prompt: "please select an action",
-					data: ["say", "respond", "move", "approach"],
-					cb: function(action) {
-						var act = function(line) {
-							cb({
-								actor: actor.name,
-								action: action,
-								line: line
-							});
-						};
-						if (action == "move") {
-							CT.modal.choice({
-								prompt: "please adjust " + actor.name + "'s position and orientation, and click 'ready' to save. click 'cancel' to abort.",
-								data: ["ready", "cancel"],
-								cb: function(resp) {
-									var pbs = zcc.people[actor.name].body.springs;
-									(resp == "ready") && act({
-										weave: pbs.weave.target,
-										slide: pbs.slide.target,
-										orientation: pbs.orientation.target
+		vu.game.stepper._.actor(function(actor) {
+			CT.modal.choice({
+				prompt: "please select an action",
+				data: ["say", "respond", "move", "approach"],
+				cb: function(action) {
+					var act = function(line) {
+						cb({
+							actor: actor.name,
+							action: action,
+							line: line
+						});
+					};
+					if (action == "move") {
+						CT.modal.choice({
+							prompt: "please adjust " + actor.name + "'s position and orientation, and click 'ready' to save. click 'cancel' to abort.",
+							data: ["ready", "cancel"],
+							cb: function(resp) {
+								var pbs = zcc.people[actor.name].body.springs;
+								(resp == "ready") && act({
+									weave: pbs.weave.target,
+									slide: pbs.slide.target,
+									orientation: pbs.orientation.target
+								});
+							}
+						});
+					} else if (action == "approach") {
+						CT.modal.choice({
+							data: ["player", "actor", "furnishing"],
+							cb: function(cat) {
+								if (cat == "player")
+									return act("player");
+								var data;
+								if (cat == "actor") {
+									data = zcc.scene.actors.filter(function(a) {
+										return a.name != actor.name;
 									});
-								}
-							});
-						} else if (action == "approach") {
-							CT.modal.choice({
-								data: ["player", "actor", "furnishing"],
-								cb: function(cat) {
-									if (cat == "player")
-										return act("player");
-									var data;
-									if (cat == "actor") {
-										data = zcc.scene.actors.filter(function(a) {
-											return a.name != actor.name;
-										});
-									} else // furnishing
-										data = Object.values(zcc.room.objects);
-									CT.modal.choice({
-										prompt: "please select a target",
-										data: data,
-										cb: function(target) {
-											act(target.name);
-										}
-									});
-								}
-							});
-						} else {
-							CT.modal.prompt({
-								prompt: "what's the line?",
-								cb: act
-							})
-						}
+								} else // furnishing
+									data = Object.values(zcc.room.objects);
+								CT.modal.choice({
+									prompt: "please select a target",
+									data: data,
+									cb: function(target) {
+										act(target.name);
+									}
+								});
+							}
+						});
+					} else {
+						CT.modal.prompt({
+							prompt: "what's the line?",
+							cb: act
+						})
 					}
-				})
-			}
+				}
+			});
 		});
 	},
 	camera: function(cb) {
@@ -158,6 +161,17 @@ vu.game.stepper = {
 			}
 		});
 	},
+	logic: function(cb) {
+		CT.modal.choice({
+			prompt: "what kind of logic gate?",
+			data: ["emotions", "gear"],
+			cb: function(kind) {
+				if (kind == "emotions") {
+
+				}
+			}
+		});
+	},
 	text: function(cb) {
 		CT.modal.prompt({
 			prompt: "what should it say?",
@@ -177,51 +191,48 @@ vu.game.stepper = {
 		});
 	},
 	state: function(cb) {
-		var zcc = zero.core.current, _ = vu.game.stepper._,
+		var zcc = zero.core.current, actor,
 			sgia = zcc.scene.game.initial.actors;
-		CT.modal.choice({
-			prompt: "please select an actor",
-			data: zcc.scene.actors.map(a => a.name),
-			cb: function(actor) {
-				CT.modal.choice({
-					prompt: "what's changing?",
-					data: [
-						"new property with initial state",
-						"new property without initial state"
-					].concat(Object.keys(sgia[actor]).filter(p => p != "positioners")),
-					cb: function(prop) {
-						var getval = function(prop) {
-							CT.modal.prompt({
-								prompt: "what's the new value?",
-								cb: function(val) {
-									var sobj = {};
-									sobj[actor] = {};
-									sobj[actor][prop] = val;
-									cb({ state: sobj });
-								}
-							});
-						};
-						if (prop.startsWith("new property")) {
-							CT.modal.prompt({
-								prompt: "ok, what's the new property?",
-								cb: function(prop) {
-									if (prop.includes("without"))
-										return getval(prop);
-									CT.modal.prompt({
-										prompt: "what's the initial value (value _prior to_ current step!)?",
-										cb: function(ival) {
-											sgia[actor][prop] = ival;
-											vu.game.step.upstate();
-											getval(prop);
-										}
-									});
-								}
-							});
-						} else
-							getval(prop);
-					}
-				});
-			}
+		vu.game.stepper._.actor(function(person) {
+			actor = person.name;
+			CT.modal.choice({
+				prompt: "what's changing?",
+				data: [
+					"new property with initial state",
+					"new property without initial state"
+				].concat(Object.keys(sgia[actor]).filter(p => p != "positioners")),
+				cb: function(prop) {
+					var getval = function(prop) {
+						CT.modal.prompt({
+							prompt: "what's the new value?",
+							cb: function(val) {
+								var sobj = {};
+								sobj[actor] = {};
+								sobj[actor][prop] = val;
+								cb({ state: sobj });
+							}
+						});
+					};
+					if (prop.startsWith("new property")) {
+						CT.modal.prompt({
+							prompt: "ok, what's the new property?",
+							cb: function(prop) {
+								if (prop.includes("without"))
+									return getval(prop);
+								CT.modal.prompt({
+									prompt: "what's the initial value (value _prior to_ current step!)?",
+									cb: function(ival) {
+										sgia[actor][prop] = ival;
+										vu.game.step.upstate();
+										getval(prop);
+									}
+								});
+							}
+						});
+					} else
+						getval(prop);
+				}
+			});
 		});
 	},
 	audio: function(stype, cb) { // fx, music, ambient
