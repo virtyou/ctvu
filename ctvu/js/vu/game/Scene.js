@@ -7,9 +7,11 @@ vu.game.Scene = CT.Class({
 			});
 		},
 		item: function(iopts, onbuild) {
-			return new zero.core.Thing(CT.merge(iopts, {
-				onbuild: onbuild,
-				scene: zero.core.current.room.group
+			return zero.core.current.room.attach(CT.merge(iopts, {
+				onbuild: function(item) {
+					item.setBounds();
+					onbuild(item);
+				}
 			}, vu.storage.get("held")[iopts.name]));
 		},
 		action: function() { // TODO: other actions...
