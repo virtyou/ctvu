@@ -48,6 +48,8 @@ vu.game.Scene = CT.Class({
 		zcc.person = zcc.people[this.player.name];
 		adv.controls.setCb(_.action);
 		adv.controls.setTarget(zcc.person);
+		CT.key.on("UP", az => cam.zoom(-50));
+		CT.key.on("DOWN", az => cam.zoom(50));
 		CT.key.on("RIGHT", cam.cut);
 		CT.key.on("LEFT", az => cam.cut(true));
 		vu.portal.on("filter", function(obj) {
