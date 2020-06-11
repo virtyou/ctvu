@@ -37,12 +37,12 @@ vu.game.util = {
 		setTimeout(mod.hide, pause || 3000);
 	},
 	logic: function(logic, state) { // TODO: multi-cond gates?
-		var scene = zero.core.current.scene, go = function(doit) {
+		var zcc = zero.core.current, go = function(doit) {
 			if (doit)
 				logic.yes && scene.script(logic.yes);
 			else
 				logic.no && scene.script(logic.no);
-		}, g = logic.gate;
+		}, g = logic.gate, scene = zcc.scene, b = zcc.person.body;
 		if (g.gear)
 			go(vu.storage.get("held")[g.gear].key in b.gearmap);
 		else {
