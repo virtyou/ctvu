@@ -36,9 +36,20 @@ vu.game.util = {
 		});
 		setTimeout(mod.hide, pause || 3000);
 	},
+	logic: function(logic, state) {
+		// support gear chex
+		// support multi-cond gates?
+		var zcc = zero.core.current, scene = zcc.scene,
+			g = logic.gate, actor = Object.keys(g)[0],
+			prop = Object.keys(g[actor])[0];
+		if (state.actors[actor][prop] == g[actor][prop])
+			logic.yes && scene.script(logic.yes);
+		else
+			logic.no && scene.script(logic.no);
+	},
 	step: function(step, nextStep, state, audio, altered) {
-		var zcc = zero.core.current, k,
-			r = zcc.room, cam = zero.core.camera;
+		var zcc = zero.core.current, k, r = zcc.room,
+			cam = zero.core.camera, vgu = vu.game.util;
 		if (step.lights) {
 			step.lights.forEach(function(val, i) {
 				r.lights[i][step.directive || "setIntensity"](val);
@@ -46,7 +57,7 @@ vu.game.util = {
 		}
 		if (step.text) {
 			altered.story = true;
-			vu.game.util.text(step.text, step.pause);
+			vgu.text(step.text, step.pause);
 			state && state.story.push(step.text);
 		}
 		if (step.story) {
@@ -57,11 +68,16 @@ vu.game.util = {
 			cam.angle(step.camera, step.target);
 		if (step.prop)
 			r[step.prop][step.directive](step.direction);
+		for (k of ["fx", "music", "ambient"])
+			if (step[k])
+				audio.play(k, step[k]);
 		if (state) {
 			if (step.state) {
 				altered.state = true;
-				vu.game.util.upstate(state, step.state);
+				vgu.upstate(state, step.state);
 			}
+			if (step.logic)
+				vgu.logic(step.logic, state);
 			if (step.scene) {
 				if (step.scene.portal) {
 					altered.state = true;
@@ -80,9 +96,6 @@ vu.game.util = {
 				}
 			}
 		}
-		for (k of ["fx", "music", "ambient"])
-			if (step[k])
-				audio.play(k, step[k]);
 		if (step.actor) {
 			zcc.people[step.actor][step.action || "say"](step.line, nextStep, true);
 			if (step.action == "respond")
