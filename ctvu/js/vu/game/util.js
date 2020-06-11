@@ -36,16 +36,20 @@ vu.game.util = {
 		});
 		setTimeout(mod.hide, pause || 3000);
 	},
-	logic: function(logic, state) {
-		// support gear chex
-		// support multi-cond gates?
-		var zcc = zero.core.current, scene = zcc.scene,
-			g = logic.gate, actor = Object.keys(g)[0],
-			prop = Object.keys(g[actor])[0];
-		if (state.actors[actor][prop] == g[actor][prop])
-			logic.yes && scene.script(logic.yes);
-		else
-			logic.no && scene.script(logic.no);
+	logic: function(logic, state) { // TODO: multi-cond gates?
+		var scene = zero.core.current.scene, go = function(doit) {
+			if (doit)
+				logic.yes && scene.script(logic.yes);
+			else
+				logic.no && scene.script(logic.no);
+		}, g = logic.gate;
+		if (g.gear)
+			go(vu.storage.get("held")[g.gear].key in b.gearmap);
+		else {
+			var actor = Object.keys(g)[0],
+				prop = Object.keys(g[actor])[0];
+			go(state.actors[actor][prop] == g[actor][prop]);
+		}
 	},
 	step: function(step, nextStep, state, audio, altered) {
 		var zcc = zero.core.current, k, r = zcc.room,
