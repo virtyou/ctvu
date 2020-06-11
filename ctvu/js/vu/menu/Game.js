@@ -47,7 +47,7 @@ vu.menu.Game = CT.Class({
 			});
 			person.onsay(this._.sayer);
 			var n = CT.dom.div();
-			vu.controls.setTriggers(n, this._.upper, person);
+			vu.controls.setTriggers(n, this._.upper, person, true);
 			return n;
 		},
 		basic: function(name, side, info, cb, header) {
