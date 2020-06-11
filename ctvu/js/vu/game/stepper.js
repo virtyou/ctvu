@@ -207,17 +207,36 @@ vu.game.stepper = {
 		});
 	},
 	logic: function(cb) {
+		var _ = vu.game.stepper._, logic = {}, yesno = function(andthen) {
+			CT.modal.prompt({
+				prompt: "what script should we call if the condition is met?",
+				cb: function(yesname) {
+					if (yesname)
+						logic.yes = yesname;
+					CT.modal.prompt({
+						prompt: "what script should we call otherwise?",
+						cb: function(noname) {
+							if (noname)
+								logic.no = noname;
+							andthen();
+						}
+					});
+				}
+			});
+		}, result = function(condition) {
+			logic.gate = condition;
+			yesno(az => cb({ logic: logic }));
+		};
 		CT.modal.choice({
 			prompt: "what kind of logic gate?",
 			data: ["actor", "gear"],
 			cb: function(kind) {
 				if (kind == "actor") {
-					vu.game.stepper._.state(function(sobj) {
-						cb({ logic: sobj.state });
-					}, "what property should we check?",
+					_.state(sobj => result(sobj.state),
+						"what property should we check?",
 						"what value are we looking for?");
 				} else { // gear
-					
+
 				}
 			}
 		});
