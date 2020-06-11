@@ -58,11 +58,12 @@ vu.controls = {
 			CT.dom.setContent(node, butt);
 		}
 	},
-	setTriggers: function(node, cb, person) {
+	setTriggers: function(node, cb, person, trigzonly) {
 		person = person || zero.core.current.person;
 		var responses = person.opts.responses,
 			triggers = person.brain.triggers,
-			trigz = CT.data.uniquify(Object.keys(responses).concat(Object.keys(triggers))),
+			tkz = Object.keys(triggers),
+			trigz = trigzonly ? tkz : CT.data.uniquify(Object.keys(responses).concat(tkz)),
 			vibez = person.vibe.opts.vibes, content = [],
 			isgame = location.pathname == "/vu/adventure.html";
 		if (isgame)
@@ -71,7 +72,7 @@ vu.controls = {
 			return CT.dom.div(trig, "bordered padded margined inline-block hoverglow", null, {
 				onclick: function(e) {
 					person.respond(trig);
-					vu.controls.setTriggers(node, cb, person);
+					vu.controls.setTriggers(node, cb, person, trigzonly);
 					e.stopPropagation();
 					cb && cb("trigger", trig, person);
 				}
