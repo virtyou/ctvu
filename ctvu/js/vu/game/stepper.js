@@ -207,7 +207,7 @@ vu.game.stepper = {
 		});
 	},
 	logic: function(cb) {
-		var _ = vu.game.stepper._, logic = {}, yesno = function(andthen) {
+		var _ = vu.game.stepper._, logic = {}, yesno = function() {
 			CT.modal.prompt({
 				prompt: "what script should we call if the condition is met?",
 				cb: function(yesname) {
@@ -218,14 +218,14 @@ vu.game.stepper = {
 						cb: function(noname) {
 							if (noname)
 								logic.no = noname;
-							andthen();
+							cb({ logic: logic });
 						}
 					});
 				}
 			});
 		}, result = function(condition) {
 			logic.gate = condition;
-			yesno(az => cb({ logic: logic }));
+			yesno();
 		};
 		CT.modal.choice({
 			prompt: "what kind of logic gate?",
@@ -236,7 +236,11 @@ vu.game.stepper = {
 						"what property should we check?",
 						"what value are we looking for?");
 				} else { // gear
-
+					CT.modal.choice({
+						prompt: "which item should we check for?",
+						data: Object.keys(vu.storage.get("held")),
+						cb: item => result({ gear: item })
+					});
 				}
 			}
 		});
