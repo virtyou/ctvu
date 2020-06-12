@@ -43,7 +43,7 @@ vu.menu.Game = CT.Class({
 		convo: function(person) {
 			setTimeout(function() { // ... meh
 //				person.look(zero.core.camera);
-				zero.core.camera.angle("front", person.name, "lookHigh");
+				zero.core.camera.angle("front", person.name);//, "lookHigh");
 			});
 			person.onsay(this._.sayer);
 			var n = CT.dom.div();
