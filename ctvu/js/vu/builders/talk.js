@@ -146,7 +146,7 @@ vu.builders.talk = {
 						rzt.innerHTML = f._trigger;
 						rz.refresh(f._trigger);
 					};
-					f.onkeyup = function() {
+					CT.dom.inputEnterCallback(f, function() {
 						if (f.value) {
 							f.value = f.value.toLowerCase();
 							responses[f.value] = responses[f._trigger];
@@ -155,7 +155,7 @@ vu.builders.talk = {
 							persist({ responses: cur.person.opts.responses });
 						} else
 							f.value = f._trigger; // meh
-					};
+					});
 				} else {
 					f.onkeyup = function() { f.value = f.value.toLowerCase() };
 				}
