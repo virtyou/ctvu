@@ -8,7 +8,6 @@ vu.builders.talk = {
 		},
 		joined: function(person) {
 			zero.core.current.person = person;
-			zero.core.camera.unfollow();
 			vu.builders.talk._.initTriggers();
 		},
 		initTriggers: function() {

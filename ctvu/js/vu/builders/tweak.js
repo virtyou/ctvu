@@ -55,7 +55,6 @@ vu.builders.tweak = {
 			registerHair();
 			_.setMorphs(person, "head");
 			_.setMorphs(person, "body");
-			zero.core.camera.unfollow();
 		},
 		partLabel: function(target, clicker, nosay) {
 			var _ = vu.builders.tweak._, k = target.opts.kind;

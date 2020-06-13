@@ -5,7 +5,6 @@ vu.builders.vibe = {
 		selectors: {},
 		joined: function(person) {
 			zero.core.current.person = person;
-			zero.core.camera.unfollow();
 			vu.builders.vibe._.loadVibes();
 		},
 		loadVibes: function() {

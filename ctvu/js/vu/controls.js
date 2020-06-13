@@ -43,7 +43,6 @@ vu.controls = {
 			};
 			((mode == "play") || (mode == "scene")) && node.update();
 		} else {
-			zero.core.camera.unfollow();
 			var butt = CT.dom.button("far", function(e) {
 				if (butt.innerHTML == "far") {
 					butt.innerHTML = "near";
