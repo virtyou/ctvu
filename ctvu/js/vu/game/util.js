@@ -1,4 +1,22 @@
 vu.game.util = {
+	scene: function(game, cb) {
+		CT.modal.choice({
+			prompt: "please select a room",
+			data: vu.storage.get("rooms"),
+			cb: function(room) {
+				vu.core.create("scene", function(s) {
+					game.scenes.push(s.key);
+					vu.storage.edit({
+						key: game.key,
+						scenes: game.scenes
+					});
+					cb(s);
+				}, {
+					room: room.key
+				});
+			}
+		});
+	},
 	sports: function(p, cb) {
 		var zcc = zero.core.current, rscenes,
 			og = zcc.room[p.name].opts.portals.outgoing;
