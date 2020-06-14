@@ -472,7 +472,7 @@ vu.builders.scene = {
 		CT.dom.addContent("ctheader", _.linx());
 		sb.setup();
 		sb.menus();
-		CT.db.get("scene", function(scenes) {
+		vu.core.my("scene", function(scenes) {
 			_.scenes = scenes;
 			if (scenes.length) {
 				if (skey) {
@@ -486,11 +486,6 @@ vu.builders.scene = {
 					sb.load(scenes[0]);
 			} else
 				sb.create();
-		}, null, null, null, {
-			owners: {
-				comparator: "contains",
-				value: user.core.get("key")
-			} // maybe later: json + extra games request?
-		}, null, null, "json_plus");
+		}, "json_plus");
 	}
 };
