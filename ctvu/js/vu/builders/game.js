@@ -141,17 +141,12 @@ vu.builders.game = {
 	init: function() {
 		var g = vu.builders.game, _ = g._;
 		CT.dom.addContent("ctheader", _.linx());
-		CT.db.get("game", function(games) {
+		vu.core.my("game", function(games) {
 			_.games = games;
 			if (games.length)
 				g.load(games[0]);
 			else
 				g.create();
-		}, null, null, null, {
-			owners: {
-				comparator: "contains",
-				value: user.core.get("key")
-			}
 		});
 	}
 };
