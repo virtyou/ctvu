@@ -320,7 +320,7 @@ vu.builders.scene = {
 			CT.dom.addContent(selz.props, selz.items);
 			CT.dom.addContent(selz.main, selz.lights);
 		},
-		swap: function() {
+		swapem: function() {
 			var _ = vu.builders.scene._, selz = _.selectors;
 			_.swappers.forEach(function(section) {
 				selz[section].modal.showHide("ctmain");
@@ -330,8 +330,43 @@ vu.builders.scene = {
 			var n = CT.dom.node(CT.parse.key2title(section)),
 				_ = vu.builders.scene._;
 			if (_.swappers.indexOf(section) != -1)
-				n.onclick = _.swap;
+				n.onclick = _.swapem;
 			return n;
+		},
+		swap: function() {
+			var sb = vu.builders.scene;
+			CT.modal.choice({
+				prompt: "please select a scene",
+				data: ["new scene"].concat(sb._.scenes),
+				cb: function(scene) {
+					if (scene == "new scene")
+						sb.create();
+					else
+						sb.load(scene);
+				}
+			});
+		},
+		play: function() {
+			location = "/vu/adventure.html#" +
+				zero.core.current.scene.game.key;
+		},
+		linx: function() {
+			var _ = vu.builders.scene._;
+			_.sharer = vu.core.sharer();
+			_.curname = CT.dom.span(null, "bold");
+			return CT.dom.div([
+				[
+					CT.dom.span("viewing:"),
+					CT.dom.pad(),
+					_.curname
+				], [
+					CT.dom.link("play", _.play),
+					CT.dom.pad(),
+					CT.dom.link("swap", _.swap),
+					CT.dom.pad(),
+					_.sharer
+				]
+			], "left shiftall");
 		}
 	},
 	load: function(scene) {
@@ -339,6 +374,7 @@ vu.builders.scene = {
 			snode = CT.dom.div(null, "right"),
 			upscripts = vu.game.step.upscripts;
 		zero.core.current.scene = scene;
+		CT.dom.setContent(_.curname, scene.name);
 		_.audio = new vu.audio.Controller({
 			fx: scene.fx,
 			music: scene.music,
@@ -405,11 +441,11 @@ vu.builders.scene = {
 			pobj.positioners = scene.game.initial.actors[pobj.name].positioners;
 		zero.core.util.init(null, vu.builders.scene._.backstage);
 	},
+	create: function() {
+
+	},
 	setup: function() {
-		var skey = location.hash.slice(1),
-			selz = vu.builders.scene._.selectors;
-		if (!skey)
-			return alert("no scene specified!");
+		var selz = vu.builders.scene._.selectors;
 		selz.main = CT.dom.div();
 		selz.scripts = CT.dom.div();
 		selz.steps = CT.dom.div();
@@ -419,15 +455,42 @@ vu.builders.scene = {
 		selz.lights = CT.dom.div();
 		selz.portals = CT.dom.div();
 		selz.cameras = CT.dom.div(null, "centered");
-		CT.db.one(skey, vu.builders.scene.load, "json_plus");
 	},
 	menus: function() {
 		var section, _ = vu.builders.scene._, selz = _.selectors;
-		vu.builders.scene.setup();
 		for (section in _.menus) {
 			selz[section].modal = vu.core.menu(section,
 				_.menus[section], selz[section], _.head(section));
 			(section == "portals") || selz[section].modal.show("ctmain");
 		}
+	},
+	init: function() {
+		var sb = vu.builders.scene, _ = sb._,
+			selz = _.selectors, smatchz,
+			skey = location.hash.slice(1);
+		location.hash = "";
+		CT.dom.addContent("ctheader", _.linx());
+		sb.setup();
+		sb.menus();
+		CT.db.get("scene", function(scenes) {
+			_.scenes = scenes;
+			if (scenes.length) {
+				if (skey) {
+					smatchz = scenes.filter(s => s.key == skey);
+					if (smatchz.length != 1) {
+						alert("oops! you don't have access to that scene :'(");
+						location = "/vu/game.html";
+					} else
+						sb.load(smatchz[0]);
+				} else
+					sb.load(scenes[0]);
+			} else
+				sb.create();
+		}, null, null, null, {
+			owners: {
+				comparator: "contains",
+				value: user.core.get("key")
+			} // maybe later: json + extra games request?
+		}, null, null, "json_plus");
 	}
 };
