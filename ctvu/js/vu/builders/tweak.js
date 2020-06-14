@@ -69,9 +69,9 @@ vu.builders.tweak = {
 		},
 		uptex: function(tx) {
 			var _ = vu.builders.tweak._;
-			CT.log("texture: " + tx);
-			vu.storage.setOpts(_.target.opts.key, {
-				texture: tx
+			vu.storage.edit({
+				key: _.target.opts.key,
+				texture: tx.key
 			});
 		},
 		setMorphs: function(person, part) {

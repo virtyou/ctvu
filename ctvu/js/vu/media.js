@@ -222,13 +222,13 @@ vu.media = {
 		texture: function(target, cb) {
 			var up = function(tx) {
 				target.update({ texture: tx.item });
-				cb(tx.item);
+				cb(tx);
 			};
 			return CT.dom.link("swap", function() {
 				vu.media.prompt.bu(function(which) {
 					if (which == "browse")
 						return vu.media.texture(up,
-							null, target.opts.kind);
+							null, target.opts.kind, true);
 					vu.media.prompt.asset(up,
 						"texture", target.opts.kind);
 				});
