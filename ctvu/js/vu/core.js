@@ -197,6 +197,14 @@ vu.core = {
 			}
 		});
 	},
+	my: function(mtype, cb, exporter) {
+		CT.db.get(mtype, cb, null, null, null, {
+			owners: {
+				comparator: "contains",
+				value: user.core.get("key")
+			}
+		}, null, null, exporter);
+	},
 	charlinx: function() {
 		var data = vu.core._udata, person = data.person, nodes = vu.core.share(person, [
 			CT.dom.link("swap", function() {
