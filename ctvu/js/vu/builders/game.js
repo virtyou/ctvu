@@ -80,24 +80,7 @@ vu.builders.game = {
 		}
 	},
 	create: function(ctype, cb, extras) {
-		ctype = ctype || "game";
-		CT.modal.prompt({
-			prompt: "what's the new " + ctype + " called?",
-			cb: function(name) {
-				CT.modal.prompt({
-					isTA: true,
-					prompt: "please describe the " + ctype,
-					cb: function(desc) {
-						vu.storage.edit(CT.merge(extras, {
-							modelName: ctype,
-							name: name,
-							description: desc,
-							owners: [user.core.get("key")]
-						}), cb || vu.builders.game.load);
-					}
-				});
-			}
-		});
+		vu.core.create(ctype, cb || vu.builders.game.load, extras);
 	},
 	load: function(game) {
 		var _ = vu.builders.game._;
