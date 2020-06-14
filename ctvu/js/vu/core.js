@@ -177,6 +177,26 @@ vu.core = {
 		}
 		return nodes;
 	},
+	create: function(ctype, cb, extras) {
+		ctype = ctype || "game";
+		CT.modal.prompt({
+			prompt: "what's the new " + ctype + " called?",
+			cb: function(name) {
+				CT.modal.prompt({
+					isTA: true,
+					prompt: "please describe the " + ctype,
+					cb: function(desc) {
+						vu.storage.edit(CT.merge(extras, {
+							modelName: ctype,
+							name: name,
+							description: desc,
+							owners: [user.core.get("key")]
+						}), cb);
+					}
+				});
+			}
+		});
+	},
 	charlinx: function() {
 		var data = vu.core._udata, person = data.person, nodes = vu.core.share(person, [
 			CT.dom.link("swap", function() {
