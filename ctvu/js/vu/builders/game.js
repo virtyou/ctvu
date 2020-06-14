@@ -19,21 +19,8 @@ vu.builders.game = {
 				CT.dom.setContent(n, [
 					snode,
 					CT.dom.button("add scene", function() {
-						CT.modal.choice({
-							prompt: "please select a room",
-							data: vu.storage.get("rooms"),
-							cb: function(room) {
-								create("scene", function(s) {
-									game.scenes.push(s.key);
-									vu.storage.edit({
-										key: game.key,
-										scenes: game.scenes
-									});
-									CT.dom.addContent(snode, scene(s));
-								}, {
-									room: room.key
-								});
-							}
+						vu.game.util.scene(game, function(s) {
+							CT.dom.addContent(snode, scene(s));
 						});
 					})
 				]);
