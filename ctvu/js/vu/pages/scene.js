@@ -25,5 +25,5 @@ CT.require("vu.builders.scene");
 CT.onload(function() {
 	CT.initCore();
 	vu.core.init();
-	vu.storage.init(vu.builders.scene.menus, true);
+	vu.storage.init(vu.builders.scene.init);
 });
