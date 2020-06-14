@@ -442,7 +442,22 @@ vu.builders.scene = {
 		zero.core.util.init(null, vu.builders.scene._.backstage);
 	},
 	create: function() {
-
+		var sb = vu.builders.scene;
+		vu.core.my("game", function(gz) {
+			if (gz.length == 0)
+				return alert("oops! create a game first on the make page!");
+			CT.modal.choice({
+				prompt: "please select a game",
+				data: gz,
+				cb: function(game) {
+					vu.game.util.scene(game, function(s) {
+						s.game = game;
+						sb._.scenes.push(s);
+						sb.load(s);
+					});
+				}
+			});
+		});
 	},
 	setup: function() {
 		var selz = vu.builders.scene._.selectors;
