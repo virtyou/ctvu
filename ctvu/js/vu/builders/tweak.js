@@ -104,7 +104,7 @@ vu.builders.tweak = {
 			}));
 		},
 		setColor: function(target, color, prop) {
-			target.material.color = vu.color.hex2rgb(color);
+			target.setColor(vu.color.hex2rgb(color));
 			if (core.config.ctvu.storage.mode == "local") {
 				vu.builders.tweak._.opts[prop][target.path] = color;
 				vu.builders.tweak.persist();
