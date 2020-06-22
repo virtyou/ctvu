@@ -31,7 +31,7 @@ vu.builders.tweak = {
 			["L", "R"].map(function(part) {
 				reg(person.head["eye" + part]);
 			});
-			_.setHair(person);
+			vu.hair.setup(person, _.partLabel);
 			_.setMorphs(person, "head");
 			_.setMorphs(person, "body");
 		},
@@ -52,52 +52,6 @@ vu.builders.tweak = {
 				key: _.target.opts.key,
 				texture: tx.key
 			});
-		},
-		setHair: function(person) {
-			var htar, _ = vu.builders.tweak._,
-				zbbh = zero.base.body.hair;
-			var attach = function(hnew) {
-				person.head.detach("hair");
-				person.head.attach(hnew, function() {
-					registerHair();
-					onhair();
-				}, true);
-			};
-			var wild = function() {
-				CT.modal.choice({
-					data: Object.keys(zbbh).concat("custom"),
-					cb: function(hvar) {
-						if (hvar == "custom")
-							return; // TODO .....
-						attach(CT.merge({
-							thing: "Hair",
-							name: hvar,
-							kind: "hair",
-							bone: 4
-						}, zbbh[hvar]));
-					}
-				});
-			};
-			var hchoice = function() {
-				CT.modal.choice({
-					prompt: "do you want to use a hair model or the experimental wild hair?",
-					data: ["model", "wild"],
-					cb: function(hvar) {
-						if (hvar == "model")
-							return vu.media.prompt.thing(attach,
-								"hair", htar);
-						wild();
-					}
-				});
-			};
-			var onhair = function() {
-				_.partLabel(htar, hchoice);
-			};
-			var registerHair = function() {
-				htar = Object.values(person.head.hair)[0];
-				zero.core.click.register(htar, onhair);
-			};
-			registerHair();
 		},
 		setMorphs: function(person, part) {
 			var _ = vu.builders.tweak._, bod = person[part],
