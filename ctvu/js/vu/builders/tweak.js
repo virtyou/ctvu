@@ -71,7 +71,7 @@ vu.builders.tweak = {
 							return; // TODO .....
 						attach(CT.merge({
 							thing: "Hair",
-							name: "wild",
+							name: hvar,
 							kind: "hair",
 							bone: 4
 						}, zbbh[hvar]));
