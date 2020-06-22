@@ -221,7 +221,7 @@ vu.media = {
 	swapper: {
 		texture: function(target, cb) {
 			var up = function(tx) {
-				target.update({ texture: tx.item });
+				target.setTexture(tx.item);
 				cb(tx);
 			};
 			return CT.dom.link("swap", function() {
