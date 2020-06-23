@@ -4,7 +4,7 @@ vu.builders.tweak = {
 		accessories: core.config.ctvu.builders.accessories,
 		selectors: {},
 		joined: function(person) {
-			var _ = vu.builders.tweak._, popts = _.opts, has_menu = false;
+			var _ = vu.builders.tweak._, popts = _.opts;
 			zero.core.current.person = person;
 			for (var c in popts.colors) {
 				var comps = c.split(".").slice(1);
@@ -18,7 +18,6 @@ vu.builders.tweak = {
 
 			var reg = function(part) {
 				zero.core.click.register(part, function() {
-					if (has_menu) return true;
 					_.partLabel(part);
 				});
 			};
@@ -32,27 +31,7 @@ vu.builders.tweak = {
 			["L", "R"].map(function(part) {
 				reg(person.head["eye" + part]);
 			});
-			var htar;
-			var hmenu = function() {
-				has_menu = true;
-				vu.media.prompt.thing(function(hnew) {
-					person.head.detach("hair");
-					person.head.attach(hnew, function() {
-						registerHair();
-						onhair();
-					}, true);
-					has_menu = false;
-				}, "hair", htar);
-			};
-			var onhair = function() {
-				if (has_menu) return true;
-				_.partLabel(htar, hmenu);
-			};
-			var registerHair = function() {
-				htar = Object.values(person.head.hair)[0];
-				zero.core.click.register(htar, onhair);
-			};
-			registerHair();
+			vu.hair.setup(person, _.partLabel);
 			_.setMorphs(person, "head");
 			_.setMorphs(person, "body");
 		},
@@ -64,7 +43,7 @@ vu.builders.tweak = {
 				CT.dom[clicker ? "link" : "span"](target.name + " (" + k +")",
 					clicker),
 				CT.dom.pad(),
-				vu.media.swapper.texture(target, this.uptex)
+				vu.media.swapper.texture(target, _.uptex)
 			]);
 		},
 		uptex: function(tx) {
