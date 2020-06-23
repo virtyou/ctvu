@@ -89,6 +89,13 @@ vu.hair = {
 				density: density,
 				coverage: coverage
 			});
+		},
+		bald: function(isbald) {
+			var _ = vu.hair._;
+			_.bspot = _.bspot || CT.dom.button("bald (hair)",
+				vu.hair.click, "abs ctr mr5 mosthigh");
+			CT.dom.addContent("ctmain", _.bspot);
+			CT.dom[isbald ? "show" : "hide"](_.bspot);
 		}
 	},
 	custom: function() {
@@ -107,6 +114,9 @@ vu.hair = {
 			vu.hair.click();
 		}, true);
 	},
+	bald: function() {
+		vu.hair._.wild({ density: 0 }, "bald");
+	},
 	wild: function() {
 		var zbbh = zero.base.body.hair;
 		CT.modal.choice({
@@ -121,11 +131,11 @@ vu.hair = {
 	choice: function() {
 		var h = vu.hair;
 		CT.modal.choice({
-			prompt: "do you want to use a hair model or the experimental wild hair?",
-			data: ["model", "wild"],
+			prompt: "do you want to use a hair model or the experimental wild hair? or no hair at all?",
+			data: ["model", "wild", "bald"],
 			cb: function(hvar) {
-				if (hvar == "wild")
-					return h.wild();
+				if (h[hvar])
+					return h[hvar]();
 				vu.media.prompt.thing(h.attach, "hair", h.target);
 			}
 		});
@@ -134,9 +144,11 @@ vu.hair = {
 		vu.hair.cb(vu.hair.target, vu.hair.choice);
 	},
 	register: function() {
-		var h = vu.hair;
-		h.target = Object.values(h.person.head.hair)[0];
-		zero.core.click.register(h.target, h.click);
+		var h = vu.hair, head = h.person.head,
+			t = h.target = Object.values(head.hair)[0],
+			bald = t.name == "bald";
+		h._.bald(bald);
+		bald || zero.core.click.register(t, h.click);
 	},
 	setup: function(person, cb) {
 		vu.hair.cb = cb;
