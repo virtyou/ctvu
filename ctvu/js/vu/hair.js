@@ -64,12 +64,18 @@ vu.hair = {
 			initial: 7
 		}],
 		wild: function(opts, name) {
-			return CT.merge(opts, {
+			var oz = CT.merge(opts, {
 				thing: "Hair",
 				name: name || "wild",
 				kind: "hair",
 				bone: 4
 			});
+			vu.storage.edit({
+				key: vu.hair.target.opts.key,
+				base: null,
+				opts: oz
+			});
+			return oz;
 		},
 		compile: function(opts) {
 			var coverage = [opts.coverage_x, opts.coverage_z],
