@@ -74,8 +74,7 @@ vu.hair = {
 				key: vu.hair.target.opts.key,
 				base: null,
 				opts: oz
-			});
-			return oz;
+			}, vu.hair.attach);
 		},
 		compile: function(opts) {
 			var coverage = [opts.coverage_x, opts.coverage_z],
@@ -85,7 +84,7 @@ vu.hair = {
 				delete opts["taper_" + p];
 			for (p of ["coverage_x", "coverage_z", "density"])
 				delete opts[p];
-			return vu.hair._.wild({
+			vu.hair._.wild({
 				strand: opts,
 				density: density,
 				coverage: coverage
@@ -97,7 +96,7 @@ vu.hair = {
 			prompt: "tweak away!",
 			style: "form",
 			numbers: vu.hair._.tweakables,
-			cb: vz => vu.hair.attach(vu.hair._.compile(vz))
+			cb: vz => vu.hair._.compile(vz)
 		});
 	},
 	attach: function(hnew) {
@@ -115,7 +114,7 @@ vu.hair = {
 			cb: function(hvar) {
 				if (hvar == "custom")
 					return vu.hair.custom();
-				vu.hair.attach(vu.hair._.wild(zbbh[hvar], hvar));
+				vu.hair._.wild(zbbh[hvar], hvar);
 			}
 		});
 	},
