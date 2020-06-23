@@ -43,7 +43,7 @@ vu.builders.tweak = {
 				CT.dom[clicker ? "link" : "span"](target.name + " (" + k +")",
 					clicker),
 				CT.dom.pad(),
-				vu.media.swapper.texture(target, this.uptex)
+				vu.media.swapper.texture(target, _.uptex)
 			]);
 		},
 		uptex: function(tx) {
