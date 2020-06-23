@@ -114,14 +114,14 @@ vu.hair = {
 		});
 	},
 	choice: function() {
+		var h = vu.hair;
 		CT.modal.choice({
 			prompt: "do you want to use a hair model or the experimental wild hair?",
 			data: ["model", "wild"],
 			cb: function(hvar) {
-				if (hvar == "model")
-					return vu.media.prompt.thing(vu.hair.attach,
-						"hair", vu.hair.target);
-				vu.hair.wild();
+				if (hvar == "wild")
+					return h.wild();
+				vu.media.prompt.thing(h.attach, "hair", h.target);
 			}
 		});
 	},
