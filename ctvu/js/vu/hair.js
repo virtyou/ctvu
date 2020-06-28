@@ -23,10 +23,10 @@ vu.hair = {
 			initial: 6
 		}, {
 			name: "segments",
-			min: 3,
-			max: 10,
+			min: 1,
+			max: 8,
 			step: 1,
-			initial: 8
+			initial: 6
 		}, {
 			name: "taper_x",
 			min: 0.5,
@@ -59,9 +59,9 @@ vu.hair = {
 			initial: 1
 		}, {
 			name: "density",
-			min: 2,
-			max: 9,
-			initial: 7
+			min: 1,
+			max: 8,
+			initial: 6
 		}],
 		wild: function(opts, name) {
 			var oz = CT.merge(opts, {
