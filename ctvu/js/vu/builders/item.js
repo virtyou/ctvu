@@ -9,7 +9,7 @@ vu.builders.item = {
 			"tongue", "facial", "beard", "accessory","held"
 		].concat([
 			"aura", "pelvis", "lumbar", "ribs", "neck", "head", "finger",
-			"hip", "knee", "ankle", "toe", "shoulder", "elbow", "wrist"
+			"hip", "knee", "ankle", "toe", "clavicle", "shoulder", "elbow", "wrist"
 		].map(k => "worn_" + k)),
 		selectors: {},
 		formatted: function(ctfile) {
