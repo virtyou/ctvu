@@ -120,6 +120,7 @@ vu.media = {
 			if (kind == "held")
 				bone = bms.arm.wrist;
 			else if (kind.startsWith("worn_")) {
+				part = part || kind.split("_")[1];
 				if (part in bm)
 					bone = bm[part];
 				else if (bms) {
