@@ -135,15 +135,13 @@ vu.media = {
 		},
 		thing: function(cb, kind, part, side, sub, partname) {
 			var up = function(thopts) {
-				var eoz = {
-					key: part.opts.key,
-					base: thopts.key
-				};
+				var eoz = { base: thopts.key };
 				if (kind == "hair") // clear opts!
 					eoz.opts = null;
-				part ? vu.storage.edit(eoz, cb) :
-					vu.media.prompt.part(cb, kind,
-						thopts, side, sub, partname);
+				part ? vu.storage.edit(CT.merge({
+					key: part.opts.key
+				}, eoz), cb) : vu.media.prompt.part(cb,
+					kind, thopts, side, sub, partname);
 			}, imap = vu.storage.get(kind),
 				items = imap && Object.values(imap);
 			if (!items)
