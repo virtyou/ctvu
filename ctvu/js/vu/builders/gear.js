@@ -68,6 +68,7 @@ vu.builders.Gear = CT.Class({
 									per.ungear(modpart[part]);
 									vu.storage.edit(modpart[part], null, "delete", "key");
 									modpart[part] = null;
+									peritem("gear", per.opts.gear);
 									up();
 								} else
 									((eopt == "swap") ? set :
