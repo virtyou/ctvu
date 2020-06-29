@@ -65,17 +65,22 @@ vu.menu.Hair = CT.Class({
 			initial: 6
 		}],
 		wild: function(opts, name) {
-			var oz = CT.merge(opts, {
-				thing: this.opts.thing,
-				name: name || this.opts.name,
-				kind: this.opts.kind,
-				bone: 4
-			});
-			vu.storage.edit({
-				key: this.target.opts.key,
-				base: null,
-				opts: oz
-			}, this.attach);
+			var eoz = {
+				opts: CT.merge(opts, {
+					thing: this.opts.thing,
+					name: name || this.opts.name,
+					kind: this.opts.kind,
+					bone: 4
+				})
+			};
+			if (this.target) {
+				eoz.base = null;
+				eoz.key = this.target.opts.key;
+			} else {
+				eoz.modelName = "part";
+				eoz.parent = this.person.head.opts.key;
+			}
+			vu.storage.edit(eoz, this.attach);
 		},
 		compile: function(opts) {
 			var coverage = [opts.coverage_x, opts.coverage_z],
@@ -109,7 +114,7 @@ vu.menu.Hair = CT.Class({
 	},
 	attach: function(hnew) {
 		var head = this.person.head, thaz = this;
-		head.detach(this.opts.kind);
+		this.target && head.detach(this.opts.kind);
 		head.attach(hnew, function() {
 			thaz.register();
 			thaz.click();
@@ -143,7 +148,7 @@ vu.menu.Hair = CT.Class({
 		});
 	},
 	click: function() {
-		this.cb(this.target, this.choice);
+		this.target ? this.cb(this.target, this.choice) : this.choice();
 	},
 	register: function() {
 		var head = this.person.head, hitz = head[this.opts.kind],
