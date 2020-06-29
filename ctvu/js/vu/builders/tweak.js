@@ -31,7 +31,20 @@ vu.builders.tweak = {
 			["L", "R"].map(function(part) {
 				reg(person.head["eye" + part]);
 			});
-			vu.hair.setup(person, _.partLabel);
+			new vu.menu.Hair({
+				person: person,
+				cb: _.partLabel
+			});
+			new vu.menu.Hair({
+				kind: "beard",
+				thing: "Beard",
+				buttpos: "cbr",
+				person: person,
+				cb: _.partLabel,
+				name: "wildbeard",
+				varieties: ["wild", "bald"],
+				prompt: "wild beard or no beard?"
+			});
 			_.setMorphs(person, "head");
 			_.setMorphs(person, "body");
 		},
