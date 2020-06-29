@@ -214,7 +214,7 @@ vu.menu.Body = CT.Class({
 					setr ? setr(f.value) : seti(sname, f.value);
 					(onfocus || person[sing])(f.value);
 				};
-				f.onkeyup = function() {
+				CT.dom.inputEnterCallback(f, function() {
 					if (f.value) {
 						gopts[f.value] = gopts[f._trigger];
 						delete gopts[f._trigger];
@@ -222,7 +222,7 @@ vu.menu.Body = CT.Class({
 						_.peritem(sname, gopts);
 					} else
 						f.value = f._trigger; // meh
-				};
+				});
 				!i && setTimeout(f.onfocus); // select 1st
 			}
 			return f;
