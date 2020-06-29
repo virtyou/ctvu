@@ -93,8 +93,8 @@ vu.menu.Hair = CT.Class({
 		},
 		bald: function(isbald) {
 			var _ = this._, oz = this.opts;
-			_.bspot = _.bspot || CT.dom.button("bald (" + oz.kind
-				+ ")", this.click, "abs mr5 mosthigh " + oz.buttpos);
+			_.bspot = _.bspot || CT.dom.button("add " + oz.kind,
+				this.click, "abs mr5 mosthigh " + oz.buttpos);
 			CT.dom.addContent("ctmain", _.bspot);
 			CT.dom[isbald ? "show" : "hide"](_.bspot);
 		}
@@ -146,9 +146,9 @@ vu.menu.Hair = CT.Class({
 		this.cb(this.target, this.choice);
 	},
 	register: function() {
-		var head = this.person.head,
-			t = this.target = Object.values(head[this.opts.kind])[0],
-			bald = t.name == "bald";
+		var head = this.person.head, hitz = head[this.opts.kind],
+			t = this.target = hitz && Object.values(hitz)[0],
+			bald = !t || t.name == "bald";
 		this._.bald(bald);
 		bald || zero.core.click.register(t, this.click);
 	},
