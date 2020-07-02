@@ -31,7 +31,18 @@ vu.color = {
 			n.picker = jsColorPicker("input#" + id, {
 				color: val,
 				readOnly: true,
-				actionCallback: cb
+				actionCallback: function() {
+					CT.log(n.value);
+					setTimeout(function() {
+						if (n.value.startsWith("rgba(")) {
+							n.value = vu.color.rgbToHex.apply(null,
+								n.value.slice(5,
+									-1).split(", ").map(s => parseInt(s)));
+							CT.log(n.value);
+						}
+						cb();
+					}, 20); // so silly...
+				}
 			});
 		});
 		return n;
@@ -44,5 +55,13 @@ vu.color = {
 			g: parseInt(result[2], 16) / 255,
 			b: parseInt(result[3], 16) / 255
 		} : null;
+	},
+	componentToHex: function(c) {
+		var hex = c.toString(16);
+		return hex.length == 1 ? "0" + hex : hex;
+	},
+	rgbToHex: function(r, g, b) {
+		var c2h = vu.color.componentToHex;
+		return "#" + c2h(r) + c2h(g) + c2h(b);
 	}
 };
