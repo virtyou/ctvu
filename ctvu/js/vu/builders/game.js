@@ -27,8 +27,28 @@ vu.builders.game = {
 			}, "json");
 			return n;
 		},
+		actor: function(actors, aname) {
+			var actor = actors[aname], propz = CT.dom.div(), p;
+			for (p in actor)
+				if (p != "positioners")
+					propz.appendChild(CT.dom.div(p + ": " + actor[p]));
+			return CT.dom.div([
+				CT.dom.div(aname, "big green"), propz
+			], "bordered padded margined round inline-block vtop");
+		},
+		cond: function(game, sec) {
+			var state = game[sec], anode = CT.dom.div(), a,
+				actors = state.actors = state.actors || {};
+			for (a in actors)
+				anode.appendChild(vu.builders.game._.actor(actors, a));
+			return CT.dom.div([
+				sec, anode
+			], "bordered padded margined round");
+		},
 		conditions: function(game) {
-
+			return CT.dom.div(["initial", "victory", "defeat"].map(function(sec) {
+				return vu.builders.game._.cond(game, sec);
+			}));
 		},
 		swap: function() {
 			var g = vu.builders.game;
