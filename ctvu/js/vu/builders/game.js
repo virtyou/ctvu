@@ -9,7 +9,7 @@ vu.builders.game = {
 				"actors: " + s.actors.map(function(a) {
 					return a.name;
 				}).join(", ")
-			], "bordered padded margined round");
+			], "bordered padded margined round inline-block");
 		},
 		scenes: function(game) {
 			var n = CT.dom.div(), vbg = vu.builders.game,
