@@ -34,9 +34,10 @@ vu.menu.Game = CT.Class({
 		sayer: function(statement, person) {
 			var _ = this._, zc = zero.core, iz = _.interactionals,
 				s = CT.dom.div(statement, "biggest");
-			if (iz.say)
+			if (iz.say) {
 				iz.say.set([person.name, s]);
-			else
+				iz.say.node.recenter();
+			} else
 				iz.say = _.basic(person.name, "top", s, _.hider("say"));
 			iz.say.show("ctmain");
 		},
