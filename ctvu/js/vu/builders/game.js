@@ -1,5 +1,10 @@
 vu.builders.game = {
 	_: {
+		states: {
+			initial: CT.dom.div(),
+			victory: CT.dom.div(),
+			defeat: CT.dom.div()
+		},
 		scene: function(s) {
 			return CT.dom.div([
 				CT.dom.link(s.name, null,
@@ -27,8 +32,83 @@ vu.builders.game = {
 			}, "json");
 			return n;
 		},
+		mod: function(actor, aname, prop, sec) {
+			var _ = vu.builders.game._, cur = _.cur, eobj = { key: cur.key };
+			CT.modal.prompt({
+				prompt: "what's the new value?",
+				cb: function(val) {
+					actor[prop] = val;
+					eobj[sec] = cur[sec];
+					vu.storage.edit(eobj, function() {
+						CT.dom.id(sec + "_" + aname).replaceWith(_.actor(cur[sec].actors,
+							aname, sec));
+					});
+				}
+			})
+		},
+		state: function(actor, aname, sec) {
+			var _ = vu.builders.game._, cur = _.cur, oz = [
+				"add property"
+			], state, sa, newp = function() {
+				CT.modal.prompt({
+					prompt: "what's the new property?",
+					cb: p => _.mod(actor, aname, p, sec)
+				});
+			}, propz = Object.keys(actor).filter(p => p != "positioners");
+			propz.length && oz.push("change property");
+			if (sec == "initial") {
+				["victory", "defeat"].forEach(function(state) {
+					if (!(aname in cur[state].actors))
+						oz.push("add " + state + " condition");
+				});
+			}
+			if (oz.length == 1) return newp();
+			CT.modal.choice({
+				data: oz,
+				cb: function(sel) {
+					if (sel == "add property")
+						newp();
+					else if (sel == "change property") {
+						CT.modal.choice({
+							prompt: "what's changing?",
+							data: propz,
+							cb: p => _.mod(actor, aname, p, sec)
+						});
+					} else {
+						state = sel.split(" ")[1];
+						sa = cur[state].actors;
+						sa[aname] = {};
+						_.states[state].appendChild(_.actor(sa, aname, state));
+					}
+				}
+			});
+		},
+		actor: function(actors, aname, sec) {
+			var actor = actors[aname], propz = CT.dom.div(), p;
+			for (p in actor)
+				if (p != "positioners")
+					propz.appendChild(CT.dom.div(p + ": " + actor[p]));
+			return CT.dom.div([
+				CT.dom.link(aname, function() {
+					vu.builders.game._.state(actor, aname, sec);
+				}, null, "big"),
+				propz
+			], "bordered padded margined round inline-block vtop", sec + "_" + aname);
+		},
+		cond: function(game, sec) {
+			var state = game[sec], _ = vu.builders.game._,
+				anode = _.states[sec], a,
+				actors = state.actors = state.actors || {};
+			for (a in actors)
+				anode.appendChild(_.actor(actors, a, sec));
+			return CT.dom.div([
+				sec, anode
+			], "bordered padded margined round");
+		},
 		conditions: function(game) {
-
+			return CT.dom.div(["initial", "victory", "defeat"].map(function(sec) {
+				return vu.builders.game._.cond(game, sec);
+			}));
 		},
 		swap: function() {
 			var g = vu.builders.game;
