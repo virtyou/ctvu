@@ -27,20 +27,41 @@ vu.builders.game = {
 			}, "json");
 			return n;
 		},
-		actor: function(actors, aname) {
+		state: function(actor, aname, sec) {
+			var cur = vu.builders.game._.cur,
+				oz = ["add property", "change property"];
+			if (sec == "initial") {
+				["victory", "defeat"].forEach(function(cond) {
+					if (!(aname in cur[cond].actors))
+						oz.push("add " + cond + " condition");
+				});
+			}
+			CT.modal.prompt({
+				data: oz,
+				cb: function(sel) {
+
+					// TODO
+
+				}
+			});
+		},
+		actor: function(actors, aname, sec) {
 			var actor = actors[aname], propz = CT.dom.div(), p;
 			for (p in actor)
 				if (p != "positioners")
 					propz.appendChild(CT.dom.div(p + ": " + actor[p]));
 			return CT.dom.div([
-				CT.dom.div(aname, "big green"), propz
+				CT.dom.link(aname, function() {
+					vu.builders.game._.state(actor, aname, sec);
+				}, null, "big"),
+				propz
 			], "bordered padded margined round inline-block vtop");
 		},
 		cond: function(game, sec) {
 			var state = game[sec], anode = CT.dom.div(), a,
 				actors = state.actors = state.actors || {};
 			for (a in actors)
-				anode.appendChild(vu.builders.game._.actor(actors, a));
+				anode.appendChild(vu.builders.game._.actor(actors, a, sec));
 			return CT.dom.div([
 				sec, anode
 			], "bordered padded margined round");
