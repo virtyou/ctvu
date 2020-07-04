@@ -16,6 +16,19 @@ vu.game.Scene = CT.Class({
 		},
 		action: function() { // TODO: other actions...
 			vu.portal.check();
+		},
+		satisfies: function(condsec) {
+			var zcc = zero.core.current, a = zcc.adventure,
+				astate = a.state.actors, target = a.game[condsec],
+				aname, actor, prop;
+			if (!Object.keys(target).length) return false;
+			for (aname in target.actors) {
+				actor = target.actors[aname];
+				for (prop in actor)
+					if (actor[prop] != astate[aname][prop])
+						return false;
+			}
+			return true;
 		}
 	},
 	refresh: function(altered) {
@@ -23,10 +36,12 @@ vu.game.Scene = CT.Class({
 		if (altered.story || altered.state) {
 			altered.story && this.menus.story();
 			this.adventure.upstate();
+			if (altered.state) {
+				for (var cond of ["victory", "defeat"])
+					if (this._.satisfies(cond))
+						return vu.game.util.text(cond);
+			}
 		}
-		// TODO:
-		// - check victory/defeat conditions
-		// - if multi, ws push
 	},
 	script: function(sname) {
 		var oz = this.opts;
