@@ -47,27 +47,32 @@ vu.builders.game = {
 			})
 		},
 		state: function(actor, aname, sec) {
-			var _ = vu.builders.game._, cur = _.cur, state,
-				oz = ["add property", "change property"], sa;
+			var _ = vu.builders.game._, cur = _.cur, oz = [
+				"add property"
+			], state, sa, newp = function() {
+				CT.modal.prompt({
+					prompt: "what's the new property?",
+					cb: p => _.mod(actor, aname, p, sec)
+				});
+			}, propz = Object.keys(actor).filter(p => p != "positioners");
+			propz.length && oz.push("change property");
 			if (sec == "initial") {
 				["victory", "defeat"].forEach(function(state) {
 					if (!(aname in cur[state].actors))
 						oz.push("add " + state + " condition");
 				});
 			}
+			if (oz.length == 1) return newp();
 			CT.modal.choice({
 				data: oz,
 				cb: function(sel) {
-					if (sel == "add property") {
-						CT.modal.prompt({
-							prompt: "what's the new property?",
-							cb: p => _.mod(actor, aname, prop, sec)
-						});
-					} else if (sel == "change property") {
+					if (sel == "add property")
+						newp();
+					else if (sel == "change property") {
 						CT.modal.choice({
 							prompt: "what's changing?",
-							data: Object.keys(actor).filter(p => p != "positioners"),
-							cb: p => _.mod(actor, aname, prop, sec)
+							data: propz,
+							cb: p => _.mod(actor, aname, p, sec)
 						});
 					} else {
 						state = sel.split(" ")[1];
