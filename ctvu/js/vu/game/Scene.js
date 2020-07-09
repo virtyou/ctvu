@@ -86,7 +86,16 @@ vu.game.Scene = CT.Class({
 			rc(zcc.room[portal], men.portal);
 		for (item in items)
 			_.item(items[item], i => rc(i, men.item));
+		this.comp();
 		this.script(this.state.script);
+	},
+	comp: function() {
+		var zcc = zero.core.current, pers,
+			cz = zcc.room.components();
+		for (pers in zcc.people)
+			cz = cz.concat(zcc.people[pers].components());
+		CT.cc.views(cz);
+		// TODO: music etc as it happens
 	},
 	unload: function() {
 		// people removed by vu.portal.portin()
