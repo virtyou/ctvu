@@ -90,11 +90,18 @@ vu.game.Scene = CT.Class({
 		this.script(this.state.script);
 	},
 	comp: function() {
-		var zcc = zero.core.current, pers,
-			cz = zcc.room.components();
+		var zcc = zero.core.current, oz = this.opts,
+			cz = zcc.room.components(), pers,
+			g = zcc.adventure.game;
 		for (pers in zcc.people)
 			cz = cz.concat(zcc.people[pers].components());
-		CT.cc.views(cz);
+		CT.cc.views([{
+			identifier: "Game: " + g.name,
+			owners: g.owners
+		}, {
+			identifier: "Scene: " + oz.name,
+			owners: oz.owners
+		}].concat(cz));
 		// TODO: music etc as it happens
 	},
 	unload: function() {
