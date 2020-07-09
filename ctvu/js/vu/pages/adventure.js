@@ -9,6 +9,7 @@ CT.require("CT.parse");
 CT.require("CT.storage");
 CT.require("CT.trans");
 CT.require("core");
+CT.require("CT.cc");
 CT.require("user.core");
 CT.require("zero.core");
 CT.require("vu.core");
