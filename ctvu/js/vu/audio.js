@@ -23,8 +23,13 @@ vu.audio.Controller = CT.Class({
 		this[sound.kind][sound.name] = sound;
 	},
 	play: function(kind, name) {
-		this.players[kind].src = this[kind][name].item;
+		var track = this[kind][name];
+		this.players[kind].src = track.item;
 		this.players[kind].play();
+		CT.cc.view({
+			identifier: "Resource (audio - " + kind + "): " + name,
+			owners: track.owners
+		});
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {

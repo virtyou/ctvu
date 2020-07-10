@@ -102,7 +102,6 @@ vu.game.Scene = CT.Class({
 			identifier: "Scene: " + oz.name,
 			owners: oz.owners
 		}].concat(cz));
-		// TODO: music etc as it happens
 	},
 	unload: function() {
 		// people removed by vu.portal.portin()
