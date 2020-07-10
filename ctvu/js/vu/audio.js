@@ -33,8 +33,8 @@ vu.audio.Controller = CT.Class({
 			});
 		} else {
 			[d, n] = name.split(": ");
-			zero.core.current.adventure.menus.attribution(n,
-				"audio (" + kind + ")", d);
+			zero.core.current.adventure.menus.attribution("hearing",
+				n, "audio (" + kind + ")", d);
 		}
 	},
 	init: function(opts) {
