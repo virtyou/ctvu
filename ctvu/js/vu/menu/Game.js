@@ -32,7 +32,7 @@ vu.menu.Game = CT.Class({
 			};
 		},
 		sayer: function(statement, person) {
-			var _ = this._, zc = zero.core, iz = _.interactionals,
+			var _ = this._, iz = _.interactionals,
 				s = CT.dom.div(statement, "biggest");
 			if (iz.say) {
 				iz.say.set([person.name, s]);
@@ -56,7 +56,7 @@ vu.menu.Game = CT.Class({
 				header, cb || this._.collapse(name));
 		},
 		info: function(name, info) {
-			var _ = this._, zc = zero.core, iz = _.interactionals;
+			var _ = this._, iz = _.interactionals;
 			if (iz.info)
 				iz.info.set([name, info]);
 			else
@@ -64,10 +64,20 @@ vu.menu.Game = CT.Class({
 					info, _.hider("info", true), name);
 			return iz.info;
 		},
+		attribution: function(name, info) {
+			var _ = this._, iz = _.interactionals;
+			if (iz.attribution)
+				iz.attribution.set([name, info]);
+			else
+				iz.attribution = _.basic("attribution", "left",
+					info, _.hider("attribution", true), name);
+			return iz.attribution;
+		},
 		setup: function() {
 			var _ = this._, selz = _.selectors, cam = zero.core.camera;
 			selz.story = CT.dom.div(null, "scrolly kidvp mt5 hm400p");
 			selz.camera = CT.dom.div();
+			selz.attribution = CT.dom.div();
 			selz.camera.update = function() {
 				CT.dom.setContent(selz.camera, [
 					CT.dom.div(cam.current, "abs ctr shiftup yellow small mr5"),
@@ -119,6 +129,13 @@ vu.menu.Game = CT.Class({
 	info: function(name, info, thing) {
 		this._.info(name, info).show();
 		zero.core.camera.follow(thing);
+	},
+	attribution: function(name, info, source) {
+		var mod = this._.attribution(CT.dom.div(name, "big"), CT.dom.div([
+			info, CT.dom.div(source, "biggest")
+		], "centered"));
+		mod.show();
+		setTimeout(mod.hide, 5000);
 	},
 	item: function(item) {
 		var zcc = zero.core.current, per = zcc.person,
