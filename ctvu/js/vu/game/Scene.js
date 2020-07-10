@@ -92,7 +92,7 @@ vu.game.Scene = CT.Class({
 	comp: function() {
 		var zcc = zero.core.current, oz = this.opts,
 			cz = zcc.room.components(), pers,
-			g = zcc.adventure.game;
+			g = zcc.adventure.game, rt = zcc.room.opts.texture;
 		for (pers in zcc.people)
 			cz = cz.concat(zcc.people[pers].components());
 		CT.cc.views([{
@@ -102,6 +102,8 @@ vu.game.Scene = CT.Class({
 			identifier: "Scene: " + oz.name,
 			owners: oz.owners
 		}].concat(cz));
+		rt.startsWith("http") && this.menus.attribution("seeing", "wallpaper",
+			null, rt.split("/")[2].split(".").slice(-2).join("."));
 	},
 	unload: function() {
 		// people removed by vu.portal.portin()
