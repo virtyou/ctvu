@@ -32,14 +32,8 @@ vu.menu.Game = CT.Class({
 			};
 		},
 		sayer: function(statement, person) {
-			var _ = this._, iz = _.interactionals,
-				s = CT.dom.div(statement, "biggest");
-			if (iz.say) {
-				iz.say.set([person.name, s]);
-				iz.say.node.recenter();
-			} else
-				iz.say = _.basic(person.name, "top", s, _.hider("say"));
-			iz.say.show("ctmain");
+			this._.interactional("say", "top", person.name,
+				CT.dom.div(statement, "biggest")).show("ctmain");
 		},
 		convo: function(person) {
 			setTimeout(function() { // ... meh
@@ -55,23 +49,23 @@ vu.menu.Game = CT.Class({
 			return vu.core.menu(name, side, info,
 				header, cb || this._.collapse(name));
 		},
-		info: function(name, info) {
+		interactional: function(itype, side, name, info) {
 			var _ = this._, iz = _.interactionals;
-			if (iz.info)
-				iz.info.set([name, info]);
+			if (iz[itype])
+				iz[itype].set([name, info]);
 			else
-				iz.info = _.basic("info", "bottom",
-					info, _.hider("info", true), name);
-			return iz.info;
+				iz[itype] = _.basic(itype, side,
+					info, _.hider(itype, true), name);
+			return iz[itype];
 		},
-		attribution: function(name, info) {
-			var _ = this._, iz = _.interactionals;
-			if (iz.attribution)
-				iz.attribution.set([name, info]);
-			else
-				iz.attribution = _.basic("attribution", "left",
-					info, _.hider("attribution", true), name);
-			return iz.attribution;
+		info: function(name, info) {
+			return this._.interactional("info", "bottom", name, info);
+		},
+		seeing: function(name, info) {
+			return this._.interactional("seeing", "right", name, info);
+		},
+		hearing: function(name, info) {
+			return this._.interactional("hearing", "left", name, info);
 		},
 		setup: function() {
 			var _ = this._, selz = _.selectors, cam = zero.core.camera;
@@ -130,8 +124,8 @@ vu.menu.Game = CT.Class({
 		this._.info(name, info).show();
 		zero.core.camera.follow(thing);
 	},
-	attribution: function(name, info, source) {
-		var mod = this._.attribution(CT.dom.div(name, "big"), CT.dom.div([
+	attribution: function(atype, name, info, source) {
+		var mod = this._[atype](CT.dom.div(name, "big"), CT.dom.div([
 			info, CT.dom.div(source, "biggest")
 		], "centered"));
 		mod.show();
