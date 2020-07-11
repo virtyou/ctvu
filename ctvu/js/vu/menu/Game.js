@@ -33,7 +33,7 @@ vu.menu.Game = CT.Class({
 		},
 		sayer: function(statement, person) {
 			this._.interactional("say", "top", person.name,
-				CT.dom.div(statement, "biggest")).show("ctmain");
+				CT.dom.div(statement, "biggest"), true).show("ctmain");
 		},
 		convo: function(person) {
 			setTimeout(function() { // ... meh
@@ -49,11 +49,12 @@ vu.menu.Game = CT.Class({
 			return vu.core.menu(name, side, info,
 				header, cb || this._.collapse(name));
 		},
-		interactional: function(itype, side, name, info) {
+		interactional: function(itype, side, name, info, recenter) {
 			var _ = this._, iz = _.interactionals;
-			if (iz[itype])
+			if (iz[itype]) {
 				iz[itype].set([name, info]);
-			else
+				recenter && iz[itype].node.recenter();
+			} else
 				iz[itype] = _.basic(itype, side,
 					info, _.hider(itype, true), name);
 			return iz[itype];
