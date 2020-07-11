@@ -72,7 +72,6 @@ vu.menu.Game = CT.Class({
 			var _ = this._, selz = _.selectors, cam = zero.core.camera;
 			selz.story = CT.dom.div(null, "scrolly kidvp mt5 hm400p");
 			selz.camera = CT.dom.div();
-			selz.attribution = CT.dom.div();
 			selz.camera.update = function() {
 				CT.dom.setContent(selz.camera, [
 					CT.dom.div(cam.current, "abs ctr shiftup yellow small mr5"),
