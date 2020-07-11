@@ -32,14 +32,8 @@ vu.menu.Game = CT.Class({
 			};
 		},
 		sayer: function(statement, person) {
-			var _ = this._, zc = zero.core, iz = _.interactionals,
-				s = CT.dom.div(statement, "biggest");
-			if (iz.say) {
-				iz.say.set([person.name, s]);
-				iz.say.node.recenter();
-			} else
-				iz.say = _.basic(person.name, "top", s, _.hider("say"));
-			iz.say.show("ctmain");
+			this._.interactional("say", "top", person.name,
+				CT.dom.div(statement, "biggest"), true).show("ctmain");
 		},
 		convo: function(person) {
 			setTimeout(function() { // ... meh
@@ -55,14 +49,24 @@ vu.menu.Game = CT.Class({
 			return vu.core.menu(name, side, info,
 				header, cb || this._.collapse(name));
 		},
+		interactional: function(itype, side, name, info, recenter) {
+			var _ = this._, iz = _.interactionals;
+			if (iz[itype]) {
+				iz[itype].set([name, info]);
+				recenter && iz[itype].node.recenter();
+			} else
+				iz[itype] = _.basic(itype, side,
+					info, _.hider(itype, true), name);
+			return iz[itype];
+		},
 		info: function(name, info) {
-			var _ = this._, zc = zero.core, iz = _.interactionals;
-			if (iz.info)
-				iz.info.set([name, info]);
-			else
-				iz.info = _.basic("info", "bottom",
-					info, _.hider("info", true), name);
-			return iz.info;
+			return this._.interactional("info", "bottom", name, info);
+		},
+		seeing: function(name, info) {
+			return this._.interactional("seeing", "right", name, info);
+		},
+		hearing: function(name, info) {
+			return this._.interactional("hearing", "left", name, info);
 		},
 		setup: function() {
 			var _ = this._, selz = _.selectors, cam = zero.core.camera;
@@ -119,6 +123,13 @@ vu.menu.Game = CT.Class({
 	info: function(name, info, thing) {
 		this._.info(name, info).show();
 		zero.core.camera.follow(thing);
+	},
+	attribution: function(atype, name, info, source) {
+		var mod = this._[atype](CT.dom.div(name, "big"), CT.dom.div([
+			info, CT.dom.div(source, "biggest")
+		], "centered"));
+		mod.show();
+		setTimeout(mod.hide, 5000);
 	},
 	item: function(item) {
 		var zcc = zero.core.current, per = zcc.person,

@@ -23,8 +23,19 @@ vu.audio.Controller = CT.Class({
 		this[sound.kind][sound.name] = sound;
 	},
 	play: function(kind, name) {
-		this.players[kind].src = this[kind][name].item;
+		var track = this[kind][name], d, n;
+		this.players[kind].src = track.item;
 		this.players[kind].play();
+		if (track.owners.length) {
+			CT.cc.view({
+				identifier: "Resource (audio - " + kind + "): " + name,
+				owners: track.owners
+			});
+		} else {
+			[d, n] = name.split(": ");
+			zero.core.current.adventure.menus.attribution("hearing",
+				n, "audio (" + kind + ")", d);
+		}
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {

@@ -42,7 +42,8 @@ class Scene(db.TimeStampedBase):
 			"scripts": self.scripts,
 			"fx": [f.json() for f in db.get_multi(self.fx)],
 			"music": [m.json() for m in db.get_multi(self.music)],
-			"ambient": [a.json() for a in db.get_multi(self.ambient)]
+			"ambient": [a.json() for a in db.get_multi(self.ambient)],
+			"owners": [o.urlsafe() for o in self.owners]
 		}
 
 	def json_plus(self):
