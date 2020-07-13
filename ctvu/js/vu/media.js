@@ -45,7 +45,7 @@ vu.media = {
 				return {
 					name: name,
 					variety: "background",
-					item: "https://images.pexels.com/photos/" + p + "/pexels-photo-" + p + ".jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
+					item: "https://images.pexels.com/photos/" + p + "/pexels-photo-" + p + ".jpeg"
 				};
 			}),
 			image: [
