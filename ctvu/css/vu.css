@@ -122,6 +122,13 @@ iframe {
 	margin-top: 5px;
 }
 
+.infobubble {
+	padding: 10px;
+	background: black;
+	border-radius: 5px;
+	border: 1px solid green;
+}
+
 .basicpopup {
 	color: black;
 	overflow-y: auto;
