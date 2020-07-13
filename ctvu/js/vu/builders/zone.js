@@ -387,41 +387,45 @@ vu.builders.zone = {
 
 			selz.base = CT.dom.div();
 			selz.base.update = function() {
-				var options = ["shell"];
+				var options = [], browse = function() {
+					vu.media.browse("background", function(img) {
+						var upobj = { texture: img.item },
+							r = zero.core.current.room;
+						r.update(upobj);
+						vu.storage.setOpts(r.opts.key, upobj);
+					});
+				};
+				if (vu.storage.has("shell"))
+					options.push("shell");
 				if (vu.storage.has("wallpaper"))
 					options.push("wallpaper");
 				options.push("wallpaper (extended)");
 				var content = [
 					CT.dom.button("swap", function() {
+						if (options.length == 1)
+							return browse();
 						CT.modal.choice({
 							data: options,
 							cb: function(variety) {
-								if (variety == "wallpaper (extended)") {
-									vu.media.browse("background", function(img) {
-										var upobj = { texture: img.item },
-											r = zero.core.current.room;
-										r.update(upobj);
-										vu.storage.setOpts(r.opts.key, upobj);
-									});
-								} else {
-									CT.modal.choice({
-										data: Object.values(vu.storage.get(variety)),
-										cb: function(base) {
-											var upobj = {};
-											_.opts.thing_key = base.key;
-											if (base.texture)
-												upobj.texture = _.opts.texture = base.texture;
-											if (base.stripset)
-												upobj.stripset = _.opts.stripset = base.stripset;
-											selz.base.update();
-											zero.core.current.room.update(upobj);
-	//										vu.builders.zone.update();
-											persist({
-												base: base.key
-											});
-										}
-									});
-								}
+								if (variety == "wallpaper (extended)")
+									return browse();
+								CT.modal.choice({
+									data: Object.values(vu.storage.get(variety)),
+									cb: function(base) {
+										var upobj = {};
+										_.opts.thing_key = base.key;
+										if (base.texture)
+											upobj.texture = _.opts.texture = base.texture;
+										if (base.stripset)
+											upobj.stripset = _.opts.stripset = base.stripset;
+										selz.base.update();
+										zero.core.current.room.update(upobj);
+//										vu.builders.zone.update();
+										persist({
+											base: base.key
+										});
+									}
+								});
 							}
 						});
 					}, "up20 right")
