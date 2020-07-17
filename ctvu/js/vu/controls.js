@@ -96,7 +96,8 @@ vu.controls = {
 	setGestures: function(node, cb) {
 		var person = zero.core.current.person,
 			gestz = person.opts.gestures,
-			dances = person.opts.dances;
+			dances = person.opts.dances,
+			modz = person.opts.mods;
 		CT.dom.setContent(node, [
 			["ungesture"].concat(Object.keys(gestz)).map(function(gest, i) {
 				return CT.dom.div(gest, "bordered padded margined inline-block hoverglow", null, {
@@ -116,20 +117,17 @@ vu.controls = {
 						cb && cb("dance", dance);
 					}
 				});
+			}),
+			"Mods",
+			["unmod"].concat(Object.keys(modz)).map(function(m, i) {
+				return CT.dom.div(m, "bordered padded margined inline-block hoverglow", null, {
+					onclick: function(e) {
+						i ? person.mod(m) : person.unmod();
+						e.stopPropagation();
+						cb && cb("mod", m);
+					}
+				});
 			})
 		]);
-	},
-	setMods: function(node, cb) {
-		var person = zero.core.current.person,
-			modz = person.opts.mods;
-		CT.dom.setContent(node, ["unmod"].concat(Object.keys(modz)).map(function(m, i) {
-			return CT.dom.div(m, "bordered padded margined inline-block hoverglow", null, {
-				onclick: function(e) {
-					i ? person.mod(m) : person.unmod();
-					e.stopPropagation();
-					cb && cb("mod", m);
-				}
-			});
-		}));
 	}
 };
