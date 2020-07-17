@@ -7,7 +7,6 @@ vu.builders.play = {
 			chat: "bottom",
 			cameras: "top",
 			info: "topleft",
-			mods: "topright",
 			run_home: "topright",
 			triggers: "bottomleft",
 			gestures: "bottomright"
@@ -19,7 +18,6 @@ vu.builders.play = {
 				vu.controls.initCamera(_.selectors.cameras);
 				vu.controls.setTriggers(_.selectors.triggers, _.emit);
 				vu.controls.setGestures(_.selectors.gestures, _.emit);
-				vu.controls.setMods(_.selectors.mods, _.emit);
 				_.controls = new zero.core.Controls({
 					cb: _.action,
 					target: person,
@@ -97,7 +95,6 @@ vu.builders.play = {
 				function() { vu.portal.port(); });
 			selz.chat = _.chatterbox();
 			selz.info = CT.dom.div();
-			selz.mods = CT.dom.div();
 			vu.portal.on("eject", function(portout) {
 				_.emit("eject", portout);
 				CT.pubsub.unsubscribe(cur.room.opts.key);
