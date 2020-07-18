@@ -272,6 +272,33 @@ img.right.h30p.up5 {
 	width: 270px;
 }
 
+.gmenu.minimap .frame {
+	position: relative;
+	width: 98%;
+	border: 2px solid green;
+}
+
+.gmenu.minimap .frame .floor,
+.gmenu.minimap .frame .wall,
+.gmenu.minimap .frame .obstacle,
+.gmenu.minimap .frame .object {
+	position: absolute;
+	opacity: 0.4;
+}
+
+.gmenu.minimap .frame .wall,
+.gmenu.minimap .frame .obstacle {
+	border: 4px solid white;
+}
+
+.gmenu.minimap .frame .floor {
+	background: lightgreen;
+}
+
+.gmenu.minimap .frame .object {
+	background: yellow;
+}
+
 .gmenu.collapsed {
 	max-height: 40px;
 	max-width: 136px;
