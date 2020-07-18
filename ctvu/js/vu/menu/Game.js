@@ -3,6 +3,7 @@ vu.menu.Game = CT.Class({
 	_: {
 		selectors: {},
 		menus: {
+			minimap: "topright",
 			story: "bottomleft",
 			camera: "bottomright"
 		},
@@ -72,6 +73,11 @@ vu.menu.Game = CT.Class({
 			var _ = this._, selz = _.selectors, cam = zero.core.camera;
 			selz.story = CT.dom.div(null, "scrolly kidvp mt5 hm400p");
 			selz.camera = CT.dom.div();
+			selz.minimap = CT.dom.div();
+			_.minimap = new vu.menu.Map({
+				wait: true,
+				node: selz.minimap
+			});
 			selz.camera.update = function() {
 				CT.dom.setContent(selz.camera, [
 					CT.dom.div(cam.current, "abs ctr shiftup yellow small mr5"),
@@ -86,6 +92,13 @@ vu.menu.Game = CT.Class({
 			};
 			cam.onchange(selz.camera.update);
 		}
+	},
+	minimap: function() {
+		var _ = this._, mod = _.selectors.minimap.modal;
+		_.minimap.refresh();
+		mod.show("ctmain");
+		if (mod.node.classList.contains("collapsed"))
+			mod.node.classList.remove("collapsed");
 	},
 	story: function() {
 		var sel = this._.selectors.story, s = this.state,
