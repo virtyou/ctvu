@@ -61,6 +61,6 @@ vu.menu.Map = CT.Class({
 		this.opts = opts = CT.merge(opts, {
 			node: document.body
 		});
-		this.refresh();
+		opts.wait || this.refresh();
 	}
 });
