@@ -4,6 +4,7 @@ vu.builders.test = {
 		selectors: {},
 		menus: {
 			camera: "top",
+			minimap: "topright",
 			triggers: "bottomleft",
 			gestures: "bottomright"
 		},
@@ -19,6 +20,7 @@ vu.builders.test = {
 				popts = _.opts = vu.storage.get("person") || _.opts;
 			_.raw = vu.core.person(popts);
 			selz.camera = CT.dom.div(null, "centered");
+			selz.minimap = CT.dom.div();
 			selz.triggers = CT.dom.div();
 			selz.gestures = CT.dom.div();
 		}
