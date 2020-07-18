@@ -28,6 +28,13 @@ vu.menu.Map = CT.Class({
 		CT.dom.addContent(_.frame, n);
 		return n;
 	},
+	person: function(p) {
+		var _ = this._, pz = _.people,
+			zccpn = zero.core.current.person.name;
+		pz[p.name] = this.place(p.body, p.name == zccpn
+			? "person" : "people", p.body.position());
+		pz[p.name].person = p;
+	},
 	frame: function(bounds) {
 		var _ = this._, min = bounds.min, max = bounds.max,
 			w = max.x - min.x, h = max.z - min.z, r = w / h,
@@ -42,20 +49,14 @@ vu.menu.Map = CT.Class({
 		n.style.height = (wp / r) + "px";
 	},
 	refresh: function() {
-		var zcc = zero.core.current, _ = this._,
-			r = zcc.room, pz = zcc.people,
-			zccpn = zcc.person.name, k, o, p;
+		var _ = this._, zcc = zero.core.current,
+			r = zcc.room, k, o;
 		this.frame(r.bounds);
 		for (k of ["floor", "wall", "obstacle"])
 			for (o in r[k])
 				this.place(r[k][o], k);
 		r.objects.forEach(o => this.place(o, "object"));
-		for (k in pz) {
-			p = pz[k];
-			_.people[p.name] = this.place(p.body,
-				p.name == zccpn ? "person" : "people", p.body.position());
-			_.people[p.name].person = p;
-		}
+		Object.values(zcc.people).forEach(this.person);
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
