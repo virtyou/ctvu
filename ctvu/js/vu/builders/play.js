@@ -14,11 +14,12 @@ vu.builders.play = {
 		},
 		cbs: {
 			moved: function(name) {
-				vu.builders.play._.minimap.update(name);
+				vu.builders.play.minimap.update(name);
 				vu.live.emit();
 			},
 			joined: function(person) { // (you)
-				var _ = vu.builders.play._, cur = zero.core.current;
+				var vbp = vu.builders.play, _ = vbp._,
+					cur = zero.core.current;
 				cur.person = person;
 				vu.controls.initCamera(_.selectors.cameras);
 				vu.controls.setTriggers(_.selectors.triggers, _.emit);
@@ -28,7 +29,7 @@ vu.builders.play = {
 					target: person,
 					moveCb: _.cbs.moved
 				});
-				_.minimap = new vu.menu.Map({ node: _.selectors.minimap });
+				vbp.minimap = new vu.menu.Map({ node: _.selectors.minimap });
 				cur.room.objects.forEach(_.clickreg);
 				zero.core.click.trigger(person.body);
 			},
@@ -49,7 +50,9 @@ vu.builders.play = {
 				mnode.scrollIntoView();
 			},
 			enter: function(person) {
-				vu.builders.play._.clickreg(person);
+				var vbp = vu.builders.play;
+				vbp._.clickreg(person);
+				vbp.minimap && vbp.minimap.person(person);
 			}
 		},
 		clickreg: function(thing) {
