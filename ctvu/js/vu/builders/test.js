@@ -14,6 +14,7 @@ vu.builders.test = {
 			vu.controls.initCamera(_.selectors.camera);
 			vu.controls.setTriggers(_.selectors.triggers);
 			vu.controls.setGestures(_.selectors.gestures);
+			new vu.menu.Map({ node: _.selectors.minimap });
 		},
 		setup: function() {
 			var _ = vu.builders.test._, selz = _.selectors,
