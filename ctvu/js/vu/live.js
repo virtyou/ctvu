@@ -2,7 +2,8 @@ vu.live = {
 	_: {
 		people: {},
 		pending: {},
-		springs: ["weave", "bob", "slide", "orientation"],
+		springs: ["weave", "slide", "orientation"],
+		bsprops: ["target", "boost", "floored", "hard"],
 		actions: { // message types
 			chat: function(person, msg) {
 				vu.live._.cbs.chat(person, msg);
@@ -38,14 +39,17 @@ vu.live = {
 			meta: function(data) {
 				if (data.user == zero.core.current.person.opts.key)
 					return;
-				var person = vu.live._.people[data.user];
+				var _ = vu.live._, person = _.people[data.user];
 				if (!person)
 					return; // will handle meta when spawn is complete
 				var s = person.body.springs, meta = data.meta;
-				vu.live._.springs.forEach(function(prop) {
+				_.springs.forEach(function(prop) {
 					s[prop].target = meta[prop];
 				});
-				vu.live._.dance(person, meta);
+				_.bsprops.forEach(function(bsp) {
+					s.bob[bsp] = meta.bob[bsp];
+				});
+				_.dance(person, meta);
 			},
 			message: function(msg) {
 				var data = msg.message,
@@ -93,16 +97,20 @@ vu.live = {
 		}
 	},
 	emit: function() {
-		var person = zero.core.current.person, s = person.body.springs, targets = {
+		var zcc = zero.core.current, person = zcc.person, targets = {
 			mod: person.activeMod,
 			vibe: person.vibe.current,
 			dance: person.activeDance,
 			gesture: person.activeGesture
-		};
-		vu.live._.springs.forEach(function(prop) {
+		}, s = person.body.springs, _ = vu.live._;
+		_.springs.forEach(function(prop) {
 			targets[prop] = s[prop].target;
 		});
-		CT.pubsub.meta(zero.core.current.room.opts.key, targets);
+		targets.bob = {};
+		_.bsprops.forEach(function(bsp) {
+			targets.bob[bsp] = s.bob[bsp];
+		});
+		CT.pubsub.meta(zcc.room.opts.key, targets);
 	},
 	init: function(cbs) {
 		var _ = vu.live._;
