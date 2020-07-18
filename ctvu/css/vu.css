@@ -281,7 +281,9 @@ img.right.h30p.up5 {
 .gmenu.minimap .frame .floor,
 .gmenu.minimap .frame .wall,
 .gmenu.minimap .frame .obstacle,
-.gmenu.minimap .frame .object {
+.gmenu.minimap .frame .object,
+.gmenu.minimap .frame .people,
+.gmenu.minimap .frame .person {
 	position: absolute;
 	opacity: 0.9;
 }
@@ -300,6 +302,20 @@ img.right.h30p.up5 {
 .gmenu.minimap .frame .object {
 	border: 1px solid black;
 	background: yellow;
+}
+
+.gmenu.minimap .frame .people,
+.gmenu.minimap .frame .person {
+	opacity: 1;
+	padding: 5px;
+	border-radius: 50%;
+	background: fuchsia;
+	border: 1px solid white;
+
+}
+
+.gmenu.minimap .frame .person {
+	background: green;
 }
 
 .gmenu.collapsed {
