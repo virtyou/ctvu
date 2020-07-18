@@ -113,6 +113,7 @@ vu.builders.play = {
 						_.emit("inject", portin);
 						room.cut();
 						room.objects.forEach(_.clickreg);
+						_.minimap.refresh();
 					}
 				}, CT.data.get(target || CT.storage.get("room"))));
 				CT.pubsub.subscribe(cur.room.opts.key);
