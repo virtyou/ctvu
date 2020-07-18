@@ -16,11 +16,12 @@ vu.menu.Map = CT.Class({
 		}
 	},
 	update: function(name) {
-		var _ = this._, n = _.people[name],
-			s = n.style, p = n.person, r,
-			rules = _.b2p(p.body.bounds, p.body.position());
-		for (r in rules)
-			s[r] = rules[r];
+		var _ = this._, zcc = zero.core.current, r,
+			n = _.people[name] || this.person(zcc.people[name]),
+			s = n.style, p = n.person, b = p.body,
+			rz = _.b2p(b.bounds, b.position());
+		for (r in rz)
+			s[r] = rz[r];
 	},
 	place: function(obj, kind, pos) {
 		var _ = this._, n = CT.dom.div(null, 
@@ -29,11 +30,11 @@ vu.menu.Map = CT.Class({
 		return n;
 	},
 	person: function(p) {
-		var _ = this._, pz = _.people,
-			zccpn = zero.core.current.person.name;
-		pz[p.name] = this.place(p.body, p.name == zccpn
-			? "person" : "people", p.body.position());
-		pz[p.name].person = p;
+		var b = p.body, n = this._.people[p.name] = this.place(b,
+			p.name == zero.core.current.person.name
+				? "person" : "people", b.position());
+		n.person = p;
+		return n;
 	},
 	frame: function(bounds) {
 		var _ = this._, min = bounds.min, max = bounds.max,
