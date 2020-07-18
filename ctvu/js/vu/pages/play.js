@@ -17,6 +17,7 @@ CT.require("vu.controls");
 CT.require("vu.storage");
 CT.require("vu.live");
 CT.require("vu.portal");
+CT.require("vu.menu.Map");
 CT.require("vu.builders.core");
 CT.require("vu.builders.play");
 
