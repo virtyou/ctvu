@@ -13,6 +13,10 @@ vu.builders.play = {
 			gestures: "bottomright"
 		},
 		cbs: {
+			moved: function(name) {
+				vu.builders.play._.minimap.update(name);
+				vu.live.emit();
+			},
 			joined: function(person) { // (you)
 				var _ = vu.builders.play._, cur = zero.core.current;
 				cur.person = person;
@@ -22,8 +26,9 @@ vu.builders.play = {
 				_.controls = new zero.core.Controls({
 					cb: _.action,
 					target: person,
-					moveCb: vu.live.emit
+					moveCb: _.cbs.moved
 				});
+				_.minimap = new vu.menu.Map({ node: _.selectors.minimap });
 				cur.room.objects.forEach(_.clickreg);
 				zero.core.click.trigger(person.body);
 			},
