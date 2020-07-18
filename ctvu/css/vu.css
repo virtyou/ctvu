@@ -148,6 +148,7 @@ iframe {
 
 .gmenu.run_home img {
 	width: 64px;
+	padding-bottom: 2px;
 }
 
 .gmenu.run_home img:hover,
@@ -160,7 +161,7 @@ img.right.h30p.up5 {
 }
 
 .gmenu.cameras {
-    left: 250px !important;
+    left: 286px !important;
     right: 276px;
     white-space: initial;
 }
@@ -227,9 +228,7 @@ img.right.h30p.up5 {
 }
 
 .gmenu.run_home {
-	/*margin-right: 180px;*/
-	margin-right: 270px;
-	margin-top: 106px;
+	margin-left: 192px;
 }
 
 /*.gmenu.mods {
