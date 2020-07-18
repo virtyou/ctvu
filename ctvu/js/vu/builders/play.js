@@ -7,6 +7,7 @@ vu.builders.play = {
 			chat: "bottom",
 			cameras: "top",
 			info: "topleft",
+			minimap: "topright",
 			run_home: "topright",
 			triggers: "bottomleft",
 			gestures: "bottomright"
@@ -92,6 +93,7 @@ vu.builders.play = {
 			selz.cameras = CT.dom.div(null, "centered");
 			selz.triggers = CT.dom.div();
 			selz.gestures = CT.dom.div();
+			selz.minimap = CT.dom.div();
 			selz.run_home = CT.dom.img("/img/vu/home.png", null,
 				function() { vu.portal.port(); });
 			selz.chat = _.chatterbox();
