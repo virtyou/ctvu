@@ -217,6 +217,7 @@ img.right.h30p.up5 {
 
 .gmenu.chat {
 	max-height: 193px;
+	top: initial !important;
 }
 
 .gmenu.chat .out {
@@ -265,6 +266,10 @@ img.right.h30p.up5 {
 	max-width: 50%;
 	margin-right: 160px;
 	white-space: normal;
+}
+
+.gmenu.minimap {
+	width: 270px;
 }
 
 .gmenu.collapsed {
