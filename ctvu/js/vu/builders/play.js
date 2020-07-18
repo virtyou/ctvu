@@ -50,9 +50,7 @@ vu.builders.play = {
 				mnode.scrollIntoView();
 			},
 			enter: function(person) {
-				var vbp = vu.builders.play;
-				vbp._.clickreg(person);
-				vbp.minimap && vbp.minimap.person(person);
+				vu.builders.play._.clickreg(person);
 			}
 		},
 		clickreg: function(thing) {
@@ -94,8 +92,8 @@ vu.builders.play = {
 			vu.portal.check();
 		},
 		setup: function() {
-			var _ = vu.builders.play._, selz = _.selectors,
-				cur = zero.core.current,
+			var vbp = vu.builders.play, _ = vbp._,
+				selz = _.selectors, cur = zero.core.current,
 				popts = _.opts = vu.storage.get("person") || _.opts;
 			_.raw = vu.core.person(popts);
 			selz.cameras = CT.dom.div(null, "centered");
@@ -116,7 +114,7 @@ vu.builders.play = {
 						_.emit("inject", portin);
 						room.cut();
 						room.objects.forEach(_.clickreg);
-						_.minimap.refresh();
+						vbp.minimap.refresh();
 					}
 				}, CT.data.get(target || CT.storage.get("room"))));
 				CT.pubsub.subscribe(cur.room.opts.key);
