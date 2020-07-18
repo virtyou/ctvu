@@ -8,7 +8,7 @@ vu.builders.play = {
 			cameras: "top",
 			info: "topleft",
 			minimap: "topright",
-			run_home: "topright",
+			run_home: "topleft",
 			triggers: "bottomleft",
 			gestures: "bottomright"
 		},
