@@ -283,19 +283,22 @@ img.right.h30p.up5 {
 .gmenu.minimap .frame .obstacle,
 .gmenu.minimap .frame .object {
 	position: absolute;
-	opacity: 0.4;
+	opacity: 0.9;
 }
 
 .gmenu.minimap .frame .wall,
 .gmenu.minimap .frame .obstacle {
-	border: 4px solid white;
+	border: 2px solid white;
 }
 
 .gmenu.minimap .frame .floor {
-	background: lightgreen;
+	opacity: 0.3;
+	background: slategray;
+	border: 1px solid lightgray;
 }
 
 .gmenu.minimap .frame .object {
+	border: 1px solid black;
 	background: yellow;
 }
 
