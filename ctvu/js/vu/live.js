@@ -57,7 +57,7 @@ vu.live = {
 			message: function(msg) {
 				var data = msg.message,
 					person = vu.live._.people[msg.user];
-				if (person)
+				if (person && person.body)
 					vu.live._.actions[data.action](person, data.data);
 				else // probs still building
 					vu.live._.pending[msg.user] = msg;
