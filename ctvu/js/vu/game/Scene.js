@@ -87,6 +87,7 @@ vu.game.Scene = CT.Class({
 		for (item in items)
 			_.item(items[item], i => rc(i, men.item));
 		this.comp();
+		this.menus.minimap();
 		this.script(this.state.script);
 	},
 	comp: function() {
