@@ -56,6 +56,7 @@ vu.builders.play = {
 						CT.dom.div("(you)", "up20 right"),
 						"move around with wasd",
 						"SPACE for jump",
+						"SHIFT for run",
 						"1-9 for gestures",
 						"1-9 + SHIFT for dances",
 						"0 to ungesture",
