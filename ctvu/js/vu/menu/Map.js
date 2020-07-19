@@ -13,13 +13,23 @@ vu.menu.Map = CT.Class({
 				width: s * (max.x - min.x) + "px",
 				height: s * (max.z - min.z) + "px"
 			};
+		},
+		r2p: function(r, p) {
+			var _ = this._, s = _.scale, o = _.offsets;
+			p = p || _.center;
+			return {
+				top: s * (o.z + p.z - r.z) + "px",
+				left: s * (o.x + p.x - r.x) + "px",
+				width: s * (r.x * 2) + "px",
+				height: s * (r.z * 2) + "px"
+			};
 		}
 	},
 	update: function(name) {
 		var _ = this._, zcc = zero.core.current, r,
 			n = _.people[name] || this.person(zcc.people[name]),
 			s = n.style, p = n.person, b = p.body,
-			rz = _.b2p(b.bounds, b.position());
+			rz = _.r2p(b.radii, b.position());
 		for (r in rz)
 			s[r] = rz[r];
 	},
