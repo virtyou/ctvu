@@ -51,10 +51,6 @@ vu.live = {
 					s.bob[bsp] = meta.bob[bsp];
 				});
 				_.dance(person, meta);
-				person.body.setBob();
-				setTimeout(function() {
-					vu.builders.play.minimap.update(person.name);
-				}, 100); // tick for upped vals
 			},
 			message: function(msg) {
 				var data = msg.message,
