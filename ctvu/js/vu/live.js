@@ -3,7 +3,7 @@ vu.live = {
 		people: {},
 		pending: {},
 		springs: ["weave", "slide", "orientation"],
-		bsprops: ["target", "boost", "floored", "hard"],
+		bsprops: ["target", "value", "boost", "floored", "hard"], // overkill?
 		actions: { // message types
 			chat: function(person, msg) {
 				vu.live._.cbs.chat(person, msg);
@@ -45,12 +45,13 @@ vu.live = {
 					return; // will handle meta when spawn is complete
 				var s = person.body.springs, meta = data.meta;
 				_.springs.forEach(function(prop) {
-					s[prop].target = meta[prop];
+					s[prop].target = meta[prop].target;
 				});
 				_.bsprops.forEach(function(bsp) {
 					s.bob[bsp] = meta.bob[bsp];
 				});
 				_.dance(person, meta);
+				person.body.setBob();
 				setTimeout(function() {
 					vu.builders.play.minimap.update(person.name);
 				}, 100); // tick for upped vals
@@ -81,7 +82,7 @@ vu.live = {
 			var _ = vu.live._, isYou = vu.core.ischar(pkey);
 			CT.db.one(pkey, function(pdata) {
 				if (meta && !invis)
-					pdata.body.position = [meta.weave, meta.bob, meta.slide];
+					pdata.body.position = [meta.weave.target, meta.bob.target, meta.slide.target];
 				zero.core.util.join(vu.core.person(pdata, invis), function(person) {
 					var s = person.body.springs;
 					_.people[pdata.key] = person;
@@ -108,7 +109,7 @@ vu.live = {
 			gesture: person.activeGesture
 		}, s = person.body.springs, _ = vu.live._;
 		_.springs.forEach(function(prop) {
-			targets[prop] = s[prop].target;
+			targets[prop] = { target: s[prop].target };
 		});
 		targets.bob = {};
 		_.bsprops.forEach(function(bsp) {
