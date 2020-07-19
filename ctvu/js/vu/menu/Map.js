@@ -25,6 +25,11 @@ vu.menu.Map = CT.Class({
 			};
 		}
 	},
+	tick: function() {
+		var pz = zero.core.current.people, p;
+		for (p in pz)
+			pz[p].body.moving && this.update(p);
+	},
 	update: function(name) {
 		var _ = this._, zcc = zero.core.current, r,
 			n = _.people[name] || this.person(zcc.people[name]),
@@ -72,6 +77,10 @@ vu.menu.Map = CT.Class({
 				this.place(r[k][o], k);
 		r.objects.forEach(o => this.place(o, "object"));
 		Object.values(zcc.people).forEach(this.person);
+		if (!this.ticking) {
+			this.ticking = true;
+			zero.core.util.ontick(this.tick);
+		}
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
