@@ -275,6 +275,7 @@ img.right.h30p.up5 {
 
 .gmenu.minimap .frame {
 	position: relative;
+	overflow: hidden;
 	width: 98%;
 	border: 2px solid green;
 }
@@ -312,7 +313,7 @@ img.right.h30p.up5 {
 	border-radius: 50%;
 	background: fuchsia;
 	border: 1px solid white;
-
+	transition: all 100ms;
 }
 
 .gmenu.minimap .frame .person {
