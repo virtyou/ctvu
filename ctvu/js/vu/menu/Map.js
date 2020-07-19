@@ -26,14 +26,15 @@ vu.menu.Map = CT.Class({
 		}
 	},
 	tick: function() {
-		var pz = zero.core.current.people, p;
-		for (p in pz)
-			pz[p].body.moving && this.update(p);
+		var zcc = zero.core.current, pz = zcc.people, p;
+		if (zcc.room && zcc.room.isReady())
+			for (p in pz)
+				pz[p].body.moving && this.update(p);
 	},
 	update: function(name) {
 		var _ = this._, zcc = zero.core.current, r,
 			n = _.people[name] || this.person(zcc.people[name]),
-			s = n.style, p = n.person, b = p.body,
+			s = n.style, p = zcc.people[name], b = p.body,
 			rz = _.r2p(b.radii, b.position());
 		for (r in rz)
 			s[r] = rz[r];
@@ -45,11 +46,10 @@ vu.menu.Map = CT.Class({
 		return n;
 	},
 	person: function(p) {
-		var b = p.body, n = this._.people[p.name] = this.place(b,
+		this._.people[p.name] = this.place(p.body,
 			p.name == zero.core.current.person.name
-				? "person" : "people", b.position());
-		n.person = p;
-		return n;
+				? "person" : "people", p.body.position());
+		return this._.people[p.name];
 	},
 	unperson: function(name) {
 		this._.people[name].remove();
