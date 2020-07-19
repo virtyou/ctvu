@@ -95,10 +95,9 @@ vu.menu.Game = CT.Class({
 	},
 	minimap: function() {
 		var _ = this._, mod = _.selectors.minimap.modal;
-		_.minimap.refresh();
-		mod.show("ctmain");
 		if (mod.node.classList.contains("collapsed"))
 			mod.node.classList.remove("collapsed");
+		mod.show("ctmain", _.minimap.refresh);
 	},
 	story: function() {
 		var sel = this._.selectors.story, s = this.state,
