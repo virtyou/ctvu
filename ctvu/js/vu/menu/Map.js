@@ -1,7 +1,6 @@
 vu.menu.Map = CT.Class({
 	CLASSNAME: "vu.menu.Map",
 	_: {
-		people: {},
 		center: { x: 0, z: 0 },
 		b2p: function(bz, p) {
 			var _ = this._, s = _.scale, o = _.offsets,
@@ -71,6 +70,7 @@ vu.menu.Map = CT.Class({
 	refresh: function() {
 		var _ = this._, zcc = zero.core.current,
 			r = zcc.room, k, o;
+		_.people = {};
 		this.frame(r.bounds);
 		for (k of ["floor", "wall", "obstacle"])
 			for (o in r[k])
