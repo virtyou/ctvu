@@ -41,7 +41,7 @@ vu.live = {
 				if (data.user == zero.core.current.person.opts.key)
 					return;
 				var _ = vu.live._, person = _.people[data.user];
-				if (!person)
+				if (!(person && person.body))
 					return; // will handle meta when spawn is complete
 				var s = person.body.springs, meta = data.meta;
 				_.springs.forEach(function(prop) {
@@ -88,11 +88,7 @@ vu.live = {
 						_.events.message(_.pending[pdata.key]);
 						delete _.pending[pdata.key];
 					}
-					if (!meta) return;
-					invis || _.springs.forEach(function(prop) {
-						s[prop].target = s[prop].value = meta[prop];
-					});
-					_.dance(person, meta);
+					meta && _.events.meta(meta);
 				}, !isYou);
 			}, "json");
 		}
