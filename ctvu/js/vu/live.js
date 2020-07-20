@@ -10,7 +10,7 @@ vu.live = {
 			},
 			inject: function(person, pkey) { // join
 				zero.core.current.room.inject(person, pkey && zero.core.Thing.get(pkey));
-				person.body.show();
+//				person.body.show();
 			},
 			eject: function(person, pkey) { // leave
 				zero.core.current.room.eject(person, pkey && zero.core.Thing.get(pkey));
@@ -28,7 +28,7 @@ vu.live = {
 				});
 			},
 			join: function(chan, user, meta) {
-				vu.live._.spawn(user, meta, true);
+				vu.live._.spawn(user, meta);//, true);
 			},
 			leave: function(chan, user) {
 				var peeps = vu.live._.people;
@@ -74,8 +74,8 @@ vu.live = {
 				person.undance();
 		},
 		spawn: function(pkey, meta, invis) {
-			if (pkey in vu.live._.people) return; // you switching rooms for instance
 			var _ = vu.live._, isYou = vu.core.ischar(pkey);
+			if (isYou && pkey in vu.live._.people) return; // you switching rooms
 			CT.db.one(pkey, function(pdata) {
 				if (meta && !invis)
 					pdata.body.position = [meta.weave.target, meta.bob.target, meta.slide.target];
