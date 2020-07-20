@@ -7,24 +7,25 @@ vu.builders.play = {
 			chat: "bottom",
 			cameras: "top",
 			info: "topleft",
-			mods: "topright",
-			run_home: "topright",
+			minimap: "topright",
+			run_home: "topleft",
 			triggers: "bottomleft",
 			gestures: "bottomright"
 		},
 		cbs: {
 			joined: function(person) { // (you)
-				var _ = vu.builders.play._, cur = zero.core.current;
+				var vbp = vu.builders.play, _ = vbp._,
+					cur = zero.core.current;
 				cur.person = person;
 				vu.controls.initCamera(_.selectors.cameras);
 				vu.controls.setTriggers(_.selectors.triggers, _.emit);
 				vu.controls.setGestures(_.selectors.gestures, _.emit);
-				vu.controls.setMods(_.selectors.mods, _.emit);
 				_.controls = new zero.core.Controls({
 					cb: _.action,
 					target: person,
 					moveCb: vu.live.emit
 				});
+				vbp.minimap = new vu.menu.Map({ node: _.selectors.minimap });
 				cur.room.objects.forEach(_.clickreg);
 				zero.core.click.trigger(person.body);
 			},
@@ -58,6 +59,7 @@ vu.builders.play = {
 						CT.dom.div("(you)", "up20 right"),
 						"move around with wasd",
 						"SPACE for jump",
+						"SHIFT for run",
 						"1-9 for gestures",
 						"1-9 + SHIFT for dances",
 						"0 to ungesture",
@@ -86,18 +88,18 @@ vu.builders.play = {
 			vu.portal.check();
 		},
 		setup: function() {
-			var _ = vu.builders.play._, selz = _.selectors,
-				cur = zero.core.current,
+			var vbp = vu.builders.play, _ = vbp._,
+				selz = _.selectors, cur = zero.core.current,
 				popts = _.opts = vu.storage.get("person") || _.opts;
 			_.raw = vu.core.person(popts);
 			selz.cameras = CT.dom.div(null, "centered");
 			selz.triggers = CT.dom.div();
 			selz.gestures = CT.dom.div();
+			selz.minimap = CT.dom.div();
 			selz.run_home = CT.dom.img("/img/vu/home.png", null,
 				function() { vu.portal.port(); });
 			selz.chat = _.chatterbox();
 			selz.info = CT.dom.div();
-			selz.mods = CT.dom.div();
 			vu.portal.on("eject", function(portout) {
 				_.emit("eject", portout);
 				CT.pubsub.unsubscribe(cur.room.opts.key);
@@ -108,6 +110,7 @@ vu.builders.play = {
 						_.emit("inject", portin);
 						room.cut();
 						room.objects.forEach(_.clickreg);
+						vbp.minimap.refresh();
 					}
 				}, CT.data.get(target || CT.storage.get("room"))));
 				CT.pubsub.subscribe(cur.room.opts.key);

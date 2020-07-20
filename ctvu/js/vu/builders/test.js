@@ -4,7 +4,7 @@ vu.builders.test = {
 		selectors: {},
 		menus: {
 			camera: "top",
-			mods: "topright",
+			minimap: "topright",
 			triggers: "bottomleft",
 			gestures: "bottomright"
 		},
@@ -14,16 +14,16 @@ vu.builders.test = {
 			vu.controls.initCamera(_.selectors.camera);
 			vu.controls.setTriggers(_.selectors.triggers);
 			vu.controls.setGestures(_.selectors.gestures);
-			vu.controls.setMods(_.selectors.mods);
+			new vu.menu.Map({ node: _.selectors.minimap });
 		},
 		setup: function() {
 			var _ = vu.builders.test._, selz = _.selectors,
 				popts = _.opts = vu.storage.get("person") || _.opts;
 			_.raw = vu.core.person(popts);
 			selz.camera = CT.dom.div(null, "centered");
+			selz.minimap = CT.dom.div();
 			selz.triggers = CT.dom.div();
 			selz.gestures = CT.dom.div();
-			selz.mods = CT.dom.div();
 		}
 	},
 	menus: function() {
