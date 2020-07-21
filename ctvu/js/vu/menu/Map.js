@@ -26,9 +26,18 @@ vu.menu.Map = CT.Class({
 	},
 	tick: function() {
 		var zcc = zero.core.current, pz = zcc.people, p;
-		if (zcc.room && zcc.room.isReady())
+		if (zcc.room && zcc.room.isReady()) {
 			for (p in pz)
 				pz[p].body.moving && this.update(p);
+			for (p in this._.movers)
+				this.move(p);
+		}
+	},
+	move: function(name) {
+		var _ = this._, s = _.movers[name].style, r,
+			rz = _.b2p(zero.core.current.room[name].bounds);
+		for (r in rz)
+			s[r] = rz[r];
 	},
 	update: function(name) {
 		var _ = this._, zcc = zero.core.current, r,
@@ -42,6 +51,8 @@ vu.menu.Map = CT.Class({
 		var _ = this._, n = CT.dom.div(null, 
 			kind, null, null, _.b2p(obj.bounds, pos));
 		CT.dom.addContent(_.frame, n);
+		if (kind == "floor" && obj.opts.shift)
+			_.movers[obj.name] = n;
 		return n;
 	},
 	person: function(p) {
@@ -71,6 +82,7 @@ vu.menu.Map = CT.Class({
 		var _ = this._, zcc = zero.core.current,
 			r = zcc.room, k, o;
 		_.people = {};
+		_.movers = {};
 		this.frame(r.bounds);
 		for (k of ["floor", "wall", "obstacle"])
 			for (o in r[k])
