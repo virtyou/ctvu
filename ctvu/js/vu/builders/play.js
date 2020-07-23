@@ -2,7 +2,6 @@ vu.builders.play = {
 	_: {
 		opts: core.config.ctvu.builders.person,
 		selectors: {},
-		emitters: ["vibe", "gesture", "dance", "mod"],
 		menus: {
 			chat: "bottom",
 			cameras: "top",
@@ -18,12 +17,12 @@ vu.builders.play = {
 					cur = zero.core.current;
 				cur.person = person;
 				vu.controls.initCamera(_.selectors.cameras);
-				vu.controls.setTriggers(_.selectors.triggers, _.emit);
-				vu.controls.setGestures(_.selectors.gestures, _.emit);
+				vu.controls.setTriggers(_.selectors.triggers, vu.live.meta);
+				vu.controls.setGestures(_.selectors.gestures, vu.live.meta);
 				_.controls = new zero.core.Controls({
 					cb: _.action,
 					target: person,
-					moveCb: vu.live.emit
+					moveCb: vu.live.meta
 				});
 				vbp.minimap = new vu.menu.Map({ node: _.selectors.minimap });
 				cur.room.objects.forEach(_.clickreg);
@@ -75,14 +74,6 @@ vu.builders.play = {
 				}
 			});
 		},
-		emit: function(action, val) {
-			if (vu.builders.play._.emitters.indexOf(action) != -1)
-				return vu.live.emit();
-			CT.pubsub.publish(zero.core.current.room.opts.key, {
-				action: action,
-				data: val
-			});
-		},
 		action: function() {
 			// TODO: other actions.....
 			vu.portal.check();
@@ -101,13 +92,13 @@ vu.builders.play = {
 			selz.chat = _.chatterbox();
 			selz.info = CT.dom.div();
 			vu.portal.on("eject", function(portout) {
-				_.emit("eject", portout);
+				vu.live.emit("eject", portout);
 				CT.pubsub.unsubscribe(cur.room.opts.key);
 			});
 			vu.portal.on("inject", function(target, portin) {
 				zero.core.util.room(CT.merge({
 					onbuild: function(room) {
-						_.emit("inject", portin);
+						vu.live.emit("inject", portin);
 						room.cut();
 						room.objects.forEach(_.clickreg);
 						vbp.minimap.refresh();
@@ -120,7 +111,7 @@ vu.builders.play = {
 		},
 		chatterbox: function() {
 			var out = CT.dom.div(null, "out"), say = function(val, e) {
-				val && vu.builders.play._.emit("chat", val);
+				val && vu.live.emit("chat", val);
 				e && e.stopPropagation();
 				return "clear";
 			}, listButt = CT.dom.button("listen", function(e) {
