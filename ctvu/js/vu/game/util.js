@@ -26,7 +26,7 @@ vu.game.util = {
 			if (door.kind != "portal")
 				return alert("this portal's destination has not been confirmed!");
 			CT.db.multi(zcc.scene.game.scenes, function(scenes) {
-				rscenes = scenes.filter(s => s.room == door.parent);
+				rscenes = scenes.filter(s => s.room.key == door.parent);
 				if (!rscenes.length)
 					return alert("no scenes in that room :(");
 				cb(rscenes);
