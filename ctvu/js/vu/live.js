@@ -33,7 +33,7 @@ vu.live = {
 			subscribe: function(data) {
 				var _ = vu.live._, spawn = _.spawn;
 				data.presence.forEach(function(u, i) {
-					spawn(u, data.metamap[u]);
+					spawn(u, data.metamap[u], !vu.core.ischar(u));
 				});
 				if (data.presence.length == 1)
 					CT.event.subscribe("environment", _.esync);
@@ -41,7 +41,7 @@ vu.live = {
 					CT.event.unsubscribe("environment", _.esync);
 			},
 			join: function(chan, user, meta) {
-				vu.live._.spawn(user, meta);//, true);
+				vu.live._.spawn(user, meta);//, null, true);
 			},
 			leave: function(chan, user) {
 				var _ = vu.live._, peeps = _.people;
@@ -91,16 +91,19 @@ vu.live = {
 			else if (person.activeDance)
 				person.undance();
 		},
-		spawn: function(pkey, meta, invis) {
+		spawn: function(pkey, meta, unfric, invis) {
 			var _ = vu.live._, isYou = vu.core.ischar(pkey);
-			if (isYou && pkey in vu.live._.people) return; // you switching rooms
+			if (isYou && pkey in _.people) return; // you switching rooms
 			CT.db.one(pkey, function(pdata) {
 				if (meta && !invis)
 					pdata.body.position = [meta.weave.target, meta.bob.target, meta.slide.target];
 				zero.core.util.join(vu.core.person(pdata, invis), function(person) {
 					_.people[pdata.key] = person;
 					_.cbs.enter(person);
-					isYou && vu.live._.cbs.joined(person);
+					if (isYou)
+						_.cbs.joined(person);
+					else if (unfric)
+						person.body.setFriction(false, true);
 					if (_.pending[pdata.key]) {
 						_.events.message(_.pending[pdata.key]);
 						delete _.pending[pdata.key];
