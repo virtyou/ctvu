@@ -14,7 +14,6 @@ vu.live = {
 			},
 			eject: function(person, pkey) { // leave
 				zero.core.current.room.eject(person, pkey && zero.core.Thing.get(pkey));
-				vu.builders.play.minimap.unperson(person.name);
 			},
 			trigger: function(person, tname) {
 				person.respond(tname);
@@ -46,6 +45,7 @@ vu.live = {
 			leave: function(chan, user) {
 				var _ = vu.live._, peeps = _.people;
 				setTimeout(function() {
+					vu.builders.play.minimap.unperson(peeps[user].name);
 					peeps[user].remove();
 					delete peeps[user];
 					if (Object.keys(peeps).length == 1)
