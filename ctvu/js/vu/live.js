@@ -18,23 +18,38 @@ vu.live = {
 			},
 			trigger: function(person, tname) {
 				person.respond(tname);
+			},
+			environment: function(person, data) { // extend/genericize.....
+				var zcc = zero.core.current;
+				if (person == zcc.person) return;
+				var flo = zcc.room[data.name], fos = flo.opts.shift;
+				fos.speed = data.speed;
+				flo.placer.position[fos.axis] = data.position;
+				flo.bounds.min[fos.axis] = data.min;
+				flo.bounds.max[fos.axis] = data.max;
 			}
 		},
 		events: {
 			subscribe: function(data) {
-				var spawn = vu.live._.spawn;
+				var _ = vu.live._, spawn = _.spawn;
 				data.presence.forEach(function(u, i) {
-					spawn(u, data.metamap[u]);
+					spawn(u, data.metamap[u], !vu.core.ischar(u));
 				});
+				if (data.presence.length == 1)
+					CT.event.subscribe("environment", _.esync);
+				else
+					CT.event.unsubscribe("environment", _.esync);
 			},
 			join: function(chan, user, meta) {
-				vu.live._.spawn(user, meta);//, true);
+				vu.live._.spawn(user, meta);//, null, true);
 			},
 			leave: function(chan, user) {
-				var peeps = vu.live._.people;
+				var _ = vu.live._, peeps = _.people;
 				setTimeout(function() {
 					peeps[user].remove();
 					delete peeps[user];
+					if (Object.keys(peeps).length == 1)
+						CT.event.subscribe("environment", _.esync);
 				}, 500); // leave time for ejection
 			},
 			meta: function(data) {
@@ -61,6 +76,9 @@ vu.live = {
 					vu.live._.pending[msg.user] = msg;
 			}
 		},
+		esync: function(data) {
+			vu.live.emit("environment", data);
+		},
 		dance: function(person, meta) {
 			if (meta.vibe != person.vibe.current)
 				person.vibe.update(meta.vibe);
@@ -73,17 +91,19 @@ vu.live = {
 			else if (person.activeDance)
 				person.undance();
 		},
-		spawn: function(pkey, meta, invis) {
+		spawn: function(pkey, meta, unfric, invis) {
 			var _ = vu.live._, isYou = vu.core.ischar(pkey);
-			if (isYou && pkey in vu.live._.people) return; // you switching rooms
+			if (isYou && pkey in _.people) return; // you switching rooms
 			CT.db.one(pkey, function(pdata) {
 				if (meta && !invis)
 					pdata.body.position = [meta.weave.target, meta.bob.target, meta.slide.target];
 				zero.core.util.join(vu.core.person(pdata, invis), function(person) {
-					var s = person.body.springs;
 					_.people[pdata.key] = person;
 					_.cbs.enter(person);
-					isYou && vu.live._.cbs.joined(person);
+					if (isYou)
+						_.cbs.joined(person);
+					else if (unfric)
+						person.body.setFriction(false, true);
 					if (_.pending[pdata.key]) {
 						_.events.message(_.pending[pdata.key]);
 						delete _.pending[pdata.key];
@@ -93,7 +113,13 @@ vu.live = {
 			}, "json");
 		}
 	},
-	emit: function() {
+	emit: function(action, val) {
+		CT.pubsub.publish(zero.core.current.room.opts.key, {
+			action: action,
+			data: val
+		});
+	},
+	meta: function() {
 		var zcc = zero.core.current, person = zcc.person, targets = {
 			mod: person.activeMod,
 			vibe: person.vibe.current,
