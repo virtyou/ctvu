@@ -49,7 +49,7 @@ def response():
 	if action == "thing": # should thing/person return json() as well?
 		succeed(thing(cgi_get("data"), cgi_get("owner")).data())
 	if action == "person":
-		succeed(person(cgi_get("name"), cgi_get("owner"), cgi_get("responses", default={})).data())
+		succeed(person(cgi_get("name"), cgi_get("owner"), cgi_get("responses", default={})).json())
 	if action == "ready":
 		user = cgi_get("user")
 		succeed({
