@@ -64,13 +64,18 @@ vu.menu.Hair = CT.Class({
 			max: 8,
 			initial: 6
 		}],
+		bones: {
+			tail: 0,
+			hair: 4,
+			beard: 4
+		},
 		wild: function(opts, name) {
-			var eoz = {
+			var _ = this._, eoz = {
 				opts: CT.merge(opts, {
 					thing: this.opts.thing,
 					name: name || this.opts.name,
 					kind: this.opts.kind,
-					bone: 4
+					bone: _.bones[this.opts.kind]
 				})
 			};
 			if (this.target) {
@@ -78,9 +83,12 @@ vu.menu.Hair = CT.Class({
 				eoz.key = this.target.opts.key;
 			} else {
 				eoz.modelName = "part";
-				eoz.parent = this.person.head.opts.key;
+				eoz.parent = _.parent().opts.key;
 			}
 			vu.storage.edit(eoz, this.attach);
+		},
+		parent: function() {
+			return this.person[(this.opts.kind == "tail") ? "body" : "head"];
 		},
 		compile: function(opts) {
 			var coverage = [opts.coverage_x, opts.coverage_z],
@@ -100,7 +108,7 @@ vu.menu.Hair = CT.Class({
 			var _ = this._, oz = this.opts;
 			_.bspot = _.bspot || CT.dom.button("add " + oz.kind,
 				this.click, "abs mr5 mosthigh " + oz.buttpos);
-			CT.dom.addContent("ctmain", _.bspot);
+			CT.dom.addContent("vnode", _.bspot);
 			CT.dom[isbald ? "show" : "hide"](_.bspot);
 		}
 	},
@@ -113,9 +121,9 @@ vu.menu.Hair = CT.Class({
 		});
 	},
 	attach: function(hnew) {
-		var head = this.person.head, thaz = this;
-		this.target && head.detach(this.opts.kind);
-		head.attach(hnew, function() {
+		var thaz = this, parent = this._.parent();
+		this.target && parent.detach(this.opts.kind);
+		parent.attach(hnew, function() {
 			thaz.register();
 			thaz.click();
 		}, true);
@@ -151,10 +159,10 @@ vu.menu.Hair = CT.Class({
 		this.target ? this.cb(this.target, this.choice) : this.choice();
 	},
 	register: function() {
-		var head = this.person.head, hitz = head[this.opts.kind],
+		var _ = this._, parent = _.parent(), hitz = parent[this.opts.kind],
 			t = this.target = hitz && Object.values(hitz)[0],
 			bald = !t || t.name == "bald";
-		this._.bald(bald);
+		_.bald(bald);
 		bald || zero.core.click.register(t, this.click);
 	},
 	init: function(opts) {
