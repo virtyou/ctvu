@@ -29,7 +29,7 @@ vu.builders.Gesture = CT.Class({
 		CT.dom.setContent(selz.interval, CT.dom.range(function(val) {
 			dopts[dname].interval = val;
 			per({ dances: dopts });
-		}, 300, 3000, dopts[dname].interval || 1000, 50, "w1"));
+		}, 200, 3000, dopts[dname].interval || 1000, 50, "w1"));
 		CT.dom.setContent(selz.step, dname);
 	},
 	loadExtras: function() {
