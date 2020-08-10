@@ -45,6 +45,16 @@ vu.builders.tweak = {
 				varieties: ["wild", "bald"],
 				prompt: "wild beard or no beard?"
 			});
+			new vu.menu.Hair({
+				kind: "tail",
+				thing: "Tail",
+				buttpos: "cbl",
+				person: person,
+				cb: _.partLabel,
+				name: "wildtail",
+				varieties: ["wild", "bald"],
+				prompt: "wild tail or no tail?"
+			});
 			_.setMorphs(person, "head");
 			_.setMorphs(person, "body");
 			_.selectors.rotation.update();
