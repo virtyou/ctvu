@@ -47,6 +47,7 @@ vu.builders.tweak = {
 			});
 			_.setMorphs(person, "head");
 			_.setMorphs(person, "body");
+			_.selectors.rotation.update();
 		},
 		partLabel: function(target, clicker, nosay) {
 			var _ = vu.builders.tweak._, k = target.opts.kind;
@@ -125,7 +126,7 @@ vu.builders.tweak = {
 		setup: function() {
 			var cfg = core.config.ctzero, _ = vu.builders.tweak._, selz = _.selectors,
 				popts = _.opts = vu.storage.get("person") || _.opts, accz = _.accessories,
-				persist = vu.builders.tweak.persist;
+				persist = vu.builders.tweak.persist, zcc = zero.core.current;
 
 			var bt = popts.body.template, template = bt ? bt.split(".").pop() : popts.name,
 				rawp = _.raw = vu.core.person(popts);
@@ -156,14 +157,14 @@ vu.builders.tweak = {
 			var pselector = selz.character = CT.dom.select(avz.map(function(item) {
 				return item.split(".").pop();
 			}), avz, null, bt && bt.slice(bt.indexOf(".") + 1), null, function() {
-				if (zero.core.current.person) {
+				if (zcc.person) {
 					persist({ template: "templates." + pselector.value }, "body");
 					location = location; // hack! do something smarter...
 				}
 			});
 			selz.accessories = (accz[template] || accz.sassy).map(function(acc) {
 				return CT.dom.checkboxAndLabel(acc, true, null, null, null, function(cb) {
-					var head = zero.core.current.person.head;
+					var head = zcc.person.head;
 					if (cb.checked) // hard-wiring one.body for now ... genericize later
 						head.attach(templates.one.body.accessories[acc]);
 					else
@@ -172,6 +173,13 @@ vu.builders.tweak = {
 			});
 			selz.morphs_head = CT.dom.div();
 			selz.morphs_body = CT.dom.div();
+
+			selz.rotation = CT.dom.div();
+			selz.rotation.update = function() {
+				CT.dom.setContent(selz.rotation,
+					CT.dom.range(zcc.person.orientation,
+						0, Math.PI * 2, 0, 0.01, "w1"));
+			};
 		}
 	},
 	persist: function(updates, sub) {
@@ -192,6 +200,10 @@ vu.builders.tweak = {
 		_.setup();
 		return [
 			CT.dom.div("your virtYou", "bigger centered pb10"),
+			CT.dom.div([
+				"Rotation",
+				selz.rotation
+			], "padded bordered round mb5"),
 			CT.dom.div([
 				CT.dom.span("Base"),
 				CT.dom.pad(),
