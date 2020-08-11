@@ -52,7 +52,21 @@ vu.builders.zone = {
 					vu.storage.setOpts(furn.opts.key, {
 						scale: [fval, fval, fval]
 					});
-				}, 0.2, 16, furn.scale().x, 0.01, "w1")
+				}, 0.1, 16, furn.scale().x, 0.01, "w1")
+			], "topbordered padded margined");
+		},
+		plevel: function(furn) {
+			var rbz = zero.core.current.room.bounds;
+			return CT.dom.div([
+				"Level",
+				CT.dom.range(function(val) {
+					var fval = parseInt(val);
+					furn.adjust("position", "y", fval);
+					var fp = furn.position();
+					vu.storage.setOpts(furn.opts.key, {
+						position: [fp.x, fp.y, fp.z]
+					});
+				}, rbz.min.y, rbz.max.y, furn.position().y, 1, "w1")
 			], "topbordered padded margined");
 		},
 		portin: function(door) {
@@ -237,6 +251,7 @@ vu.builders.zone = {
 				_.unfurn(furn),
 				_.fname(furn),
 				_.fscale(furn),
+				(furn.opts.name == "pool") && _.plevel(furn), // eh do better...
 				CT.dom.div([
 					"Rotation",
 					CT.dom.range(function(val) {
