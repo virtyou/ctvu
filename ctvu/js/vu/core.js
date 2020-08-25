@@ -248,8 +248,24 @@ vu.core = {
 			}
 		});
 	},
-	baseme: function() {
+	addbase: function() {
 
+	},
+	baseme: function() {
+		var data = vu.core._udata, person = data.person;
+		if (!person.basepacks.length)
+			return vu.core.addbase();
+		CT.modal.choice({
+			prompt: "add, remove, or reorder?",
+			data: ["add", "remove", "reorder"],
+			cb: function(sel) {
+				if (sel == "add")
+					return vu.core.addbase();
+
+				// TODO: addbase, remove base, reorder (reorder prompt() / shuffle())
+
+			}
+		});
 	},
 	base: function() {
 		var data = vu.core._udata, person = data.person,
