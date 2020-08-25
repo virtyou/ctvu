@@ -231,6 +231,13 @@ vu.core = {
 			style: "multiple-choice",
 			selections: person.basepack,
 			data: ["mood", "vibe", "mods", "gear", "dances", "gestures", "responses"],
+			linkages: {
+				"mood": ["vibe"],
+				"vibe": ["mood"],
+				"dances": ["gestures"],
+				"gestures": ["dances"],
+				"responses": ["mood", "vibe", "mods", "gear", "dances", "gestures"]
+			},
 			cb: function(blocks) {
 				vu.storage.edit({
 					key: person.key,
