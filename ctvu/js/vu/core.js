@@ -205,7 +205,7 @@ vu.core = {
 				value: user.core.get("key")
 			}
 		}, null, null, exporter);
-	},//[]
+	},
 	impconf: function() {
 		var data = vu.core._udata, person = data.person;
 		CT.modal.choice({
@@ -223,6 +223,26 @@ vu.core = {
 				});
 			}
 		});
+	},
+	mebase: function() {
+		var data = vu.core._udata, person = data.person;
+		CT.modal.choice({
+			prompt: "please select the configuration blocks you wish to share in this basepack. note that some blocks always go with other blocks - e.g. gestures and dances.",
+			style: "multiple-choice",
+			selections: person.basepack,
+			data: ["mood", "vibe", "mods", "gear", "dances", "gestures", "responses"],
+			cb: function(blocks) {
+				vu.storage.edit({
+					key: person.key,
+					basepack: blocks
+				}, function() {
+					window.location = location; // oh my, what a hack!
+				});
+			}
+		});
+	},
+	baseme: function() {
+
 	},
 	base: function() {
 		var data = vu.core._udata, person = data.person,
@@ -249,8 +269,11 @@ vu.core = {
 			data: choices,
 			cb: function(sel) {
 				if (sel == "import configuration")
-					return vu.core.impconf();
-				// TODO: basepack/basepacks
+					vu.core.impconf();
+				else if (sel == "register/edit basepack")
+					vu.core.mebase();
+				else // assign/reorder basepacks
+					vu.core.baseme();
 			}
 		});
 	},
