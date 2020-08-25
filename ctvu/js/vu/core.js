@@ -205,11 +205,11 @@ vu.core = {
 				value: user.core.get("key")
 			}
 		}, null, null, exporter);
-	},
+	},//[]
 	impconf: function() {
 		var data = vu.core._udata, person = data.person;
 		CT.modal.choice({
-			prompt: "import configuration (morphs, vibe, gestures, dances, responses) from whom?",
+			prompt: "import configuration (mood, vibe, mods, gear, dances, gestures, responses) from whom?",
 			data: data.people.filter(function(peep) {
 				return peep.name != person.name;
 			}),

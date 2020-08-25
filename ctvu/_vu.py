@@ -61,7 +61,7 @@ def response():
 		pto = db.get(cgi_get("to"))
 		pfbod = pfrom.body.get()
 		ptbod = pto.body.get()
-		for item in ["vibe", "gestures", "dances", "responses"]:
+		for item in ["mood", "vibe", "mods", "gear", "dances", "gestures", "responses"]:
 			setattr(pto, item, getattr(pfrom, item))
 		ptbod.morphs = pfbod.morphs
 		db.put_multi([pto, ptbod])
