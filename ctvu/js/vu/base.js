@@ -32,7 +32,7 @@ vu.base = {
 				"vibe": ["mood"],
 				"dances": ["gestures"],
 				"gestures": ["dances"],
-				"responses": ["mood", "vibe", "mods", "gear", "dances", "gestures"]
+				"responses": ["mood", "vibe", "mods", "dances", "gestures"]
 			},
 			cb: function(blocks) {
 				vu.storage.edit({
