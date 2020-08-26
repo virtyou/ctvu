@@ -206,6 +206,10 @@ vu.core = {
 			}
 		}, null, null, exporter);
 	},
+	base: function() {
+		CT.require("vu.base", true);
+		vu.base.edit();
+	},
 	charlinx: function() {
 		var data = vu.core._udata, person = data.person, nodes = vu.core.share(person, [
 			CT.dom.link("swap", function() {
@@ -214,28 +218,10 @@ vu.core = {
 				});
 			})
 		]);
-		if (data.people.length > 1) {
-			nodes = nodes.concat([
-				CT.dom.pad(),
-				CT.dom.link("import", function() {
-					CT.modal.choice({
-						prompt: "import configuration (morphs, vibe, gestures, dances, responses) from whom?",
-						data: data.people.filter(function(peep) {
-							return peep.name != person.name;
-						}),
-						cb: function(whom) {
-							vu.core.v({
-								action: "import",
-								from: whom.key,
-								to: person.key
-							}, function() {
-								window.location = location; // oh my, what a hack!
-							});
-						}
-					});
-				})
-			]);
-		}
+		nodes = nodes.concat([
+			CT.dom.pad(),
+			CT.dom.link("base", vu.core.base)
+		]);
 		return CT.dom.div([[
 			CT.dom.span("hello,"),
 			CT.dom.pad(),
