@@ -1,4 +1,9 @@
 vu.base = {
+	_: {
+		reload: function() {
+			window.location = location; // oh my, what a hack!
+		}
+	},
 	impconf: function() {
 		var data = vu.core._udata, person = data.person;
 		CT.modal.choice({
@@ -11,9 +16,7 @@ vu.base = {
 					action: "import",
 					from: whom.key,
 					to: person.key
-				}, function() {
-					window.location = location; // oh my, what a hack!
-				});
+				}, vu.base_.reload);
 			}
 		});
 	},
@@ -35,14 +38,67 @@ vu.base = {
 				vu.storage.edit({
 					key: person.key,
 					basepack: blocks
-				}, function() {
-					window.location = location; // oh my, what a hack!
-				});
+				}, vu.base._.reload);
+			}
+		});
+	},
+	reorder: function() {
+		var data = vu.core._udata, person = data.person;
+		CT.modal.prompt({
+			prompt: "order your basepacks. higher basepacks are loaded first, so lower basepacks overwrite higher ones.",
+			style: "reorder",
+			data: person.basepacks,
+			rower: function(bp) {
+				return CT.dom.div([
+					CT.dom.div(bp.label, "big"),
+					bp.pack.map(cblock => CT.dom.div(cblock,
+						"bordered padded margined inline-block"))
+				], "centered");
+			},
+			cb: function(bps) {
+				vu.storage.edit({
+					key: person.key,
+					basepacks: bps.map(b => b.key)
+				}, vu.base._.reload);
 			}
 		});
 	},
 	newb: function() {
-
+		var data = vu.core._udata, person = data.person;
+		CT.db.get("person", function(pz) {
+			var bpkz = person.basepacks.map(bp => bp.key);
+			CT.modal.choice({
+				prompt: "please select some basepacks",
+				style: "multiple-choice",
+				data: pz.filter(p => !bpkz.includes(p.key)),
+				cb: function(bpz) {
+					bpkz = bpkz.concat(bpz.map(bp => bp.key));
+					vu.storage.edit({
+						key: person.key,
+						basepacks: bpkz
+					}, vu.base._.reload);
+				}
+			});
+		}, null, null, null, {
+			"basepack": { "comparator": "!=", "value": [] }
+		});
+	},
+	delb: function() {
+		var data = vu.core._udata, person = data.person,
+			bpkz = person.basepacks.map(bp => bp.key), bp;
+		CT.modal.choice({
+			prompt: "please select the basepacks you wish to remove",
+			style: "multiple-choice",
+			data: person.basepacks,
+			cb: function(bpz) {
+				for (bp of bpz)
+					CT.data.remove(bpkz, bp.key);
+				vu.storage.edit({
+					key: person.key,
+					basepacks: bpkz
+				}, vu.base._.reload);
+			}
+		});
 	},
 	bases: function() {
 		var data = vu.core._udata, person = data.person;
@@ -54,9 +110,10 @@ vu.base = {
 			cb: function(sel) {
 				if (sel == "add")
 					return vu.base.newb();
-
-				// TODO: addbase, remove base, reorder (reorder prompt() / shuffle())
-
+				else if (sel == "remove")
+					vu.base.delb();
+				else // reorder
+					vu.base.reorder();
 			}
 		});
 	},
