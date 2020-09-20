@@ -262,7 +262,7 @@ vu.builders.zone = {
 						});
 					}, 0, 6, furn.rotation().y, 0.01, "w1")
 				], "topbordered padded margined"),
-			 	_.materials(furn)
+			 	furn.opts.material && _.materials(furn)
 			];
 		},
 		furn: function(furn) {
