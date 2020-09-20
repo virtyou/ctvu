@@ -463,7 +463,7 @@ vu.builders.zone = {
 						CT.dom.range(function(val) {
 							val = parseFloat(val);
 							scopts[i] = val;
-							room.adjust("scale", dim, val, true);
+							room.adjust("scale", dim, val);
 							room.setBounds();
 							room.updateCameras();
 							vu.storage.setOpts(_.opts.key, {
