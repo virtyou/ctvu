@@ -29,5 +29,7 @@ CT.onload(function() {
 		vu.builders.zone.menus();
 		// virtual world
 		vu.builders.core.init();
+		// resources
+		vu.media.init();
 	}, true);
 });
