@@ -431,7 +431,7 @@ vu.media = {
 			item = CT.dom.div(CT.file.dragdrop(function(ctfile) {
 				ctfile.upload("/_vu", function(ent) {
 					Object.assign(opts, ent);
-					name.value = opts.name
+					name.value = opts.name;
 					vu.media.viewer(viewer, opts, sel);
 					cb();
 				}, {
