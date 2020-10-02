@@ -232,7 +232,7 @@ vu.builders.zone = {
 					video: opts.video
 				});
 				scr.unvideo();
-				scr.update({ video: opts.video });
+				opts.video.item && scr.update({ video: opts.video });
 			}, true);
 		},
 		screen: function(scr) {
