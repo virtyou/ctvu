@@ -235,6 +235,26 @@ vu.builders.zone = {
 				opts.video.item && scr.update({ video: opts.video });
 			}, true);
 		},
+		fznsel: function(stream) {
+			var opts = CT.data.get(stream.opts.key),
+				chan = opts.video && opts.video.slice(4),
+				cnode = CT.dom.node(chan, "b");
+			return CT.dom.div([
+				[
+					CT.dom.span("fzn channel:"),
+					CT.dom.pad(),
+					cnode
+				],
+				CT.dom.smartField(function(val) {
+					cnode.innerHTML = val;
+					opts.video = "fzn:" + val;
+					vu.storage.setOpts(opts.key, {
+						video: opts.video
+					});
+					val && stream.update({ video: opts.video });
+				}, "w1", null, chan)
+			], "topbordered padded margined");
+		},
 		screen: function(scr) {
 			 var _ = vu.builders.zone._;
 			 return [
@@ -243,6 +263,16 @@ vu.builders.zone = {
 			 	_.fscale(scr),
 			 	_.materials(scr),
 			 	_.vidsel(scr)
+			 ];
+		},
+		stream: function(scr) {
+			 var _ = vu.builders.zone._;
+			 return [
+			 	_.unfurn(scr),
+			 	_.fname(scr),
+			 	_.fscale(scr),
+			 	_.materials(scr),
+			 	_.fznsel(scr)
 			 ];
 		},
 		furnishing: function(furn) {
@@ -275,14 +305,14 @@ vu.builders.zone = {
 			};
 			if (thing) // not required for screen
 				eopts.base = thing.key;
-			if (kind == "poster" || kind == "screen") { // TODO: probs do this elsewhere/better!
+			if (kind == "poster" || kind == "screen" || kind == "stream") { // TODO: probs do this elsewhere/better!
 				eopts.opts = {
 					wall: 0,
 					planeGeometry: [100, 100] // TODO: should derive from img/video dims
 				};
-				if (kind == "screen") {
-					eopts.opts.name = "screen" + Math.floor(Math.random() * 1000);
-					eopts.opts.kind = "screen"; // no base necessary...
+				if (kind != "poster") {
+					eopts.opts.name = kind + Math.floor(Math.random() * 1000);
+					eopts.opts.kind = kind; // no base necessary...
 				}
 			} else if (kind == "portal")
 				eopts.opts = { wall: 0 };
@@ -298,8 +328,8 @@ vu.builders.zone = {
 		},
 		selfurn: function(kind, cb) {
 			var _ = vu.builders.zone._;
-			if (kind == "screen")
-				return _.part(null, "screen", cb);
+			if (kind == "screen" || kind == "stream")
+				return _.part(null, kind, cb);
 			var options = vu.storage.get(kind);
 			if (!options)
 				return alert("add something on the item page!");
@@ -317,7 +347,7 @@ vu.builders.zone = {
 				CT.dom.setContent(selz.furnishings, [
 					CT.dom.button("add", function() {
 						CT.modal.choice({
-							data: ["furnishing", "poster", "portal", "screen"],
+							data: ["furnishing", "poster", "portal", "screen", "stream"],
 							cb: _.selfurn
 						});
 					}, "up20 right"),
