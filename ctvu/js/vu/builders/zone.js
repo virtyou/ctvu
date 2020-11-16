@@ -302,7 +302,7 @@ vu.builders.zone = {
 			var _ = vu.builders.zone._, selz = _.selectors, eopts = {
 				parent: _.opts.key,
 				modelName: "furnishing"
-			};
+			}, zccr = zero.core.current.room;
 			if (thing) // not required for screen
 				eopts.base = thing.key;
 			if (kind == "poster" || kind == "screen" || kind == "stream") { // TODO: probs do this elsewhere/better!
@@ -316,8 +316,17 @@ vu.builders.zone = {
 				}
 			} else if (kind == "portal")
 				eopts.opts = { wall: 0 };
+			if (zccr[thing.name]) {
+				eopts.opts = eopts.opts || {};
+				if (!eopts.opts.name) {
+					var altname = thing.name;
+					while (altname in zccr)
+						altname += "_";
+					eopts.opts.name = altname;
+				}
+			}
 			vu.storage.edit(eopts, function(furn) {
-				var f = zero.core.current.room.addObject(furn, function() {
+				var f = zccr.addObject(furn, function() {
 					_.regObj(f);
 					f.setBounds(); // TODO: this should probably be in zero.core.Room
 					cb && cb(f);
