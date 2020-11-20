@@ -316,7 +316,7 @@ vu.builders.zone = {
 				}
 			} else if (kind == "portal")
 				eopts.opts = { wall: 0 };
-			if (zccr[thing.name]) {
+			if (zccr[(thing || eopts).name]) {
 				eopts.opts = eopts.opts || {};
 				if (!eopts.opts.name) {
 					var altname = thing.name;
