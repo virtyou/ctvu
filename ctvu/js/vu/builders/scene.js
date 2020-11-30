@@ -434,11 +434,17 @@ vu.builders.scene = {
 	},
 	build: function() {
 		var cfg = core.config.ctzero, pobj,
-			scene = zero.core.current.scene;
+			scene = zero.core.current.scene,
+			sgi = scene.game.initial,
+			sgia = sgi.actors = sgi.actors || {}, acto;
 		cfg.room = scene.room;
 		cfg.people = scene.actors;
-		for (pobj of cfg.people)
-			pobj.positioners = scene.game.initial.actors[pobj.name].positioners;
+		for (pobj of cfg.people) {
+			acto = sgia[pobj.name] = sgia[pobj.name] || {};
+			pobj.positioners = acto.positioners = acto.positioners || {
+				slide: 0, bob: 0, weave: 0
+			};
+		}
 		zero.core.util.init(null, vu.builders.scene._.backstage);
 	},
 	create: function() {
