@@ -6,12 +6,13 @@ vu.builders.zone = {
 		menus: {
 			cameras: "top",
 			basic: "topleft",
+			floors: "topleft",
 			lights: "topright",
 			controls: "bottomright",
 			furnishings: "topright",
 			portal_requests: "bottom"
 		},
-		swappers: ["furnishings", "lights"],
+		swappers: ["furnishings", "lights", "basic", "floors"],
 		lightdirs: {
 			point: "Position",
 			directional: "Direction"
@@ -42,30 +43,34 @@ vu.builders.zone = {
 				vu.storage.edit(furn.opts.key, null, "delete", "key");
 			}, "up5 right");
 		},
-		fscale: function(furn) {
+		fscale: function(furn, min, max, unit, cb) {
 			return CT.dom.div([
 				"Scale",
 				CT.dom.range(function(val) {
 					var fval = parseFloat(val);
 					furn.scale(fval);
 					furn.setBounds(true); // TODO: maybe move to zero.core.Thing.scale()?
-					vu.storage.setOpts(furn.opts.key, {
+					cb ? cb(fval) : vu.storage.setOpts(furn.opts.key, {
 						scale: [fval, fval, fval]
 					});
-				}, 0.1, 16, furn.scale().x, 0.01, "w1")
+				}, min || 0.1, max || 16, furn.scale().x, unit || 0.01, "w1")
 			], "topbordered padded margined");
 		},
-		plevel: function(furn) {
+		plevel: function(furn, cb) {
 			var rbz = zero.core.current.room.bounds;
 			return CT.dom.div([
 				"Level",
 				CT.dom.range(function(val) {
 					var fval = parseInt(val);
 					furn.adjust("position", "y", fval);
-					var fp = furn.position();
-					vu.storage.setOpts(furn.opts.key, {
-						position: [fp.x, fp.y, fp.z]
-					});
+					if (cb)
+						cb(fval);
+					else {
+						var fp = furn.position();
+						vu.storage.setOpts(furn.opts.key, {
+							position: [fp.x, fp.y, fp.z]
+						});
+					}
 				}, rbz.min.y, rbz.max.y, furn.position().y, 1, "w1")
 			], "topbordered padded margined");
 		},
@@ -275,6 +280,21 @@ vu.builders.zone = {
 			 	_.fznsel(scr)
 			 ];
 		},
+		floor: function(fopts, i) {
+			var _ = vu.builders.zone._,
+				floor = zero.core.current.room["floor" + i];
+			return [
+				_.fname(floor),
+				_.fscale(floor, 5, 500, 5, function(scale) {
+					fopts.scale = [scale, scale, scale];
+					_.floorup();
+				}),
+				_.plevel(floor, function(yval) {
+					fopts.position[1] = yval;
+					_.floorup();
+				})
+			];
+		},
 		furnishing: function(furn) {
 			var _ = vu.builders.zone._;
 			return [
@@ -364,18 +384,58 @@ vu.builders.zone = {
 				]);
 			};
 		},
+		floorup: function() {
+			var ro = zero.core.current.room.opts;
+			vu.storage.setOpts(ro.key, {
+				floor: ro.floor
+			});
+		},
+		floors: function() {
+			var _ = vu.builders.zone._, selz = _.selectors,
+				zcc = zero.core.current, zccr, fpz, flo;
+			selz.floors = CT.dom.div();
+			selz.floors.update = function() {
+				zccr = zcc.room;
+				if (!zccr.opts.floor)
+					zccr.opts.floor = { parts: [] };
+				fpz = zccr.opts.floor.parts;
+				CT.dom.setContent(selz.floors, [
+					CT.dom.button("add", function() {
+						flo = {
+							planeGeometry: true,
+							position: [0, 0, 0],
+							scale: [100, 100, 100],
+							material: {
+								side: THREE.DoubleSide
+							}
+						};
+						fpz.push(flo);
+						_.floorup();
+						vu.builders.zone.update(); // overkill?
+					}, "up20 right"),
+					fpz.map(_.floor)
+				]);
+			};
+		},
 		posup: function() {
-			var _ = vu.builders.zone._, target = _.controls.target, pos, opts;
+			var _ = vu.builders.zone._, target = _.controls.target,
+				zccr = zero.core.current.room, fi, pos, opts;
 			if (!target.gesture) { // person (probs detect in a nicer way)
 				pos = target.position(), opts = {
 					position: [pos.x, pos.y, pos.z]
 				};
-				if ("wall" in target.opts)
-					opts.wall = target.opts.wall;
-				vu.storage.setOpts(target.opts.key, opts);
+				if (target.opts.kind == "floor") {
+					fi = parseInt(target.name.slice(5));
+					zccr.opts.floor.parts[fi].position = opts.position;
+					_.floorup();
+				} else {
+					if ("wall" in target.opts)
+						opts.wall = target.opts.wall;
+					vu.storage.setOpts(target.opts.key, opts);
+					if (target.opts.kind == "screen")
+						target.playPause();
+				}
 				_.selectors.controls.update();
-				if (target.opts.kind == "screen")
-					target.playPause();
 			}
 		},
 		controls: function() {
@@ -424,6 +484,7 @@ vu.builders.zone = {
 			_.lights();
 			_.cameras();
 			_.controls();
+			_.floors();
 			_.preqs();
 
 			var enz = core.config.ctvu.loaders.environments;
@@ -684,6 +745,7 @@ vu.builders.zone = {
 				selz.base.update();
 				selz.scale.update();
 				selz.color.update();
+				selz.floors.update();
 				selz.lights.update();
 				selz.cameras.update();
 				selz.controls.update();
@@ -797,7 +859,8 @@ vu.builders.zone = {
 		for (section in _.menus) {
 			selz[section].modal = vu.core.menu(section,
 				_.menus[section], selz[section], _.head(section));
-			(section == "furnishings") || selz[section].modal.show("ctmain");
+			(section == "furnishings") || (section == "floors")
+				|| selz[section].modal.show("ctmain");
 		}
 	}
 };
