@@ -156,7 +156,7 @@ img.right.h30p.up5 {
 	filter: invert(100%);
 }
 
-.gmenu.basic {
+.gmenu.basic, .gmenu.floors {
 	width: 247px;
 }
 
