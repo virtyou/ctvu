@@ -6,12 +6,13 @@ vu.builders.zone = {
 		menus: {
 			cameras: "top",
 			basic: "topleft",
+			floors: "topleft",
 			lights: "topright",
 			controls: "bottomright",
 			furnishings: "topright",
 			portal_requests: "bottom"
 		},
-		swappers: ["furnishings", "lights"],
+		swappers: ["furnishings", "lights", "basic", "floors"],
 		lightdirs: {
 			point: "Position",
 			directional: "Direction"
@@ -275,6 +276,12 @@ vu.builders.zone = {
 			 	_.fznsel(scr)
 			 ];
 		},
+		floor: function(floor) {
+			var _ = vu.builders.zone._;
+			return [
+				"TODO: position! scale! remove!"
+			];
+		},
 		furnishing: function(furn) {
 			var _ = vu.builders.zone._;
 			return [
@@ -364,6 +371,35 @@ vu.builders.zone = {
 				]);
 			};
 		},
+		floors: function() {
+			var _ = vu.builders.zone._, selz = _.selectors,
+				zcc = zero.core.current, zccr, fpz, flo;
+			selz.floors = CT.dom.div();
+			selz.floors.update = function() {
+				zccr = zcc.room;
+				if (!zccr.opts.floor)
+					zccr.opts.floor = { parts: [] };
+				fpz = zccr.opts.floor.parts;
+				CT.dom.setContent(selz.floors, [
+					CT.dom.button("add", function() {
+						flo = {
+							planeGeometry: true,
+							position: [0, 0, 0],
+							scale: [100, 100, 100],
+							material: {
+								side: THREE.DoubleSide
+							}
+						};
+						fpz.push(flo);
+						zccr.attach(flo);
+						vu.storage.setOpts(zccr.opts.key, {
+							floor: zccr.opts.floor
+						});
+					}, "up20 right"),
+					fpz.map(_.floor)
+				]);
+			};
+		},
 		posup: function() {
 			var _ = vu.builders.zone._, target = _.controls.target, pos, opts;
 			if (!target.gesture) { // person (probs detect in a nicer way)
@@ -424,6 +460,7 @@ vu.builders.zone = {
 			_.lights();
 			_.cameras();
 			_.controls();
+			_.floors();
 			_.preqs();
 
 			var enz = core.config.ctvu.loaders.environments;
@@ -684,6 +721,7 @@ vu.builders.zone = {
 				selz.base.update();
 				selz.scale.update();
 				selz.color.update();
+				selz.floors.update();
 				selz.lights.update();
 				selz.cameras.update();
 				selz.controls.update();
@@ -797,7 +835,8 @@ vu.builders.zone = {
 		for (section in _.menus) {
 			selz[section].modal = vu.core.menu(section,
 				_.menus[section], selz[section], _.head(section));
-			(section == "furnishings") || selz[section].modal.show("ctmain");
+			(section == "furnishings") || (section == "floors")
+				|| selz[section].modal.show("ctmain");
 		}
 	}
 };
