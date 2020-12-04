@@ -292,8 +292,7 @@ vu.builders.zone = {
 				_.plevel(floor, function(yval) {
 					fopts.position[1] = yval;
 					_.floorup();
-				}),
-				"TODO: position! remove!"
+				})
 			];
 		},
 		furnishing: function(furn) {
@@ -419,17 +418,24 @@ vu.builders.zone = {
 			};
 		},
 		posup: function() {
-			var _ = vu.builders.zone._, target = _.controls.target, pos, opts;
+			var _ = vu.builders.zone._, target = _.controls.target,
+				zccr = zero.core.current.room, fi, pos, opts;
 			if (!target.gesture) { // person (probs detect in a nicer way)
 				pos = target.position(), opts = {
 					position: [pos.x, pos.y, pos.z]
 				};
-				if ("wall" in target.opts)
-					opts.wall = target.opts.wall;
-				vu.storage.setOpts(target.opts.key, opts);
+				if (target.opts.kind == "floor") {
+					fi = parseInt(target.name.slice(5));
+					zccr.opts.floor.parts[fi].position = opts.position;
+					_.floorup();
+				} else {
+					if ("wall" in target.opts)
+						opts.wall = target.opts.wall;
+					vu.storage.setOpts(target.opts.key, opts);
+					if (target.opts.kind == "screen")
+						target.playPause();
+				}
 				_.selectors.controls.update();
-				if (target.opts.kind == "screen")
-					target.playPause();
 			}
 		},
 		controls: function() {
