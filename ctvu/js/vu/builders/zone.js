@@ -43,30 +43,34 @@ vu.builders.zone = {
 				vu.storage.edit(furn.opts.key, null, "delete", "key");
 			}, "up5 right");
 		},
-		fscale: function(furn) {
+		fscale: function(furn, min, max, unit, cb) {
 			return CT.dom.div([
 				"Scale",
 				CT.dom.range(function(val) {
 					var fval = parseFloat(val);
 					furn.scale(fval);
 					furn.setBounds(true); // TODO: maybe move to zero.core.Thing.scale()?
-					vu.storage.setOpts(furn.opts.key, {
+					cb ? cb(fval) : vu.storage.setOpts(furn.opts.key, {
 						scale: [fval, fval, fval]
 					});
-				}, 0.1, 16, furn.scale().x, 0.01, "w1")
+				}, min || 0.1, max || 16, furn.scale().x, unit || 0.01, "w1")
 			], "topbordered padded margined");
 		},
-		plevel: function(furn) {
+		plevel: function(furn, cb) {
 			var rbz = zero.core.current.room.bounds;
 			return CT.dom.div([
 				"Level",
 				CT.dom.range(function(val) {
 					var fval = parseInt(val);
 					furn.adjust("position", "y", fval);
-					var fp = furn.position();
-					vu.storage.setOpts(furn.opts.key, {
-						position: [fp.x, fp.y, fp.z]
-					});
+					if (cb)
+						cb(fval);
+					else {
+						var fp = furn.position();
+						vu.storage.setOpts(furn.opts.key, {
+							position: [fp.x, fp.y, fp.z]
+						});
+					}
 				}, rbz.min.y, rbz.max.y, furn.position().y, 1, "w1")
 			], "topbordered padded margined");
 		},
@@ -276,10 +280,20 @@ vu.builders.zone = {
 			 	_.fznsel(scr)
 			 ];
 		},
-		floor: function(floor) {
-			var _ = vu.builders.zone._;
+		floor: function(fopts, i) {
+			var _ = vu.builders.zone._,
+				floor = zero.core.current.room["floor" + i];
 			return [
-				"TODO: position! scale! remove!"
+				_.fname(floor),
+				_.fscale(floor, 5, 500, 5, function(scale) {
+					fopts.scale = [scale, scale, scale];
+					_.floorup();
+				}),
+				_.plevel(floor, function(yval) {
+					fopts.position[1] = yval;
+					_.floorup();
+				}),
+				"TODO: position! remove!"
 			];
 		},
 		furnishing: function(furn) {
@@ -371,6 +385,12 @@ vu.builders.zone = {
 				]);
 			};
 		},
+		floorup: function() {
+			var ro = zero.core.current.room.opts;
+			vu.storage.setOpts(ro.key, {
+				floor: ro.floor
+			});
+		},
 		floors: function() {
 			var _ = vu.builders.zone._, selz = _.selectors,
 				zcc = zero.core.current, zccr, fpz, flo;
@@ -391,10 +411,8 @@ vu.builders.zone = {
 							}
 						};
 						fpz.push(flo);
-						zccr.attach(flo);
-						vu.storage.setOpts(zccr.opts.key, {
-							floor: zccr.opts.floor
-						});
+						_.floorup();
+						vu.builders.zone.update(); // overkill?
 					}, "up20 right"),
 					fpz.map(_.floor)
 				]);
