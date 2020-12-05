@@ -256,7 +256,8 @@ img.right.h30p.up5 {
 	max-height: calc(100% - 350px);
 }
 .gmenu.body {
-	margin-left: 235px;
+	margin-left: 265px;
+	max-width: 159px;
 }
 
 .gmenu.story {
