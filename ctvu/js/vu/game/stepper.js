@@ -122,7 +122,7 @@ vu.game.stepper = {
 		vu.game.stepper._.actor(function(actor) {
 			CT.modal.choice({
 				prompt: "please select an action",
-				data: ["say", "respond", "move", "approach", "leave"],
+				data: ["say", "respond", "move", "approach", "chase", "leave"],
 				cb: function(action) {
 					var act = function(line) {
 						cb({
@@ -144,9 +144,12 @@ vu.game.stepper = {
 								});
 							}
 						});
-					} else if (action == "approach") {
+					} else if (action == "approach" || action == "chase") {
+						var aopts = ["player", "actor"];
+						if (action == "approach")
+							aopts.push("furnishing");
 						CT.modal.choice({
-							data: ["player", "actor", "furnishing"],
+							data: aopts,
 							cb: function(cat) {
 								if (cat == "player")
 									return act("player");
