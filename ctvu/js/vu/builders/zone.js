@@ -386,6 +386,7 @@ vu.builders.zone = {
 		},
 		floorup: function() {
 			var ro = zero.core.current.room.opts;
+			vu.builders.zone._.opts.floor = ro.floor;
 			vu.storage.setOpts(ro.key, {
 				floor: ro.floor
 			});
