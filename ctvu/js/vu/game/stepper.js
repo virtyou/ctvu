@@ -11,27 +11,30 @@ vu.game.stepper = {
 				}
 			});
 		},
-		link: function(cb) {
+		port: function(cb) {
 			var zcc = zero.core.current, s = zcc.scene, sobj = {},
 				portals = s.game.initial.scenes[s.name].portals;
 			CT.modal.choice({
 				prompt: "please select a portal",
 				data: Object.values(portals),
-				cb: function(portal) {
-					sobj = { portal: portal.name };
-					vu.game.util.sports(portal, function(rscenes) {
-						CT.modal.choice({
-							prompt: "please select a scene",
-							data: ["none (locked)"].concat(rscenes),
-							cb: function(target) {
-								if (target != "none (locked)")
-									sobj.target = target.name;
-								cb({ scene: sobj });
-							}
-						});
+				cb: cb
+			});
+		},
+		link: function(cb) {
+			vu.game.stepper._.port(function(portal) {
+				var sobj = { portal: portal.name };
+				vu.game.util.sports(portal, function(rscenes) {
+					CT.modal.choice({
+						prompt: "please select a scene",
+						data: ["none (locked)"].concat(rscenes),
+						cb: function(target) {
+							if (target != "none (locked)")
+								sobj.target = target.name;
+							cb({ scene: sobj });
+						}
 					});
-				}
-			})
+				});
+			});
 		},
 		actor: function(cb) {
 			CT.modal.choice({
@@ -119,7 +122,7 @@ vu.game.stepper = {
 		vu.game.stepper._.actor(function(actor) {
 			CT.modal.choice({
 				prompt: "please select an action",
-				data: ["say", "respond", "move", "approach"],
+				data: ["say", "respond", "move", "approach", "leave"],
 				cb: function(action) {
 					var act = function(line) {
 						cb({
@@ -163,7 +166,9 @@ vu.game.stepper = {
 								});
 							}
 						});
-					} else {
+					} else if (action == "leave")
+						vu.game.stepper._.port(port => act(port.name));
+					else {
 						CT.modal.prompt({
 							prompt: "what's the line?",
 							cb: act
