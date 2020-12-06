@@ -63,6 +63,8 @@ vu.game.util = {
 		}, g = logic.gate, scene = zcc.scene, b = zcc.person.body;
 		if (g.gear)
 			go(vu.storage.get("held")[g.gear].key in b.gearmap);
+		else if (g.story)
+			go(state.story.includes(g.story));
 		else {
 			var actor = Object.keys(g)[0],
 				prop = Object.keys(g[actor])[0];
