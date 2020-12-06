@@ -6,13 +6,13 @@ vu.builders.zone = {
 		menus: {
 			cameras: "top",
 			basic: "topleft",
-			floors: "topleft",
+			structural: "topleft",
 			lights: "topright",
 			controls: "bottomright",
 			furnishings: "topright",
 			portal_requests: "bottom"
 		},
-		swappers: ["furnishings", "lights", "basic", "floors"],
+		swappers: ["furnishings", "lights", "basic", "structural"],
 		lightdirs: {
 			point: "Position",
 			directional: "Direction"
@@ -280,20 +280,29 @@ vu.builders.zone = {
 			 	_.fznsel(scr)
 			 ];
 		},
-		floor: function(fopts, i) {
+		struct: function(variety, fopts, i) {
 			var _ = vu.builders.zone._,
-				floor = zero.core.current.room["floor" + i];
+				floor = zero.core.current.room[variety + i];
 			return [
 				_.fname(floor),
 				_.fscale(floor, 5, 500, 5, function(scale) {
 					fopts.scale = [scale, scale, scale];
-					_.floorup();
+					_.strup(variety);
 				}),
 				_.plevel(floor, function(yval) {
 					fopts.position[1] = yval;
-					_.floorup();
+					_.strup(variety);
 				})
 			];
+		},
+		wall: function(fopts, i) {
+			return vu.builders.zone._.struct("wall", fopts, i);
+		},
+		floor: function(fopts, i) {
+			return vu.builders.zone._.struct("floor", fopts, i);
+		},
+		obstacle: function(fopts, i) {
+			return vu.builders.zone._.struct("obstacle", fopts, i);
 		},
 		furnishing: function(furn) {
 			var _ = vu.builders.zone._;
@@ -384,56 +393,77 @@ vu.builders.zone = {
 				]);
 			};
 		},
-		floorup: function() {
-			var ro = zero.core.current.room.opts;
-			vu.builders.zone._.opts.floor = ro.floor;
-			vu.storage.setOpts(ro.key, {
-				floor: ro.floor
-			});
+		strup: function(variety) {
+			var ro = zero.core.current.room.opts, d = {};
+			vu.builders.zone._.opts[variety] = d[variety] = ro[variety];
+			vu.storage.setOpts(ro.key, d);
 		},
-		floors: function() {
+		structs: function(variety) {
 			var _ = vu.builders.zone._, selz = _.selectors,
-				zcc = zero.core.current, zccr, fpz, flo;
-			selz.floors = CT.dom.div();
-			selz.floors.update = function() {
+				zcc = zero.core.current, zccr, fpz, flo,
+				plur = variety + "s",
+				sel = selz[plur] = CT.dom.div();
+			sel.update = function() {
 				zccr = zcc.room;
-				if (!zccr.opts.floor)
-					zccr.opts.floor = { parts: [] };
-				fpz = zccr.opts.floor.parts;
-				CT.dom.setContent(selz.floors, [
+				if (!zccr.opts[variety])
+					zccr.opts[variety] = { parts: [] };
+				fpz = zccr.opts[variety].parts;
+				CT.dom.setContent(sel, [
 					CT.dom.button("add", function() {
 						flo = {
-							planeGeometry: true,
 							position: [0, 0, 0],
-							scale: [100, 100, 100],
 							material: {
 								side: THREE.DoubleSide
 							}
 						};
+						if (variety == "obstacle") {
+							flo.scale = [10, 10, 10];
+							flo.dimensions = [10, 10, 10];
+						} else {
+							flo.planeGeometry = true;
+							flo.scale = [100, 100, 100];
+						}
 						fpz.push(flo);
-						_.floorup();
-						vu.builders.zone.update(); // overkill?
+						_.strup(variety);
+						setTimeout(vu.builders.zone.update); // overkill?
 					}, "up20 right"),
-					fpz.map(_.floor)
+					fpz.map(_[variety])
 				]);
+			};
+			return CT.dom.div([
+				plur,
+				sel
+			], "topbordered padded margined");
+		},
+		structural: function() {
+			var _ = vu.builders.zone._, selz = _.selectors, sel = selz.structural = CT.dom.div([
+				_.structs("wall"),
+				_.structs("floor"),
+				_.structs("obstacle")
+			]);
+			sel.update = function() {
+				selz.walls.update();
+				selz.floors.update();
+				selz.obstacles.update();
 			};
 		},
 		posup: function() {
 			var _ = vu.builders.zone._, target = _.controls.target,
-				zccr = zero.core.current.room, fi, pos, opts;
+				zccr = zero.core.current.room, fi, pos, opts, kind;
 			if (!target.gesture) { // person (probs detect in a nicer way)
 				pos = target.position(), opts = {
 					position: [pos.x, pos.y, pos.z]
 				};
-				if (target.opts.kind == "floor") {
-					fi = parseInt(target.name.slice(5));
-					zccr.opts.floor.parts[fi].position = opts.position;
-					_.floorup();
+				kind = target.opts.kind;
+				if (["floor", "obstacle", "wall"].includes(kind)) {
+					fi = parseInt(target.name.slice(kind.length));
+					zccr.opts[kind].parts[fi].position = opts.position;
+					_.strup(kind);
 				} else {
 					if ("wall" in target.opts)
 						opts.wall = target.opts.wall;
 					vu.storage.setOpts(target.opts.key, opts);
-					if (target.opts.kind == "screen")
+					if (kind == "screen")
 						target.playPause();
 				}
 				_.selectors.controls.update();
@@ -485,7 +515,7 @@ vu.builders.zone = {
 			_.lights();
 			_.cameras();
 			_.controls();
-			_.floors();
+			_.structural();
 			_.preqs();
 
 			var enz = core.config.ctvu.loaders.environments;
@@ -746,13 +776,13 @@ vu.builders.zone = {
 				selz.base.update();
 				selz.scale.update();
 				selz.color.update();
-				selz.floors.update();
 				selz.lights.update();
 				selz.cameras.update();
 				selz.controls.update();
 				selz.friction.update();
 				selz.specular.update();
 				selz.shininess.update();
+				selz.structural.update();
 				selz.furnishings.update();
 				selz.portal_requests.update();
 			}, name = room.name || room.environment;
@@ -860,7 +890,7 @@ vu.builders.zone = {
 		for (section in _.menus) {
 			selz[section].modal = vu.core.menu(section,
 				_.menus[section], selz[section], _.head(section));
-			(section == "furnishings") || (section == "floors")
+			(section == "furnishings") || (section == "structural")
 				|| selz[section].modal.show("ctmain");
 		}
 	}
