@@ -400,32 +400,35 @@ vu.builders.zone = {
 		},
 		structs: function(variety) {
 			var _ = vu.builders.zone._, selz = _.selectors,
-				zcc = zero.core.current, zccr, fpz, flo,
+				zcc = zero.core.current, zccr, voz, fpz, flo,
 				plur = variety + "s",
 				sel = selz[plur] = CT.dom.div();
 			sel.update = function() {
 				zccr = zcc.room;
-				if (!zccr.opts[variety])
-					zccr.opts[variety] = { parts: [] };
-				fpz = zccr.opts[variety].parts;
+				voz = zccr.opts[variety] = zccr.opts[variety] || {
+					parts: [],
+					material: {
+						side: THREE.DoubleSide
+					}
+				};
+				if (variety == "obstacle")
+					voz.dimensions = [10, 10, 10, 1, 1];
+				fpz = voz.parts;
 				CT.dom.setContent(sel, [
 					CT.dom.button("add", function() {
 						flo = {
-							position: [0, 0, 0],
-							material: {
-								side: THREE.DoubleSide
-							}
+							position: [0, 0, 0]
 						};
-						if (variety == "obstacle") {
+						if (variety == "obstacle")
 							flo.scale = [10, 10, 10];
-							flo.dimensions = [10, 10, 10];
-						} else {
+						else {
 							flo.planeGeometry = true;
 							flo.scale = [100, 100, 100];
 						}
 						fpz.push(flo);
 						_.strup(variety);
-						setTimeout(vu.builders.zone.update); // overkill?
+						vu.builders.zone.update(); // overkill?
+						setTimeout(sel.update, 500);
 					}, "up20 right"),
 					fpz.map(_[variety])
 				]);
