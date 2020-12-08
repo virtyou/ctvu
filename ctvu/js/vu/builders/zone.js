@@ -298,6 +298,9 @@ vu.builders.zone = {
 		wall: function(fopts, i) {
 			return vu.builders.zone._.struct("wall", fopts, i);
 		},
+		ramp: function(fopts, i) {
+			return vu.builders.zone._.struct("ramp", fopts, i);
+		},
 		floor: function(fopts, i) {
 			return vu.builders.zone._.struct("floor", fopts, i);
 		},
@@ -441,11 +444,13 @@ vu.builders.zone = {
 		structural: function() {
 			var _ = vu.builders.zone._, selz = _.selectors, sel = selz.structural = CT.dom.div([
 				_.structs("wall"),
+				_.structs("ramp"),
 				_.structs("floor"),
 				_.structs("obstacle")
 			]);
 			sel.update = function() {
 				selz.walls.update();
+				selz.ramps.update();
 				selz.floors.update();
 				selz.obstacles.update();
 			};
@@ -458,7 +463,7 @@ vu.builders.zone = {
 					position: [pos.x, pos.y, pos.z]
 				};
 				kind = target.opts.kind;
-				if (["floor", "obstacle", "wall"].includes(kind)) {
+				if (["floor", "obstacle", "wall", "ramp"].includes(kind)) {
 					fi = parseInt(target.name.slice(kind.length));
 					zccr.opts[kind].parts[fi].position = opts.position;
 					_.strup(kind);
