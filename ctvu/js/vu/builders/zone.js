@@ -283,7 +283,7 @@ vu.builders.zone = {
 		struct: function(variety, fopts, i) {
 			var _ = vu.builders.zone._,
 				floor = zero.core.current.room[variety + i];
-			return [
+			var cont = [
 				_.fname(floor),
 				_.fscale(floor, 5, 500, 5, function(scale) {
 					fopts.scale = [scale, scale, scale];
@@ -293,7 +293,15 @@ vu.builders.zone = {
 					fopts.position[1] = yval;
 					_.strup(variety);
 				})
-			];
+			], rot, ry;
+			(variety == "wall") && cont.push(CT.dom.button("rotate", function() {
+				rot = floor.rotation();
+				ry = rot.y ? 0 : Math.PI / 2;
+				floor.adjust("rotation", "y", ry);
+				fopts.rotation = [rot.x, ry, rot.z];
+				_.strup(variety);
+			}, "w1"));
+			return cont;
 		},
 		wall: function(fopts, i) {
 			return vu.builders.zone._.struct("wall", fopts, i);
