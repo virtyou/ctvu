@@ -43,7 +43,7 @@ vu.builders.zone = {
 				vu.storage.edit(furn.opts.key, null, "delete", "key");
 			}, "up5 right");
 		},
-		fscale: function(furn, min, max, unit, cb) {
+		fscale: function(furn, cb, min, max, unit) {
 			return CT.dom.div([
 				"Scale",
 				CT.dom.range(function(val) {
@@ -282,13 +282,14 @@ vu.builders.zone = {
 		},
 		struct: function(variety, fopts, i) {
 			var _ = vu.builders.zone._,
-				floor = zero.core.current.room[variety + i];
+				floor = zero.core.current.room[variety + i],
+				s3 = variety == "obstacle";
 			var cont = [
 				_.fname(floor),
-				_.fscale(floor, 5, 500, 5, function(scale) {
-					fopts.scale = [scale, scale, scale];
+				_[s3 ? "scalers" : "fscale"](floor, function(scale) {
+					fopts.scale = s3 ? scale : [scale, scale, scale];
 					_.strup(variety);
-				}),
+				}, 5, 500, 5),
 				_.plevel(floor, function(yval) {
 					fopts.position[1] = yval;
 					_.strup(variety);
@@ -513,6 +514,22 @@ vu.builders.zone = {
 				]);
 			};
 		},
+		scalers: function(obj, cb, min, max, unit) {
+			var scale = obj.scale(),
+				scopts = [scale.x, scale.y, scale.z];
+			return ["x", "y", "z"].map(function(dim, i) {
+				return [
+					dim,
+					CT.dom.range(function(val) {
+						val = parseFloat(val);
+						scopts[i] = val;
+						obj.adjust("scale", dim, val);
+						obj.setBounds();
+						cb(scopts);
+					}, min || 0.3, max || 3, scale[dim], unit || 0.01, "w1")
+				];
+			});
+		},
 		setup: function() {
 			var _ = vu.builders.zone._, selz = _.selectors,
 				persist = vu.builders.zone.persist;
@@ -601,23 +618,12 @@ vu.builders.zone = {
 
 			selz.scale = CT.dom.div();
 			selz.scale.update = function() {
-				var room = zero.core.current.room,
-					scale = room.scale(),
-					scopts = [scale.x, scale.y, scale.z];
-				CT.dom.setContent(selz.scale, ["x", "y", "z"].map(function(dim, i) {
-					return [
-						dim,
-						CT.dom.range(function(val) {
-							val = parseFloat(val);
-							scopts[i] = val;
-							room.adjust("scale", dim, val);
-							room.setBounds();
-							room.updateCameras();
-							vu.storage.setOpts(_.opts.key, {
-								scale: scopts
-							});
-						}, 0.3, 3, scale[dim], 0.01, "w1")
-					];
+				var room = zero.core.current.room;
+				CT.dom.setContent(selz.scale, _.scalers(room, function(scopts) {
+					room.updateCameras();
+					vu.storage.setOpts(_.opts.key, {
+						scale: scopts
+					});
 				}));
 			};
 
