@@ -216,7 +216,7 @@ img.right.h30p.up5 {
 	white-space: normal;
 }
 
-.gmenu.chat {
+.gmenu.chat, .gmenu.portal_requests {
 	max-height: 193px;
 	top: initial !important;
 }
