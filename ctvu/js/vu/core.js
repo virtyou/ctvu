@@ -32,7 +32,8 @@ vu.core = {
 			noClose: true,
 			onclick: onclick,
 			transition: "slide",
-			resizeRecenter: ["top", "bottom"].includes(origin),
+			resizeRecenter: origin == "top", // eh ....
+//			resizeRecenter: ["top", "bottom"].includes(origin),
 			slide: { origin: origin },
 			content: [
 				header || CT.parse.key2title(section),
