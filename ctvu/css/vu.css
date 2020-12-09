@@ -285,6 +285,7 @@ img.right.h30p.up5 {
 
 .gmenu.minimap .frame .floor,
 .gmenu.minimap .frame .wall,
+.gmenu.minimap .frame .ramp,
 .gmenu.minimap .frame .obstacle,
 .gmenu.minimap .frame .object,
 .gmenu.minimap .frame .people,
@@ -298,7 +299,8 @@ img.right.h30p.up5 {
 	border: 2px solid white;
 }
 
-.gmenu.minimap .frame .floor {
+.gmenu.minimap .frame .floor,
+.gmenu.minimap .frame .ramp {
 	opacity: 0.3;
 	background: slategray;
 	border: 1px solid lightgray;
