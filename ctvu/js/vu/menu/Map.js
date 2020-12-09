@@ -84,7 +84,7 @@ vu.menu.Map = CT.Class({
 		_.people = {};
 		_.movers = {};
 		this.frame(r.bounds);
-		for (k of ["floor", "wall", "obstacle"])
+		for (k of ["floor", "wall", "ramp", "obstacle"])
 			for (o in r[k])
 				this.place(r[k][o], k);
 		r.objects.forEach(o => this.place(o, "object"));
