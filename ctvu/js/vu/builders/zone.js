@@ -546,7 +546,7 @@ vu.builders.zone = {
 						obj.adjust("scale", dim, val);
 						obj.setBounds();
 						cb(scopts);
-					}, min || 0.3, max || 6, scale[dim], unit || 0.01, "w1")
+					}, min || 0.3, max || 12, scale[dim], unit || 0.01, "w1")
 				];
 			});
 		},
