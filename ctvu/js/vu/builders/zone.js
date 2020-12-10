@@ -56,6 +56,18 @@ vu.builders.zone = {
 				}, min || 0.1, max || 16, furn.scale().x, unit || 0.01, "w1")
 			], "topbordered padded margined");
 		},
+		rtilt: function(ramp, cb) {
+			var unit = Math.PI / 16;
+			return CT.dom.div([
+				"Tilt",
+				CT.dom.range(function(val) {
+					var fval = parseFloat(val);
+					ramp.adjust("rotation", "x", fval);
+					ramp.setBounds(true);
+					cb(fval);
+				}, unit * 4, unit * 12, ramp.rotation().x, unit, "w1")
+			], "topbordered padded margined");
+		},
 		plevel: function(furn, cb) {
 			var rbz = zero.core.current.room.bounds;
 			return CT.dom.div([
@@ -282,26 +294,33 @@ vu.builders.zone = {
 		},
 		struct: function(variety, fopts, i) {
 			var _ = vu.builders.zone._,
-				floor = zero.core.current.room[variety + i],
+				item = zero.core.current.room[variety + i],
 				s3 = variety == "obstacle";
 			var cont = [
-				_.fname(floor),
-				_[s3 ? "scalers" : "fscale"](floor, function(scale) {
+				_.fname(item),
+				_[s3 ? "scalers" : "fscale"](item, function(scale) {
 					fopts.scale = s3 ? scale : [scale, scale, scale];
 					_.strup(variety);
 				}, 5, 500, 5),
-				_.plevel(floor, function(yval) {
+				_.plevel(item, function(yval) {
 					fopts.position[1] = yval;
 					_.strup(variety);
 				})
 			], rot, ry;
-			(variety == "wall") && cont.push(CT.dom.button("rotate", function() {
-				rot = floor.rotation();
-				ry = rot.y ? 0 : Math.PI / 2;
-				floor.adjust("rotation", "y", ry);
-				fopts.rotation = [rot.x, ry, rot.z];
-				_.strup(variety);
-			}, "w1"));
+			if (variety == "wall") {
+				cont.push(CT.dom.button("rotate", function() {
+					rot = item.rotation();
+					ry = rot.y ? 0 : Math.PI / 2;
+					item.adjust("rotation", "y", ry);
+					fopts.rotation = [rot.x, ry, rot.z];
+					_.strup(variety);
+				}, "w1"));
+			} else if (variety == "ramp") {
+				cont.push(_.rtilt(item, function(rot) {
+					fopts.rotation = [rot, 0, 0];
+					_.strup(variety);
+				}));
+			}
 			return cont;
 		},
 		wall: function(fopts, i) {
