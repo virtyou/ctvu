@@ -10,7 +10,8 @@ vu.builders.zone = {
 			lights: "topright",
 			controls: "bottomright",
 			furnishings: "topright",
-			portal_requests: "bottom"
+			minimap: "bottom",
+			portal_requests: "bottomleft"
 		},
 		swappers: ["furnishings", "lights", "basic", "structural"],
 		lightdirs: {
@@ -545,9 +546,15 @@ vu.builders.zone = {
 						obj.adjust("scale", dim, val);
 						obj.setBounds();
 						cb(scopts);
-					}, min || 0.3, max || 3, scale[dim], unit || 0.01, "w1")
+					}, min || 0.3, max || 6, scale[dim], unit || 0.01, "w1")
 				];
 			});
+		},
+		mima: function() {
+			var _ = vu.builders.zone._, selz = _.selectors,
+				sel = selz.minimap = CT.dom.div();
+			_.minimap = new vu.menu.Map({ node: sel, wait: true });
+			sel.update = _.minimap.refresh;
 		},
 		setup: function() {
 			var _ = vu.builders.zone._, selz = _.selectors,
@@ -569,6 +576,7 @@ vu.builders.zone = {
 			_.controls();
 			_.structural();
 			_.preqs();
+			_.mima();
 
 			var enz = core.config.ctvu.loaders.environments;
 			var eselector = selz.environment = CT.dom.select(enz.map(function(item) {
@@ -819,6 +827,7 @@ vu.builders.zone = {
 				selz.color.update();
 				selz.lights.update();
 				selz.cameras.update();
+				selz.minimap.update();
 				selz.controls.update();
 				selz.friction.update();
 				selz.specular.update();
