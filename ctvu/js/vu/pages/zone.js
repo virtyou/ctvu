@@ -17,6 +17,7 @@ CT.require("vu.color");
 CT.require("vu.controls");
 CT.require("vu.media");
 CT.require("vu.storage");
+CT.require("vu.menu.Map");
 CT.require("vu.builders.core");
 CT.require("vu.builders.zone");
 CT.scriptImport("CT.lib.colorPicker");
