@@ -503,6 +503,8 @@ vu.builders.zone = {
 					if (kind == "screen")
 						target.playPause();
 				}
+				target.setBounds(true);
+				_.minimap.refresh();
 				_.selectors.controls.update();
 			}
 		},
