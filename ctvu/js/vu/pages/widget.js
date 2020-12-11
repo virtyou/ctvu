@@ -1,3 +1,4 @@
+CT.require("CT.align");
 CT.require("CT.data");
 CT.require("CT.db");
 CT.require("CT.dom");
