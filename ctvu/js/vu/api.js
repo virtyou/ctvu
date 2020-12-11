@@ -1,9 +1,11 @@
 window.VU = {
 	_: {
+		cams: {},
 		people: {},
 		bridges: {},
 		actions: ["ping", "set", "say", "respond", "responses", "triggers", "trigger", "listen"],
 		queries: ["rooms", "people", "room", "person"],
+		navs: ["move", "rotate"],
 		switchies: ["set", "ping"],
 		sender: function(action, entity, onsend) {
 			return function(data, cb) {
@@ -62,13 +64,23 @@ window.VU = {
 		},
 		bridge: function(ifr, key, onready) {
 			var _ = VU._, b = _.bridges[key] = {
-				cbs: {}, key: key, iframe: ifr,
+				cbs: {}, key: key, iframe: ifr
 			};
 			ifr.onload = onready;
 			_.queries.forEach(function(query) {
 				b[query] = _.sender(query, b, _.upbridge);
 			});
 			return b;
+		},
+		cam: function(ifr, key, onready) {
+			var _ = VU._, c = _.cams[key] = {
+				cbs: {}, key: key, iframe: ifr
+			};
+			ifr.onload = onready;
+			_.navs.forEach(function(nav) {
+				c[nav] = _.sender(nav, c);
+			});
+			return c;
 		},
 		switcher: function(ifr, onswitch) {
 			var _ = VU._, s = _.switcheroo = {
@@ -86,7 +98,8 @@ window.VU = {
 			var ifr = document.createElement("iframe"),
 				loc = VU._.location();
 			ifr._targetOrigin = loc;
-			ifr.allow = "microphone";
+			if (!key.startsWith("cam"))
+				ifr.allow = "microphone";
 			ifr.src = loc + "/vu/widget.html#" + key;
 			ifr.style.width = ifr.style.height = "100%";
 			if (typeof node == "string")
@@ -115,6 +128,10 @@ window.VU = {
 		VU.init();
 		var key = pkey + "_" + rkey;
 		return VU._.person(VU._.iframe(key, node), key, onready);
+	},
+	cam: function(node, rkey, onready) {
+		VU.init();
+		return VU._.cam(VU._.iframe("cam" + rkey, node), rkey, onready);
 	},
 	onresolved: function(cb) {
 		VU._.onresolved = cb;
