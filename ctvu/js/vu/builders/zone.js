@@ -296,13 +296,13 @@ vu.builders.zone = {
 		struct: function(variety, fopts, i) {
 			var _ = vu.builders.zone._,
 				item = zero.core.current.room[variety + i],
-				s3 = variety == "obstacle";
+				s3 = ["wall", "obstacle"].includes(variety);
 			var cont = [
 				_.fname(item),
 				_[s3 ? "scalers" : "fscale"](item, function(scale) {
 					fopts.scale = s3 ? scale : [scale, scale, scale];
 					_.strup(variety);
-				}, 5, 500, 5),
+				}, 5, 500, 5, variety == "wall" && ["x", "y"], "topbordered padded margined"),
 				_.plevel(item, function(yval) {
 					fopts.position[1] = yval;
 					_.strup(variety);
@@ -455,7 +455,7 @@ vu.builders.zone = {
 							flo.scale = [10, 10, 10];
 						else {
 							flo.planeGeometry = true;
-							flo.scale = [100, 100, 100];
+							flo.scale = [80, 80, 1];
 						}
 						fpz.push(flo);
 						_.strup(variety);
@@ -536,21 +536,24 @@ vu.builders.zone = {
 				]);
 			};
 		},
-		scalers: function(obj, cb, min, max, unit) {
+		scalers: function(obj, cb, min, max, unit, dims, cname) {
 			var scale = obj.scale(),
 				scopts = [scale.x, scale.y, scale.z];
-			return ["x", "y", "z"].map(function(dim, i) {
-				return [
-					dim,
-					CT.dom.range(function(val) {
-						val = parseFloat(val);
-						scopts[i] = val;
-						obj.adjust("scale", dim, val);
-						obj.setBounds();
-						cb(scopts);
-					}, min || 0.3, max || 12, scale[dim], unit || 0.01, "w1")
-				];
-			});
+			return CT.dom.div([
+					"Scale",
+					(dims || ["x", "y", "z"]).map(function(dim, i) {
+						return [
+							dim,
+							CT.dom.range(function(val) {
+								val = parseFloat(val);
+								scopts[i] = val;
+								obj.adjust("scale", dim, val);
+								obj.setBounds();
+								cb(scopts);
+							}, min || 0.3, max || 12, scale[dim], unit || 0.01, "w1")
+						];
+					})
+				], cname || "padded bordered round mb5");
 		},
 		mima: function() {
 			var _ = vu.builders.zone._, selz = _.selectors,
@@ -688,10 +691,7 @@ vu.builders.zone = {
 					"Friction",
 					selz.friction
 				], "padded bordered round mb5"),
-				CT.dom.div([
-					"Scale",
-					selz.scale
-				], "padded bordered round mb5"),
+				selz.scale,
 				CT.dom.div([
 					"Materials",
 					_.materials()
