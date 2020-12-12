@@ -878,7 +878,8 @@ vu.builders.zone = {
 			});
 		},
 		linx: function() {
-			var _ = vu.builders.zone._, popts = vu.storage.get("person");
+			var _ = vu.builders.zone._, zcc = zero.core.current,
+				popts = vu.storage.get("person");
 			_.sharer = vu.core.sharer();
 			_.curname = CT.dom.span(null, "bold");
 			// add person for scale
@@ -886,8 +887,8 @@ vu.builders.zone = {
 				_.selectors.controls.update();
 			};
 			zero.core.util.join(vu.core.person(popts), function(person) {
-				zero.core.current.person = person;
-				zero.core.current.room.objects.forEach(_.regObj);
+				zcc.person = person;
+				zcc.room.objects.forEach(_.regObj);
 				var r = vu.storage.get("room");
 				r ? _.set(r, true) : _.build();
 			});
@@ -895,7 +896,12 @@ vu.builders.zone = {
 				[
 					CT.dom.span("viewing:"),
 					CT.dom.pad(),
-					_.curname
+					CT.dom.link(_.curname, function() {
+						CT.modal.modal([
+							"Use this key to embed this zone offsite",
+							zcc.room.opts.key
+						]);
+					})
 				], [
 					CT.dom.link("swap", _.select),
 					CT.dom.pad(),
