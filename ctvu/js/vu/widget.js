@@ -20,6 +20,10 @@ vu.widget = {
 					CT.storage.set("preset_" + k, d.data[k]);
 				return;
 			}
+			if (d.action == "cut")
+				return zero.core.current.room.cut(d.data);
+			if (["move", "rotate", "upsprings"].includes(d.action))
+				return zero.core.camera[d.action](d.data);
 			if (["rooms", "people", "room", "person"].indexOf(d.action) != -1)
 				return _.bridge(d);
 			var person = zero.core.current.person;
@@ -95,10 +99,15 @@ vu.widget = {
 			user.core.onchange(upyou);
 			setTimeout(upyou, 1000);
 		},
+		setCam: function(rkey) {
+			CT.db.one(rkey, room => vu.widget.room(rkey), "json");
+		},
 		load: function() {
 			var _ = vu.widget._, h = _.key = document.location.hash.slice(1);
 			if (h == "switcheroo")
 				_.setSwitcher();
+			else if (h.startsWith("cam"))
+				_.setCam(h.slice(3));
 			else if (h.indexOf("_") != -1) // person / room specified - else, user key
 				vu.widget.setup.apply(null, h.split("_"));
 		}
