@@ -20,12 +20,11 @@ vu.widget = {
 					CT.storage.set("preset_" + k, d.data[k]);
 				return;
 			}
-			if (["move", "rotate"].includes(d.action)) {
-				CT.log(d.action);
-				CT.log(d.data);
+			if (d.action == "cut")
+				return zero.core.current.room.cut(d.data);
+			if (["move", "rotate", "upsprings"].includes(d.action))
 				return zero.core.camera[d.action](d.data);
-			}
-			else if (["rooms", "people", "room", "person"].indexOf(d.action) != -1)
+			if (["rooms", "people", "room", "person"].indexOf(d.action) != -1)
 				return _.bridge(d);
 			var person = zero.core.current.person;
 			if (d.action == "listen")

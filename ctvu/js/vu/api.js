@@ -5,7 +5,7 @@ window.VU = {
 		bridges: {},
 		actions: ["ping", "set", "say", "respond", "responses", "triggers", "trigger", "listen"],
 		queries: ["rooms", "people", "room", "person"],
-		navs: ["move", "rotate"],
+		navs: ["move", "rotate", "cut", "upsprings"],
 		switchies: ["set", "ping"],
 		sender: function(action, entity, onsend) {
 			return function(data, cb) {
