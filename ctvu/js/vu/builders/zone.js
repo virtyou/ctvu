@@ -695,8 +695,33 @@ vu.builders.zone = {
 				CT.dom.div([
 					"Materials",
 					_.materials()
+				], "padded bordered round mb5"),
+				CT.dom.div([
+					"Environmental",
+					_.environmental()
 				], "padded bordered round mb5")
 			];
+		},
+		environmental: function() {
+			var _ = vu.builders.zone._, selz = _.selectors,
+				sel = selz.environmental = CT.dom.div(),
+				zcc = zero.core.current, ro, po;
+			sel.update = function() {
+				ro = zcc.room.opts;
+				CT.dom.setContent(sel, ["fog", "rain"].map(function(ename) {
+					return CT.dom.checkboxAndLabel(ename, ro[ename],
+						null, null, null, function(cbox) {
+							if (cbox.checked)
+								zcc.room.addEnv(ename);
+							else
+								zcc.room.detach(ename);
+							po = {};
+							po[ename] = cbox.checked;
+							vu.storage.setOpts(ro.key, po);
+						});
+				}));
+			};
+			return sel;
 		},
 		materials: function(furn) {
 			var obj, selz = furn || vu.builders.zone._.selectors;
@@ -836,6 +861,7 @@ vu.builders.zone = {
 				selz.shininess.update();
 				selz.structural.update();
 				selz.furnishings.update();
+				selz.environmental.update();
 				selz.portal_requests.update();
 			}, name = room.name || room.environment;
 			_.opts = room;
