@@ -69,6 +69,13 @@ vu.builders.zone = {
 				}, unit * 4, unit * 12, ramp.rotation().x, unit, "w1")
 			], "topbordered padded margined");
 		},
+		sgrip: function(floor, cb) {
+			return CT.dom.checkboxAndLabel("grippy", floor.opts.grippy,
+				null, null, null, function(cbox) {
+					floor.grippy = cbox.checked;
+					cb(floor.grippy);
+				});
+		},
 		plevel: function(furn, cb) {
 			var rbz = zero.core.current.room.bounds;
 			return CT.dom.div([
@@ -316,9 +323,15 @@ vu.builders.zone = {
 					fopts.rotation = [rot.x, ry, rot.z];
 					_.strup(variety);
 				}, "w1"));
-			} else if (variety == "ramp") {
-				cont.push(_.rtilt(item, function(rot) {
-					fopts.rotation = [rot, 0, 0];
+			} else {
+				if (variety == "ramp") {
+					cont.push(_.rtilt(item, function(rot) {
+						fopts.rotation = [rot, 0, 0];
+						_.strup(variety);
+					}));
+				}
+				cont.push(_.sgrip(item, function(isgrippy) {
+					fopts.grippy = isgrippy;
 					_.strup(variety);
 				}));
 			}
