@@ -42,7 +42,7 @@ vu.storage.remote = {
 		vu.storage.edit(obj, cb);
 	},
 	has: function(ent_type) {
-		return !!vu.core._udata[ent_type];
+		return !!(vu.core._udata[ent_type] || vu.storage._extras[ent_type]);
 	},
 	get: function(ent_type) {
 		var vc = vu.core, vcu = vc._udata,
