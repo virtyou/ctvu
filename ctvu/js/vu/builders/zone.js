@@ -76,6 +76,22 @@ vu.builders.zone = {
 					cb(floor.grippy);
 				});
 		},
+		fscroll: function(floor, cb) {
+			var fos = floor.opts.scroll, curval = fos ? (
+				"scroll " + ( fos.axis || "y" )
+			) : "no scroll";
+			return CT.dom.select({
+				names: ["no scroll", "scroll y", "scroll x"],
+				curvalue: curval,
+				onchange: function(val) {
+					if (val == "no scroll")
+						floor.unscroll(true);
+					else
+						floor.scroll({ axis: val.split(" ").pop() });
+					cb(floor.opts.scroll);
+				}
+			});
+		},
 		plevel: function(furn, cb) {
 			var rbz = zero.core.current.room.bounds;
 			return CT.dom.div([
@@ -327,6 +343,11 @@ vu.builders.zone = {
 				if (variety == "ramp") {
 					cont.push(_.rtilt(item, function(rot) {
 						fopts.rotation = [rot, 0, 0];
+						_.strup(variety);
+					}));
+				} else if (variety == "floor") {
+					cont.push(_.fscroll(item, function(sopts) {
+						fopts.scroll = sopts;
 						_.strup(variety);
 					}));
 				}
