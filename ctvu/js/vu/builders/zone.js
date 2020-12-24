@@ -81,7 +81,7 @@ vu.builders.zone = {
 				"scroll " + ( fos.axis || "y" )
 			) : "no scroll";
 			return CT.dom.select({
-				names: ["no scroll", "scroll y", "scroll x"],
+				names: ["no scroll", "scroll x", "scroll y"],
 				curvalue: curval,
 				onchange: function(val) {
 					if (val == "no scroll")
@@ -91,6 +91,40 @@ vu.builders.zone = {
 					cb(floor.opts.scroll);
 				}
 			});
+		},
+		fshift: function(floor, cb) {
+			var fos = floor.opts.shift, curval = fos ? (
+				"shift " + ( fos.axis || "z" )
+			) : "no shift", curmode = fos && fos.mode, modesel = CT.dom.select({
+				names: ["bounce", "recycle"],
+				curvalue: curmode || "bounce",
+				onchange: function(val) {
+					floor.shift({ mode: val });
+					cb(floor.opts.shift);
+				}
+			});
+			fos || CT.dom.hideV(modesel);
+			return [
+				CT.dom.select({
+					names: ["no shift", "shift x", "shift y", "shift z"],
+					curvalue: curval,
+					onchange: function(val) {
+						if (val == "no shift") {
+							floor.unshift(true);
+							CT.dom.hideV(modesel);
+						}
+						else {
+							floor.shift({
+								mode: modesel.value,
+								axis: val.split(" ").pop()
+							});
+							CT.dom.showV(modesel);
+						}
+						cb(floor.opts.shift);
+					}
+				}),
+				modesel
+			];
 		},
 		plevel: function(furn, cb) {
 			var rbz = zero.core.current.room.bounds;
@@ -348,6 +382,10 @@ vu.builders.zone = {
 				} else if (variety == "floor") {
 					cont.push(_.fscroll(item, function(sopts) {
 						fopts.scroll = sopts;
+						_.strup(variety);
+					}));
+					cont.push(_.fshift(item, function(sopts) {
+						fopts.shift = sopts;
 						_.strup(variety);
 					}));
 				}
