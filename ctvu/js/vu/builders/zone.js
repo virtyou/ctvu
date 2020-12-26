@@ -350,11 +350,28 @@ vu.builders.zone = {
 			 	_.fznsel(scr)
 			 ];
 		},
+		stx: function(item, cb) {
+			var tlink = CT.dom.link("no texture", function() {
+				vu.media.browse("background", function(img) {
+					item.setTexture(img.item);
+					tname(img.item);
+					cb(img.item);
+				});
+			}, null, "small right clearnode"), tname = function(tx) {
+				tlink.innerHTML = tx.split("/").pop().split(".").shift();
+			};
+			item.opts.texture && tname(item.opts.texture);
+			return tlink;
+		},
 		struct: function(variety, fopts, i) {
 			var _ = vu.builders.zone._,
 				item = zero.core.current.room[variety + i],
 				s3 = ["wall", "obstacle"].includes(variety);
 			var cont = [
+				_.stx(item, function(tx) {
+					fopts.texture = tx;
+					_.strup(variety);
+				}),
 				_.fname(item),
 				_[s3 ? "scalers" : "fscale"](item, function(scale) {
 					fopts.scale = s3 ? scale : [scale, scale, scale];
