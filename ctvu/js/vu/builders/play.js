@@ -114,18 +114,42 @@ vu.builders.play = {
 				val && vu.live.emit("chat", val);
 				e && e.stopPropagation();
 				return "clear";
-			}, singButt = CT.dom.button("sing", function(e) {
+			}, zcu = zero.core.util, singButt = CT.dom.button("sing", function(e) {
 				if (!cbox.value) return;
-				var words = cbox.value.split(" ");
+				var words = cbox.value.split(" "),
+					i, durs = [];
+				for (i = 1; i <= 5; i++)
+					durs.push(i * 80 + "px");
 				CT.modal.prompt({
 					style: "draggers",
 					data: words.map(w => [
 						"", "", w, "", ""
 					]),
+					colattrs: {
+						onwheel: function(e) {
+							var col = e.currentTarget,
+								cw = col.style.width,
+								ci = durs.indexOf(cw),
+								dir = e.deltaY < 0 ? 1 : -1,
+								ni = Math.max(0, Math.min(4, ci + dir));
+							col.style.width = durs[ni];
+						}
+					},
+					colstyle: {
+						width: durs[2]
+					},
+					dataer: function(col) {
+						return {
+							rows: col.data,
+							width: col.style.width
+						};
+					},
 					cb: function(wdata) {
 						say(words.map(function(w, i) {
 							return "<prosody pitch='"
-								+ zero.core.util.pitches[wdata[i].indexOf(w)]
+								+ zcu.pitches[wdata[i].rows.indexOf(w)]
+								+ "' rate='"
+								+ zcu.rates[4 - durs.indexOf(wdata[i].width)]
 								+ "'>" + w + "</prosody>";
 						}).join(" "));
 					}
