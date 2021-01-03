@@ -114,17 +114,38 @@ vu.builders.play = {
 				val && vu.live.emit("chat", val);
 				e && e.stopPropagation();
 				return "clear";
-			}, listButt = CT.dom.button("listen", function(e) {
+			}, singButt = CT.dom.button("sing", function(e) {
+				if (!cbox.value) return;
+				var words = cbox.value.split(" ");
+				CT.modal.prompt({
+					style: "draggers",
+					data: words.map(w => [
+						"", "", w, "", ""
+					]),
+					cb: function(wdata) {
+						say(words.map(function(w, i) {
+							return "<prosody pitch='"
+								+ zero.core.util.pitches[wdata[i].indexOf(w)]
+								+ "'>" + w + "</prosody>";
+						}).join(" "));
+					}
+				});
+				cbox.value = "";
+				e.stopPropagation();
+			}), listButt = CT.dom.button("listen", function(e) {
 				listButt.style.color = "red";
 				zero.core.rec.listen(function(phrase) {
 					say(phrase);
 					listButt.style.color = "black";
 				});
 				e.stopPropagation();
-			}, "right up20"), cbox = CT.dom.smartField(say, "w1 block mt5",
+			}), cbox = CT.dom.smartField(say, "w1 block mt5",
 				null, null, null, core.config.ctvu.blurs.talk);
 			cbox.onclick = function(e) { e.stopPropagation(); };
-			var n = CT.dom.div([ listButt, out, cbox ]);
+			var n = CT.dom.div([
+				CT.dom.div([singButt, listButt], "right up15"),
+				out, cbox
+			]);
 			n.out = out;
 			return n;
 		},
