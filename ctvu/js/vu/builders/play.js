@@ -120,6 +120,13 @@ vu.builders.play = {
 					i, durs = [];
 				for (i = 1; i <= 5; i++)
 					durs.push(i * 80 + "px");
+				var prosodize = function(word, pitchIndex, parentWidth) {
+					return "<prosody pitch='"
+						+ zcu.pitches[4 - pitchIndex]
+						+ "' rate='"
+						+ zcu.rates[4 - durs.indexOf(parentWidth)]
+						+ "'>" + word + "</prosody>";
+				};
 				CT.modal.prompt({
 					style: "draggers",
 					data: words.map(w => [
@@ -138,6 +145,17 @@ vu.builders.play = {
 					colstyle: {
 						width: durs[2]
 					},
+					rower: function(rowname) {
+						var cname = "bordered padded margined round";
+						if (rowname) cname += " pointer";
+						var rnode = CT.dom.div(rowname, cname, null, rowname && {
+							onclick: function() {
+								zero.core.current.person.say(prosodize(rowname,
+									CT.dom.childNum(rnode), rnode.parentNode.style.width));
+							}
+						});
+						return rnode;
+					},
 					dataer: function(col) {
 						return {
 							rows: col.data,
@@ -146,11 +164,8 @@ vu.builders.play = {
 					},
 					cb: function(wdata) {
 						say(words.map(function(w, i) {
-							return "<prosody pitch='"
-								+ zcu.pitches[wdata[i].rows.indexOf(w)]
-								+ "' rate='"
-								+ zcu.rates[4 - durs.indexOf(wdata[i].width)]
-								+ "'>" + w + "</prosody>";
+							return prosodize(w, wdata[i].rows.indexOf(w),
+								wdata[i].width);
 						}).join(" "));
 					}
 				});
