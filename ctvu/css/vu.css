@@ -56,6 +56,8 @@ iframe {
 
 #ctmain {
 	top: 110px;
+}
+#ctmain:not(.gamepage) {
 	overflow-y: hidden;
 }
 
