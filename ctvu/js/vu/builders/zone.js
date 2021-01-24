@@ -915,12 +915,15 @@ vu.builders.zone = {
 							var pos = light.position();
 							content.push(CT.dom.div([
 								_.lightdirs[light.opts.variety],
-								CT.dom.div(["x", "y", "z"].map(function(dim, i) {
+								CT.dom.div(["x", "y", "z"].map(function(dim, di) {
 									return [
 										dim,
 										CT.dom.range(function(val) {
 											light.thring.position[dim] = val;
-											// TODO: persist
+											_.opts.lights[i].position[di] = val;
+											vu.builders.zone.persist({
+												lights: _.opts.lights
+											});
 										}, -256, 256, pos[dim], 0.1, "w1")
 									];
 								}))
