@@ -21,11 +21,18 @@ vu.live = {
 			environment: function(person, data) { // extend/genericize.....
 				var zcc = zero.core.current;
 				if (person == zcc.person) return;
-				var flo = zcc.room[data.name], fos = flo.opts.shift;
-				fos.speed = data.speed;
-				flo.placer.position[fos.axis] = data.position;
-				flo.bounds.min[fos.axis] = data.min;
-				flo.bounds.max[fos.axis] = data.max;
+				if ("light" in data) {
+					var lig = zcc.room.lights[data.light];
+					data.color && lig.setColor(data.color);
+					data.position && lig.position(data.position);
+					("intensity" in data) && lig.setIntensity(data.intensity);
+				} else {
+					var flo = zcc.room[data.name], fos = flo.opts.shift;
+					fos.speed = data.speed;
+					flo.placer.position[fos.axis] = data.position;
+					flo.bounds.min[fos.axis] = data.min;
+					flo.bounds.max[fos.axis] = data.max;
+				}
 			}
 		},
 		events: {
