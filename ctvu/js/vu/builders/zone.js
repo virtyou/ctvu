@@ -14,10 +14,6 @@ vu.builders.zone = {
 			portal_requests: "bottomleft"
 		},
 		swappers: ["furnishings", "lights", "basic", "structural"],
-		lightdirs: {
-			point: "Position",
-			directional: "Direction"
-		},
 		starter: {
 			environment: "one.box",
 			cameras: [
@@ -861,78 +857,20 @@ vu.builders.zone = {
 				selz.shininess.full
 			];
 		},
-		lightup: function(color, lnum) {
-			var _ = vu.builders.zone._;
-			_.opts.lights[lnum].color = color;
+		lightup: function(lnum, property, val, subprop) {
+			var _ = vu.builders.zone._,
+				lig = _.opts.lights[lnum];
+			if (subprop != undefined)
+				lig[property][subprop] = val;
+			else
+				lig[property] = val;
 			vu.builders.zone.persist({
 				lights: _.opts.lights
 			});
 		},
 		lights: function() {
-			var _ = vu.builders.zone._, selz = _.selectors,
-				room, color, intensity, content;
-			selz.lights = CT.dom.div();
-			selz.lights.update = function() {
-				room = zero.core.current.room;
-				CT.dom.setContent(selz.lights, [
-					CT.dom.button("add", function() {
-						CT.modal.choice({
-							data: ["ambient", "directional", "point"],
-							cb: function(variety) {
-								room.addLight({
-									variety: variety
-								});
-								selz.lights.update();
-							}
-						});
-					}, "vcrunch right"),
-					room.lights.map(function(light, i) {
-						color = vu.color.selector(light, null, i, _.lightup);
-						intensity = CT.dom.range(function(val) {
-							val = parseInt(val) / 100;
-							light.setIntensity(val);
-							_.opts.lights[i].intensity = val;
-							vu.builders.zone.persist({
-								lights: _.opts.lights
-							});
-						}, 0, 100, light.opts.intensity * 100, 1, "w1");
-						content = [
-							CT.dom.button("remove", function() {
-								room.removeLight(light);
-								selz.lights.update();
-							}, "up5 right"),
-							light.opts.variety,
-							CT.dom.div([
-								"Color",
-								color
-							], "topbordered padded margined"),
-							CT.dom.div([
-								"Intensity",
-								intensity
-							], "topbordered padded margined")
-						];
-						if (light.opts.variety != "ambient") {
-							var pos = light.position();
-							content.push(CT.dom.div([
-								_.lightdirs[light.opts.variety],
-								CT.dom.div(["x", "y", "z"].map(function(dim, di) {
-									return [
-										dim,
-										CT.dom.range(function(val) {
-											light.thring.position[dim] = val;
-											_.opts.lights[i].position[di] = val;
-											vu.builders.zone.persist({
-												lights: _.opts.lights
-											});
-										}, -256, 256, pos[dim], 0.1, "w1")
-									];
-								}))
-							], "topbordered padded margined"));
-						}
-						return CT.dom.div(content, "margined padded bordered round");
-					})
-				]);
-			};
+			var _ = vu.builders.zone._;
+			_.selectors.lights = vu.party.lights(_.lightup, true);
 		},
 		cameras: function() {
 			var selz = vu.builders.zone._.selectors;
