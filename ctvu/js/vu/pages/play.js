@@ -13,13 +13,16 @@ CT.require("core");
 CT.require("user.core");
 CT.require("zero.core");
 CT.require("vu.core");
+CT.require("vu.color");
 CT.require("vu.controls");
 CT.require("vu.storage");
 CT.require("vu.live");
+CT.require("vu.party");
 CT.require("vu.portal");
 CT.require("vu.menu.Map");
 CT.require("vu.builders.core");
 CT.require("vu.builders.play");
+CT.scriptImport("CT.lib.colorPicker");
 
 CT.onload(function() {
 	CT.initCore();
