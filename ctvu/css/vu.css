@@ -178,6 +178,10 @@ img.right.h30p.up5 {
 	max-height: calc(100% - 127px);
 }
 
+.playpage .gmenu.lights {
+	max-height: 65%;
+}
+
 .gmenu.controls {
 	height: 133px;
 }
