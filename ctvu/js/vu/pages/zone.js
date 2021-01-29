@@ -16,6 +16,7 @@ CT.require("vu.core");
 CT.require("vu.color");
 CT.require("vu.controls");
 CT.require("vu.media");
+CT.require("vu.party");
 CT.require("vu.storage");
 CT.require("vu.menu.Map");
 CT.require("vu.builders.core");

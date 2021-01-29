@@ -6,11 +6,13 @@ vu.builders.play = {
 			chat: "bottom",
 			cameras: "top",
 			info: "topleft",
+			lights: "topright",
 			minimap: "topright",
 			run_home: "topleft",
 			triggers: "bottomleft",
 			gestures: "bottomright"
 		},
+		swappers: ["lights", "minimap"],
 		cbs: {
 			joined: function(person) { // (you)
 				var vbp = vu.builders.play, _ = vbp._,
@@ -25,6 +27,7 @@ vu.builders.play = {
 					moveCb: vu.live.meta
 				});
 				vbp.minimap = new vu.menu.Map({ node: _.selectors.minimap });
+				_.ownz() && _.selectors.lights.update();
 				cur.room.objects.forEach(_.clickreg);
 				zero.core.click.trigger(person.body);
 			},
@@ -78,6 +81,20 @@ vu.builders.play = {
 			// TODO: other actions.....
 			vu.portal.check();
 		},
+		uplights: function() {
+			var _ = vu.builders.play._;
+			if (_.ownz())
+				_.selectors.lights.update();
+			else if (_.partified)
+				_.swap();
+		},
+		lightup: function(lnum, property, val, pindex, paxis) {
+			var edata = { light: lnum };
+			edata[property] = val;
+			if (paxis) // for position
+				edata.axis = paxis;
+			vu.live.esync(edata);
+		},
 		setup: function() {
 			var vbp = vu.builders.play, _ = vbp._,
 				selz = _.selectors, cur = zero.core.current,
@@ -87,6 +104,7 @@ vu.builders.play = {
 			selz.triggers = CT.dom.div();
 			selz.gestures = CT.dom.div();
 			selz.minimap = CT.dom.div();
+			selz.lights = vu.party.lights(_.lightup);
 			selz.run_home = CT.dom.img("/img/vu/home.png", null,
 				function() { vu.portal.port(); });
 			selz.chat = _.chatterbox();
@@ -102,6 +120,7 @@ vu.builders.play = {
 						room.cut();
 						room.objects.forEach(_.clickreg);
 						vbp.minimap.refresh();
+						_.uplights();
 					}
 				}, CT.data.get(target || CT.storage.get("room"))));
 				CT.pubsub.subscribe(cur.room.opts.key);
@@ -191,10 +210,28 @@ vu.builders.play = {
 		collapse: function(section) {
 			var _ = vu.builders.play._, selz = _.selectors,
 				sel = selz[section];
+			if (_.swappers.includes(section)) return;
 			return function() {
 				sel._collapsed = !sel._collapsed;
 				sel.modal.node.classList[sel._collapsed ? "add" : "remove"]("collapsed");
 			};
+		},
+		ownz: function() {
+			return zero.core.current.room.opts.owners.includes(user.core.get("key"));
+		},
+		swap: function() {
+			var _ = vu.builders.play._, selz = _.selectors;
+			if (!_.ownz() && !_.partified) return;
+			_.partified = !_.partified;
+			_.swappers.forEach(function(section) {
+				selz[section].modal.showHide("ctmain");
+			});
+		},
+		head: function(section) {
+			var n = CT.dom.node(CT.parse.key2title(section));
+			if (vu.builders.play._.swappers.indexOf(section) != -1)
+				n.onclick = vu.builders.play._.swap;
+			return n;
 		}
 	},
 	menus: function() {
@@ -202,8 +239,8 @@ vu.builders.play = {
 		_.setup();
 		for (section in _.menus) {
 			selz[section].modal = vu.core.menu(section, _.menus[section],
-				selz[section], null, vu.builders.play._.collapse(section));
-			if (section != "run_home")
+				selz[section], _.head(section), _.collapse(section));
+			if (section != "run_home" && section != "lights")
 				selz[section].modal.show("ctmain");
 		}
 	}

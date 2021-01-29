@@ -1,6 +1,6 @@
 vu.color = {
 	set: function(target, color, prop, lnum, uplight) {
-		var copts = {}, _ = vu.builders.zone._, rgb = vu.color.hex2rgb(color);
+		var copts = {}, rgb = vu.color.hex2rgb(color);
 		color = parseInt(color.slice(1), 16);
 		if (uplight) { // light
 			target.setColor(rgb);

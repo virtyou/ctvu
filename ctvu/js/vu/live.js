@@ -21,11 +21,19 @@ vu.live = {
 			environment: function(person, data) { // extend/genericize.....
 				var zcc = zero.core.current;
 				if (person == zcc.person) return;
-				var flo = zcc.room[data.name], fos = flo.opts.shift;
-				fos.speed = data.speed;
-				flo.placer.position[fos.axis] = data.position;
-				flo.bounds.min[fos.axis] = data.min;
-				flo.bounds.max[fos.axis] = data.max;
+				if ("light" in data) {
+					var lig = zcc.room.lights[data.light];
+					data.color && lig.setColor(vu.color.hex2rgb(vu.color.componentToHex(data.color)));
+					if (data.position)
+						lig.thring.position[data.axis] = data.position;
+					("intensity" in data) && lig.setIntensity(data.intensity);
+				} else {
+					var flo = zcc.room[data.name], fos = flo.opts.shift;
+					fos.speed = data.speed;
+					flo.placer.position[fos.axis] = data.position;
+					flo.bounds.min[fos.axis] = data.min;
+					flo.bounds.max[fos.axis] = data.max;
+				}
 			}
 		},
 		events: {
@@ -35,9 +43,9 @@ vu.live = {
 					spawn(u, data.metamap[u], !vu.core.ischar(u));
 				});
 				if (data.presence.length == 1)
-					CT.event.subscribe("environment", _.esync);
+					CT.event.subscribe("environment", vu.live.esync);
 				else
-					CT.event.unsubscribe("environment", _.esync);
+					CT.event.unsubscribe("environment", vu.live.esync);
 			},
 			join: function(chan, user, meta) {
 				vu.live._.spawn(user, meta);//, null, true);
@@ -49,7 +57,7 @@ vu.live = {
 					peeps[user].remove();
 					delete peeps[user];
 					if (Object.keys(peeps).length == 1)
-						CT.event.subscribe("environment", _.esync);
+						CT.event.subscribe("environment", vu.live.esync);
 				}, 500); // leave time for ejection
 			},
 			meta: function(data) {
@@ -75,9 +83,6 @@ vu.live = {
 				else // probs still building
 					vu.live._.pending[msg.user] = msg;
 			}
-		},
-		esync: function(data) {
-			vu.live.emit("environment", data);
 		},
 		dance: function(person, meta) {
 			if (meta.vibe != person.vibe.current)
@@ -112,6 +117,9 @@ vu.live = {
 				}, !isYou);
 			}, "json");
 		}
+	},
+	esync: function(data) {
+		vu.live.emit("environment", data);
 	},
 	emit: function(action, val) {
 		CT.pubsub.publish(zero.core.current.room.opts.key, {
