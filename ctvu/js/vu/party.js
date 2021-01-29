@@ -55,7 +55,7 @@ vu.party = {
 									dim,
 									CT.dom.range(function(val) {
 										light.thring.position[dim] = val;
-										updater(i, "position", val, di);
+										updater(i, "position", val, di, dim);
 									}, -256, 256, pos[dim], 0.1, "w1")
 								];
 							}))
