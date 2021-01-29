@@ -88,11 +88,12 @@ vu.builders.play = {
 			else if (_.partified)
 				_.swap();
 		},
-		lightup: function(lnum, property, val, subprop) {
-
-			console.log(lnum, property, val, subprop);
-			// TODO ....
-
+		lightup: function(lnum, property, val, pindex, paxis) {
+			var edata = { light: lnum };
+			edata[property] = val;
+			if (paxis) // for position
+				edata.axis = paxis;
+			vu.live.esync(edata);
 		},
 		setup: function() {
 			var vbp = vu.builders.play, _ = vbp._,
