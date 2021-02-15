@@ -92,9 +92,13 @@ vu.live = {
 			else if (person.activeGesture)
 				person.ungesture();
 			if (meta.dance)
-				person.dance(meta.dance);
+				(person.activeDance == meta.dance) || person.dance(meta.dance);
 			else if (person.activeDance)
 				person.undance();
+			if (meta.mod)
+				(person.activeMod == meta.mod) || person.mod(meta.mod);
+			else if (person.activeMod)
+				person.unmod();
 		},
 		spawn: function(pkey, meta, unfric, invis) {
 			var _ = vu.live._, isYou = vu.core.ischar(pkey);
