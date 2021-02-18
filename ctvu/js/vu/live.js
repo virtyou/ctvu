@@ -41,7 +41,7 @@ vu.live = {
 					CT.event.unsubscribe("environment", vu.live.esync);
 			},
 			join: function(chan, user, meta) {
-				vu.live._.spawn(user, meta);//, null, true);
+				vu.live._.spawn(user, meta, true);
 			},
 			leave: function(chan, user) {
 				var _ = vu.live._, peeps = _.people;
