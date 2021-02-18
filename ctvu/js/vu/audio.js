@@ -19,21 +19,42 @@ vu.audio.Controller = CT.Class({
 			}
 		}
 	},
-	add: function(sound) {
+	url: function(url, kind) {
+		var parts = url.split("/"),
+			tname = parts[parts.length - 1],
+			site = parts[2],
+			name = site + ": " + tname;
+		kind = kind || "music";
+		var track = {
+			name: name,
+			item: url,
+			kind: kind
+		};
+		this.add(track, true);
+		return track;
+	},
+	add: function(sound, doPlay) {
 		this[sound.kind][sound.name] = sound;
+		(doPlay === true) && this.play(sound.kind, sound.name);
 	},
 	play: function(kind, name) {
-		var track = this[kind][name], d, n;
-		this.players[kind].src = track.item;
-		this.players[kind].play();
-		if (track.owners.length) {
+		var zcc = zero.core.current, d, n,
+			track = this[kind][name],
+			player = this.players[kind];
+		player.src = track.item;
+		player.play().catch(function() {
+			CT.modal.modal("let's get started!", function() {
+				player.play();
+			}, null, true);
+		});
+		if (track.owners && track.owners.length) {
 			CT.cc.view({
 				identifier: "Resource (audio - " + kind + "): " + name,
 				owners: track.owners
 			});
-		} else {
+		} else if (zcc.adventure) {
 			[d, n] = name.split(": ");
-			zero.core.current.adventure.menus.attribution("hearing",
+			zcc.adventure.menus.attribution("hearing",
 				n, "audio (" + kind + ")", d);
 		}
 	},
