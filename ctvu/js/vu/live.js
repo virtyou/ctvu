@@ -63,14 +63,17 @@ vu.live = {
 							lig.thring.position[ldata.axis] = ldata.position;
 						("intensity" in ldata) && lig.setIntensity(ldata.intensity);
 					}
-				} else {
-					// TODO: music etc
 				}
+				if ("audio" in data.meta)
+					for (aud in data.meta.audio)
+						zcc.audio.add(data.meta.audio[aud], true);
+				// TODO: video etc
 			},
 			meta: function(data) {
-				if (data.user == zero.core.current.person.opts.key)
+				var _ = vu.live._, person = _.people[data.user],
+					zcc = zero.core.current;
+				if (zcc.person && data.user == zcc.person.opts.key)
 					return;
-				var _ = vu.live._, person = _.people[data.user];
 				if (!(person && person.body))
 					return; // will handle meta when spawn is complete
 				var s = person.body.springs, meta = data.meta;
