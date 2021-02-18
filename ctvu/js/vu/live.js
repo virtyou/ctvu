@@ -21,19 +21,11 @@ vu.live = {
 			environment: function(person, data) { // extend/genericize.....
 				var zcc = zero.core.current;
 				if (person == zcc.person) return;
-				if ("light" in data) {
-					var lig = zcc.room.lights[data.light];
-					data.color && lig.setColor(vu.color.hex2rgb(vu.color.componentToHex(data.color)));
-					if (data.position)
-						lig.thring.position[data.axis] = data.position;
-					("intensity" in data) && lig.setIntensity(data.intensity);
-				} else {
-					var flo = zcc.room[data.name], fos = flo.opts.shift;
-					fos.speed = data.speed;
-					flo.placer.position[fos.axis] = data.position;
-					flo.bounds.min[fos.axis] = data.min;
-					flo.bounds.max[fos.axis] = data.max;
-				}
+				var flo = zcc.room[data.name], fos = flo.opts.shift;
+				fos.speed = data.speed;
+				flo.placer.position[fos.axis] = data.position;
+				flo.bounds.min[fos.axis] = data.min;
+				flo.bounds.max[fos.axis] = data.max;
 			}
 		},
 		events: {
@@ -42,6 +34,7 @@ vu.live = {
 				data.presence.forEach(function(u, i) {
 					spawn(u, data.metamap[u], !vu.core.ischar(u));
 				});
+				_.events.chmeta({ meta: data.meta.channel });
 				if (data.presence.length == 1)
 					CT.event.subscribe("environment", vu.live.esync);
 				else
@@ -59,6 +52,20 @@ vu.live = {
 					if (Object.keys(peeps).length == 1)
 						CT.event.subscribe("environment", vu.live.esync);
 				}, 500); // leave time for ejection
+			},
+			chmeta: function(data) {
+				var zcc = zero.core.current;
+				if ("lights" in data.meta) {
+					for (var ldata of Object.values(data.meta.lights)) {
+						var lig = zcc.room.lights[ldata.light];
+						ldata.color && lig.setColor(vu.color.hex2rgb(vu.color.componentToHex(ldata.color)));
+						if (ldata.position)
+							lig.thring.position[ldata.axis] = ldata.position;
+						("intensity" in ldata) && lig.setIntensity(ldata.intensity);
+					}
+				} else {
+					// TODO: music etc
+				}
 			},
 			meta: function(data) {
 				if (data.user == zero.core.current.person.opts.key)
@@ -131,6 +138,9 @@ vu.live = {
 			data: val
 		});
 	},
+	zmeta: function(data) {
+		CT.pubsub.chmeta(zero.core.current.room.opts.key, data);
+	},
 	meta: function() {
 		var zcc = zero.core.current, person = zcc.person, targets = {
 			mod: person.activeMod,
@@ -150,7 +160,7 @@ vu.live = {
 	init: function(cbs) {
 		var _ = vu.live._;
 		_.cbs = cbs;
-		["subscribe", "join", "leave", "meta", "message"].forEach(function(ename) {
+		["subscribe", "join", "leave", "meta", "chmeta", "message"].forEach(function(ename) {
 			CT.pubsub.set_cb(ename, _.events[ename]);
 		});
 		CT.pubsub.connect(location.hostname, 8888, CT.storage.get("person"));
