@@ -122,7 +122,7 @@ vu.live = {
 					if (isYou)
 						_.cbs.joined(person);
 					else if (unfric)
-						person.body.setFriction(false, true);
+						person.body.setFriction(false);
 					if (_.pending[pdata.key]) {
 						_.events.message(_.pending[pdata.key]);
 						delete _.pending[pdata.key];
