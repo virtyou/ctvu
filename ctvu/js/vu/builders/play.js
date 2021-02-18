@@ -6,13 +6,14 @@ vu.builders.play = {
 			chat: "bottom",
 			cameras: "top",
 			info: "topleft",
+			audio: "topleft",
 			lights: "topright",
 			minimap: "topright",
 			run_home: "topleft",
 			triggers: "bottomleft",
 			gestures: "bottomright"
 		},
-		swappers: ["lights", "minimap"],
+		swappers: ["lights", "minimap", "audio", "info"],
 		cbs: {
 			joined: function(person) { // (you)
 				var vbp = vu.builders.play, _ = vbp._,
@@ -97,15 +98,24 @@ vu.builders.play = {
 			fdata.lights[lnum] = edata;
 			vu.live.zmeta(fdata);
 		},
+		audup: function(track) {
+			var adata = {};
+			adata[track.kind] = track;
+			vu.live.zmeta({
+				audio: adata
+			});
+		},
 		setup: function() {
 			var vbp = vu.builders.play, _ = vbp._,
 				selz = _.selectors, cur = zero.core.current,
 				popts = _.opts = vu.storage.get("person") || _.opts;
 			_.raw = vu.core.person(popts);
+			cur.audio = new vu.audio.Controller();
 			selz.cameras = CT.dom.div(null, "centered");
 			selz.triggers = CT.dom.div();
 			selz.gestures = CT.dom.div();
 			selz.minimap = CT.dom.div();
+			selz.audio = vu.party.audio(_.audup);
 			selz.lights = vu.party.lights(_.lightup);
 			selz.run_home = CT.dom.img("/img/vu/home.png", null,
 				function() { vu.portal.port(); });
@@ -242,7 +252,7 @@ vu.builders.play = {
 		for (section in _.menus) {
 			selz[section].modal = vu.core.menu(section, _.menus[section],
 				selz[section], _.head(section), _.collapse(section));
-			if (section != "run_home" && section != "lights")
+			if (!["run_home", "lights", "audio"].includes(section))
 				selz[section].modal.show("ctmain");
 		}
 	}
