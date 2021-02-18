@@ -3,7 +3,41 @@ vu.party = {
 		lightdirs: {
 			point: "Position",
 			directional: "Direction"
+		},
+		lights: ["ambient", "directional", "point"],
+		auds: ["music", "ambient", "fx"],
+		aud: function(kind, updater) {
+			var cur = zero.core.current, swapper = CT.dom.link("play", function() {
+				CT.modal.choice({
+					prompt: "enter a url or consult the collection?",
+					data: ["url", "collection"],
+					cb: function(sel) {
+						if (sel == "url") {
+							CT.modal.prompt({
+								prompt: "what's the url?",
+								cb: url => update(cur.audio.url(url, kind))
+							});
+						} else {
+							vu.media.swapper.audio(function(edata) {
+								cur.audio.add(edata, true);
+								update(edata);
+							}, kind);
+						}
+					}
+				});
+			}), update = function(edata) {
+				swapper.innerHTML = edata.name;
+				updater(edata);
+			};
+			return [
+				kind,
+				swapper
+			];
 		}
+	},
+	audio: function(updater) {
+		var _ = vu.party._;
+		return CT.dom.div(_.auds.map(k => _.aud(k, updater)));
 	},
 	lights: function(updater, addAndRemove) {
 		var _ = vu.party._, lnode = CT.dom.div(),
@@ -13,7 +47,7 @@ vu.party = {
 			CT.dom.setContent(lnode, [
 				addAndRemove && CT.dom.button("add", function() {
 					CT.modal.choice({
-						data: ["ambient", "directional", "point"],
+						data: _.lights,
 						cb: function(variety) {
 							room.addLight({
 								variety: variety
