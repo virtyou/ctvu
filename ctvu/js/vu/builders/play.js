@@ -93,7 +93,9 @@ vu.builders.play = {
 			edata[property] = val;
 			if (paxis) // for position
 				edata.axis = paxis;
-			vu.live.esync(edata);
+			var fdata = { lights: {} };
+			fdata.lights[lnum] = edata;
+			vu.live.zmeta(fdata);
 		},
 		setup: function() {
 			var vbp = vu.builders.play, _ = vbp._,
