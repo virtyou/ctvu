@@ -13,6 +13,8 @@ CT.require("core");
 CT.require("user.core");
 CT.require("zero.core");
 CT.require("vu.core");
+CT.require("vu.media");
+CT.require("vu.audio");
 CT.require("vu.color");
 CT.require("vu.controls");
 CT.require("vu.storage");
