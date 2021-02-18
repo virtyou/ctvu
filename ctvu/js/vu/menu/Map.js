@@ -62,8 +62,11 @@ vu.menu.Map = CT.Class({
 		return this._.people[p.name];
 	},
 	unperson: function(name) {
-		this._.people[name].remove();
-		delete this._.people[name];
+		var pz = this._.people;
+		if (pz[name]) {
+			pz[name].remove();
+			delete pz[name];
+		}
 	},
 	frame: function(bounds) {
 		var _ = this._, min = bounds.min, max = bounds.max,
