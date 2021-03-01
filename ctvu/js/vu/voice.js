@@ -29,7 +29,7 @@ vu.voice = {
 		mode: function(mode) {
 			CT.log("mode: " + mode);
 			vu.voice._.mode = mode;
-			// TODO ....
+			// TODO: accelerometer modes!!!!
 		},
 		cam: function(cmode) {
 			if (!vu.voice._.cams.includes(cmode))
