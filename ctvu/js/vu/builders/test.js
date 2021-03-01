@@ -4,6 +4,7 @@ vu.builders.test = {
 		selectors: {},
 		menus: {
 			camera: "top",
+			voice: "topleft",
 			minimap: "topright",
 			triggers: "bottomleft",
 			gestures: "bottomright"
@@ -20,6 +21,16 @@ vu.builders.test = {
 			var _ = vu.builders.test._, selz = _.selectors,
 				popts = _.opts = vu.storage.get("person") || _.opts;
 			_.raw = vu.core.person(popts);
+			selz.voice = CT.dom.button("listen for voice commands", function() {
+				selz.voice._listening = !selz.voice._listening;
+				if (selz.voice._listening) {
+					vu.voice.listen();
+					selz.voice.innerHTML = "stop listening";
+				} else {
+					vu.voice.unlisten();
+					selz.voice.innerHTML = "listen for voice commands";
+				}
+			});
 			selz.camera = CT.dom.div(null, "centered");
 			selz.minimap = CT.dom.div();
 			selz.triggers = CT.dom.div();
