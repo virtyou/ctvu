@@ -13,6 +13,7 @@ CT.require("zero.core");
 CT.require("vu.core");
 CT.require("vu.controls");
 CT.require("vu.storage");
+CT.require("vu.voice");
 CT.require("vu.menu.Map");
 CT.require("vu.builders.core");
 CT.require("vu.builders.test");
