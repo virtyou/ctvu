@@ -14,7 +14,8 @@ vu.controls = {
 					e.stopPropagation();
 				};
 			}, pov = CT.dom.button("pov", looker("pov")), bcams,
-				behind = CT.dom.button("behind", looker("behind"));
+				behind = CT.dom.button("behind", looker("behind")),
+				front = CT.dom.button("front", looker("front"));
 			node.update = function() {
 				room = zero.core.current.room;
 				tbutts = [cycbutt];
@@ -22,7 +23,7 @@ vu.controls = {
 					bcams = [];
 					tbutts.pop();
 				} else
-					bcams = [pov, behind];
+					bcams = [pov, behind, front];
 				(mode == "zone") && tbutts.push(CT.dom.button("refresh", function(e) {
 					room.updateCameras();
 					node.update();
