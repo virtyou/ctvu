@@ -31,7 +31,7 @@ vu.voice = {
 			vu.voice._.mode = mode;
 			// TODO: accelerometer modes!!!!
 		},
-		cam: function(cmode) {
+		camera: function(cmode) {
 			if (!vu.voice._.cams.includes(cmode))
 				return CT.log("not a camera angle: " + cmode);
 			zero.core.camera.angle(cmode);
