@@ -81,7 +81,7 @@ vu.menu.Game = CT.Class({
 			selz.camera.update = function() {
 				CT.dom.setContent(selz.camera, [
 					CT.dom.div(cam.current, "abs ctr shiftup yellow small mr5"),
-					["behind", "pov", cam.cyclabel()].map(function(p) {
+					["behind", "pov", "front", cam.cyclabel()].map(function(p) {
 						return CT.dom.button(p, function(e) {
 							cam.angle(p);
 							e.stopPropagation();
