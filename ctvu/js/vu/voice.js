@@ -3,7 +3,7 @@ vu.voice = {
 		convo: false,
 		listening: false,
 		mode: "walk", // walk|look|dance
-		cams: ["pov", "behind", "cycle"],
+		cams: ["pov", "behind", "front", "cycle"],
 		personal: ["say", "approach", "dance", "gesture", "mod", "vibe"],
 		resume: function() {
 			var _ = vu.voice._;
