@@ -19,6 +19,7 @@ CT.require("vu.color");
 CT.require("vu.controls");
 CT.require("vu.storage");
 CT.require("vu.live");
+CT.require("vu.voice");
 CT.require("vu.party");
 CT.require("vu.portal");
 CT.require("vu.menu.Map");
