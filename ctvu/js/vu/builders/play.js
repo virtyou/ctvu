@@ -23,6 +23,7 @@ vu.builders.play = {
 				vu.controls.setTriggers(_.selectors.triggers, vu.live.meta);
 				vu.controls.setGestures(_.selectors.gestures, vu.live.meta);
 				_.controls = new zero.core.Controls({
+					cams: true,
 					cb: _.action,
 					target: person,
 					moveCb: vu.live.meta
