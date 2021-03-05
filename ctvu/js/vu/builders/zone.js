@@ -597,15 +597,15 @@ vu.builders.zone = {
 			var _ = vu.builders.zone._, selz = _.selectors;
 			_.controls = new zero.core.Controls({
 				cb: _.posup
-			});
+			}), zcc = zero.core.current;
 			selz.controls = CT.dom.div();
 			selz.controls.update = function(target) {
 				if (!target) {
-					target = zero.core.current.person;
+					target = zcc.person;
 					zero.core.camera.follow(target.body.looker);
 				} else
 					zero.core.camera.follow(target);
-				_.controls.setTarget(target);
+				_.controls.setTarget(target, target == zcc.person);
 				CT.dom.setContent(selz.controls, [
 					CT.dom.div(target.name, "bigger"),
 					target.body ? [
