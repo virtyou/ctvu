@@ -14,7 +14,7 @@ vu.voice = {
 			if (action == "vibe")
 				checker = p.opts.vibe;
 			else if (action == "approach")
-				checker = zcc.people;
+				checker = CT.merge(zcc.people, zcc.room);
 			else if (action != "say")
 				checker = p.opts[action + "s"];
 			if (checker && !(target in checker))
@@ -27,9 +27,10 @@ vu.voice = {
 	},
 	commands: {
 		mode: function(mode) {
+			var zcc = zero.core.current;
 			CT.log("mode: " + mode);
 			vu.voice._.mode = mode;
-			// TODO: accelerometer modes!!!!
+			zcc.controls && zcc.controls.setXLRMode(mode);
 		},
 		camera: function(cmode) {
 			if (!vu.voice._.cams.includes(cmode))
