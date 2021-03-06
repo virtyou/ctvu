@@ -196,10 +196,20 @@ vu.builders.play = {
 						};
 					},
 					cb: function(wdata) {
-						say(words.map(function(w, i) {
-							return prosodize(w, wdata[i].rows.indexOf(w),
-								wdata[i].width);
-						}).join(" "));
+						CT.modal.choice({
+							prompt: "sing or export song string (for offsite fiddling)?",
+							data: ["sing", "export"],
+							cb: function(sel) {
+								var song = words.map(function(w, i) {
+									return prosodize(w, wdata[i].rows.indexOf(w),
+										wdata[i].width);
+								}).join(" ");
+								if (sel == "sing")
+									say(song);
+								else
+									CT.modal.modal(CT.dom.textArea(null, song, "w400p h400p"));
+							}
+						});
 					}
 				});
 				cbox.value = "";
