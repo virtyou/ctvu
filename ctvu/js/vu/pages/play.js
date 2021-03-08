@@ -28,6 +28,10 @@ CT.require("vu.builders.play");
 CT.scriptImport("CT.lib.colorPicker");
 
 CT.onload(function() {
+	if (CT.info.mobile) {
+		core.config.ctzero.camera.vr = true;
+		document.body.classList.add("unheadered");
+	}
 	CT.initCore();
 	vu.core.init();
 	vu.storage.init(function() {
