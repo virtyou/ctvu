@@ -61,7 +61,7 @@ vu.game.Scene = CT.Class({
 			state = this.state.scenes[this.name],
 			slz = state.lights, items = state.items,
 			portals = state.portals, adv = this.adventure;
-		zcc.person = zcc.people[this.player.name];
+		zero.core.util.setCurPer(zcc.people[this.player.name]);
 		adv.controls.setCb(_.action);
 		adv.controls.setTarget(zcc.person, true);
 		vu.portal.on("filter", function(obj) {

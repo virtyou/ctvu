@@ -11,7 +11,7 @@ vu.builders.test = {
 		},
 		joined: function(person) {
 			var _ = vu.builders.test._;
-			zero.core.current.person = person;
+			zero.core.util.setCurPer(person);
 			vu.controls.initCamera(_.selectors.camera);
 			vu.controls.setTriggers(_.selectors.triggers);
 			vu.controls.setGestures(_.selectors.gestures);

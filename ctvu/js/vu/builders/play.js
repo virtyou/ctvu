@@ -18,7 +18,7 @@ vu.builders.play = {
 			joined: function(person) { // (you)
 				var vbp = vu.builders.play, _ = vbp._,
 					cur = zero.core.current;
-				cur.person = person;
+				zero.core.util.setCurPer(person);
 				vu.controls.initCamera(_.selectors.cameras);
 				vu.controls.setTriggers(_.selectors.triggers, vu.live.meta);
 				vu.controls.setGestures(_.selectors.gestures, vu.live.meta);

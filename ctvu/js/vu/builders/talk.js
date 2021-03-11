@@ -7,7 +7,7 @@ vu.builders.talk = {
 			background: "img"
 		},
 		joined: function(person) {
-			zero.core.current.person = person;
+			zero.core.util.setCurPer(person);
 			vu.builders.talk._.initTriggers();
 		},
 		initTriggers: function() {

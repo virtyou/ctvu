@@ -5,7 +5,7 @@ vu.builders.tweak = {
 		selectors: {},
 		joined: function(person) {
 			var _ = vu.builders.tweak._, popts = _.opts;
-			zero.core.current.person = person;
+			zero.core.util.setCurPer(person);
 			for (var c in popts.colors) {
 				var comps = c.split(".").slice(1);
 				_.target = person.body;

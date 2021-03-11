@@ -943,7 +943,7 @@ vu.builders.zone = {
 				_.selectors.controls.update();
 			};
 			zero.core.util.join(vu.core.person(popts), function(person) {
-				zcc.person = person;
+				zero.core.util.setCurPer(person);
 				zcc.room.objects.forEach(_.regObj);
 				var r = vu.storage.get("room");
 				r ? _.set(r, true) : _.build();

@@ -4,7 +4,7 @@ vu.builders.vibe = {
 		accessories: core.config.ctvu.builders.accessories,
 		selectors: {},
 		joined: function(person) {
-			zero.core.current.person = person;
+			zero.core.util.setCurPer(person);
 			vu.builders.vibe._.loadVibes();
 		},
 		loadVibes: function() {
