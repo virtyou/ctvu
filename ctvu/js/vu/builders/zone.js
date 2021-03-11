@@ -784,8 +784,31 @@ vu.builders.zone = {
 				CT.dom.div([
 					"Environmental",
 					_.environmental()
+				], "padded bordered round mb5"),
+				CT.dom.div([
+					"Interactional",
+					_.interactional()
 				], "padded bordered round mb5")
 			];
+		},
+		interactional: function() {
+			var _ = vu.builders.zone._, selz = _.selectors,
+				sel = selz.interactional = CT.dom.div(),
+				zcc = zero.core.current, ro;
+			sel.update = function() {
+				ro = zcc.room.opts;
+				CT.dom.setContent(sel, [
+					"moshiness",
+					CT.dom.range(function(val) {
+						val = parseInt(val);
+						ro.moshy = val;
+						vu.storage.setOpts(ro.key, {
+							moshy: val
+						});
+					}, 0, 5, ro.moshy || 0, 1, "w1")
+				]);
+			};
+			return sel;
 		},
 		environmental: function() {
 			var _ = vu.builders.zone._, selz = _.selectors,
@@ -892,6 +915,7 @@ vu.builders.zone = {
 				selz.structural.update();
 				selz.furnishings.update();
 				selz.environmental.update();
+				selz.interactional.update();
 				selz.portal_requests.update();
 			}, name = room.name || room.environment;
 			_.opts = room;
