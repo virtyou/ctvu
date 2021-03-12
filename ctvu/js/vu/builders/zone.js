@@ -72,6 +72,13 @@ vu.builders.zone = {
 					cb(floor.grippy);
 				});
 		},
+		fmosh: function(floor, cb) {
+			return CT.dom.div([
+				"moshiness",
+				CT.dom.range(val => cb(parseInt(val)),
+					0, 5, floor.moshy || 0, 1, "w1")
+			], "topbordered padded margined");
+		},
 		fscroll: function(floor, cb) {
 			var fos = floor.opts.scroll, curval = fos ? (
 				"scroll " + ( fos.axis || "y" )
@@ -399,6 +406,10 @@ vu.builders.zone = {
 					}));
 					cont.push(_.fshift(item, function(sopts) {
 						fopts.shift = sopts;
+						_.strup(variety);
+					}));
+					cont.push(_.fmosh(fopts, function(moshiness) {
+						fopts.moshy = moshiness;
 						_.strup(variety);
 					}));
 				}
@@ -797,16 +808,12 @@ vu.builders.zone = {
 				zcc = zero.core.current, ro;
 			sel.update = function() {
 				ro = zcc.room.opts;
-				CT.dom.setContent(sel, [
-					"moshiness",
-					CT.dom.range(function(val) {
-						val = parseInt(val);
-						ro.moshy = val;
-						vu.storage.setOpts(ro.key, {
-							moshy: val
-						});
-					}, 0, 5, ro.moshy || 0, 1, "w1")
-				]);
+				CT.dom.setContent(sel, _.fmosh(ro, function(val) {
+					ro.moshy = val;
+					vu.storage.setOpts(ro.key, {
+						moshy: val
+					});
+				}));
 			};
 			return sel;
 		},
