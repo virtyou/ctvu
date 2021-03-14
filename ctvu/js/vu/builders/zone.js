@@ -355,10 +355,35 @@ vu.builders.zone = {
 		},
 		stx: function(item, cb) {
 			var tlink = CT.dom.link("no texture", function() {
-				vu.media.browse("background", function(img) {
-					item.setTexture(img.item);
-					tname(img.item);
-					cb(img.item);
+				CT.modal.choice({
+					prompt: "image or moving picture?",
+					data: ["image", "moving picture"],
+					cb: function(sel) {
+						if (sel == "image") {
+							vu.media.browse("background", function(img) {
+								item.setTexture(img.item);
+								tname(img.item);
+								cb({ texture: img.item, vstrip: null });
+							});
+						} else {
+							var vidz = templates.one.vstrip;
+							CT.modal.choice({
+								prompt: "select a moving picture",
+								data: Object.keys(vidz),
+								cb: function(vsel) {
+									var d = vidz[vsel];
+									item.update({
+										vstrip: d
+									});
+									tname(d.texture);
+									cb({
+										vstrip: d,
+										texture: null
+									});
+								}
+							});
+						}
+					}
 				});
 			}, null, "small right clearnode"), tname = function(tx) {
 				tlink.innerHTML = tx.split("/").pop().split(".").shift();
@@ -371,8 +396,8 @@ vu.builders.zone = {
 				item = zero.core.current.room[variety + i],
 				s3 = ["wall", "obstacle"].includes(variety);
 			var cont = [
-				_.stx(item, function(tx) {
-					fopts.texture = tx;
+				_.stx(item, function(txups) {
+					Object.assign(fopts, txups);
 					_.strup(variety);
 				}),
 				_.fname(item),
