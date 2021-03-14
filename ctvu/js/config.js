@@ -25,7 +25,7 @@
     },
     "loaders": {
         "customs": ["one.earring", "one.pony"],
-        "templates": ["one.body"],
+        "templates": ["one.body", "one.vstrip"],
         "environments": ["one.scrolly", "one.techno", "one.box", "one.kidroom"],
         "avatars": ["one.body.sassy", "one.body.kid"]
     },
