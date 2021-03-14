@@ -379,7 +379,7 @@ vu.builders.zone = {
 				_[s3 ? "scalers" : "fscale"](item, function(scale) {
 					fopts.scale = s3 ? scale : [scale, scale, scale];
 					_.strup(variety);
-				}, 5, 500, 5, variety == "wall" && ["x", "y"], "topbordered padded margined"),
+				}, 1, 500, 1, variety == "wall" && ["x", "y"], "topbordered padded margined"),
 				_.plevel(item, function(yval) {
 					fopts.position[1] = yval;
 					_.strup(variety);
