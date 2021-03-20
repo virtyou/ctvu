@@ -671,7 +671,7 @@ vu.builders.zone = {
 								obj.adjust("scale", dim, val);
 								obj.setBounds();
 								cb(scopts);
-							}, min || 0.3, max || 12, scale[dim], unit || 0.01, "w1")
+							}, min || 0.3, max || 256, scale[dim], unit || 0.1, "w1")
 						];
 					})
 				], cname || "padded bordered round mb5");
