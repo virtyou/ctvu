@@ -751,8 +751,8 @@ vu.builders.zone = {
 										if (base.stripset)
 											upobj.stripset = _.opts.stripset = base.stripset;
 										selz.base.update();
-										zero.core.current.room.update(upobj);
-//										vu.builders.zone.update();
+										(variety == "shell") ? _.set(_.opts) :
+											zero.core.current.room.update(upobj);
 										persist({
 											base: base.key
 										});
