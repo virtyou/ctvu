@@ -933,7 +933,10 @@ vu.builders.zone = {
 			vu.controls.initCamera(selz.cameras);
 		},
 		set: function(room, noUpdate) {
-			var _ = vu.builders.zone._, selz = _.selectors, upmenus = function() {
+			var _ = vu.builders.zone._, zcc = zero.core.current;
+			if (!zcc.room || !zcc.room.bounds)
+				return setTimeout(() => _.set(room, noUpdate), 500);
+			var selz = _.selectors, upmenus = function() {
 				selz.base.update();
 				selz.scale.update();
 				selz.color.update();
