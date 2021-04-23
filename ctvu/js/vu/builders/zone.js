@@ -135,13 +135,13 @@ vu.builders.zone = {
 				"Level",
 				CT.dom.range(function(val) {
 					var fval = parseInt(val);
-					furn.adjust("position", "y", fval);
+					furn.setLevel(fval);
 					if (cb)
 						cb(fval);
 					else {
 						var fp = furn.position();
 						vu.storage.setOpts(furn.opts.key, {
-							position: [fp.x, fp.y, fp.z]
+							position: [fp.x, fval, fp.z]
 						});
 					}
 				}, rbz.min.y, rbz.max.y, furn.position().y, 1, "w1")
