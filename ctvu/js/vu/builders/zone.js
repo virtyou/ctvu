@@ -463,7 +463,7 @@ vu.builders.zone = {
 				_.unfurn(furn),
 				_.fname(furn),
 				_.fscale(furn),
-				(furn.opts.name == "pool") && _.plevel(furn), // eh do better...
+				_.plevel(furn),
 				CT.dom.div([
 					"Rotation",
 					CT.dom.range(function(val) {
