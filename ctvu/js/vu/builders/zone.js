@@ -477,6 +477,10 @@ vu.builders.zone = {
 			 	furn.opts.material && _.materials(furn)
 			];
 		},
+		elemental: function(el) {
+			// TODO: add specialized controllers for fire/pool
+			return vu.builders.zone._.furnishing(el);
+		},
 		furn: function(furn) {
 			return CT.dom.div(vu.builders.zone._[furn.opts.kind](furn), "margined padded bordered round");
 		},
@@ -538,7 +542,7 @@ vu.builders.zone = {
 				CT.dom.setContent(selz.furnishings, [
 					CT.dom.button("add", function() {
 						CT.modal.choice({
-							data: ["furnishing", "poster", "portal", "screen", "stream"],
+							data: ["furnishing", "poster", "portal", "screen", "stream", "elemental"],
 							cb: _.selfurn
 						});
 					}, "up20 right"),
