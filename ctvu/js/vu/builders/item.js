@@ -5,8 +5,8 @@ vu.builders.item = {
 			"KMZ", "MD2", "MMD", "MTL", "NRRD", "OBJ", "PCD", "PDB", "PlayCanvas",
 			"PLY", "PVR", "RGBE", "STL", "SVG", "TGA", "TTF", "UTF8", "VRML", "VTK"],
 		kinds: ["furnishing", "shell", "wallpaper", "poster", "portal",
-			"clothing", "body", "head", "hair", "eye", "teeth", "teeth_top",
-			"tongue", "facial", "beard", "accessory","held"
+			"speaker", "clothing", "body", "head", "hair", "eye", "teeth",
+			"teeth_top", "tongue", "facial", "beard", "accessory","held"
 		].concat([
 			"aura", "pelvis", "lumbar", "ribs", "neck", "head", "finger",
 			"hip", "knee", "ankle", "toe", "clavicle", "shoulder", "elbow", "wrist"
