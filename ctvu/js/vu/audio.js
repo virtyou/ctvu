@@ -38,20 +38,9 @@ vu.audio.Controller = CT.Class({
 		(doPlay === true) && this.play(sound.kind, sound.name);
 	},
 	play: function(kind, name) {
-		var zcc = zero.core.current, d, n,
-			track = this[kind][name],
+		var track = this[kind][name],
 			player = this.players[kind];
-		zero.core.util.playAudio(player, track.item);
-		if (track.owners && track.owners.length) {
-			CT.cc.view({
-				identifier: "Resource (audio - " + kind + "): " + name,
-				owners: track.owners
-			});
-		} else if (zcc.adventure) {
-			[d, n] = name.split(": ");
-			zcc.adventure.menus.attribution("hearing",
-				n, "audio (" + kind + ")", d);
-		}
+		zero.core.util.playTrack(player, track);
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
