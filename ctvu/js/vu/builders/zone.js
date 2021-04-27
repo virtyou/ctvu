@@ -481,6 +481,30 @@ vu.builders.zone = {
 			// TODO: add specialized controllers for fire/pool
 			return vu.builders.zone._.furnishing(el);
 		},
+		playlist: function(sp) {
+			var pl = sp.opts.playlist = sp.opts.playlist || [],
+				s2n = (s) => CT.dom.div(s.name,
+					"bordered padded margined round"),
+				plist = CT.dom.div(pl.map(s2n));
+			return CT.dom.div([
+				CT.dom.button("add", function() {
+					vu.media.audio(function(song) {
+						pl.push(song);
+						vu.storage.setOpts(sp.opts.key, {
+							playlist: pl
+						});
+						plist.appendChild(s2n(song));
+					}, "music");
+				}, "right"),
+				"Playlist", plist
+			], "topbordered padded margined");
+		},
+		speaker: function(sp) {
+			var _ = vu.builders.zone._;
+			return _.furnishing(sp).concat([
+				_.playlist(sp)
+			]);
+		},
 		furn: function(furn) {
 			return CT.dom.div(vu.builders.zone._[furn.opts.kind](furn), "margined padded bordered round");
 		},
@@ -542,7 +566,7 @@ vu.builders.zone = {
 				CT.dom.setContent(selz.furnishings, [
 					CT.dom.button("add", function() {
 						CT.modal.choice({
-							data: ["furnishing", "poster", "portal", "screen", "stream", "elemental"],
+							data: ["furnishing", "poster", "portal", "screen", "stream", "elemental", "speaker"],
 							cb: _.selfurn
 						});
 					}, "up20 right"),
