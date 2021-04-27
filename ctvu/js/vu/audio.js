@@ -41,12 +41,7 @@ vu.audio.Controller = CT.Class({
 		var zcc = zero.core.current, d, n,
 			track = this[kind][name],
 			player = this.players[kind];
-		player.src = track.item;
-		player.play().catch(function() {
-			CT.modal.modal("let's get started!", function() {
-				player.play();
-			}, null, true);
-		});
+		zero.core.util.playAudio(player, track.item);
 		if (track.owners && track.owners.length) {
 			CT.cc.view({
 				identifier: "Resource (audio - " + kind + "): " + name,
