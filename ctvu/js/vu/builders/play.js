@@ -51,10 +51,11 @@ vu.builders.play = {
 			}
 		},
 		clickreg: function(thing) {
-			var isYou = vu.core.ischar(thing.opts.key),
+			var _ = vu.builders.play._,
+				isYou = vu.core.ischar(thing.opts.key),
 				target = thing.body || thing;
 			zero.core.click.register(target, function() {
-				CT.dom.setContent(vu.builders.play._.selectors.info, [
+				CT.dom.setContent(_.selectors.info, [
 					CT.dom.div(thing.name, "bigger"),
 					isYou ? [
 						CT.dom.div("(you)", "up20 right"),
@@ -71,7 +72,7 @@ vu.builders.play = {
 				]);
 				zero.core.camera.follow(target.looker || target);
 				if (!isYou) {
-					target.playPause();
+					target.playPause(_.audup);
 					CT.key.down("SHIFT") && zero.core.current.person.approach(target);
 				}
 			});
@@ -96,9 +97,9 @@ vu.builders.play = {
 			fdata.lights[lnum] = edata;
 			vu.live.zmeta(fdata);
 		},
-		audup: function(track) {
+		audup: function(track, player) {
 			var adata = {};
-			adata[track.kind] = track;
+			adata[player || track.kind] = track;
 			vu.live.zmeta({
 				audio: adata
 			});
