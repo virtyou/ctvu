@@ -66,7 +66,7 @@ vu.live = {
 				}
 				if ("audio" in data.meta)
 					for (aud in data.meta.audio)
-						zcc.audio.add(data.meta.audio[aud], true);
+						zcc.audio.add(data.meta.audio[aud], true, aud);
 				// TODO: video etc
 			},
 			meta: function(data) {
