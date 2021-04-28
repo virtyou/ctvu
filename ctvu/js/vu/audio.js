@@ -33,7 +33,9 @@ vu.audio.Controller = CT.Class({
 		this.add(track, true);
 		return track;
 	},
-	add: function(sound, doPlay) {
+	add: function(sound, doPlay, player) {
+		if (player && player != sound.kind)
+			return zero.core.Thing.get(player).playSong(sound);
 		this[sound.kind][sound.name] = sound;
 		(doPlay === true) && this.play(sound.kind, sound.name);
 	},
