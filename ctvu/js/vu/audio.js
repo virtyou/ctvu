@@ -33,30 +33,16 @@ vu.audio.Controller = CT.Class({
 		this.add(track, true);
 		return track;
 	},
-	add: function(sound, doPlay) {
+	add: function(sound, doPlay, player) {
+		if (player && player != sound.kind)
+			return zero.core.Thing.get(player).playSong(sound);
 		this[sound.kind][sound.name] = sound;
 		(doPlay === true) && this.play(sound.kind, sound.name);
 	},
 	play: function(kind, name) {
-		var zcc = zero.core.current, d, n,
-			track = this[kind][name],
+		var track = this[kind][name],
 			player = this.players[kind];
-		player.src = track.item;
-		player.play().catch(function() {
-			CT.modal.modal("let's get started!", function() {
-				player.play();
-			}, null, true);
-		});
-		if (track.owners && track.owners.length) {
-			CT.cc.view({
-				identifier: "Resource (audio - " + kind + "): " + name,
-				owners: track.owners
-			});
-		} else if (zcc.adventure) {
-			[d, n] = name.split(": ");
-			zcc.adventure.menus.attribution("hearing",
-				n, "audio (" + kind + ")", d);
-		}
+		zero.core.util.playTrack(player, track);
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
