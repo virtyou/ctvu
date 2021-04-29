@@ -1,6 +1,6 @@
 vu.color = {
 	set: function(target, color, prop, lnum, uplight) {
-		var copts = {}, rgb = vu.color.hex2rgb(color);
+		var copts = {}, rgb = zero.core.util.hex2rgb(color);
 		color = parseInt(color.slice(1), 16);
 		if (uplight) { // light
 			target.setColor(rgb);
@@ -35,7 +35,7 @@ vu.color = {
 					CT.log(n.value);
 					setTimeout(function() {
 						if (n.value.startsWith("rgba(")) {
-							n.value = vu.color.rgbToHex.apply(null,
+							n.value = zero.core.util.rgbToHex.apply(null,
 								n.value.slice(5,
 									-1).split(", ").map(s => parseInt(s)));
 							CT.log(n.value);
@@ -46,22 +46,5 @@ vu.color = {
 			});
 		});
 		return n;
-	},
-	// https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb#5624139
-	hex2rgb: function(hex) {
-		var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-		return result ? {
-			r: parseInt(result[1], 16) / 255,
-			g: parseInt(result[2], 16) / 255,
-			b: parseInt(result[3], 16) / 255
-		} : null;
-	},
-	componentToHex: function(c) {
-		var hex = c.toString(16);
-		return hex.length == 1 ? "0" + hex : hex;
-	},
-	rgbToHex: function(r, g, b) {
-		var c2h = vu.color.componentToHex;
-		return "#" + c2h(r) + c2h(g) + c2h(b);
 	}
 };

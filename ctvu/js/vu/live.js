@@ -54,11 +54,11 @@ vu.live = {
 				}, 500); // leave time for ejection
 			},
 			chmeta: function(data) {
-				var zcc = zero.core.current;
+				var zcc = zero.core.current, zcu = zero.core.util;
 				if ("lights" in data.meta) {
 					for (var ldata of Object.values(data.meta.lights)) {
 						var lig = zcc.room.lights[ldata.light];
-						ldata.color && lig.setColor(vu.color.hex2rgb(vu.color.componentToHex(ldata.color)));
+						ldata.color && lig.setColor(zcu.hex2rgb(zcu.componentToHex(ldata.color)));
 						if (ldata.position)
 							lig.thring.position[ldata.axis] = ldata.position;
 						("intensity" in ldata) && lig.setIntensity(ldata.intensity);

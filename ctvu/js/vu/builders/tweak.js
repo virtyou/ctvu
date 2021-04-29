@@ -4,15 +4,16 @@ vu.builders.tweak = {
 		accessories: core.config.ctvu.builders.accessories,
 		selectors: {},
 		joined: function(person) {
-			var _ = vu.builders.tweak._, popts = _.opts;
-			zero.core.util.setCurPer(person);
+			var _ = vu.builders.tweak._,
+				zcu = zero.core.util, popts = _.opts;
+			zcu.setCurPer(person);
 			for (var c in popts.colors) {
 				var comps = c.split(".").slice(1);
 				_.target = person.body;
 				comps.forEach(function(comp) {
 					_.target = _.target[comp];
 				});
-				_.target.material.color = vu.core.hex2rgb(popts.colors[c]);
+				_.target.material.color = zcu.hex2rgb(popts.colors[c]);
 			}
 			_.partLabel(person.body, null, true);
 
@@ -107,7 +108,7 @@ vu.builders.tweak = {
 			}));
 		},
 		setColor: function(target, color, prop) {
-			target.setColor(vu.color.hex2rgb(color));
+			target.setColor(zero.core.util.hex2rgb(color));
 			if (core.config.ctvu.storage.mode == "local") {
 				vu.builders.tweak._.opts[prop][target.path] = color;
 				vu.builders.tweak.persist();
