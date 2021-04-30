@@ -499,21 +499,41 @@ vu.builders.zone = {
 				"Playlist", plist
 			], "topbordered padded margined");
 		},
+		swaptions: function(cb) {
+			var _ = vu.builders.zone._,
+				vswarms = templates.one.vswarm;
+			CT.modal.choice({
+				prompt: "select a voxel swarm",
+				data: Object.keys(vswarms),
+				cb: function(vswarm) {
+					_.part(null, "swarm", cb, {
+						name: vswarm,
+						kind: "swarm",
+						thing: "Swarm",
+						frames: vswarms[vswarm]
+					});
+				}
+			});
+		},
 		speaker: function(sp) {
 			var _ = vu.builders.zone._;
 			return _.furnishing(sp).concat([
 				_.playlist(sp)
 			]);
 		},
+		swarm: function(sw) {
+			// TODO: add specialized controllers for swarm
+			return vu.builders.zone._.furnishing(sw);
+		},
 		furn: function(furn) {
 			return CT.dom.div(vu.builders.zone._[furn.opts.kind](furn), "margined padded bordered round");
 		},
-		part: function(thing, kind, cb) {
+		part: function(thing, kind, cb, eoptsopts) {
 			var _ = vu.builders.zone._, selz = _.selectors, eopts = {
 				parent: _.opts.key,
 				modelName: "furnishing"
 			}, zccr = zero.core.current.room;
-			if (thing) // not required for screen
+			if (thing) // not required for screen/swarm
 				eopts.base = thing.key;
 			if (kind == "poster" || kind == "screen" || kind == "stream") { // TODO: probs do this elsewhere/better!
 				eopts.opts = {
@@ -526,6 +546,8 @@ vu.builders.zone = {
 				}
 			} else if (kind == "portal")
 				eopts.opts = { wall: 0 };
+			else if (eoptsopts)
+				eopts.opts = eoptsopts;
 			if (thing && zccr[thing.name]) {
 				eopts.opts = eopts.opts || {};
 				if (!eopts.opts.name) {
@@ -547,6 +569,8 @@ vu.builders.zone = {
 		},
 		selfurn: function(kind, cb) {
 			var _ = vu.builders.zone._;
+			if (kind == "swarm")
+				return _.swaptions(cb);
 			if (kind == "screen" || kind == "stream")
 				return _.part(null, kind, cb);
 			var options = vu.storage.get(kind);
@@ -566,7 +590,7 @@ vu.builders.zone = {
 				CT.dom.setContent(selz.furnishings, [
 					CT.dom.button("add", function() {
 						CT.modal.choice({
-							data: ["furnishing", "poster", "portal", "screen", "stream", "elemental", "speaker"],
+							data: ["furnishing", "poster", "portal", "screen", "stream", "elemental", "speaker", "swarm"],
 							cb: _.selfurn
 						});
 					}, "up20 right"),
