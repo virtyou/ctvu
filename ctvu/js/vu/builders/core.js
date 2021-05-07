@@ -4,8 +4,9 @@ vu.builders.core = {
 			_ = vu.builders[pname]._;
 		core.config.ctzero.room = vu.core.room();
 		if (pname == "item") {
-			delete core.config.ctzero.room.texture;
-			delete core.config.ctzero.room.objects;
+			["texture", "objects", "obstacle", "floor", "wall", "ramp"].forEach(function(item) {
+				delete core.config.ctzero.room[item];
+			});
 		}
 		zero.core.util.init();
 		if (pname == "item")
