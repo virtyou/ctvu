@@ -3,7 +3,7 @@ vu.builders.core = {
 		var pname = location.pathname.split("/").pop().split(".")[0],
 			_ = vu.builders[pname]._;
 		core.config.ctzero.room = vu.core.room();
-		if (pname == "item") {
+		if (["item", "arcraft"].includes(pname)) {
 			["texture", "objects", "obstacle", "floor", "wall", "ramp"].forEach(function(item) {
 				delete core.config.ctzero.room[item];
 			});
@@ -11,7 +11,7 @@ vu.builders.core = {
 		zero.core.util.init();
 		if (pname == "item")
 			zero.core.camera.move({ x: 0, y: 0, z: 200 });
-		if (["zone", "item"].indexOf(pname) != -1)
+		if (["zone", "item", "arcraft"].includes(pname))
 			CT.dom.addContent("ctheader", _.linx());
 		else {
 			if (pname == "play")
