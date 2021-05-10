@@ -25,12 +25,29 @@ vu.builders.arcraft = {
 				return n;
 			},
 			lights: function() {
-				var n = CT.dom.div(), _ = vu.builders.arcraft._;
+				var n = CT.dom.div(), _ = vu.builders.arcraft._,
+					lig, r = zero.core.current.room;
 				n.update = function() {
-					// basic zone-like controls
+					r.setLights(_.aug.lights);
+					CT.dom.setContent(n, vu.party.lights(_.lightup, true));
 				};
 				return n;
 			}
+		},
+		lightup: function(lnum, property, val, subprop) {
+			var _ = vu.builders.arcraft._, alz = _.aug.lights,
+				lig, rlz = zero.core.current.room.opts.lights;
+			if (alz.length != rlz.length)
+				alz = _.aug.lights = rlz;
+			lig = _.aug.lights[lnum];
+			if (subprop != undefined)
+				lig[property][subprop] = val;
+			else
+				lig[property] = val;
+			vu.storage.edit({
+				key: _.aug.key,
+				lights: _.aug.lights
+			});
 		},
 		setup: function() {
 			var _ = vu.builders.arcraft._, genz = _.generators, section;
