@@ -1,23 +1,60 @@
 vu.builders.arcraft = {
 	_: {
 		selectors: {},
+		sections: {},
 		menus: {
 			basic: "topleft",
 			markers: "topright",
 			lights: "bottomleft"
 		},
+		generators: {
+			basic: function() {
+				var n = CT.dom.div(), _ = vu.builders.arcraft._;
+				n.update = function() {
+					// qrcode
+				};
+				return n;
+			},
+			markers: function() {
+				var n = CT.dom.div(), _ = vu.builders.arcraft._;
+				n.update = function() {
+					// hiro/kanji/0-7 -> thing/vswarm/primitive
+				};
+				return n;
+			},
+			lights: function() {
+				var n = CT.dom.div(), _ = vu.builders.arcraft._;
+				n.update = function() {
+					// basic zone-like controls
+				};
+				return n;
+			}
+		},
 		setup: function() {
-			var _ = vu.builders.arcraft._, selz = _.selectors, section;
-			for (section in _.menus)
-				selz[section] = CT.dom.div();
+			var _ = vu.builders.arcraft._, genz = _.generators, section;
+			for (section in genz)
+				_.sections[section] = genz[section]();
 		},
 		load: function(aug) {
-			var _ = vu.builders.arcraft._, selz = _.selectors;
+			var _ = vu.builders.arcraft._, secz = _.sections;
+			_.aug = aug;
 			_.sharer.update(aug);
 			CT.dom.setContent(_.curname, aug.name);
+			secz.basic.update();
+			secz.markers.update();
+			secz.lights.update();
 		},
 		swap: function() {
-
+			var _ = vu.builders.arcraft._;
+			CT.modal.choice({
+				prompt: "select augmentation",
+				data: [{ name: "new augmentation" }].concat(_.augs),
+				cb: function(aug) {
+					if (aug.name == "new augmentation")
+						return _.craft();
+					_.load(aug);
+				}
+			});
 		},
 		craft: function() {
 			var _ = vu.builders.arcraft._;
@@ -30,7 +67,7 @@ vu.builders.arcraft = {
 						name: name
 					}, function(item) {
 						_.augs.push(item);
-						_.swap(item);
+						_.load(item);
 					});
 				}
 			});
@@ -40,7 +77,7 @@ vu.builders.arcraft = {
 			CT.db.get("augmentation", function(augs) {
 				_.augs = augs;
 				if (augs.length)
-					_.swap(augs[0]);
+					_.load(augs[0]);
 				else
 					_.craft();
 			}, 1000, null, null, {
