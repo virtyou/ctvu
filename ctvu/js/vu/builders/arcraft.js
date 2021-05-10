@@ -1,7 +1,6 @@
 vu.builders.arcraft = {
 	_: {
 		selectors: {},
-		sections: {},
 		menus: {
 			basic: "topleft",
 			markers: "topright",
@@ -9,9 +8,12 @@ vu.builders.arcraft = {
 		},
 		generators: {
 			basic: function() {
-				var n = CT.dom.div(), _ = vu.builders.arcraft._;
+				var alink, qn, n = CT.dom.div(), _ = vu.builders.arcraft._;
 				n.update = function() {
-					// qrcode
+					alink = "/vu/ar.html#" + _.aug.key;
+					qn = CT.dom.div();
+					new QRCode(qn, alink);
+					CT.dom.setContent(n, [ qn, CT.dom.link(_.aug.name, null, alink) ]);
 				};
 				return n;
 			},
@@ -33,16 +35,16 @@ vu.builders.arcraft = {
 		setup: function() {
 			var _ = vu.builders.arcraft._, genz = _.generators, section;
 			for (section in genz)
-				_.sections[section] = genz[section]();
+				_.selectors[section] = genz[section]();
 		},
 		load: function(aug) {
-			var _ = vu.builders.arcraft._, secz = _.sections;
+			var _ = vu.builders.arcraft._, selz = _.selectors;
 			_.aug = aug;
 			_.sharer.update(aug);
 			CT.dom.setContent(_.curname, aug.name);
-			secz.basic.update();
-			secz.markers.update();
-			secz.lights.update();
+			selz.basic.update();
+			selz.markers.update();
+			selz.lights.update();
 		},
 		swap: function() {
 			var _ = vu.builders.arcraft._;
