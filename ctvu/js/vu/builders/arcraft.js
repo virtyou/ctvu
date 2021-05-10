@@ -32,7 +32,7 @@ vu.builders.arcraft = {
 		}
 	},
 	menus: function() {
-		var section, _ = vu.builders.test._, selz = _.selectors;
+		var section, _ = vu.builders.arcraft._, selz = _.selectors;
 		_.setup();
 		for (section in _.menus)
 			vu.core.menu(section, _.menus[section], selz[section]).show("ctmain");
