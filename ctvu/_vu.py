@@ -42,7 +42,7 @@ def response():
 			kind=cgi_get("kind"),
 			exalt=Resource).get().json())
 	if action == "augmentation":
-		aug = Augmentation(owners=cgi_get("owners"), name=cgi_get("name"))
+		aug = Augmentation(owners=cgi_get("owners"), name=cgi_get("name"), lights=[{}])
 		aug.put()
 		succeed(aug.data())
 	if action == "room":
