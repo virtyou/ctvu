@@ -15,6 +15,7 @@ CT.require("vu.controls");
 CT.require("vu.storage");
 CT.require("vu.builders.core");
 CT.require("vu.builders.arcraft");
+CT.scriptImport("CT.lib.qrcode");
 
 CT.onload(function() {
 	CT.initCore();
