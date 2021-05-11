@@ -59,10 +59,17 @@ vu.builders.arcraft = {
 				});
 			},
 			list: function() {
-				var _ = vu.builders.arcraft._;
-
-				// TODO: this!
-				
+				var _ = vu.builders.arcraft._, t;
+				return Object.keys(_.aug.markers).map(function(m) {
+					t = _.aug.markers[m];
+					if (typeof t == "string")
+						t = _.thinkeys[t];
+					return CT.dom.div([
+						CT.dom.div(m, "bold centered"),
+						CT.dom.img("/adata/" + m + ".png", "w1"),
+						CT.dom.link(t.name, () => _.thingup(t))
+					], "bordered padded margined round");
+				});
 			}
 		},
 		generators: {
@@ -95,6 +102,11 @@ vu.builders.arcraft = {
 				};
 				return n;
 			}
+		},
+		thingup: function(t) {
+			var _ = vu.builders.arcraft._, r = zero.core.current.room;
+			_.thing && r.removeObject(_.thing);
+			_.thing = r.addObject(t);
 		},
 		lightup: function(lnum, property, val, subprop) {
 			var _ = vu.builders.arcraft._, alz = _.aug.lights,
@@ -172,6 +184,10 @@ vu.builders.arcraft = {
 			var _ = vu.builders.arcraft._;
 			CT.db.get("thing", function(things) {
 				_.things = things;
+				_.thinkeys = {};
+				things.forEach(function(t) {
+					_.thinkeys[t.key] = t;
+				});
 			}, 1000);
 		},
 		linx: function() {
