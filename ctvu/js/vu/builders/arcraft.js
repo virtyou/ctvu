@@ -88,18 +88,18 @@ vu.builders.arcraft = {
 				var n = CT.dom.div(), m = vu.builders.arcraft._.marker;
 				n.update = function() { // hiro/kanji/0-7 -> thing/vswarm/primitive
 					CT.dom.setContent(n, [
-						CT.dom.button("add", m.craft),
+						CT.dom.button("add", m.craft, "right"),
 						m.list()
 					]);
 				};
 				return n;
 			},
 			lights: function() {
-				var n = CT.dom.div(), _ = vu.builders.arcraft._,
-					lig, r = zero.core.current.room;
+				var n = CT.dom.div(), _ = vu.builders.arcraft._;
+				n.controls = vu.party.lights(_.lightup, true);
+				n.appendChild(n.controls);
 				n.update = function() {
-					r.setLights(_.aug.lights);
-					CT.dom.setContent(n, vu.party.lights(_.lightup, true));
+					zero.core.current.room.setLights(_.aug.lights, n.controls.update);
 				};
 				return n;
 			}
@@ -171,7 +171,7 @@ vu.builders.arcraft = {
 			CT.db.get("augmentation", function(augs) {
 				_.augs = augs;
 				if (augs.length)
-					_.load(augs[0]);
+					zero.core.current.room.onReady(() => _.load(augs[0]));
 				else
 					_.craft();
 			}, 1000, null, null, {
