@@ -6,6 +6,58 @@ vu.builders.arcraft = {
 			markers: "topright",
 			lights: "bottomleft"
 		},
+		marker: {
+			pattern: ["hiro", "kanji"],
+			barcode: [0, 1, 2, 3, 4, 5, 6, 7],
+			anchor: function(cb) {
+				var _ = vu.builders.arcraft._, m = _.marker;
+				CT.modal.choice({
+					prompt: "what kind of marker?",
+					data: ["pattern", "barcode"], // TODO: custom
+					cb: function(variety) {
+						CT.modal.choice({
+							prompt: "what kind of " + variety + "?",
+							data: m[variety],
+							cb: cb
+						});
+					}
+				});
+			},
+			augmentation: function(cb) {
+				var options, _ = vu.builders.arcraft._, m = _.marker;
+				CT.modal.choice({
+					prompt: "what kind of augmentation?",
+					data: ["thing", "voxel swarm"], // TODO: primitives [w/ material controls]
+					cb: function(variety) {
+						options = _[variety] || templates.one.vswarm;
+						CT.modal.choice({
+							prompt: "select something",
+							data: options,
+							cb: t => cb(t.key || t)
+						});
+					}
+				});
+			},
+			craft: function() {
+				var _ = vu.builders.arcraft._, m = _.marker;
+				m.anchor(function(marker) {
+					m.augmentation(function(aug) {
+						_.aug.markers[marker] = aug;
+						vu.storage.edit({
+							key: _.aug.key,
+							markers: _.aug.markers
+						});
+						_.selectors.markers.update();
+					});
+				});
+			},
+			list: function() {
+				var _ = vu.builders.arcraft._;
+
+				// TODO: this!
+				
+			}
+		},
 		generators: {
 			basic: function() {
 				var alink, qn, n = CT.dom.div(), _ = vu.builders.arcraft._;
@@ -18,9 +70,12 @@ vu.builders.arcraft = {
 				return n;
 			},
 			markers: function() {
-				var n = CT.dom.div(), _ = vu.builders.arcraft._;
-				n.update = function() {
-					// hiro/kanji/0-7 -> thing/vswarm/primitive
+				var n = CT.dom.div(), m = vu.builders.arcraft._.marker;
+				n.update = function() { // hiro/kanji/0-7 -> thing/vswarm/primitive
+					CT.dom.setContent(n, [
+						CT.dom.button("add", m.craft),
+						m.list()
+					]);
 				};
 				return n;
 			},
@@ -106,11 +161,18 @@ vu.builders.arcraft = {
 				}
 			});
 		},
+		getThings: function() {
+			var _ = vu.builders.arcraft._;
+			CT.db.get("thing", function(things) {
+				_.things = things;
+			}, 1000);
+		},
 		linx: function() {
 			var _ = vu.builders.arcraft._;
 			_.sharer = vu.core.sharer();
 			_.curname = CT.dom.span(null, "bold");
 			_.getAugmentations();
+			_.getThings();
 			return CT.dom.div([
 				[
 					CT.dom.span("viewing:"),
