@@ -59,14 +59,15 @@ vu.builders.arcraft = {
 				});
 			},
 			list: function() {
-				var _ = vu.builders.arcraft._, t;
+				var _ = vu.builders.arcraft._, t, i;
 				return Object.keys(_.aug.markers).map(function(m) {
 					t = _.aug.markers[m];
 					if (typeof t == "string")
 						t = _.thinkeys[t];
+					i = "/adata/" + m + ".png";
 					return CT.dom.div([
-						CT.dom.div(m, "bold centered"),
-						CT.dom.img("/adata/" + m + ".png", "w1"),
+						CT.dom.link(m, null, i, "bold block centered", null, null, true),
+						CT.dom.img(i, "w1"),
 						CT.dom.link(t.name, () => _.thingup(t))
 					], "bordered padded margined round");
 				});
