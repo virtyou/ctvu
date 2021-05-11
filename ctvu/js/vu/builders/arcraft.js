@@ -24,16 +24,23 @@ vu.builders.arcraft = {
 				});
 			},
 			augmentation: function(cb) {
-				var options, _ = vu.builders.arcraft._, m = _.marker;
+				var _ = vu.builders.arcraft._, vswarmz = templates.one.vswarm, options;
 				CT.modal.choice({
 					prompt: "what kind of augmentation?",
 					data: ["thing", "voxel swarm"], // TODO: primitives [w/ material controls]
 					cb: function(variety) {
-						options = _[variety] || templates.one.vswarm;
+						options = _[variety] || Object.keys(vswarmz);
 						CT.modal.choice({
 							prompt: "select something",
 							data: options,
-							cb: t => cb(t.key || t)
+							cb: function(t) {
+								cb(t.key || {
+									name: t,
+									kind: "swarm",
+									thing: "Swarm",
+									frames: vswarmz[t]
+								});
+							}
 						});
 					}
 				});
