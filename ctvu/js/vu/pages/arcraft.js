@@ -11,11 +11,13 @@ CT.require("core");
 CT.require("user.core");
 CT.require("zero.core");
 CT.require("vu.core");
+CT.require("vu.color");
 CT.require("vu.party");
 CT.require("vu.storage");
 CT.require("vu.builders.core");
 CT.require("vu.builders.arcraft");
 CT.scriptImport("CT.lib.qrcode");
+CT.scriptImport("CT.lib.colorPicker");
 
 CT.onload(function() {
 	CT.initCore();
