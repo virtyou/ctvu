@@ -29,7 +29,7 @@ vu.builders.arcraft = {
 					prompt: "what kind of augmentation?",
 					data: ["thing", "voxel swarm"], // TODO: primitives [w/ material controls]
 					cb: function(variety) {
-						options = _[variety] || Object.keys(vswarmz);
+						options = _[variety + "s"] || Object.keys(vswarmz);
 						CT.modal.choice({
 							prompt: "select something",
 							data: options,
@@ -64,10 +64,18 @@ vu.builders.arcraft = {
 					t = _.aug.markers[m];
 					if (typeof t == "string")
 						t = _.thinkeys[t];
-					i = "/adata/" + m + ".png";
+					i = "/ardata/" + m + ".png";
 					return CT.dom.div([
-						CT.dom.link(m, null, i, "bold block centered", null, null, true),
-						CT.dom.img(i, "w1"),
+						CT.dom.button("remove", function() {
+							delete _.aug.markers[m];
+							vu.storage.edit({
+								key: _.aug.key,
+								markers: _.aug.markers
+							});
+							_.selectors.markers.update();
+						}, "right"),
+						CT.dom.link(m, null, i, "bold", null, null, true),
+						CT.dom.img(i, "block w100p"),
 						CT.dom.link(t.name, () => _.thingup(t))
 					], "bordered padded margined round");
 				});
@@ -88,7 +96,7 @@ vu.builders.arcraft = {
 				var n = CT.dom.div(), m = vu.builders.arcraft._.marker;
 				n.update = function() { // hiro/kanji/0-7 -> thing/vswarm/primitive
 					CT.dom.setContent(n, [
-						CT.dom.button("add", m.craft, "right"),
+						CT.dom.button("add", m.craft, "vcrunch right"),
 						m.list()
 					]);
 				};
@@ -189,7 +197,7 @@ vu.builders.arcraft = {
 				things.forEach(function(t) {
 					_.thinkeys[t.key] = t;
 				});
-			}, 1000);
+			}, 1000, null, null, null, null, null, "json");
 		},
 		linx: function() {
 			var _ = vu.builders.arcraft._;
