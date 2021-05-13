@@ -6,6 +6,46 @@ vu.builders.arcraft = {
 			markers: "topright",
 			lights: "bottomleft"
 		},
+		augmentation: {
+			video: function(cb) {
+				var vopts = {
+					autoplay: true,
+					planeGeometry: [2, 2],
+					rotation: [Math.PI / 2, 0, 0],
+					name: "video" + CT.data.random(10000),
+					thringopts: {
+						rotation: [-Math.PI / 2, 0, 0]
+					}
+				}, m = CT.modal.modal(vu.media.selector(vopts, "video", function() {
+					m.hide();
+					cb(vopts);
+				}, true));
+			},
+			craft: function(cb) {
+				var _ = vu.builders.arcraft._, vswarmz = templates.one.vswarm, options;
+				CT.modal.choice({
+					prompt: "what kind of augmentation?",
+					data: ["thing", "video", "voxel swarm"], // TODO: primitives [w/ material controls]
+					cb: function(variety) {
+						if (variety == "video")
+							return _.augmentation.video(cb);
+						options = _[variety + "s"] || Object.keys(vswarmz);
+						CT.modal.choice({
+							prompt: "select something",
+							data: options,
+							cb: function(t) {
+								cb(t.key || {
+									name: t,
+									kind: "swarm",
+									thing: "Swarm",
+									frames: vswarmz[t]
+								});
+							}
+						});
+					}
+				});
+			},
+		},
 		marker: {
 			pattern: ["hiro", "kanji"],
 			barcode: [0, 1, 2, 3, 4, 5, 6, 7],
@@ -23,32 +63,10 @@ vu.builders.arcraft = {
 					}
 				});
 			},
-			augmentation: function(cb) {
-				var _ = vu.builders.arcraft._, vswarmz = templates.one.vswarm, options;
-				CT.modal.choice({
-					prompt: "what kind of augmentation?",
-					data: ["thing", "voxel swarm"], // TODO: primitives [w/ material controls]
-					cb: function(variety) {
-						options = _[variety + "s"] || Object.keys(vswarmz);
-						CT.modal.choice({
-							prompt: "select something",
-							data: options,
-							cb: function(t) {
-								cb(t.key || {
-									name: t,
-									kind: "swarm",
-									thing: "Swarm",
-									frames: vswarmz[t]
-								});
-							}
-						});
-					}
-				});
-			},
 			craft: function() {
-				var _ = vu.builders.arcraft._, m = _.marker;
-				m.anchor(function(marker) {
-					m.augmentation(function(aug) {
+				var _ = vu.builders.arcraft._;
+				_.marker.anchor(function(marker) {
+					_.augmentation.craft(function(aug) {
 						_.aug.markers[marker] = aug;
 						vu.storage.edit({
 							key: _.aug.key,
