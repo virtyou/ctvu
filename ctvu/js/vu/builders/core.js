@@ -1,16 +1,16 @@
 vu.builders.core = {
 	init: function() {
 		var pname = location.pathname.split("/").pop().split(".")[0],
-			_ = vu.builders[pname]._;
+			_ = vu.builders[pname]._, isiora = ["item", "arcraft"].includes(pname);
 		core.config.ctzero.room = vu.core.room();
-		if (pname == "item") {
-			delete core.config.ctzero.room.texture;
-			delete core.config.ctzero.room.objects;
-		}
+		isiora && ["texture", "objects", "obstacle", "floor", "wall", "ramp"].forEach(function(item) {
+			delete core.config.ctzero.room[item];
+		});
 		zero.core.util.init();
-		if (pname == "item")
-			zero.core.camera.move({ x: 0, y: 0, z: 200 });
-		if (["zone", "item"].indexOf(pname) != -1)
+		isiora && zero.core.camera.move({
+			x: 0, y: 0, z: pname == "item" && 200 || 20
+		});
+		if (isiora || pname == "zone")
 			CT.dom.addContent("ctheader", _.linx());
 		else {
 			if (pname == "play")

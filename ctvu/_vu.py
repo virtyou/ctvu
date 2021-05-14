@@ -1,9 +1,9 @@
 from cantools.web import respond, succeed, fail, cgi_get, read_file
 from ctone.spawners import person, thing, asset, room, exists
-from model import db, Member, Person, Room, Resource
+from model import db, Member, Person, Room, Resource, Augmentation
 
 def response():
-	action = cgi_get("action", choices=["person", "import", "thing", "resource", "asset", "room", "ready", "share"])
+	action = cgi_get("action", choices=["person", "import", "thing", "resource", "asset", "augmentation", "room", "ready", "share"])
 	if action == "resource":
 		key = cgi_get("key", required=False)
 		dkey = cgi_get("data", required=False)
@@ -41,6 +41,10 @@ def response():
 			data=read_file(cgi_get("data")),
 			kind=cgi_get("kind"),
 			exalt=Resource).get().json())
+	if action == "augmentation":
+		aug = Augmentation(owners=cgi_get("owners"), name=cgi_get("name"))
+		aug.put()
+		succeed(aug.data())
 	if action == "room":
 		succeed(room(cgi_get("name"), cgi_get("owner"),
 			cgi_get("environment", required=False),

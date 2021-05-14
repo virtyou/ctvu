@@ -51,7 +51,7 @@ vu.party = {
 						cb: function(variety) {
 							room.addLight({
 								variety: variety
-							});
+							}, null, true);
 							lnode.update();
 						}
 					});

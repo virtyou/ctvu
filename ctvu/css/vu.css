@@ -108,6 +108,11 @@ iframe {
 	left: 287px;
 }
 
+#vnode .all0 canvas {
+	margin-top: 0 !important;
+	margin-left: 0 !important;
+}
+
 #listening_indicator {
 	position: absolute;
 	top: 0;
@@ -252,6 +257,9 @@ img.right.h30p.up5 {
 /*	max-width: calc(100% - 410px);*/
 	max-width: 30%;
 	max-height: 50%;
+}
+.gmenu.markers {
+	max-width: 300px;
 }
 .gmenu.actors {
 	min-width: 110px;
