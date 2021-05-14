@@ -258,6 +258,9 @@ img.right.h30p.up5 {
 	max-width: 30%;
 	max-height: 50%;
 }
+.gmenu.markers {
+	max-width: 300px;
+}
 .gmenu.actors {
 	min-width: 110px;
 /*	max-width: 416px;*/
