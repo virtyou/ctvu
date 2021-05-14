@@ -24,6 +24,7 @@ CT.scriptImport("CT.lib.colorPicker");
 CT.onload(function() {
 	CT.initCore();
 	vu.core.init();
+	vu.media.init();
 	vu.storage.init(function() {
 		// menu
 		vu.builders.arcraft.menus();
