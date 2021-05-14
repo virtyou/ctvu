@@ -7,7 +7,9 @@ vu.builders.core = {
 			delete core.config.ctzero.room[item];
 		});
 		zero.core.util.init();
-		isiora && zero.core.camera.move({ x: 0, y: 0, z: 200 });
+		isiora && zero.core.camera.move({
+			x: 0, y: 0, z: pname == "item" && 200 || 20
+		});
 		if (isiora || pname == "zone")
 			CT.dom.addContent("ctheader", _.linx());
 		else {
