@@ -7,19 +7,10 @@ vu.builders.arcraft = {
 			lights: "bottomleft"
 		},
 		augmentation: {
-			video: function(cb) {
-				var vopts = {
-					autoplay: true,
-					planeGeometry: [2, 2],
-					rotation: [Math.PI / 2, 0, 0],
-					name: "video" + CT.data.random(10000),
-					thringopts: {
-						rotation: [-Math.PI / 2, 0, 0]
-					}
-				}, m = CT.modal.modal(vu.media.selector(vopts, "video", function() {
-					m.hide();
-					cb(vopts);
-				}, true));
+			video: function(t, cb) {
+				return vu.media.selector(t, "video", function() {
+					cb(t);
+				}, true);
 			},
 			craft: function(cb) {
 				var _ = vu.builders.arcraft._, vswarmz = templates.one.vswarm, options;
@@ -27,8 +18,17 @@ vu.builders.arcraft = {
 					prompt: "what kind of augmentation?",
 					data: ["thing", "video", "voxel swarm"], // TODO: primitives [w/ material controls]
 					cb: function(variety) {
-						if (variety == "video")
-							return _.augmentation.video(cb);
+						if (variety == "video") {
+							return cb({
+								kind: "video",
+								autoplay: true,
+								planeGeometry: [2, 2],
+								rotation: [Math.PI / 2, 0, 0],
+								thringopts: {
+									rotation: [-Math.PI / 2, 0, 0]
+								}
+							});
+						}
 						options = _[variety + "s"] || Object.keys(vswarmz);
 						CT.modal.choice({
 							prompt: "select something",
@@ -45,10 +45,25 @@ vu.builders.arcraft = {
 					}
 				});
 			},
+			controllers: function(t, cb) {
+				var _ = vu.builders.arcraft._, nz = [
+					CT.dom.link(t.name || t.video.name, () => _.thingup(t))
+				];
+				if (t.kind == "video")
+					nz.push(_.augmentation.video(t, cb));
+				return nz;
+			}
 		},
 		marker: {
 			pattern: ["hiro", "kanji"],
 			barcode: [0, 1, 2, 3, 4, 5, 6, 7],
+			up: function() {
+				var _ = vu.builders.arcraft._;
+				vu.storage.edit({
+					key: _.aug.key,
+					markers: _.aug.markers
+				});
+			},
 			anchor: function(cb) {
 				var _ = vu.builders.arcraft._, m = _.marker;
 				CT.modal.choice({
@@ -68,10 +83,7 @@ vu.builders.arcraft = {
 				_.marker.anchor(function(marker) {
 					_.augmentation.craft(function(aug) {
 						_.aug.markers[marker] = aug;
-						vu.storage.edit({
-							key: _.aug.key,
-							markers: _.aug.markers
-						});
+						_.marker.up();
 						_.selectors.markers.update();
 					});
 				});
@@ -94,7 +106,7 @@ vu.builders.arcraft = {
 						}, "right"),
 						CT.dom.link(m, null, i, "bold", null, null, true),
 						CT.dom.img(i, "block w100p"),
-						CT.dom.link(t.name, () => _.thingup(t))
+						_.augmentation.controllers(t, _.marker.up)
 					], "bordered padded margined round");
 				});
 			}
