@@ -260,6 +260,7 @@ img.right.h30p.up5 {
 }
 .gmenu.markers {
 	max-width: 300px;
+	min-width: 120px;
 }
 .gmenu.actors {
 	min-width: 110px;
