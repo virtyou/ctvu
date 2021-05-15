@@ -51,11 +51,13 @@ vu.party = {
 						cb: function(variety) {
 							room.addLight({
 								variety: variety
-							}, null, true);
-							lnode.update();
+							}, function() {
+								lnode.update();
+								updater();
+							}, true);
 						}
 					});
-				}, "vcrunch right"),
+				}, "up20 right"),
 				room.lights.map(function(light, i) {
 					color = vu.color.selector(light, null, i, function(col, lnum) {
 						updater(lnum, "color", col);
@@ -69,6 +71,7 @@ vu.party = {
 						addAndRemove && CT.dom.button("remove", function() {
 							room.removeLight(light);
 							lnode.update();
+							updater();
 						}, "up5 right"),
 						light.opts.variety,
 						CT.dom.div([
