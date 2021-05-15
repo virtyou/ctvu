@@ -9,6 +9,7 @@ vu.builders.arcraft = {
 		augmentation: {
 			video: function(t, cb) {
 				return vu.media.selector(t, "video", function() {
+					t.name = t.video.name;
 					cb(t);
 				}, true);
 			},
@@ -47,7 +48,7 @@ vu.builders.arcraft = {
 			},
 			controllers: function(t, cb) {
 				var _ = vu.builders.arcraft._, nz = [
-					CT.dom.link(t.name || t.video.name, () => _.thingup(t))
+					CT.dom.link(t.name || "unnamed", () => _.thingup(t))
 				];
 				if (t.kind == "video")
 					nz.push(_.augmentation.video(t, cb));
@@ -126,7 +127,7 @@ vu.builders.arcraft = {
 				var n = CT.dom.div(), m = vu.builders.arcraft._.marker;
 				n.update = function() { // hiro/kanji/0-7 -> thing/vswarm/primitive
 					CT.dom.setContent(n, [
-						CT.dom.button("add", m.craft, "vcrunch right"),
+						CT.dom.button("add", m.craft, "up20 right"),
 						m.list()
 					]);
 				};
@@ -152,11 +153,13 @@ vu.builders.arcraft = {
 				lig, rlz = zero.core.current.room.opts.lights;
 			if (alz.length != rlz.length)
 				alz = _.aug.lights = rlz;
-			lig = _.aug.lights[lnum];
-			if (subprop != undefined)
-				lig[property][subprop] = val;
-			else
-				lig[property] = val;
+			else if (property) {
+				lig = _.aug.lights[lnum];
+				if (subprop != undefined)
+					lig[property][subprop] = val;
+				else
+					lig[property] = val;
+			}
 			vu.storage.edit({
 				key: _.aug.key,
 				lights: _.aug.lights
@@ -204,20 +207,25 @@ vu.builders.arcraft = {
 				}
 			});
 		},
+		start: function() {
+			var _ = vu.builders.arcraft._;
+			if (!_.augs || !_.things) return; // wait for other thing to load...
+			if (_.augs.length)
+				zero.core.current.room.onReady(() => _.load(_.augs[0]));
+			else
+				_.craft();
+		},
 		getAugmentations: function() {
 			var _ = vu.builders.arcraft._;
 			CT.db.get("augmentation", function(augs) {
 				_.augs = augs;
-				if (augs.length)
-					zero.core.current.room.onReady(() => _.load(augs[0]));
-				else
-					_.craft();
+				_.start();
 			}, 1000, null, null, {
 				owners: {
 					comparator: "contains",
 					value: user.core.get("key")
 				}
-			});
+			}, null, null, "json");
 		},
 		getThings: function() {
 			var _ = vu.builders.arcraft._;
@@ -227,6 +235,7 @@ vu.builders.arcraft = {
 				things.forEach(function(t) {
 					_.thinkeys[t.key] = t;
 				});
+				_.start();
 			}, 1000, null, null, null, null, null, "json");
 		},
 		linx: function() {
