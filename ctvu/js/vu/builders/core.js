@@ -3,9 +3,11 @@ vu.builders.core = {
 		var pname = location.pathname.split("/").pop().split(".")[0],
 			_ = vu.builders[pname]._, isiora = ["item", "arcraft"].includes(pname);
 		core.config.ctzero.room = vu.core.room();
-		isiora && ["texture", "objects", "obstacle", "floor", "wall", "ramp"].forEach(function(item) {
+		isiora && ["environment", "texture", "objects", "obstacle", "floor", "wall", "ramp"].forEach(function(item) {
 			delete core.config.ctzero.room[item];
 		});
+		if (pname == "arcraft")
+			delete core.config.ctzero.room.lights;
 		zero.core.util.init();
 		isiora && zero.core.camera.move({
 			x: 0, y: 0, z: pname == "item" && 200 || 20
