@@ -146,6 +146,11 @@ vu.builders.arcraft = {
 		thingup: function(t) {
 			var _ = vu.builders.arcraft._, r = zero.core.current.room;
 			_.thing && r.removeObject(_.thing);
+			if (t.kind != "video") {
+				t.onbound = zero.core.util.fit;
+				t.scale = [1, 1, 1];
+				t.centered = true;
+			}
 			_.thing = r.addObject(t);
 		},
 		lightup: function(lnum, property, val, subprop) {
