@@ -9,9 +9,10 @@ CT.require("CT.parse");
 CT.require("CT.storage");
 CT.require("CT.trans");
 CT.require("core");
+CT.require("CT.cc");
 CT.require("user.core");
 CT.require("zero.core");
-var zcar = zero.core.util.ar;
+var zcar = zero.core.ar;
 zcar.init();
 
 CT.onload(function() {
