@@ -254,16 +254,19 @@ vu.builders.talk = {
 			rz.refresh();
 		},
 		ai: function() {
-			var cur = zero.core.current, aiopts = cur.person.opts.ai = cur.person.opts.ai || {
-				identity: "Anonymous",
-				options: {
-					quote: true,
-					opinion: true,
-					retort: true,
-					fallback: true,
-					brief: true
-				}
-			}, _ = vu.builders.talk._;
+			var _ = vu.builders.talk._, cur = zero.core.current, aiopts = cur.person.opts.ai;
+			if (!aiopts || !aiopts.identity) {
+				aiopts = cur.person.opts.ai = {
+					identity: "Anonymous",
+					options: {
+						quote: true,
+						opinion: true,
+						retort: true,
+						fallback: true,
+						brief: true
+					}
+				};
+			}
 			CT.dom.setContent(_.selectors.ai, [
 				CT.dom.select({
 					names: _.identities,
