@@ -140,86 +140,19 @@ vu.builders.play = {
 			});
 		},
 		chatterbox: function() {
-			var out = CT.dom.div(null, "out"), say = function(val, e) {
+			var zcu = zero.core.util, out = CT.dom.div(null, "out"), say = function(val, e) {
 				val && vu.live.emit("chat", val);
 				e && e.stopPropagation();
 				return "clear";
-			}, zcu = zero.core.util, singButt = CT.dom.button("sing", function(e) {
-				if (!cbox.value) return;
-				var words = cbox.value.split(" "),
-					i, durs = [];
-				for (i = 1; i <= 5; i++)
-					durs.push(i * 80 + "px");
-				var prosodize = function(word, pitchIndex, parentWidth) {
-					return "<prosody pitch='"
-						+ zcu.pitches[4 - pitchIndex]
-						+ "' rate='"
-						+ zcu.rates[4 - durs.indexOf(parentWidth)]
-						+ "'>" + word + "</prosody>";
-				};
-				CT.modal.prompt({
-					style: "draggers",
-					data: words.map(w => [
-						"", "", w, "", ""
-					]),
-					colattrs: {
-						onwheel: function(e) {
-							var col = e.currentTarget,
-								cw = col.style.width,
-								ci = durs.indexOf(cw),
-								dir = e.deltaY < 0 ? 1 : -1,
-								ni = Math.max(0, Math.min(4, ci + dir));
-							col.style.width = durs[ni];
-						}
-					},
-					colstyle: {
-						width: durs[2]
-					},
-					rower: function(rowname) {
-						var cname = "bordered padded margined round";
-						if (rowname) cname += " pointer";
-						var rnode = CT.dom.div(rowname, cname, null, rowname && {
-							onclick: function() {
-								zero.core.current.person.say(prosodize(rowname,
-									CT.dom.childNum(rnode), rnode.parentNode.style.width));
-							}
-						});
-						return rnode;
-					},
-					dataer: function(col) {
-						return {
-							rows: col.data,
-							width: col.style.width
-						};
-					},
-					cb: function(wdata) {
-						CT.modal.choice({
-							prompt: "sing or export song string (for offsite fiddling)?",
-							data: ["sing", "export"],
-							cb: function(sel) {
-								var song = words.map(function(w, i) {
-									return prosodize(w, wdata[i].rows.indexOf(w),
-										wdata[i].width);
-								}).join(" ");
-								if (sel == "sing")
-									say(song);
-								else
-									CT.modal.modal(CT.dom.textArea(null, song, "w400p h400p"));
-							}
-						});
-					}
-				});
-				cbox.value = "";
-				e.stopPropagation();
-			}), listButt = CT.dom.button("listen", function(e) {
+			}, listButt = CT.dom.button("listen", function(e) {
 				listButt.style.color = "red";
 				zero.core.rec.listen(function(phrase) {
 					say(phrase);
 					listButt.style.color = "black";
 				});
 				e.stopPropagation();
-			}), cbox = CT.dom.smartField(say, "w1 block mt5",
-				null, null, null, core.config.ctvu.blurs.talk);
+			}), cbox = CT.dom.smartField(say, "w1 block mt5", null, null, null,
+				core.config.ctvu.blurs.talk), singButt = zcu.singer(cbox, say);
 			cbox.onclick = function(e) { e.stopPropagation(); };
 			var n = CT.dom.div([
 				CT.dom.div([singButt, listButt], "right up15"),
