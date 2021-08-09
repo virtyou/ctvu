@@ -182,6 +182,10 @@ vu.builders.talk = {
 				if (!Array.isArray(rez.phrase))
 					rez.phrase = [rez.phrase];
 				vu.core.fieldList(rz, rez.phrase);
+				var singButt = zero.core.util.singer(rz.fields.empty, null, "songify phrase");
+				singButt.style.display = "block";
+				singButt.style.margin = "-20px auto 0px 82px";
+				rz.insertBefore(singButt, rz.firstChild);
 				["disable", "mood", "vibe", "media", "chain", "gesture", "dance", "mod"].forEach(function(trig) {
 					selz[trig].refresh();
 				});
