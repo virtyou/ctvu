@@ -3,7 +3,7 @@ vu.builders.pop = {
 		selectors: {},
 		menus: {
 			cameras: "top",
-			people: "topleft",
+			automatons: "topleft",
 			activities: "topright",
 			minimap: "bottom"
 		},
@@ -18,7 +18,7 @@ vu.builders.pop = {
 		},
 		set: function(room, noUpdate) {
 			var _ = vu.builders.pop._, selz = _.selectors, item, upmenus = function() {
-				for (item of ["people", "activities", "cameras", "minimap"])
+				for (item of ["automatons", "activities", "cameras", "minimap"])
 					selz[item].update();
 			};
 			_.opts = room;
@@ -64,25 +64,57 @@ vu.builders.pop = {
 			_.minimap = new vu.menu.Map({ node: sel, wait: true });
 			sel.update = _.minimap.refresh;
 		},
-		people: function() {
-			var _ = vu.builders.pop._, selz = _.selectors;
-			selz.people = CT.dom.div();
-			selz.people.update = function() {
+		automaton: function(auto) {
 
+		},
+		automatons: function() { // [{person,program{interval{base,coefficient,randomize},activities[]}}]
+			var _ = vu.builders.pop._, selz = _.selectors, zcc = zero.core.current;
+			selz.automatons = CT.dom.div();
+			selz.automatons.update = function() {
+				var az = zcc.room.automatons.map(_.automaton);
+				CT.dom.setContent(selz.automatons, [
+					CT.dom.button("add", function() {
+						var autos = zcc.room.automatons, auto,
+							akeys = autos.map(a => a.person.opts.key);
+						akeys.push(zcc.person.opts.key);
+						CT.modal.choice({
+							prompt: "please select an automaton",
+							data: vu.storage.get("people").filter(p => !akeys.includes(p.key)),
+							cb: function(perobj) {
+								auto = new zero.core.auto.Automaton({
+									person: perobj.key,
+									onjoin: function() {
+										CT.dom.addContent(az, _.automaton(auto));
+									}
+								});
+								autos.push(auto);
+							}
+						});
+					}, "right"),
+					az
+				]);
 			};
 		},
-		activities: function() {
+		activity: function(act) {
+
+		},
+		activities: function() { // [{action[say|respond|move|wander|dance],value}]
 			var _ = vu.builders.pop._, selz = _.selectors;
 			selz.activities = CT.dom.div();
 			selz.activities.update = function() {
+				CT.dom.setContent(selz.activities, [
+					CT.dom.button("add", function() {
 
+					}, "right"),
+
+				]);
 			};
 		},
 		setup: function() {
 			var _ = vu.builders.pop._, selz = _.selectors;
 			selz.cameras = CT.dom.div(null, "centered");
 			vu.controls.initCamera(selz.cameras);
-			_.people();
+			_.automatons();
 			_.activities();
 			_.mima();
 		}
