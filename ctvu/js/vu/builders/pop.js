@@ -2,7 +2,7 @@ vu.builders.pop = {
 	_: {
 		selectors: {},
 		menus: {
-			camera: "top",
+			cameras: "top",
 			people: "topleft",
 			activities: "topright",
 			minimap: "bottom"
@@ -10,8 +10,12 @@ vu.builders.pop = {
 		joined: function(person) {
 			var _ = vu.builders.pop._;
 			zero.core.util.setCurPer(person);
-			vu.controls.initCamera(_.selectors.camera);
+			vu.controls.initCamera(_.selectors.cameras);
 			new vu.menu.Map({ node: _.selectors.minimap });
+			new zero.core.Controls({
+				cams: true,
+				target: person
+			});
 		},
 		set: function(zone) {
 
@@ -49,7 +53,7 @@ vu.builders.pop = {
 		},
 		setup: function() {
 			var _ = vu.builders.pop._, selz = _.selectors;
-			selz.camera = CT.dom.div(null, "centered");
+			selz.cameras = CT.dom.div(null, "centered");
 			selz.minimap = CT.dom.div();
 			selz.people = CT.dom.div();
 			selz.activities = CT.dom.div();
