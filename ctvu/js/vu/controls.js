@@ -42,7 +42,7 @@ vu.controls = {
 					})), "centered clearnode")
 				]);
 			};
-			((mode == "play") || (mode == "scene")) && node.update();
+			["play", "scene", "pop"].includes(mode) && node.update();
 		} else {
 			var butt = CT.dom.button("far", function(e) {
 				if (butt.innerHTML == "far") {
