@@ -10,19 +10,22 @@ vu.builders.pop = {
 		joined: function(person) {
 			var _ = vu.builders.pop._;
 			zero.core.util.setCurPer(person);
-			_.set(zero.core.current.room);
+			_.set(zero.core.current.room.opts, true);
 			new zero.core.Controls({
 				cams: true,
 				target: person
 			});
 		},
-		set: function(room) {
-			var _ = vu.builders.pop._, selz = _.selectors, item;
-			_.sharer.update(room.opts);
+		set: function(room, noUpdate) {
+			var _ = vu.builders.pop._, selz = _.selectors, item, upmenus = function() {
+				for (item of ["people", "activities", "cameras", "minimap"])
+					selz[item].update();
+			};
+			_.opts = room;
+			_.sharer.update(room);
 			vu.core.setroom(room);
 			CT.dom.setContent(_.curname, room.name || room.environment);
-			for (item of ["people", "activities", "cameras", "minimap"])
-				selz[item].update();
+			noUpdate ? upmenus() : vu.builders.pop.update(upmenus);
 		},
 		select: function() {
 			var _ = vu.builders.pop._,
@@ -83,6 +86,14 @@ vu.builders.pop = {
 			_.activities();
 			_.mima();
 		}
+	},
+	update: function(cb) {
+		zero.core.util.room(CT.merge({
+			onbuild: function(room) {
+				cb && cb();
+				room.cut();
+			}
+		}, vu.builders.pop._.opts));
 	},
 	menus: function() {
 		var section, _ = vu.builders.pop._, selz = _.selectors;
