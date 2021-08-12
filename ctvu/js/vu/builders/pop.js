@@ -10,15 +10,19 @@ vu.builders.pop = {
 		joined: function(person) {
 			var _ = vu.builders.pop._;
 			zero.core.util.setCurPer(person);
-			vu.controls.initCamera(_.selectors.cameras);
-			new vu.menu.Map({ node: _.selectors.minimap });
+			_.set(zero.core.current.room);
 			new zero.core.Controls({
 				cams: true,
 				target: person
 			});
 		},
-		set: function(zone) {
-
+		set: function(room) {
+			var _ = vu.builders.pop._, selz = _.selectors, item;
+			_.sharer.update(room.opts);
+			vu.core.setroom(room);
+			CT.dom.setContent(_.curname, room.name || room.environment);
+			for (item of ["people", "activities", "cameras", "minimap"])
+				selz[item].update();
 		},
 		select: function() {
 			var _ = vu.builders.pop._,
@@ -51,12 +55,33 @@ vu.builders.pop = {
 				]
 			], "left shiftall");
 		},
+		mima: function() {
+			var _ = vu.builders.pop._, selz = _.selectors,
+				sel = selz.minimap = CT.dom.div();
+			_.minimap = new vu.menu.Map({ node: sel, wait: true });
+			sel.update = _.minimap.refresh;
+		},
+		people: function() {
+			var _ = vu.builders.pop._, selz = _.selectors;
+			selz.people = CT.dom.div();
+			selz.people.update = function() {
+
+			};
+		},
+		activities: function() {
+			var _ = vu.builders.pop._, selz = _.selectors;
+			selz.activities = CT.dom.div();
+			selz.activities.update = function() {
+
+			};
+		},
 		setup: function() {
 			var _ = vu.builders.pop._, selz = _.selectors;
 			selz.cameras = CT.dom.div(null, "centered");
-			selz.minimap = CT.dom.div();
-			selz.people = CT.dom.div();
-			selz.activities = CT.dom.div();
+			vu.controls.initCamera(selz.cameras);
+			_.people();
+			_.activities();
+			_.mima();
 		}
 	},
 	menus: function() {
