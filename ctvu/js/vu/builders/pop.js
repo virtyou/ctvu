@@ -90,7 +90,7 @@ vu.builders.pop = {
 								autos.push(auto);
 							}
 						});
-					}, "right"),
+					}, "up20 right"),
 					az
 				]);
 			};
@@ -105,7 +105,7 @@ vu.builders.pop = {
 				CT.dom.setContent(selz.activities, [
 					CT.dom.button("add", function() {
 
-					}, "right"),
+					}, "up20 right"),
 
 				]);
 			};
