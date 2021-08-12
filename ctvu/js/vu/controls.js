@@ -1,7 +1,7 @@
 vu.controls = {
 	initCamera: function(node, cb) {
 		var mode = location.pathname.split("/").pop().split(".")[0];
-		if (["zone", "play", "scene", "adventure"].indexOf(mode) != -1) {
+		if (["zone", "play", "scene", "adventure", "pop"].indexOf(mode) != -1) {
 			var cycbutt = CT.dom.button("cycle", function(e) {
 				if (zero.core.camera.cycle())
 					cycbutt.innerHTML = "stop cycling";
