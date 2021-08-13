@@ -79,7 +79,7 @@ vu.builders.pop = {
 			var _ = vu.builders.pop._, selz = _.selectors, zcc = zero.core.current;
 			selz.automatons = CT.dom.div();
 			selz.automatons.update = function() {
-				var autos = zcc.room.automatons, az = autos.map(_.automaton), adder = function() {
+				var autos = zcc.room.automatons, adder = function() {
 					var akeys = autos.map(a => a.person.opts.key);
 					akeys.push(zcc.person.opts.key);
 					CT.modal.choice({
@@ -92,17 +92,20 @@ vu.builders.pop = {
 									var anode = _.automaton(auto);
 									CT.dom.addContent(az, anode);
 									anode.onclick();
+
+									// TODO: update/persist
+
 								}
 							});
 							autos.push(auto);
 						}
 					});
-				};
+				}, az = CT.dom.div(autos.map(_.automaton));
 				CT.dom.setContent(selz.automatons, [
 					CT.dom.button("add", adder, "up20 right"),
 					az
 				]);
-				az.length ? az[0].onclick() : adder();
+				az.firstChild ? az.firstChild.onclick() : adder();
 			};
 		},
 		activity: function(act) { // {action[say|respond|move|wander|dance],value}
@@ -125,9 +128,9 @@ vu.builders.pop = {
 			selz.program = CT.dom.div();
 			selz.program.update = function() {
 				CT.dom.setContent(selz.program, [
-					_.auto.person.name,
-					CT.dom.checkboxAndLabel("randomize activities", r.randomize,
-						null, null, null, function(cbox) {
+					CT.dom.div(_.auto.person.name, "up15 right big bold"),
+					CT.dom.checkboxAndLabel("randomize activities",
+						_.auto.program.randomize, null, null, null, function(cbox) {
 							_.auto.reprogram({
 								randomize: cbox.checked
 							});
