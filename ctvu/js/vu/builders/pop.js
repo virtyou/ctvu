@@ -123,19 +123,43 @@ vu.builders.pop = {
 				]);
 			};
 		},
-		program: function() {
+		program: function() { // {base,coefficient,randomize}
 			var _ = vu.builders.pop._, selz = _.selectors;
 			selz.program = CT.dom.div();
 			selz.program.update = function() {
+				var pr = _.auto.program;
 				CT.dom.setContent(selz.program, [
-					CT.dom.div(_.auto.person.name, "up15 right big bold"),
+					CT.dom.div(_.auto.person.name, "up15 right bigger bold"),
 					CT.dom.checkboxAndLabel("randomize activities",
-						_.auto.program.randomize, null, null, null, function(cbox) {
+						pr.randomize, null, null, null, function(cbox) {
 							_.auto.reprogram({
 								randomize: cbox.checked
 							});
 							vu.builders.pop.persist();
 						}),
+					CT.dom.div([
+						CT.dom.div("interval", "big right"),
+						"base",
+						CT.dom.range(function(val) {
+							val = parseFloat(val);
+							_.auto.reprogram({
+								base: val
+							});
+
+							//vu.builders.pop.persist();
+
+						}, 1, 10, pr.base, 0.5, "w1"),
+						"coefficient (random multiplier)",
+						CT.dom.range(function(val) {
+							val = parseFloat(val);
+							_.auto.reprogram({
+								coefficient: val
+							});
+
+							//vu.builders.pop.persist();
+
+						}, 1, 10, pr.coefficient, 0.5, "w1")
+					], "bordered padded margined round")
 				]);
 			};
 		},
