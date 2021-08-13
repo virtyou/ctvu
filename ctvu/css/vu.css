@@ -50,7 +50,7 @@ iframe {
 }
 
 #ctll {
-	width: 148px;
+	width: 149px;
 	margin-top: -30px;
 }
 
@@ -152,6 +152,10 @@ iframe {
 	white-space: nowrap;
 	border: 1px solid green;
 	transition: all 500ms !important;
+}
+
+.gmenu.automatons, .gmenu.activities {
+	min-width: 140px;
 }
 
 .gmenu.run_home img {
