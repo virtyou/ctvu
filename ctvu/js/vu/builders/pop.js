@@ -5,6 +5,7 @@ vu.builders.pop = {
 			cameras: "top",
 			automatons: "topleft",
 			activities: "topright",
+			program: "bottomleft",
 			minimap: "bottom"
 		},
 		joined: function(person) {
@@ -18,8 +19,8 @@ vu.builders.pop = {
 		},
 		set: function(room, noUpdate) {
 			var _ = vu.builders.pop._, selz = _.selectors, item, upmenus = function() {
-				for (item of ["automatons", "activities", "cameras", "minimap"])
-					selz[item].update();
+				for (item of ["automatons", "cameras", "minimap"])
+					selz[item].update(); // automatons updates activities/program
 			};
 			_.opts = room;
 			_.sharer.update(room);
@@ -64,41 +65,50 @@ vu.builders.pop = {
 			_.minimap = new vu.menu.Map({ node: sel, wait: true });
 			sel.update = _.minimap.refresh;
 		},
-		automaton: function(auto) {
-
+		automaton: function(auto) { // {person,program{base,coefficient,randomize,activities[]}}
+			var _ = vu.builders.pop._, selz = _.selectors;
+			return CT.dom.div(auto.person.name, "bordered padded margined round hoverglow", null, {
+				onclick: function() {
+					_.auto = auto;
+					selz.program.update();
+					selz.activities.update();
+				}
+			});
 		},
-		automatons: function() { // [{person,program{interval{base,coefficient,randomize},activities[]}}]
+		automatons: function() {
 			var _ = vu.builders.pop._, selz = _.selectors, zcc = zero.core.current;
 			selz.automatons = CT.dom.div();
 			selz.automatons.update = function() {
-				var az = zcc.room.automatons.map(_.automaton);
+				var autos = zcc.room.automatons, az = autos.map(_.automaton), adder = function() {
+					var akeys = autos.map(a => a.person.opts.key);
+					akeys.push(zcc.person.opts.key);
+					CT.modal.choice({
+						prompt: "please select an automaton",
+						data: vu.storage.get("people").filter(p => !akeys.includes(p.key)),
+						cb: function(perobj) {
+							var auto = new zero.core.auto.Automaton({
+								person: perobj,
+								onjoin: function() {
+									var anode = _.automaton(auto);
+									CT.dom.addContent(az, anode);
+									anode.onclick();
+								}
+							});
+							autos.push(auto);
+						}
+					});
+				};
 				CT.dom.setContent(selz.automatons, [
-					CT.dom.button("add", function() {
-						var autos = zcc.room.automatons, auto,
-							akeys = autos.map(a => a.person.opts.key);
-						akeys.push(zcc.person.opts.key);
-						CT.modal.choice({
-							prompt: "please select an automaton",
-							data: vu.storage.get("people").filter(p => !akeys.includes(p.key)),
-							cb: function(perobj) {
-								auto = new zero.core.auto.Automaton({
-									person: perobj.key,
-									onjoin: function() {
-										CT.dom.addContent(az, _.automaton(auto));
-									}
-								});
-								autos.push(auto);
-							}
-						});
-					}, "up20 right"),
+					CT.dom.button("add", adder, "up20 right"),
 					az
 				]);
+				az.length ? az[0].onclick() : adder();
 			};
 		},
-		activity: function(act) {
+		activity: function(act) { // {action[say|respond|move|wander|dance],value}
 
 		},
-		activities: function() { // [{action[say|respond|move|wander|dance],value}]
+		activities: function() {
 			var _ = vu.builders.pop._, selz = _.selectors;
 			selz.activities = CT.dom.div();
 			selz.activities.update = function() {
@@ -110,14 +120,39 @@ vu.builders.pop = {
 				]);
 			};
 		},
+		program: function() {
+			var _ = vu.builders.pop._, selz = _.selectors;
+			selz.program = CT.dom.div();
+			selz.program.update = function() {
+				CT.dom.setContent(selz.program, [
+					_.auto.person.name,
+					CT.dom.checkboxAndLabel("randomize activities", r.randomize,
+						null, null, null, function(cbox) {
+							_.auto.reprogram({
+								randomize: cbox.checked
+							});
+							vu.builders.pop.persist();
+						}),
+				]);
+			};
+		},
 		setup: function() {
 			var _ = vu.builders.pop._, selz = _.selectors;
 			selz.cameras = CT.dom.div(null, "centered");
 			vu.controls.initCamera(selz.cameras);
 			_.automatons();
 			_.activities();
+			_.program();
 			_.mima();
 		}
+	},
+	persist: function() { // NB: this only works in remote mode, screw it ;)
+		var oz = vu.builders.pop._.opts;
+		oz.automatons = zero.core.auto.json();
+		vu.storage.edit({
+			key: oz.key,
+			automatons: oz.automatons
+		});
 	},
 	update: function(cb) {
 		zero.core.util.room(CT.merge({
