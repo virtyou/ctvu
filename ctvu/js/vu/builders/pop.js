@@ -66,8 +66,9 @@ vu.builders.pop = {
 			sel.update = _.minimap.refresh;
 		},
 		automaton: function(auto) { // {person,program{base,coefficient,randomize},activities[]}
-			var _ = vu.builders.pop._, selz = _.selectors;
-			return CT.dom.div(auto.person.name, "bordered padded margined round hoverglow", null, {
+			var _ = vu.builders.pop._, selz = _.selectors, pname = CT.dom.div();
+			auto.onperson(p => CT.dom.setContent(pname, p.name));
+			return CT.dom.div(pname, "bordered padded margined round hoverglow", null, {
 				onclick: function() {
 					_.auto = auto;
 					selz.program.update();
@@ -168,12 +169,14 @@ vu.builders.pop = {
 			};
 		},
 		program: function() { // {base,coefficient,randomize}
-			var _ = vu.builders.pop._, selz = _.selectors;
+			var _ = vu.builders.pop._, selz = _.selectors,
+				pname = CT.dom.div(null, "up15 right bigger bold");
 			selz.program = CT.dom.div();
 			selz.program.update = function() {
 				var pr = _.auto.program;
+				_.auto.onperson(p => CT.dom.setContent(pname, p.name));
 				CT.dom.setContent(selz.program, [
-					CT.dom.div(_.auto.person.name, "up15 right bigger bold"),
+					pname,
 					CT.dom.checkboxAndLabel("randomize activities",
 						pr.randomize, null, null, null, function(cbox) {
 							_.auto.reprogram({
