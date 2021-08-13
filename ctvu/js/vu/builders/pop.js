@@ -119,6 +119,7 @@ vu.builders.pop = {
 				var actz = _.auto.activities, addAct = function(act) {
 					actz.push(act);
 					vu.builders.pop.persist();
+					(actz.length == 1) && _.auto.play();
 					CT.dom.addContent(az, _.activity(act));
 				}, adder = function() {
 					CT.modal.choice({
