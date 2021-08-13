@@ -65,7 +65,7 @@ vu.builders.pop = {
 			_.minimap = new vu.menu.Map({ node: sel, wait: true });
 			sel.update = _.minimap.refresh;
 		},
-		automaton: function(auto) { // {person,program{base,coefficient,randomize,activities[]}}
+		automaton: function(auto) { // {person,program{base,coefficient,randomize},activities[]}
 			var _ = vu.builders.pop._, selz = _.selectors;
 			return CT.dom.div(auto.person.name, "bordered padded margined round hoverglow", null, {
 				onclick: function() {
@@ -92,9 +92,6 @@ vu.builders.pop = {
 									var anode = _.automaton(auto);
 									CT.dom.addContent(az, anode);
 									anode.onclick();
-
-									// TODO: update/persist
-
 								}
 							});
 							autos.push(auto);
@@ -109,18 +106,64 @@ vu.builders.pop = {
 			};
 		},
 		activity: function(act) { // {action[say|respond|move|wander|dance],value}
-
+			return CT.dom.div([
+				CT.dom.span(act.action, "bold"),
+				CT.dom.pad(),
+				CT.dom.span(act.value)
+			], "bordered padded margined round");
 		},
 		activities: function() {
 			var _ = vu.builders.pop._, selz = _.selectors;
 			selz.activities = CT.dom.div();
 			selz.activities.update = function() {
+				var actz = _.auto.activities, addAct = function(act) {
+					actz.push(act);
+					vu.builders.pop.persist();
+					CT.dom.addContent(az, _.activity(act));
+				}, adder = function() {
+					CT.modal.choice({
+						prompt: "please select an action",
+						data: ["say", "respond", "dance", "wander", "move"],
+						cb: function(action) {
+							if (action == "dance") {
+								CT.modal.choice({
+									prompt: "please select a dance",
+									data: Object.keys(_.auto.person.opts.dances),
+									cb: function(dance) {
+										addAct({
+											action: "dance",
+											value: dance
+										});
+									}
+								});
+							} else if (action == "wander") {
+
+								// TODO: floor selection
+								addAct({ action: "wander" });
+
+							} else if (action == "move") {
+
+								alert("unimplemented!"); // TODO
+
+							} else { // say/respond
+								CT.modal.prompt({
+									prompt: action + " what?",
+									cb: function(phrase) {
+										addAct({
+											action: action,
+											value: phrase
+										});
+									}
+								});
+							}
+						}
+					});
+				}, az = CT.dom.div(actz.map(_.activity));
 				CT.dom.setContent(selz.activities, [
-					CT.dom.button("add", function() {
-
-					}, "up20 right"),
-
+					CT.dom.button("add", adder, "up20 right"),
+					az
 				]);
+				az.firstChild || adder();
 			};
 		},
 		program: function() { // {base,coefficient,randomize}
@@ -145,9 +188,7 @@ vu.builders.pop = {
 							_.auto.reprogram({
 								base: val
 							});
-
-							//vu.builders.pop.persist();
-
+							vu.builders.pop.persist();
 						}, 1, 10, pr.base, 0.5, "w1"),
 						"coefficient (random multiplier)",
 						CT.dom.range(function(val) {
@@ -155,9 +196,7 @@ vu.builders.pop = {
 							_.auto.reprogram({
 								coefficient: val
 							});
-
-							//vu.builders.pop.persist();
-
+							vu.builders.pop.persist();
 						}, 1, 10, pr.coefficient, 0.5, "w1")
 					], "bordered padded margined round")
 				]);
