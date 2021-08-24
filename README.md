@@ -7,6 +7,7 @@ Connective tissue and basic interfaces for virtual world builders and applicatio
     syms = {
     	".": ["_vu.py"],
     	"js": ["vu"],
+    	"img": ["vu"],
     	"css": ["vu.css"],
     	"html": ["vu"]
     }
@@ -31,6 +32,7 @@ Connective tissue and basic interfaces for virtual world builders and applicatio
             "apikey": "APIKEY"
         },
         "blurs": {
+            "mod": ["what's the mod called?", "change into what?"],
             "talk": ["say something", "say what?", "type something"],
             "resource": ["what's the name?", "name this resource", "what's it called?"],
             "chain": ["enter name of chained trigger", "what happens next?", "next trigger"],
@@ -41,17 +43,26 @@ Connective tissue and basic interfaces for virtual world builders and applicatio
             "environment": ["what's the environment?", "which environment?", "environment"],
             "gesture": ["what's the gesture?", "gesture, please", "any gesture?"],
             "dance": ["got a dance in mind?", "how about a dance?", "would you like to dance?"],
-            "name": ["what's the name?", "name, please", "name?"]
+            "name": ["what's the name?", "name, please", "name?"],
+            "trigger": ["what's the trigger?", "trigger?"],
+            "className": ["string of CSS class names", "enter class names here"],
+            "css": ["enter custom CSS rules", "custom CSS here", "style with CSS"]
         },
         "loaders": {
             "customs": ["one.earring", "one.pony"],
-            "templates": ["one.body"],
+            "templates": ["one.body", "one.vstrip"],
             "environments": ["one.scrolly", "one.techno", "one.box", "one.kidroom"],
             "avatars": ["one.body.sassy", "one.body.kid"]
+        },
+        "volumes": {
+            "fx": 0.8,
+            "music": 0.5,
+            "ambient": 0.5
         },
         "builders": {
             "talk": {
                 "help": {
+                    "mod": "Mods are configured on the mod page. Use 'unmod' to stop modding.",
                     "responses": "Your character will say one of these in response to this trigger.",
                     "disable": "Disable any triggers that should no longer apply at this point in the conversation. Use 'untrigger' to clear all.",
                     "chain": "Chain together triggers to define complex responses.",
@@ -92,7 +103,7 @@ Connective tissue and basic interfaces for virtual world builders and applicatio
                 "responses": {},
                 "voice": "Joanna",
                 "body": {
-                    "template": "templates.one.body.sassy"
+                    "template": "templates.one.body.basic"
                 }
             }
         }
