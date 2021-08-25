@@ -29,9 +29,10 @@ CT.require("vu.builders.play");
 CT.scriptImport("CT.lib.colorPicker");
 
 CT.onload(function() {
+	var camcfg = core.config.ctzero.camera;
 	if (CT.info.mobile) {
-		core.config.ctzero.camera.vr = true;
-		core.config.ctzero.camera.cardboard = true;
+		camcfg.vr = true;
+		camcfg.cardboard = true;
 		document.body.classList.add("unheadered");
 	}
 	CT.initCore();
@@ -42,7 +43,10 @@ CT.onload(function() {
 		// virtual world
 		zero.core.xr.init({
 			ondecide: function(doit) {
-				core.config.ctzero.camera.vr = doit || CT.info.mobile;
+				if (doit) {
+					camcfg.vr = true;
+//					camcfg.fov = 135;
+				}
 				vu.builders.core.init();
 			}
 		});
