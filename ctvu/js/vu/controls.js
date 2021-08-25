@@ -11,7 +11,7 @@ vu.controls = {
 			}), room, tbutts, per, dim, bl, looker = function(perspective) {
 				return function(e) {
 					zero.core.camera.angle(perspective);
-					e.stopPropagation();
+					e && e.stopPropagation();
 				};
 			}, pov = CT.dom.button("pov", looker("pov")), bcams,
 				behind = CT.dom.button("behind", looker("behind")),
@@ -41,6 +41,7 @@ vu.controls = {
 						});
 					})), "centered clearnode")
 				]);
+				core.config.ctzero.camera.vr && bcams[0].onclick();
 			};
 			["play", "scene"].includes(mode) && node.update();
 		} else {
