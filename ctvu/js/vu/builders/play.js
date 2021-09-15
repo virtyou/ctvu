@@ -32,7 +32,7 @@ vu.builders.play = {
 				_.ownz() && _.selectors.lights.update();
 				cur.room.objects.forEach(_.clickreg);
 				zero.core.click.trigger(person.body);
-				core.config.ctzero.camera.vr && vu.voice.listen();
+				core.config.ctzero.camera.cardboard && vu.voice.listen();
 			},
 			chat: function(person, msg) {
 				var mnode = CT.dom.div([
@@ -191,7 +191,7 @@ vu.builders.play = {
 	menus: function() {
 		var section, _ = vu.builders.play._, selz = _.selectors;
 		_.setup();
-		if (core.config.ctzero.camera.vr) return; // no menus necessary
+		if (core.config.ctzero.camera.cardboard) return; // no menus necessary
 		for (section in _.menus) {
 			selz[section].modal = vu.core.menu(section, _.menus[section],
 				selz[section], _.head(section), _.collapse(section));

@@ -12,6 +12,7 @@ CT.require("CT.trans");
 CT.require("core");
 CT.require("user.core");
 CT.require("zero.core");
+CT.require("zero.core.xr");
 CT.require("vu.core");
 CT.require("vu.media");
 CT.require("vu.audio");
@@ -28,8 +29,10 @@ CT.require("vu.builders.play");
 CT.scriptImport("CT.lib.colorPicker");
 
 CT.onload(function() {
+	var camcfg = core.config.ctzero.camera;
 	if (CT.info.mobile) {
-		core.config.ctzero.camera.vr = true;
+		camcfg.vr = true;
+		camcfg.cardboard = true;
 		document.body.classList.add("unheadered");
 	}
 	CT.initCore();
@@ -38,6 +41,14 @@ CT.onload(function() {
 		// menu
 		vu.builders.play.menus();
 		// virtual world
-		vu.builders.core.init();
+		zero.core.xr.init({
+			ondecide: function(doit) {
+				if (doit) {
+					camcfg.vr = true;
+//					camcfg.fov = 135;
+				}
+				vu.builders.core.init();
+			}
+		});
 	}, true);
 });
