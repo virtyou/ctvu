@@ -39,7 +39,7 @@ vu.party = {
 		var _ = vu.party._;
 		return CT.dom.div(_.auds.map(k => _.aud(k, updater)));
 	},
-	lights: function(updater, addAndRemove) {
+	lights: function(updater, addAndRemove, persister) {
 		var _ = vu.party._, lnode = CT.dom.div(),
 			room, color, intensity, content;
 		lnode.update = function() {
@@ -54,6 +54,7 @@ vu.party = {
 							}, function() {
 								lnode.update();
 								updater();
+								persister && persister();
 							}, true);
 						}
 					});
@@ -61,17 +62,19 @@ vu.party = {
 				room.lights.map(function(light, i) {
 					color = vu.color.selector(light, null, i, function(col, lnum) {
 						updater(lnum, "color", col);
+						persister && persister();
 					});
 					intensity = CT.dom.range(function(val) {
 						val = parseInt(val) / 100;
 						light.setIntensity(val);
 						updater(i, "intensity", val);
-					}, 0, 100, light.opts.intensity * 100, 1, "w1");
+					}, 0, 100, light.opts.intensity * 100, 1, "w1", null, persister);
 					content = [
 						addAndRemove && CT.dom.button("remove", function() {
 							room.removeLight(light);
 							lnode.update();
 							updater();
+							persister && persister();
 						}, "up5 right"),
 						light.opts.variety,
 						CT.dom.div([
@@ -93,7 +96,7 @@ vu.party = {
 									CT.dom.range(function(val) {
 										light.thring.position[dim] = val;
 										updater(i, "position", val, di, dim);
-									}, -256, 256, pos[dim], 0.1, "w1")
+									}, -256, 256, pos[dim], 0.1, "w1", null, persister)
 								];
 							}))
 						], "topbordered padded margined"));
