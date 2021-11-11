@@ -93,17 +93,20 @@ vu.builders.tweak = {
 				}, m, bod);
 				zero.core.morphs.delta(bod, m);
 			});
-
 			CT.dom.setContent(_.selectors["morphs_" + part], bod.staticMorphs.map(function(sel) {
+				var upMo = function(val) {
+					bod.springs[sel].target = bod.opts.morphs[sel] = val / 100;
+				};
 				return [
 					sel,
-					CT.dom.range(function(val) {
-						CT.log(sel + ": " + val);
-						bod.springs[sel].target = bod.opts.morphs[sel] = val / 100;
-						vu.builders.tweak.persist({
-							morphs: bod.opts.morphs
-						}, part);
-					}, 0, 100, 100 * (bod.opts.morphs[sel] || 0), 1, "w1")
+					CT.dom.range(upMo, 0, 100, 100 * (bod.opts.morphs[sel] || 0),
+						1, "w1", null, function(val) {
+							CT.log(sel + ": " + val);
+							upMo(val);
+							vu.builders.tweak.persist({
+								morphs: bod.opts.morphs
+							}, part);
+						})
 				];
 			}));
 		},
