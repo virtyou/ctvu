@@ -966,12 +966,16 @@ vu.builders.zone = {
 			];
 		},
 		lightup: function(lnum, property, val, subprop) {
-			var _ = vu.builders.zone._,
+			var _ = vu.builders.zone._, lig;
+			if (lnum == undefined)
+				_.opts.lights = zero.core.current.room.opts.lights;
+			else {
 				lig = _.opts.lights[lnum];
-			if (subprop != undefined)
-				lig[property][subprop] = val;
-			else
-				lig[property] = val;
+				if (subprop != undefined)
+					lig[property][subprop] = val;
+				else
+					lig[property] = val;
+			}
 			vu.builders.zone.persist({
 				lights: _.opts.lights
 			});
