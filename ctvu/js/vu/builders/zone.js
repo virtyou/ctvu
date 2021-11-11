@@ -976,13 +976,15 @@ vu.builders.zone = {
 				else
 					lig[property] = val;
 			}
+		},
+		lightput: function() {
 			vu.builders.zone.persist({
-				lights: _.opts.lights
+				lights: vu.builders.zone._.opts.lights
 			});
 		},
 		lights: function() {
 			var _ = vu.builders.zone._;
-			_.selectors.lights = vu.party.lights(_.lightup, true);
+			_.selectors.lights = vu.party.lights(_.lightup, true, _.lightput);
 		},
 		cameras: function() {
 			var selz = vu.builders.zone._.selectors;
