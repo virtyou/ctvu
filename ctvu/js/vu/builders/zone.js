@@ -886,12 +886,21 @@ vu.builders.zone = {
 				zcc = zero.core.current, ro;
 			sel.update = function() {
 				ro = zcc.room.opts;
-				CT.dom.setContent(sel, _.fmosh(ro, function(val) {
-					ro.moshy = val;
-					vu.storage.setOpts(ro.key, {
-						moshy: val
-					});
-				}));
+				CT.dom.setContent(sel, [
+					_.fmosh(ro, function(val) {
+						ro.moshy = val;
+						vu.storage.setOpts(ro.key, {
+							moshy: val
+						});
+					}),
+					CT.dom.checkboxAndLabel("autoplay videos", ro.autovid,
+						null, null, null, function(cbox) {
+							ro.autovid = cbox.checked;
+							vu.storage.setOpts(ro.key, {
+								autovid: ro.autovid
+							})
+						})
+				]);
 			};
 			return sel;
 		},
