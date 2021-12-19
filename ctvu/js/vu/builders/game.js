@@ -99,6 +99,7 @@ vu.builders.game = {
 			var state = game[sec], _ = vu.builders.game._,
 				anode = _.states[sec], a,
 				actors = state.actors = state.actors || {};
+			CT.dom.clear(anode);
 			for (a in actors)
 				anode.appendChild(_.actor(actors, a, sec));
 			return CT.dom.div([
