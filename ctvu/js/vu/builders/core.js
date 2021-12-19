@@ -9,7 +9,7 @@ vu.builders.core = {
 		if (pname == "arcraft") {
 			delete core.config.ctzero.room.scale;
 			delete core.config.ctzero.room.lights;
-			core.config.ctzero.room.gravity = false;
+			core.config.ctzero.gravity = false;
 		}
 		zero.core.util.init();
 		isiora && zero.core.camera.move({
