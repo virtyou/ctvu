@@ -43,7 +43,7 @@ vu.game.Adventure = CT.Class({
 		zero.core.current.scene.script("start");
 	},
 	upstate: function() {
-		vu.storage.edit({
+		user.core.get() && vu.storage.edit({
 			key: this.opts.key,
 			state: this.state
 		});
