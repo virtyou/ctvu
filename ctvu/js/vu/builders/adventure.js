@@ -2,7 +2,7 @@ vu.builders.adventure = {
 	_: {
 		selectors: {},
 		menus: {},
-		anonmsg: "playing anonymously - log in to save your progress!",
+		anonmsg: CT.dom.div("playing anonymously - log in to save your progress!", "bigger padded bold"),
 		newa: function(gkey, pkey, fullg, fullp) {
 			var _ = vu.builders.adventure._, u = user.core.get();
 			u ? vu.storage.edit({
