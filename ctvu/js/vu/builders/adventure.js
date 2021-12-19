@@ -2,29 +2,34 @@ vu.builders.adventure = {
 	_: {
 		selectors: {},
 		menus: {},
-		newa: function(gkey, pkey) {
-			vu.storage.edit({
+		anonmsg: "playing anonymously - log in to save your progress!",
+		newa: function(gkey, pkey, fullg, fullp) {
+			var _ = vu.builders.adventure._, u = user.core.get();
+			u ? vu.storage.edit({
 				modelName: "adventure",
-				owner: user.core.get("key"),
+				owner: u.key,
 				player: pkey,
 				game: gkey
-			}, vu.builders.adventure._.resume);
+			}, _.resume) : CT.modal.modal(_.anonmsg, () => _.resume({
+				player: zero.core.util.person(vu.core.bgen(fullp.body), fullp.name || "you", null, fullp, fullp.body),
+				state: fullg.initial,
+				game: fullg
+			}), null, true);
 		},
 		begin: function(gkey) {
-			var _ = vu.builders.adventure._, playpro = function(players) {
-				CT.modal.choice({
-					prompt: "please select your player",
-					data: players,
-					cb: function(player) {
-						_.newa(gkey, player.key);
-					}
-				});
-			};
+			var _ = vu.builders.adventure._;
 			CT.db.one(gkey, function(gopts) {
+				var gonew = function(player) {
+					_.newa(gkey, player.key, gopts, player);
+				}, playpro = function(players) {
+					(players.length == 1) ? gonew(players[0]) : CT.modal.choice({
+						prompt: "please select your player",
+						data: players,
+						cb: gonew
+					});
+				};
 				if (gopts.players.length == 0)
 					playpro(vu.storage.get("people"));
-				else if (gopts.players.length == 1)
-					return _.newa(gkey, gopts.players[0]);
 				else
 					CT.db.multi(gopts.players, playpro);
 			});
@@ -34,9 +39,12 @@ vu.builders.adventure = {
 		},
 		setup: function() {
 			var gkey = location.hash.slice(1),
-				_ = vu.builders.adventure._;
+				_ = vu.builders.adventure._, u = user.core.get();
 			if (!gkey)
 				return alert("no game specified!");
+			if (!u) {
+				return _.begin(gkey);
+			}
 			CT.db.get("adventure", function(advz) {
 				if (advz.length == 0)
 					_.begin(gkey);
@@ -44,7 +52,7 @@ vu.builders.adventure = {
 					_.resume(advz[0]);
 			}, 1, 0, null, {
 				game: gkey,
-				owner: user.core.get("key")
+				owner: u.key
 			}, null, null, "json");
 		}
 	},
