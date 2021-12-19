@@ -94,8 +94,8 @@ vu.game.Scene = CT.Class({
 		var zcc = zero.core.current, oz = this.opts,
 			cz = zcc.room.components(), pers,
 			g = zcc.adventure.game, rt = zcc.room.opts.texture;
-		for (pers in zcc.people)
-			cz = cz.concat(zcc.people[pers].components());
+		for (pers in zcc.people) // filter for anon mode
+			cz = cz.concat(zcc.people[pers].components().filter(cz => cz.owners));
 		CT.cc.views([{
 			identifier: "Game: " + g.name,
 			owners: g.owners
