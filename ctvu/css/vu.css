@@ -170,7 +170,7 @@ img.right.h30p.up5 {
 
 .gmenu.basic, .gmenu.structural {
 	width: 247px;
-	max-height: calc(100% - 30px);
+	max-height: calc(100% - 60px);
 }
 
 .gmenu.cameras {
