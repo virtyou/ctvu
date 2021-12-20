@@ -110,7 +110,7 @@ vu.game.Scene = CT.Class({
 		// people removed by vu.portal.portin()
 		// everything else is on the room right...?
 		var zcc = zero.core.current;
-		zcc.room.remove();
+		zcc.room.unload();
 		delete zcc.room;
 	},
 	load: function() {
