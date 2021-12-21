@@ -59,9 +59,15 @@ vu.game.step = {
 			CT.dom.button("edit", function() {
 				CT.modal.choice({
 					prompt: "how would you like to modify this step?",
-					data: ["add something", "remove entirely", "shift"],
+					data: ["add something", "replace", "remove entirely", "shift"],
 					cb: function(etype) {
-						if (etype == "remove entirely") {
+						if (etype == "replace") {
+							vgs.step(function(upz) {
+								CT.data.replace(zcc.scene.scripts[zcc.script], s, upz);
+								CT.dom.replace(stpr, vgs.stepper(upz));
+								vgs.upscripts();
+							});
+						} else if (etype == "remove entirely") {
 							CT.data.remove(zcc.scene.scripts[zcc.script], s);
 							vgs.upscripts();
 							stpr.remove();
