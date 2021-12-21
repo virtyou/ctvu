@@ -237,7 +237,7 @@ vu.game.stepper = {
 		};
 		CT.modal.choice({
 			prompt: "what kind of logic gate?",
-			data: ["actor", "gear", "story"],
+			data: ["actor", "gear", "story", "coin flip"],
 			cb: function(kind) {
 				if (kind == "actor") {
 					_.state(sobj => result(sobj.state),
@@ -249,12 +249,13 @@ vu.game.stepper = {
 						data: Object.keys(vu.storage.get("held")),
 						cb: item => result({ gear: item })
 					});
-				} else { // story
+				} else if (kind == "story") {
 					CT.modal.prompt({
 						prompt: "what's the story line?",
 						cb: line => result({ story: line })
 					});
-				}
+				} else // coin flip
+					result({ coinflip: true });
 			}
 		});
 	},
