@@ -105,6 +105,13 @@ vu.game.stepper = {
 			cb: dosel
 		});
 	},
+	script: function(cb) {
+		CT.modal.choice({
+			prompt: "trigger which script?",
+			data: Object.keys(zero.core.current.scene.scripts),
+			cb: name => cb({ script: name })
+		});
+	},
 	setAudio: function(aud) {
 		vu.game.stepper._.audio = aud;
 	},
