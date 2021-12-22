@@ -54,13 +54,13 @@ vu.game.util = {
 		});
 		setTimeout(mod.hide, pause || 3000);
 	},
-	logic: function(logic, state) { // TODO: multi-cond gates?
-		var zcc = zero.core.current, go = function(doit) {
+	logic: function(logic, state, audio, altered) { // TODO: multi-cond gates?
+		var zcc = zero.core.current, vgu = vu.game.util, go = function(doit) {
 			if (doit)
-				logic.yes && scene.script(logic.yes);
+				logic.yes && vgu.doscript(logic.yes, state, audio, altered);
 			else
-				logic.no && scene.script(logic.no);
-		}, g = logic.gate, scene = zcc.scene, b = zcc.person.body;
+				logic.no && vgu.doscript(logic.no, state, audio, altered);
+		}, g = logic.gate, b = zcc.person.body;
 		if (g.coinflip)
 			go(CT.data.random());
 		else if (g.gear)
@@ -103,7 +103,7 @@ vu.game.util = {
 				vgu.upstate(state, step.state);
 			}
 			if (step.logic)
-				vgu.logic(step.logic, state);
+				vgu.logic(step.logic, state, audio, altered);
 			if (step.scene) {
 				if (step.scene.portal) {
 					altered.state = true;
@@ -122,12 +122,20 @@ vu.game.util = {
 				}
 			}
 		}
+		if (step.script)
+			vgu.doscript(step.script, state, audio, altered);
 		if (step.actor) {
 			zcc.people[step.actor][step.action || "say"](step.line, nextStep, true);
 			if (step.action == "respond")
 				zcc.people[step.actor].click();
 		} else
 			nextStep && nextStep();
+	},
+	doscript: function(name, state, audio, altered) {
+		var zcc = zero.core.current;
+		if (zcc.scene && zcc.scene.script)
+			return zcc.scene.script(name); // for state, audio, main "thread"
+		vu.game.util.script(zcc.scene.scripts[name], null, state, audio, altered);
 	},
 	script: function(script, cb, state, audio, altered) {
 		altered = altered || {};
