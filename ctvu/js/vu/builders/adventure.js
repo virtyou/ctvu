@@ -10,11 +10,14 @@ vu.builders.adventure = {
 				owner: u.key,
 				player: pkey,
 				game: gkey
-			}, _.resume) : CT.modal.modal(_.anonmsg, () => _.resume({
-				player: zero.core.util.person(vu.core.bgen(fullp.body), fullp.name || "you", null, fullp, fullp.body),
-				state: fullg.initial,
-				game: fullg
-			}), null, true);
+			}, _.resume) : CT.modal.modal(_.anonmsg, function() {
+				_.resume({
+					player: zero.core.util.person(vu.core.bgen(fullp.body), fullp.name || "you", null, fullp, fullp.body),
+					state: fullg.initial,
+					game: fullg
+				});
+				CT.dom.id("helperoo").onclick();
+			}, null, true);
 		},
 		begin: function(gkey) {
 			var _ = vu.builders.adventure._;
