@@ -17,7 +17,7 @@ vu.builders.adventure = {
 					game: fullg
 				});
 				CT.dom.id("helperoo").onclick();
-			}, null, true);
+			}, { noClose: true }, true);
 		},
 		begin: function(gkey) {
 			var _ = vu.builders.adventure._;
