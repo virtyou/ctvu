@@ -23,7 +23,7 @@ vu.game.Adventure = CT.Class({
 		initState: function() {
 			var _ = this._, oz = this.opts;
 			this.state = oz.state;
-			if (oz.state.story) {
+			if (oz.state.story && oz.state.story.length) {
 				CT.modal.choice({
 					prompt: "resume adventure or start over?",
 					data: ["resume", "restart"],
