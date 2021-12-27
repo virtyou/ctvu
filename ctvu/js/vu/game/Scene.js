@@ -151,6 +151,8 @@ vu.game.Scene = CT.Class({
 		});
 		var a = this.adventure = opts.adventure,
 			s = this.state = a.state, osa = s.actors;
+		if (!s.scenes[opts.name]) // scene w/ no initial state
+			s.scenes[opts.name] = {};
 		this.name = opts.name;
 		this.menus = a.menus;
 		this.player = a.player;
