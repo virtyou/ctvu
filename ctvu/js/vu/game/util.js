@@ -64,7 +64,7 @@ vu.game.util = {
 		if (g.coinflip)
 			go(CT.data.random());
 		else if (g.gear)
-			go(vu.storage.get("held")[g.gear].key in b.gearmap);
+			go(vu.storage.get("items")[g.gear].key in b.gearmap);
 		else if (g.story)
 			go(state.story.includes(g.story));
 		else {

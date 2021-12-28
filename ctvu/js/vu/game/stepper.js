@@ -253,7 +253,7 @@ vu.game.stepper = {
 				} else if (kind == "gear") {
 					CT.modal.choice({
 						prompt: "which item should we check for?",
-						data: Object.keys(vu.storage.get("held")),
+						data: Object.keys(vu.storage.get("items")),
 						cb: item => result({ gear: item })
 					});
 				} else if (kind == "story") {
