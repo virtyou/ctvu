@@ -6,11 +6,8 @@ vu.builders.item = {
 			"PLY", "PVR", "RGBE", "STL", "SVG", "TGA", "TTF", "UTF8", "VRML", "VTK"],
 		kinds: ["furnishing", "shell", "wallpaper", "poster", "portal",
 			"speaker", "clothing", "body", "head", "hair", "eye", "teeth",
-			"teeth_top", "tongue", "facial", "beard", "accessory","held"
-		].concat([
-			"aura", "pelvis", "lumbar", "ribs", "neck", "head", "finger",
-			"hip", "knee", "ankle", "toe", "clavicle", "shoulder", "elbow", "wrist"
-		].map(k => "worn_" + k)),
+			"teeth_top", "tongue", "facial", "beard", "accessory", "held"
+		].concat(vu.core.worns),
 		selectors: {},
 		formatted: function(ctfile) {
 			var _ = vu.builders.item._, selz = _.selectors;

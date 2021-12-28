@@ -1,4 +1,8 @@
 vu.core = {
+	worns: [
+		"aura", "pelvis", "lumbar", "ribs", "neck", "head", "finger",
+		"hip", "knee", "ankle", "toe", "clavicle", "shoulder", "elbow", "wrist"
+	].map(k => "worn_" + k),
 	bgen: function(opts) {
 		return opts.template ? eval(opts.template) : function() {
 //			opts.joints = zero.base.joints();
