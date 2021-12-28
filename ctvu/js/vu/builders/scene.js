@@ -235,7 +235,7 @@ vu.builders.scene = {
 					noBreak: true,
 					classname: "w1",
 					value: iopts.description,
-					blurs: ["enter a short description", "describe this person"],
+					blurs: ["enter a short description", "describe this item"],
 					cb: function(desc) {
 						iopts.description = desc.trim();
 						gup();
