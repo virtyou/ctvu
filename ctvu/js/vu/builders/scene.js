@@ -227,9 +227,9 @@ vu.builders.scene = {
 			var r = zero.core.current.room,
 				gup = vu.game.step.upstate,
 				item = new zero.core.Thing(CT.merge(iopts,
-					vu.storage.get(iopts.variety)[iopts.name]));
+					vu.storage.get(iopts.kind)[iopts.name]));
 			return CT.dom.div([
-				CT.dom.div(" (" + iopts.variety + ")", "right small"),
+				CT.dom.div(" (" + iopts.kind + ")", "right small"),
 				item.name,
 				CT.dom.smartField({
 					isTA: true,
@@ -272,14 +272,14 @@ vu.builders.scene = {
 					CT.modal.choice({
 						prompt: "what kind of item?",
 						data: ["held"].concat(vu.core.worns).filter(k => vu.storage.get(k)),
-						cb: function(variety) {
+						cb: function(kind) {
 							CT.modal.choice({
 								prompt: "please select an item",
-								data: Object.keys(vu.storage.get(variety)),
+								data: Object.keys(vu.storage.get(kind)),
 								cb: function(iname) {
 									si[iname] = {
 										name: iname,
-										variety: variety,
+										kind: kind,
 										position: [0, 0, 0]
 									};
 									CT.dom.addContent(iz, _.item(si[iname]));
