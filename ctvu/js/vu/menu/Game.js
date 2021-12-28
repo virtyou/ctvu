@@ -152,7 +152,10 @@ vu.menu.Game = CT.Class({
 				per.get(item, function() {
 					vu.game.util.text(msg);
 					state.story.push(msg);
-					state.inventory.gear.held = per.opts.gear.held;
+					if (item.opts.kind == "held")
+						state.inventory.gear.held = per.opts.gear.held;
+					else
+						state.inventory.gear.worn = per.opts.gear.worn;
 					delete state.scenes[zcc.scene.name].items[item.name];
 					zcc.adventure.upstate();
 				});
