@@ -7,7 +7,7 @@ vu.builders.item = {
 		kinds: ["furnishing", "shell", "wallpaper", "poster", "portal",
 			"speaker", "clothing", "body", "head", "hair", "eye", "teeth",
 			"teeth_top", "tongue", "facial", "beard", "accessory", "held"
-		].concat(vu.core.worns),
+		].concat(zero.core.util.worns),
 		selectors: {},
 		formatted: function(ctfile) {
 			var _ = vu.builders.item._, selz = _.selectors;
