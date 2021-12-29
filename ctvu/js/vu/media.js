@@ -113,23 +113,10 @@ vu.media = {
 			], "centered padded"));
 		},
 		part: function(cb, kind, base, side, sub, part) { // worn/held!!
-			var bm = zero.core.current.person.body.bmap, oz = {
+			var oz = {
 				modelName: "part",
 				base: base.key
-			}, bms = side && bm[side], bone, part;
-			if (kind == "held")
-				bone = bms.arm.wrist;
-			else if (kind.startsWith("worn_")) {
-				part = part || kind.split("_")[1];
-				if (part in bm)
-					bone = bm[part];
-				else if (bms) {
-					bone = sub ? bms[sub][part] : bms[part];
-					if (sub == "hand")
-						bone = bone[0];
-				} else // aura...
-					bone = 0; // i guess
-			}
+			}, bone = zero.core.util.gear2bone(kind, side, sub, part);
 			if (bone != undefined)
 				oz.opts = { bone: bone };
 			vu.storage.edit(oz, cb);
