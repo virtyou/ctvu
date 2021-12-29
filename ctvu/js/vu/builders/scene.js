@@ -264,14 +264,14 @@ vu.builders.scene = {
 		},
 		items: function() {
 			var _ = vu.builders.scene._, selz = _.selectors,
-				zcc = zero.core.current,
+				zc = zero.core, zcu = zc.util, zcc = zc.current,
 				si = _.state(zcc.scene.name, "items"),
 				iz = CT.dom.div(Object.values(si).map(_.item));
 			CT.dom.setContent(selz.items, [
 				CT.dom.button("add", function() {
 					CT.modal.choice({
 						prompt: "what kind of item?",
-						data: ["held"].concat(vu.core.worns).filter(k => vu.storage.get(k)),
+						data: ["held"].concat(zcu.worns).filter(k => vu.storage.get(k)),
 						cb: function(kind) {
 							CT.modal.choice({
 								prompt: "please select an item",
