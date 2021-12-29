@@ -12,7 +12,7 @@ vu.game.Scene = CT.Class({
 					item.setBounds();
 					onbuild(item);
 				}
-			}, vu.storage.get("held")[iopts.name]));
+			}, vu.storage.get(iopts.kind)[iopts.name]));
 		},
 		action: function() { // TODO: other actions...
 			vu.portal.check();

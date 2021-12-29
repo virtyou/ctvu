@@ -227,15 +227,16 @@ vu.builders.scene = {
 			var r = zero.core.current.room,
 				gup = vu.game.step.upstate,
 				item = new zero.core.Thing(CT.merge(iopts,
-					vu.storage.get("held")[iopts.name]));
+					vu.storage.get(iopts.kind)[iopts.name]));
 			return CT.dom.div([
+				CT.dom.div(" (" + iopts.kind + ")", "right small"),
 				item.name,
 				CT.dom.smartField({
 					isTA: true,
 					noBreak: true,
 					classname: "w1",
 					value: iopts.description,
-					blurs: ["enter a short description", "describe this person"],
+					blurs: ["enter a short description", "describe this item"],
 					cb: function(desc) {
 						iopts.description = desc.trim();
 						gup();
@@ -263,22 +264,29 @@ vu.builders.scene = {
 		},
 		items: function() {
 			var _ = vu.builders.scene._, selz = _.selectors,
-				zcc = zero.core.current,
+				zc = zero.core, zcu = zc.util, zcc = zc.current,
 				si = _.state(zcc.scene.name, "items"),
 				iz = CT.dom.div(Object.values(si).map(_.item));
 			CT.dom.setContent(selz.items, [
 				CT.dom.button("add", function() {
 					CT.modal.choice({
-						prompt: "please select an item",
-						data: Object.keys(vu.storage.get("held")),
-						cb: function(iname) {
-							si[iname] = {
-								name: iname,
-								position: [0, 0, 0]
-							};
-							CT.dom.addContent(iz, _.item(si[iname]));
+						prompt: "what kind of item?",
+						data: ["held"].concat(zcu.worns).filter(k => vu.storage.get(k)),
+						cb: function(kind) {
+							CT.modal.choice({
+								prompt: "please select an item",
+								data: Object.keys(vu.storage.get(kind)),
+								cb: function(iname) {
+									si[iname] = {
+										name: iname,
+										kind: kind,
+										position: [0, 0, 0]
+									};
+									CT.dom.addContent(iz, _.item(si[iname]));
+								}
+							});
 						}
-					})
+					});
 				}, "right"),
 				"Items",
 				iz

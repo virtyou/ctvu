@@ -73,11 +73,18 @@ vu.storage.remote = {
 		};
 	},
 	init: function(cb, allrooms) {
-		var rcount = 2; // for possible additional requests....
+		var k, j, item, items, rcount = 2; // more requests..
 		vu.core.z({ action: "things" }, function(extras) {
-			for (var k in extras)
-				for (var j in extras[k])
-					CT.data.add(extras[k][j]);
+			items = {};
+			for (k in extras) {
+				for (j in extras[k]) {
+					item = extras[k][j];
+					CT.data.add(item);
+					if (k == "held" || k.startsWith("worn_"))
+						items[j] = item;
+				}
+			}
+			extras.items = items;
 			vu.storage._extras = extras;
 			vu.storage._ready(cb, rcount)();
 		});
