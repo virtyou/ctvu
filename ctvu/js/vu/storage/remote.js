@@ -73,7 +73,7 @@ vu.storage.remote = {
 		};
 	},
 	init: function(cb, allrooms) {
-		var k, j, item, items, vals, rcount = 2; // more requests..
+		var k, j, item, items, rcount = 2; // more requests..
 		vu.core.z({ action: "things" }, function(extras) {
 			items = {};
 			for (k in extras) {
