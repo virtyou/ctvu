@@ -83,11 +83,11 @@ vu.core = {
 			cb(pdata[option]);
 		}, "json", true);
 	},
-	person: function(popts, invisible) {
+	person: function(popts, invisible, pos) {
 		if (invisible)
 			popts.body.invisible = true;
 		return zero.core.util.person(vu.core.bgen(popts.body),
-			popts.name || "you", null, popts, popts.body);
+			popts.name || "you", pos, popts, popts.body);
 	},
 	room: function() {
 		return CT.merge(vu.storage.get("room"), core.config.ctvu.builders.room, core.config.ctzero.room);
