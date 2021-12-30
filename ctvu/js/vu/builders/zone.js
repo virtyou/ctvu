@@ -1069,7 +1069,9 @@ vu.builders.zone = {
 			popts.body.onclick = function() {
 				_.selectors.controls.update();
 			};
-			zero.core.util.join(vu.core.person(popts), function(person) {
+			zero.core.util.join(vu.core.person(popts, false, [
+				0, 800, 0 // meh, hacky (should use max height or something)
+			]), function(person) {
 				zero.core.util.setCurPer(person);
 				zcc.room.onReady(() => zcc.room.objects.forEach(_.regObj));
 				var r = vu.storage.get("room");
