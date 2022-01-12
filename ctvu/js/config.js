@@ -26,7 +26,7 @@
     "loaders": {
         "customs": ["one.earring", "one.pony"],
         "templates": ["one.body", "one.vstrip"],
-        "environments": ["one.scrolly", "one.techno", "one.box", "one.kidroom"],
+        "environments": ["one.box", "one.day", "one.night", "one.scrolly", "one.techno", "one.kidroom", "one.forest"],
         "avatars": ["one.body.sassy", "one.body.kid"]
     },
     "volumes": {
