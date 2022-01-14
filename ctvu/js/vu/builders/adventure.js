@@ -35,7 +35,7 @@ vu.builders.adventure = {
 					playpro(vu.storage.get("people"));
 				else
 					CT.db.multi(gopts.players, playpro);
-			});
+			}, "json");
 		},
 		resume: function(aopts) {
 			zero.core.current.adventure = new vu.game.Adventure(aopts);
