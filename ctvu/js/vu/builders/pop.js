@@ -5,13 +5,14 @@ vu.builders.pop = {
 			cameras: "top",
 			automatons: "topleft",
 			activities: "topright",
+			natural: "bottomright",
 			program: "bottomleft",
 			minimap: "bottom"
 		},
 		joined: function(person) {
-			var _ = vu.builders.pop._;
+			var _ = vu.builders.pop._, r = zero.core.current.room;
 			zero.core.util.setCurPer(person);
-			_.set(zero.core.current.room.opts, true);
+			r.onReady(() => _.set(r.opts, true));
 			new zero.core.Controls({
 				cams: true,
 				target: person
@@ -19,7 +20,7 @@ vu.builders.pop = {
 		},
 		set: function(room, noUpdate) {
 			var _ = vu.builders.pop._, selz = _.selectors, item, upmenus = function() {
-				for (item of ["automatons", "cameras", "minimap"])
+				for (item of ["automatons", "cameras", "minimap", "natural"])
 					selz[item].update(); // automatons updates activities/program
 			};
 			_.opts = room;
@@ -103,7 +104,7 @@ vu.builders.pop = {
 					CT.dom.button("add", adder, "up20 right"),
 					az
 				]);
-				az.firstChild ? az.firstChild.onclick() : adder();
+//				az.firstChild ? az.firstChild.onclick() : adder();
 			};
 		},
 		activity: function(act) { // {action[say|respond|move|wander|dance],value}
@@ -206,6 +207,47 @@ vu.builders.pop = {
 				]);
 			};
 		},
+		nat: function(natcat) {
+			var _ = vu.builders.pop._, oz = _.opts,
+				upd = {}, r = zero.core.current.room,
+				base = zero.core[CT.parse.capitalize(natcat)],
+				setter = base[CT.parse.capitalize(base.setter)];
+			var sel = CT.dom.link(oz[base.setter] || "none", function() {
+				CT.modal.choice({
+					prompt: "please select a " + natcat + " set",
+					data: ["none"].concat(Object.keys(base.sets)),
+					cb: function(natset) {
+						if (r[base.setter])
+							r.detach(base.setter);
+						if (natset == "none")
+							oz[base.setter] = upd[base.setter] = null;
+						else {
+							r.attach({
+								name: base.setter,
+								kind: "natural",
+								collection: natset,
+								subclass: setter
+							});
+							oz[base.setter] = upd[base.setter] = natset;
+						}
+						vu.storage.setOpts(oz.key, upd);
+						CT.dom.setContent(sel, natset);
+					}
+				});
+			});
+			return CT.dom.div([
+				CT.dom.span(natcat + ":"),
+				CT.dom.pad(),
+				sel
+			], "bordered padded margned round");
+		},
+		flofa: function() {
+			var _ = vu.builders.pop._, selz = _.selectors;
+			selz.natural = CT.dom.div();
+			selz.natural.update = function() {
+				CT.dom.setContent(selz.natural, ["flora", "fauna"].map(_.nat));
+			};
+		},
 		setup: function() {
 			var _ = vu.builders.pop._, selz = _.selectors;
 			selz.cameras = CT.dom.div(null, "centered");
@@ -213,6 +255,7 @@ vu.builders.pop = {
 			_.automatons();
 			_.activities();
 			_.program();
+			_.flofa();
 			_.mima();
 		}
 	},
