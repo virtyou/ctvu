@@ -84,6 +84,10 @@ vu.live = {
 					s.bob[bsp] = meta.bob[bsp];
 				});
 				_.dance(person, meta);
+				if (person.helpMe != meta.helpMe) {
+					person.helpMe = meta.helpMe;
+					vu.core.ownz() && vu.builders.play.minimap.help(person);
+				}
 			},
 			message: function(msg) {
 				var data = msg.message,
@@ -146,6 +150,7 @@ vu.live = {
 	},
 	meta: function() {
 		var zcc = zero.core.current, person = zcc.person, targets = {
+			helpMe: person.helpMe,
 			mod: person.activeMod,
 			vibe: person.vibe.current,
 			dance: person.activeDance,

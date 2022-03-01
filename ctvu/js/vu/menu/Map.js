@@ -55,6 +55,9 @@ vu.menu.Map = CT.Class({
 			_.movers[obj.name] = n;
 		return n;
 	},
+	help: function(p) {
+		this._.people[p.name].style.background = p.helpMe ? "red" : "green";
+	},
 	person: function(p) {
 		this._.people[p.name] = this.place(p.body,
 			p.name == zero.core.current.person.name
