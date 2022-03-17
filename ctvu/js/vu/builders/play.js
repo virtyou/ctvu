@@ -53,7 +53,13 @@ vu.builders.play = {
 		clickreg: function(thing) {
 			var _ = vu.builders.play._,
 				isYou = vu.core.ischar(thing.opts.key),
-				target = thing.body || thing;
+				target = thing.body || thing,
+				other = [
+					"SHIFT + click to approach"
+				];
+			thing.body && vu.core.ownz() && other.push(CT.dom.button("dunk", function() {
+				confirm("dunk this person?") && vu.live.emit("dunk", thing.opts.key);
+			}));
 			zero.core.click.register(target, function() {
 				CT.dom.setContent(_.selectors.info, [
 					CT.dom.div(thing.name, "bigger"),
@@ -66,9 +72,7 @@ vu.builders.play = {
 						"1-9 + SHIFT for dances",
 						"0 to ungesture",
 						"0 + SHIFT to undance"
-					] : [
-						"SHIFT + click to approach"
-					]
+					] : other
 				]);
 				zero.core.camera.follow(target.looker || target);
 				if (!isYou) {

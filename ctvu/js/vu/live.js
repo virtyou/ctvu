@@ -26,6 +26,9 @@ vu.live = {
 				flo.placer.position[fos.axis] = data.position;
 				flo.bounds.min[fos.axis] = data.min;
 				flo.bounds.max[fos.axis] = data.max;
+			},
+			dunk: function(person, pkey) {
+				vu.core.ischar(pkey) && vu.portal.port();
 			}
 		},
 		events: {
