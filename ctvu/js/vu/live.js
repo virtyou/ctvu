@@ -26,6 +26,9 @@ vu.live = {
 				flo.placer.position[fos.axis] = data.position;
 				flo.bounds.min[fos.axis] = data.min;
 				flo.bounds.max[fos.axis] = data.max;
+			},
+			dunk: function(person, pkey) {
+				vu.core.ischar(pkey) && vu.portal.port();
 			}
 		},
 		events: {
@@ -84,6 +87,10 @@ vu.live = {
 					s.bob[bsp] = meta.bob[bsp];
 				});
 				_.dance(person, meta);
+				if (person.helpMe != meta.helpMe) {
+					person.helpMe = meta.helpMe;
+					vu.core.ownz() && vu.builders.play.minimap.help(person);
+				}
 			},
 			message: function(msg) {
 				var data = msg.message,
@@ -146,6 +153,7 @@ vu.live = {
 	},
 	meta: function() {
 		var zcc = zero.core.current, person = zcc.person, targets = {
+			helpMe: person.helpMe,
 			mod: person.activeMod,
 			vibe: person.vibe.current,
 			dance: person.activeDance,

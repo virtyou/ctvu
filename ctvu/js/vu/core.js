@@ -198,6 +198,9 @@ vu.core = {
 			}
 		});
 	},
+	ownz: function() {
+		return zero.core.current.room.opts.owners.includes(user.core.get("key"));
+	},
 	my: function(mtype, cb, exporter) {
 		CT.db.get(mtype, cb, null, null, null, {
 			owners: {

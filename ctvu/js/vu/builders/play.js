@@ -29,7 +29,7 @@ vu.builders.play = {
 					moveCb: vu.live.meta
 				});
 				vbp.minimap = new vu.menu.Map({ node: _.selectors.minimap });
-				_.ownz() && _.selectors.lights.update();
+				vu.core.ownz() && _.selectors.lights.update();
 				cur.room.objects.forEach(_.clickreg);
 				zero.core.click.trigger(person.body);
 				core.config.ctzero.camera.cardboard && vu.voice.listen();
@@ -53,7 +53,13 @@ vu.builders.play = {
 		clickreg: function(thing) {
 			var _ = vu.builders.play._,
 				isYou = vu.core.ischar(thing.opts.key),
-				target = thing.body || thing;
+				target = thing.body || thing,
+				other = [
+					"SHIFT + click to approach"
+				];
+			thing.body && vu.core.ownz() && other.push(CT.dom.button("dunk", function() {
+				confirm("dunk this person?") && vu.live.emit("dunk", thing.opts.key);
+			}));
 			zero.core.click.register(target, function() {
 				CT.dom.setContent(_.selectors.info, [
 					CT.dom.div(thing.name, "bigger"),
@@ -66,9 +72,7 @@ vu.builders.play = {
 						"1-9 + SHIFT for dances",
 						"0 to ungesture",
 						"0 + SHIFT to undance"
-					] : [
-						"SHIFT + click to approach"
-					]
+					] : other
 				]);
 				zero.core.camera.follow(target.looker || target);
 				if (!isYou) {
@@ -140,7 +144,8 @@ vu.builders.play = {
 			});
 		},
 		chatterbox: function() {
-			var zcu = zero.core.util, out = CT.dom.div(null, "out"), say = function(val, e) {
+			var zc = zero.core, zcu = zc.util, zcc = zc.current, out = CT.dom.div(null,
+			"out"), say = function(val, e) {
 				val && vu.live.emit("chat", val);
 				e && e.stopPropagation();
 				return "clear";
@@ -151,11 +156,24 @@ vu.builders.play = {
 					listButt.style.color = "black";
 				});
 				e.stopPropagation();
-			}), cbox = CT.dom.smartField(say, "w1 block mt5", null, null, null,
-				core.config.ctvu.blurs.talk), singButt = zcu.singer(cbox, say);
+			}), cbox = CT.dom.smartField(say,
+				"w1 block mt5", null, null, null,
+			core.config.ctvu.blurs.talk), helpButt = CT.dom.button("help", function(e) {
+				zcc.person.helpMe = !zcc.person.helpMe;
+				if (zcc.person.helpMe) {
+					helpButt.style.color = "red";
+					helpButt.innerText = "unhelp";
+				} else {
+					helpButt.style.color = "black";
+					helpButt.innerText = "help";
+				}
+				vu.builders.play.minimap.help(zcc.person);
+				vu.live.meta();
+				e.stopPropagation();
+			}), singButt = zcu.singer(cbox, say);
 			cbox.onclick = function(e) { e.stopPropagation(); };
 			var n = CT.dom.div([
-				CT.dom.div([singButt, listButt], "right up15"),
+				CT.dom.div([singButt, listButt, helpButt], "right up15"),
 				out, cbox
 			]);
 			n.out = out;
@@ -170,12 +188,9 @@ vu.builders.play = {
 				sel.modal.node.classList[sel._collapsed ? "add" : "remove"]("collapsed");
 			};
 		},
-		ownz: function() {
-			return zero.core.current.room.opts.owners.includes(user.core.get("key"));
-		},
 		swap: function() {
 			var _ = vu.builders.play._, selz = _.selectors;
-			if (!_.ownz() && !_.partified) return;
+			if (!vu.core.ownz() && !_.partified) return;
 			_.partified = !_.partified;
 			_.swappers.forEach(function(section) {
 				selz[section].modal.showHide("ctmain");
