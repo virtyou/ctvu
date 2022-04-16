@@ -22,6 +22,24 @@ vu.lang = {
 		CT.storage.set("language", _.settings);
 		vu.live.meta();
 	},
+	transer: function(words, slang, tlang) {
+		var _ = vu.lang._;
+		var butt = CT.dom.button("translate from " + slang.lang + "?", function() {
+			CT.net.post({
+				path: "/_speech",
+				params: {
+					action: "trans",
+					words: words,
+					language: slang.code,
+					target: tlang.code
+				},
+				cb: function(trans) {
+					butt.replaceNode(CT.dom.div("[translated from " + slang.lang + "]: " + trans, "bold"));
+				}
+			});
+		});
+		return butt;
+	},
 	settings: function() {
 		vu.lang._.init();
 		return vu.lang._.settings;
