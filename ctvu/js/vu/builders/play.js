@@ -170,10 +170,10 @@ vu.builders.play = {
 				vu.builders.play.minimap.help(zcc.person);
 				vu.live.meta();
 				e.stopPropagation();
-			}), singButt = zcu.singer(cbox, say);
+			}), langButt = vu.lang.button(), singButt = zcu.singer(cbox, say);
 			cbox.onclick = function(e) { e.stopPropagation(); };
 			var n = CT.dom.div([
-				CT.dom.div([singButt, listButt, helpButt], "right up15"),
+				CT.dom.div([singButt, listButt, langButt, helpButt], "right up15"),
 				out, cbox
 			]);
 			n.out = out;
