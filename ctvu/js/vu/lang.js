@@ -8,17 +8,19 @@ vu.lang = {
 				_.settings = CT.storage.get("language");
 				_.settings || vu.lang.set();
 			}
+			zero.core.current.person.language = _.settings;
 		}
 	},
 	set: function(lang) {
 		lang = lang || "English";
 		var _ = vu.lang._, lin = _.langs.indexOf(lang);
-		_.settings = {
+		zero.core.current.person.language = _.settings = {
 			lang: lang,
 			code: _.codes[lin],
 			index: lin
 		};
 		CT.storage.set("language", _.settings);
+		vu.live.meta();
 	},
 	settings: function() {
 		vu.lang._.init();
@@ -26,7 +28,6 @@ vu.lang = {
 	},
 	menu: function() {
 		var _ = vu.lang._;
-		_.init();
 		CT.modal.prompt({
 			prompt: "please select your language",
 			style: "single-choice",
@@ -36,6 +37,7 @@ vu.lang = {
 		});
 	},
 	button: function() {
+		vu.lang._.init();
 		return CT.dom.button("language", vu.lang.menu);
 	}
 };
