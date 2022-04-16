@@ -19,6 +19,7 @@ CT.require("vu.audio");
 CT.require("vu.color");
 CT.require("vu.controls");
 CT.require("vu.storage");
+CT.require("vu.lang");
 CT.require("vu.live");
 CT.require("vu.voice");
 CT.require("vu.party");
