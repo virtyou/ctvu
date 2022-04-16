@@ -87,6 +87,7 @@ vu.live = {
 					s.bob[bsp] = meta.bob[bsp];
 				});
 				_.dance(person, meta);
+				person.language = meta.language;
 				if (person.helpMe != meta.helpMe) {
 					person.helpMe = meta.helpMe;
 					vu.core.ownz() && vu.builders.play.minimap.help(person);
@@ -157,7 +158,8 @@ vu.live = {
 			mod: person.activeMod,
 			vibe: person.vibe.current,
 			dance: person.activeDance,
-			gesture: person.activeGesture
+			gesture: person.activeGesture,
+			language: person.language
 		}, s = person.body.springs, _ = vu.live._;
 		_.springs.forEach(function(prop) {
 			targets[prop] = { target: s[prop].target };
