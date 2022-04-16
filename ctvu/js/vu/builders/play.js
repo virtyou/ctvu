@@ -35,15 +35,18 @@ vu.builders.play = {
 				core.config.ctzero.camera.cardboard && vu.voice.listen();
 			},
 			chat: function(person, msg) {
-				var mnode = CT.dom.div([
+				var zccp = zero.core.current.person, subs = [
 					CT.dom.span(person.name, "bold italic green"),
 					CT.dom.pad(),
 					CT.dom.span(msg)
-				]);
-				if (!vu.core.ischar(person.opts.key))
+				];
+				if (!vu.core.ischar(person.opts.key)) {
 					person.setVolume(zero.core.util.close2u(person.body));
+					if (person.language.code != zccp.language.code)
+						subs.push(vu.lang.transer(msg, person.language, zccp.language));
+				}
 				person.say(msg, null, true);
-				CT.dom.addContent(vu.builders.play._.selectors.chat.out, mnode);
+				CT.dom.addContent(vu.builders.play._.selectors.chat.out, CT.dom.div(subs));
 				mnode.scrollIntoView();
 			},
 			enter: function(person) {
