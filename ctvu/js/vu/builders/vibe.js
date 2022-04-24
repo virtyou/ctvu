@@ -69,7 +69,7 @@ vu.builders.vibe = {
 			]);
 		},
 		setup: function() {
-			var _ = vu.builders.vibe._, selz = _.selectors,
+			var _ = vu.builders.vibe._, selz = _.selectors, vsel,
 				popts = _.opts = vu.storage.get("person") || _.opts;
 			_.raw = vu.core.person(popts);
 			selz.mood = CT.dom.div();
@@ -77,11 +77,11 @@ vu.builders.vibe = {
 			selz.voice = CT.dom.span();
 			selz.voice.update = function() {
 				CT.dom.setContent(selz.voice,
-					CT.dom.select(vu.lang.voices(selz.lang.value),
+					vsel = CT.dom.select(vu.lang.voices(selz.lang.value),
 						null, null, popts.voice, null, function() {
 							var person = zero.core.current.person;
 							if (person) {
-								person.voice = selz.voice.value;
+								person.voice = vsel.value;
 								vu.builders.vibe.persist({ voice: person.voice });
 							}
 						}));
