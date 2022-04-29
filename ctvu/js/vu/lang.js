@@ -71,7 +71,7 @@ vu.lang = {
 	},
 	transer: function(words, slang, tlang) {
 		var _ = vu.lang._;
-		var butt = CT.dom.button("translate from " + slang.lang + "?", function() {
+		var butt = CT.dom.button("translate from " + slang.lang + "?", function(e) {
 			CT.net.post({
 				path: "/_speech",
 				params: {
@@ -81,9 +81,10 @@ vu.lang = {
 					target: tlang.code
 				},
 				cb: function(trans) {
-					butt.replaceNode(CT.dom.div("[translated from " + slang.lang + "]: " + trans, "bold"));
+					butt.replaceWith(CT.dom.div("[translated from " + slang.lang + "]: " + trans, "bold"));
 				}
 			});
+			e && e.stopPropagation();
 		});
 		return butt;
 	},
