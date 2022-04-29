@@ -19,6 +19,7 @@ vu.builders.play = {
 				var vbp = vu.builders.play, _ = vbp._,
 					cur = zero.core.current;
 				zero.core.util.setCurPer(person);
+				CT.dom.setContent(_.langButt, vu.lang.button());
 				vu.controls.initCamera(_.selectors.cameras);
 				vu.controls.setTriggers(_.selectors.triggers, vu.live.meta);
 				vu.controls.setGestures(_.selectors.gestures, vu.live.meta);
@@ -35,13 +36,17 @@ vu.builders.play = {
 				core.config.ctzero.camera.cardboard && vu.voice.listen();
 			},
 			chat: function(person, msg) {
-				var mnode = CT.dom.div([
+				var zccp = zero.core.current.person, subs = [
 					CT.dom.span(person.name, "bold italic green"),
 					CT.dom.pad(),
 					CT.dom.span(msg)
-				]);
-				if (!vu.core.ischar(person.opts.key))
+				], mnode;
+				if (!vu.core.ischar(person.opts.key)) {
 					person.setVolume(zero.core.util.close2u(person.body));
+					if (person.language.code != zccp.language.code)
+						subs.push(vu.lang.transer(msg, person.language, zccp.language));
+				}
+				mnode = CT.dom.div(subs);
 				person.say(msg, null, true);
 				CT.dom.addContent(vu.builders.play._.selectors.chat.out, mnode);
 				mnode.scrollIntoView();
@@ -145,7 +150,7 @@ vu.builders.play = {
 		},
 		chatterbox: function() {
 			var zc = zero.core, zcu = zc.util, zcc = zc.current, out = CT.dom.div(null,
-			"out"), say = function(val, e) {
+			"out"), _ = vu.builders.play._, say = function(val, e) {
 				val && vu.live.emit("chat", val);
 				e && e.stopPropagation();
 				return "clear";
@@ -171,9 +176,10 @@ vu.builders.play = {
 				vu.live.meta();
 				e.stopPropagation();
 			}), singButt = zcu.singer(cbox, say);
+			_.langButt = CT.dom.span();
 			cbox.onclick = function(e) { e.stopPropagation(); };
 			var n = CT.dom.div([
-				CT.dom.div([singButt, listButt, helpButt], "right up15"),
+				CT.dom.div([singButt, listButt, _.langButt, helpButt], "right up15"),
 				out, cbox
 			]);
 			n.out = out;

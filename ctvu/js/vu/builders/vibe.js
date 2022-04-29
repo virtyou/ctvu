@@ -69,21 +69,26 @@ vu.builders.vibe = {
 			]);
 		},
 		setup: function() {
-			var _ = vu.builders.vibe._, selz = _.selectors,
+			var _ = vu.builders.vibe._, selz = _.selectors, vsel,
 				popts = _.opts = vu.storage.get("person") || _.opts;
 			_.raw = vu.core.person(popts);
 			selz.mood = CT.dom.div();
 			selz.vibes = CT.dom.div();
-			selz.voice = CT.dom.select(["Joanna", "Justin", "Ivy",
-				"Joey", "Kendra", "Matthew", "Kimberly", "Salli"],
-				null, null, popts.voice, null, function() {
-					var person = zero.core.current.person;
-					if (person) {
-						person.voice = selz.voice.value;
-						vu.builders.vibe.persist({ voice: person.voice });
-					}
-				});
-
+			selz.voice = CT.dom.span();
+			selz.voice.update = function() {
+				CT.dom.setContent(selz.voice,
+					vsel = CT.dom.select(vu.lang.voices(selz.lang.value),
+						null, null, popts.voice, null, function() {
+							var person = zero.core.current.person;
+							if (person) {
+								person.voice = vsel.value;
+								vu.builders.vibe.persist({ voice: person.voice });
+							}
+						}));
+			};
+			selz.lang = CT.dom.select(vu.lang.langs(),
+				null, null, "All", null, selz.voice.update);
+			selz.voice.update();
 		}
 	},
 	persist: function(updates, sub) {
@@ -101,6 +106,9 @@ vu.builders.vibe = {
 		return [
 			CT.dom.div("your virtYou", "bigger centered pb10"),
 			CT.dom.div([
+				CT.dom.span("Lang"),
+				CT.dom.pad(),
+				selz.lang,
 				CT.dom.span("Voice"),
 				CT.dom.pad(),
 				selz.voice,
