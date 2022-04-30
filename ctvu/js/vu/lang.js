@@ -70,8 +70,9 @@ vu.lang = {
 		vu.live && vu.live.meta();
 	},
 	transer: function(words, slang, tlang) {
-		var _ = vu.lang._;
+		var _ = vu.lang._, transing = CT.dom.div("translating...");
 		var butt = CT.dom.button("translate from " + slang.lang + "?", function(e) {
+			butt.replaceWith(transing);
 			CT.net.post({
 				path: "/_speech",
 				params: {
@@ -81,7 +82,7 @@ vu.lang = {
 					target: tlang.code
 				},
 				cb: function(trans) {
-					butt.replaceWith(CT.dom.div("[translated from " + slang.lang + "]: " + trans, "bold"));
+					transing.replaceWith(CT.dom.div("[translated from " + slang.lang + "]: " + trans, "bold"));
 				}
 			});
 			e && e.stopPropagation();
