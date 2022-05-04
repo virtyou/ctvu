@@ -31,7 +31,7 @@ vu.builders.play = {
 				});
 				vbp.minimap = new vu.menu.Map({ node: _.selectors.minimap });
 				vu.core.ownz() && _.selectors.lights.update();
-				cur.room.objects.forEach(_.clickreg);
+				_.regclix();
 				zero.core.click.trigger(person.body);
 				core.config.ctzero.camera.cardboard && vu.voice.listen();
 			},
@@ -55,16 +55,38 @@ vu.builders.play = {
 				vu.builders.play._.clickreg(person);
 			}
 		},
+		regclix: function() {
+			var _ = vu.builders.play._, room = zero.core.current.room;
+			room.objects.forEach(_.clickreg);
+			room.automatons.forEach(a => _.clickreg(a.person));
+		},
 		clickreg: function(thing) {
-			var _ = vu.builders.play._,
+			var _ = vu.builders.play._, zccp = zero.core.current.person,
 				isYou = vu.core.ischar(thing.opts.key),
 				target = thing.body || thing,
 				other = [
 					"SHIFT + click to approach"
 				];
-			thing.body && vu.core.ownz() && other.push(CT.dom.button("dunk", function() {
-				confirm("dunk this person?") && vu.live.emit("dunk", thing.opts.key);
-			}));
+			if (thing.body) {
+				if (thing.automaton) {
+					var cbutt = CT.dom.button("chat", function() {
+						thing.automaton.pause();
+						thing.look(zccp.body, true);
+						zccp.onsay(thing.respond);
+						CT.dom.setContent(cbox, cstop);
+					}), cstop = CT.dom.button("stop chatting", function() {
+						thing.unlook();
+						thing.automaton.play();
+						zccp.onsay();
+						CT.dom.setContent(cbox, cbutt);
+					}), cbox = CT.dom.div(cbutt);
+					other.push(cbox);
+				} else if (vu.core.ownz()) {
+					other.push(CT.dom.button("dunk", function() {
+						confirm("dunk this person?") && vu.live.emit("dunk", thing.opts.key);
+					}));
+				}
+			}
 			zero.core.click.register(target, function() {
 				CT.dom.setContent(_.selectors.info, [
 					CT.dom.div(thing.name, "bigger"),
@@ -138,7 +160,7 @@ vu.builders.play = {
 					onbuild: function(room) {
 						vu.live.emit("inject", portin);
 						room.cut();
-						room.objects.forEach(_.clickreg);
+						_.regclix();
 						vbp.minimap.refresh();
 						_.uplights();
 					}
