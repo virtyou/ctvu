@@ -58,7 +58,7 @@ vu.builders.play = {
 		regclix: function() {
 			var _ = vu.builders.play._, room = zero.core.current.room;
 			room.objects.forEach(_.clickreg);
-			room.automatons.forEach(a => _.clickreg(a.person));
+			room.automatons.forEach(a => a.onperson(_.clickreg));
 		},
 		clickreg: function(thing) {
 			var _ = vu.builders.play._, zccp = zero.core.current.person,
@@ -72,7 +72,7 @@ vu.builders.play = {
 					var cbutt = CT.dom.button("chat", function() {
 						thing.automaton.pause();
 						thing.look(zccp.body, true);
-						zccp.onsay(thing.respond);
+						zccp.onsay(statement => thing.respond(statement));
 						CT.dom.setContent(cbox, cstop);
 					}), cstop = CT.dom.button("stop chatting", function() {
 						thing.unlook();
