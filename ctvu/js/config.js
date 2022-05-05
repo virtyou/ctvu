@@ -36,6 +36,7 @@
     },
     "builders": {
         "talk": {
+            "identities": [],
             "help": {
                 "mod": "Mods are configured on the mod page. Use 'unmod' to stop modding.",
                 "responses": "Your character will say one of these in response to this trigger.",
