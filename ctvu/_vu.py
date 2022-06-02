@@ -1,9 +1,12 @@
-from cantools.web import respond, succeed, fail, cgi_get, read_file
+from cantools.web import respond, succeed, fail, cgi_get, read_file, send_mail
 from ctone.spawners import person, thing, asset, room, exists
 from model import db, Member, Person, Room, Resource, Augmentation
+from cantools import config
+
+CALLMSG = '%s is calling! Click <a href="https://%s/vu/chat.html#%s">here</a> to talk.'
 
 def response():
-	action = cgi_get("action", choices=["person", "import", "thing", "resource", "asset", "augmentation", "room", "ready", "share"])
+	action = cgi_get("action", choices=["person", "import", "thing", "resource", "asset", "augmentation", "room", "ready", "share", "call"])
 	if action == "resource":
 		key = cgi_get("key", required=False)
 		dkey = cgi_get("data", required=False)
@@ -69,14 +72,19 @@ def response():
 			setattr(pto, item, getattr(pfrom, item))
 		ptbod.morphs = pfbod.morphs
 		db.put_multi([pto, ptbod])
+	# below for share/call only!!
+	p = Member.query(Member.email == cgi_get("email")).get()
+	if not p:
+		fail("no member with that email :(")
 	if action == "share":
-		p = Member.query(Member.email == cgi_get("email")).get()
-		if not p:
-			fail("no member with that email :(")
 		c = db.get(cgi_get("content"))
 		if p.key in c.owners:
 			fail("already sharing with that person!")
 		c.owners = c.owners + [p.key]
 		c.put()
+	if action == "call":
+		caller = db.get(cgi_get("caller"))
+		send_mail(p.email, subject="call from %s"%(caller.firstName,),
+			body=CALLMSG%(caller.firstName, config.web.domain, caller.key.urlsafe()))
 
 respond(response)
