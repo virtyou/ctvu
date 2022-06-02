@@ -23,7 +23,6 @@ CT.onload(function() {
 	CT.initCore();
 	vu.core.init();
 	vu.storage.init(function() {
-		// menu
 		vu.builders.chat.menus();
 		vu.builders.core.init();
 	}, true);
