@@ -52,7 +52,7 @@ vu.builders.chat = {
 								email: m.email,
 								caller: ukey
 							});
-							cb(m.key + ukey);
+							cb(ukey + m.key);
 						}
 					});
 				});
