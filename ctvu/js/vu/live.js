@@ -177,6 +177,9 @@ vu.live = {
 			CT.pubsub.set_cb(ename, _.events[ename]);
 		});
 		CT.pubsub.connect(location.hostname, 8888, CT.storage.get("person"));
-		CT.pubsub.subscribe(zero.core.current.room.opts.key);
+		if (cbs.find)
+			cbs.find(CT.pubsub.subscribe);
+		else
+			CT.pubsub.subscribe(zero.core.current.room.opts.key);
 	}
 };
