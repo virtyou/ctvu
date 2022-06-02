@@ -47,9 +47,10 @@ vu.live = {
 				vu.live._.spawn(user, meta, true);
 			},
 			leave: function(chan, user) {
-				var _ = vu.live._, peeps = _.people;
+				var _ = vu.live._, peeps = _.people,
+					vbp = vu.builders.play;
 				setTimeout(function() {
-					vu.builders.play.minimap.unperson(peeps[user].name);
+					vbp && vpb.minimap.unperson(peeps[user].name);
 					peeps[user].remove();
 					delete peeps[user];
 					if (Object.keys(peeps).length == 1)
@@ -74,7 +75,7 @@ vu.live = {
 			},
 			meta: function(data) {
 				var _ = vu.live._, person = _.people[data.user],
-					zcc = zero.core.current;
+					zcc = zero.core.current, vbp = vu.builders.play;
 				if (zcc.person && data.user == zcc.person.opts.key)
 					return;
 				if (!(person && person.body))
@@ -90,7 +91,7 @@ vu.live = {
 				person.language = meta.language;
 				if (person.helpMe != meta.helpMe) {
 					person.helpMe = meta.helpMe;
-					vu.core.ownz() && vu.builders.play.minimap.help(person);
+					vbp && vu.core.ownz() && vbp.minimap.help(person);
 				}
 			},
 			message: function(msg) {
