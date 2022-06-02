@@ -36,6 +36,7 @@ vu.builders.chat = {
 			},
 			enter: function(person) {
 				person.watch(false, true);
+				person.look(zero.core.camera);
 			},
 			find: function(cb) {
 				var h = document.location.hash.slice(1),
