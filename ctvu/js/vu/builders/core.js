@@ -18,7 +18,7 @@ vu.builders.core = {
 		if (isiora || pname == "zone" || pname == "pop")
 			CT.dom.addContent("ctheader", _.linx());
 		else {
-			if (pname == "play")
+			if (pname == "play" || pname == "chat")
 				vu.live.init(_.cbs);
 			else
 				zero.core.util.join(_.raw, _.joined);
