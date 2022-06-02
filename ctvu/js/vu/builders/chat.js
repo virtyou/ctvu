@@ -6,6 +6,7 @@ vu.builders.chat = {
 			chat: "bottom"
 		},
 		cbs: {
+			frozen: true,
 			joined: function(person) { // (you)
 				var vbp = vu.builders.chat, _ = vbp._,
 					cur = zero.core.current,
@@ -15,6 +16,7 @@ vu.builders.chat = {
 				bs.bob.value = 15;
 				bs.weave.target = -20;
 				CT.dom.setContent(_.langButt, vu.lang.button());
+				vu.live.meta(); // for lang
 			},
 			chat: function(person, msg) {
 				var zccp = zero.core.current.person, subs = [
@@ -28,7 +30,7 @@ vu.builders.chat = {
 						subs.push(vu.lang.transer(msg, person.language, zccp.language));
 				}
 				mnode = CT.dom.div(subs);
-				person.say(msg, null, true);
+				person.say(msg);
 				CT.dom.addContent(vu.builders.chat._.selectors.chat.out, mnode);
 				mnode.scrollIntoView();
 			},
@@ -79,23 +81,12 @@ vu.builders.chat = {
 				e.stopPropagation();
 			}), cbox = CT.dom.smartField(say,
 				"w1 block mt5", null, null, null,
-			core.config.ctvu.blurs.talk), helpButt = CT.dom.button("help", function(e) {
-				zcc.person.helpMe = !zcc.person.helpMe;
-				if (zcc.person.helpMe) {
-					helpButt.style.color = "red";
-					helpButt.innerText = "unhelp";
-				} else {
-					helpButt.style.color = "black";
-					helpButt.innerText = "help";
-				}
-				vu.builders.chat.minimap.help(zcc.person);
-				vu.live.meta();
-				e.stopPropagation();
-			}), singButt = zcu.singer(cbox, say);
+			core.config.ctvu.blurs.talk),
+				singButt = zcu.singer(cbox, say);
 			_.langButt = CT.dom.span();
 			cbox.onclick = function(e) { e.stopPropagation(); };
 			var n = CT.dom.div([
-				CT.dom.div([singButt, listButt, _.langButt, helpButt], "right up15"),
+				CT.dom.div([singButt, listButt, _.langButt], "right up15"),
 				out, cbox
 			]);
 			n.out = out;
