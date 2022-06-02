@@ -26,7 +26,7 @@ vu.builders.chat = {
 				], mnode;
 				if (!vu.core.ischar(person.opts.key)) {
 					person.setVolume(zero.core.util.close2u(person.body));
-					if (person.language.code != zccp.language.code)
+					if (person.language && person.language.code != zccp.language.code)
 						subs.push(vu.lang.transer(msg, person.language, zccp.language));
 				}
 				mnode = CT.dom.div(subs);
