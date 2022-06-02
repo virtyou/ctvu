@@ -15,6 +15,9 @@ vu.builders.core = {
 		isiora && zero.core.camera.move({
 			x: 0, y: 0, z: pname == "item" && 200 || 10
 		});
+		(pname == "chat") && zero.core.camera.move({
+			x: 0, y: 10, z: 40
+		});
 		if (isiora || pname == "zone" || pname == "pop")
 			CT.dom.addContent("ctheader", _.linx());
 		else {
