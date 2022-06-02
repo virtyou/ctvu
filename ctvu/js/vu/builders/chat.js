@@ -7,12 +7,13 @@ vu.builders.chat = {
 		},
 		cbs: {
 			joined: function(person) { // (you)
-
-				// TODO: cam/position
-
 				var vbp = vu.builders.chat, _ = vbp._,
-					cur = zero.core.current;
+					cur = zero.core.current,
+					pb = person.body, bs = pb.springs;
 				zero.core.util.setCurPer(person);
+				pb.grow(0.2);
+				bs.bob.value = 15;
+				bs.weave.target = -20;
 				CT.dom.setContent(_.langButt, vu.lang.button());
 			},
 			chat: function(person, msg) {
@@ -32,9 +33,7 @@ vu.builders.chat = {
 				mnode.scrollIntoView();
 			},
 			enter: function(person) {
-
-				// TODO: cam/position
-
+				person.watch(false, true);
 			},
 			find: function(cb) {
 				var h = document.location.hash.slice(1),
