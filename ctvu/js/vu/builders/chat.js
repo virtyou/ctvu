@@ -81,8 +81,7 @@ vu.builders.chat = {
 				e.stopPropagation();
 			}), cbox = CT.dom.smartField(say,
 				"w1 block mt5", null, null, null,
-			core.config.ctvu.blurs.talk),
-				singButt = zcu.singer(cbox, say);
+			core.config.ctvu.blurs.talk), singButt = zcu.singer(cbox, say);
 			_.langButt = CT.dom.span();
 			cbox.onclick = function(e) { e.stopPropagation(); };
 			var n = CT.dom.div([
