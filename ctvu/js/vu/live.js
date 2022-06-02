@@ -81,6 +81,8 @@ vu.live = {
 				if (!(person && person.body))
 					return; // will handle meta when spawn is complete
 				var s = person.body.springs, meta = data.meta;
+				person.language = meta.language;
+				if (_.cbs.frozen) return;
 				_.springs.forEach(function(prop) {
 					s[prop].target = meta[prop].target;
 				});
@@ -88,7 +90,6 @@ vu.live = {
 					s.bob[bsp] = meta.bob[bsp];
 				});
 				_.dance(person, meta);
-				person.language = meta.language;
 				if (person.helpMe != meta.helpMe) {
 					person.helpMe = meta.helpMe;
 					vbp && vu.core.ownz() && vbp.minimap.help(person);
@@ -123,7 +124,7 @@ vu.live = {
 			var _ = vu.live._, isYou = vu.core.ischar(pkey);
 			if (isYou && pkey in _.people) return; // you switching rooms
 			CT.db.one(pkey, function(pdata) {
-				if (meta && !invis)
+				if (meta && !invis && !_.cbs.frozen)
 					pdata.body.position = [meta.weave.target, meta.bob.target, meta.slide.target];
 				zero.core.util.join(vu.core.person(pdata, invis), function(person) {
 					_.people[pdata.key] = person;
@@ -136,7 +137,10 @@ vu.live = {
 						_.events.message(_.pending[pdata.key]);
 						delete _.pending[pdata.key];
 					}
-					meta && _.events.meta(meta);
+					meta && _.events.meta({
+						user: pkey,
+						meta: meta
+					});
 				}, !isYou);
 			}, "json");
 		}
@@ -154,21 +158,29 @@ vu.live = {
 		CT.pubsub.chmeta(vu.live._.channel || zero.core.current.room.opts.key, data);
 	},
 	meta: function() {
-		var zcc = zero.core.current, person = zcc.person, targets = {
-			helpMe: person.helpMe,
-			mod: person.activeMod,
-			vibe: person.vibe.current,
-			dance: person.activeDance,
-			gesture: person.activeGesture,
-			language: person.language
-		}, s = person.body.springs, _ = vu.live._;
-		_.springs.forEach(function(prop) {
-			targets[prop] = { target: s[prop].target };
-		});
-		targets.bob = {};
-		_.bsprops.forEach(function(bsp) {
-			targets.bob[bsp] = s.bob[bsp];
-		});
+		var zcc = zero.core.current, person = zcc.person,
+			s = person.body.springs, _ = vu.live._, targets;
+		if (_.cbs.frozen) {
+			targets = {
+				language: person.language
+			};
+		} else {
+			targets = {
+				helpMe: person.helpMe,
+				mod: person.activeMod,
+				vibe: person.vibe.current,
+				dance: person.activeDance,
+				gesture: person.activeGesture,
+				language: person.language
+			};
+			_.springs.forEach(function(prop) {
+				targets[prop] = { target: s[prop].target };
+			});
+			targets.bob = {};
+			_.bsprops.forEach(function(bsp) {
+				targets.bob[bsp] = s.bob[bsp];
+			});
+		}
 		CT.pubsub.meta(_.channel || zcc.room.opts.key, targets);
 	},
 	channel: function(channel) {
