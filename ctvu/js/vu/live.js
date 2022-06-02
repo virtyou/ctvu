@@ -145,13 +145,13 @@ vu.live = {
 		vu.live.emit("environment", data);
 	},
 	emit: function(action, val) {
-		CT.pubsub.publish(zero.core.current.room.opts.key, {
+		CT.pubsub.publish(vu.live._.channel || zero.core.current.room.opts.key, {
 			action: action,
 			data: val
 		});
 	},
 	zmeta: function(data) {
-		CT.pubsub.chmeta(zero.core.current.room.opts.key, data);
+		CT.pubsub.chmeta(vu.live._.channel || zero.core.current.room.opts.key, data);
 	},
 	meta: function() {
 		var zcc = zero.core.current, person = zcc.person, targets = {
@@ -169,7 +169,11 @@ vu.live = {
 		_.bsprops.forEach(function(bsp) {
 			targets.bob[bsp] = s.bob[bsp];
 		});
-		CT.pubsub.meta(zcc.room.opts.key, targets);
+		CT.pubsub.meta(_.channel || zcc.room.opts.key, targets);
+	},
+	channel: function(channel) {
+		vu.live._.channel = channel;
+		CT.pubsub.subscribe(channel);
 	},
 	init: function(cbs) {
 		var _ = vu.live._;
@@ -179,7 +183,7 @@ vu.live = {
 		});
 		CT.pubsub.connect(location.hostname, 8888, CT.storage.get("person"));
 		if (cbs.find)
-			cbs.find(CT.pubsub.subscribe);
+			cbs.find(vu.live.channel);
 		else
 			CT.pubsub.subscribe(zero.core.current.room.opts.key);
 	}
