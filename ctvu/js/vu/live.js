@@ -47,9 +47,10 @@ vu.live = {
 				vu.live._.spawn(user, meta, true);
 			},
 			leave: function(chan, user) {
-				var _ = vu.live._, peeps = _.people;
+				var _ = vu.live._, peeps = _.people,
+					vbp = vu.builders.play;
 				setTimeout(function() {
-					vu.builders.play.minimap.unperson(peeps[user].name);
+					vbp && vpb.minimap.unperson(peeps[user].name);
 					peeps[user].remove();
 					delete peeps[user];
 					if (Object.keys(peeps).length == 1)
@@ -74,12 +75,14 @@ vu.live = {
 			},
 			meta: function(data) {
 				var _ = vu.live._, person = _.people[data.user],
-					zcc = zero.core.current;
+					zcc = zero.core.current, vbp = vu.builders.play;
 				if (zcc.person && data.user == zcc.person.opts.key)
 					return;
 				if (!(person && person.body))
 					return; // will handle meta when spawn is complete
 				var s = person.body.springs, meta = data.meta;
+				person.language = meta.language;
+				if (_.cbs.frozen) return;
 				_.springs.forEach(function(prop) {
 					s[prop].target = meta[prop].target;
 				});
@@ -87,10 +90,9 @@ vu.live = {
 					s.bob[bsp] = meta.bob[bsp];
 				});
 				_.dance(person, meta);
-				person.language = meta.language;
 				if (person.helpMe != meta.helpMe) {
 					person.helpMe = meta.helpMe;
-					vu.core.ownz() && vu.builders.play.minimap.help(person);
+					vbp && vu.core.ownz() && vbp.minimap.help(person);
 				}
 			},
 			message: function(msg) {
@@ -122,7 +124,7 @@ vu.live = {
 			var _ = vu.live._, isYou = vu.core.ischar(pkey);
 			if (isYou && pkey in _.people) return; // you switching rooms
 			CT.db.one(pkey, function(pdata) {
-				if (meta && !invis)
+				if (meta && !invis && !_.cbs.frozen)
 					pdata.body.position = [meta.weave.target, meta.bob.target, meta.slide.target];
 				zero.core.util.join(vu.core.person(pdata, invis), function(person) {
 					_.people[pdata.key] = person;
@@ -135,7 +137,10 @@ vu.live = {
 						_.events.message(_.pending[pdata.key]);
 						delete _.pending[pdata.key];
 					}
-					meta && _.events.meta(meta);
+					meta && _.events.meta({
+						user: pkey,
+						meta: meta
+					});
 				}, !isYou);
 			}, "json");
 		}
@@ -144,31 +149,43 @@ vu.live = {
 		vu.live.emit("environment", data);
 	},
 	emit: function(action, val) {
-		CT.pubsub.publish(zero.core.current.room.opts.key, {
+		CT.pubsub.publish(vu.live._.channel || zero.core.current.room.opts.key, {
 			action: action,
 			data: val
 		});
 	},
 	zmeta: function(data) {
-		CT.pubsub.chmeta(zero.core.current.room.opts.key, data);
+		CT.pubsub.chmeta(vu.live._.channel || zero.core.current.room.opts.key, data);
 	},
 	meta: function() {
-		var zcc = zero.core.current, person = zcc.person, targets = {
-			helpMe: person.helpMe,
-			mod: person.activeMod,
-			vibe: person.vibe.current,
-			dance: person.activeDance,
-			gesture: person.activeGesture,
-			language: person.language
-		}, s = person.body.springs, _ = vu.live._;
-		_.springs.forEach(function(prop) {
-			targets[prop] = { target: s[prop].target };
-		});
-		targets.bob = {};
-		_.bsprops.forEach(function(bsp) {
-			targets.bob[bsp] = s.bob[bsp];
-		});
-		CT.pubsub.meta(zcc.room.opts.key, targets);
+		var zcc = zero.core.current, person = zcc.person,
+			s = person.body.springs, _ = vu.live._, targets;
+		if (_.cbs.frozen) {
+			targets = {
+				language: person.language
+			};
+		} else {
+			targets = {
+				helpMe: person.helpMe,
+				mod: person.activeMod,
+				vibe: person.vibe.current,
+				dance: person.activeDance,
+				gesture: person.activeGesture,
+				language: person.language
+			};
+			_.springs.forEach(function(prop) {
+				targets[prop] = { target: s[prop].target };
+			});
+			targets.bob = {};
+			_.bsprops.forEach(function(bsp) {
+				targets.bob[bsp] = s.bob[bsp];
+			});
+		}
+		CT.pubsub.meta(_.channel || zcc.room.opts.key, targets);
+	},
+	channel: function(channel) {
+		vu.live._.channel = channel;
+		CT.pubsub.subscribe(channel);
 	},
 	init: function(cbs) {
 		var _ = vu.live._;
@@ -177,6 +194,9 @@ vu.live = {
 			CT.pubsub.set_cb(ename, _.events[ename]);
 		});
 		CT.pubsub.connect(location.hostname, 8888, CT.storage.get("person"));
-		CT.pubsub.subscribe(zero.core.current.room.opts.key);
+		if (cbs.find)
+			cbs.find(vu.live.channel);
+		else
+			CT.pubsub.subscribe(zero.core.current.room.opts.key);
 	}
 };
