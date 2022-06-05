@@ -1,4 +1,4 @@
-from cantools.web import respond, succeed, fail, cgi_get, read_file, send_mail
+from cantools.web import respond, succeed, fail, cgi_get, read_file
 from ctone.spawners import person, thing, asset, room, exists
 from model import db, Member, Person, Room, Resource, Augmentation
 from cantools import config
@@ -84,7 +84,7 @@ def response():
 		c.put()
 	if action == "call":
 		caller = db.get(cgi_get("caller"))
-		send_mail(p.email, subject="call from %s"%(caller.firstName,),
-			body=CALLMSG%(caller.firstName, config.web.domain, caller.key.urlsafe()))
+		p.notify("call from %s"%(caller.firstName,),
+			CALLMSG%(caller.firstName, config.web.domain, caller.key.urlsafe()))
 
 respond(response)
