@@ -14,6 +14,7 @@ vu.builders.play = {
 			gestures: "bottomright"
 		},
 		swappers: ["lights", "minimap", "audio", "info"],
+		anonmsg: CT.dom.div("playing anonymously - log in to craft your own avatar!", "bigger padded bold"),
 		cbs: {
 			joined: function(person) { // (you)
 				var vbp = vu.builders.play, _ = vbp._,
@@ -232,7 +233,11 @@ vu.builders.play = {
 		}
 	},
 	menus: function() {
-		var section, _ = vu.builders.play._, selz = _.selectors;
+		var section, _ = vu.builders.play._, selz = _.selectors,
+			h = location.hash.slice(1);
+		h && CT.storage.set("room", h);
+		user.core.get() || CT.modal.modal(_.anonmsg,
+			CT.dom.id("helperoo").onclick);
 		_.setup();
 		if (core.config.ctzero.camera.cardboard) return; // no menus necessary
 		for (section in _.menus) {
