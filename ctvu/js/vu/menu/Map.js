@@ -87,6 +87,8 @@ vu.menu.Map = CT.Class({
 	refresh: function() {
 		var _ = this._, zcc = zero.core.current,
 			r = zcc.room, k, o;
+		if (!r.bounds)
+			return setTimeout(this.refresh, 500);
 		_.people = {};
 		_.movers = {};
 		this.frame(r.bounds);
