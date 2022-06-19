@@ -15,12 +15,15 @@ vu.help = {
         play: "Walk around the world on the explore page, and hang out with the other players. Features basic test page menus: Triggers and Vibes, bottom left; Gestures and Dances, bottom right; Mods, top right. Also includes Chat menu at the bottom and Run Home button at the top (only visible when you're away from your home room). Anything you say or do is relayed to anyone else nearby, so play responsibly!",
         games: "Check out the games folks have made on the games page. The really cool thing is that as you play through a game, anyone involved in the creation of any aspect (interactional/environmental/musical/personal/etc) of the experience is compensated through carecoin!",
         profile: "The profile page has some basic profile stuff, as well as a little widget for associating your carecoin account. If you do this, you'll be compensated whenever anyone interacts (in a game etc) with something you made.",
-        adventure: "Move your character around with WASD. Jump with SPACE. Run with SHIFT. Open doors with ENTER. Adjust the camera with the ARROW keys. Click a person or object to interact. Basic (most useful) camera controls in bottom-right corner."
+        adventure: "Move your character around with WASD. Jump with SPACE. Run with SHIFT. Open doors with ENTER. Adjust the camera with the ARROW keys. Click a person or object to interact. Basic (most useful) camera controls in bottom-right corner.",
+        arcraft: "Design augmented reality experiences!",
+        chat: "Catch up with your buds!"
 	},
 	p2n: {
 		play: "explore (play)",
 		scene: "scene (make)",
-		game: "game (make)"
+		game: "game (make)",
+		arcraft: "ar (arcraft)"
 	},
 	full: function() {
 		var h = vu.help;
@@ -30,7 +33,7 @@ vu.help = {
 		var h = vu.help;
 		return [
 			CT.dom.div((h.p2n[p] || p) + " page", "big centered"),
-			h.sections[p]
+			CT.dom.div(h.sections[p], "bottompadded")
 		];
 	},
 	page: function() {
