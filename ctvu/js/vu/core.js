@@ -170,7 +170,8 @@ vu.core = {
 		return sl;
 	},
 	share: function(item, nodes) {
-		if (item.owners[0] == user.core.get("key")) {
+		var ukey = user.core.get("key");
+		if (ukey && item.owners[0] == ukey) {
 			nodes = nodes.concat([
 				CT.dom.pad(),
 				vu.core.sharer(item)
@@ -233,10 +234,14 @@ vu.core = {
 	},
 	seta: function(cb) {
 		var data = vu.core._udata;
-		data.person = CT.storage.get("person");
+		if (data.anon) {
+			data.person = CT.data.choice(data.people).key;
+			CT.storage.set("person", data.person);
+		} else
+			data.person = CT.storage.get("person");
+		data.person = CT.data.get(data.person);
 		if (!data.person)
 			return vu.core.charselect(function() { cb(); });
-		data.person = CT.data.get(data.person);
 		cb();
 	},
 	setz: function() {
@@ -244,6 +249,8 @@ vu.core = {
 		data.room = CT.storage.get("room");
 		if (data.room)
 			data.room = CT.data.get(data.room);
+		else if (data.anon)
+			data.room = CT.data.choice(data.rooms);
 		else
 			data.room = data.rooms[0];
 	},
@@ -258,12 +265,15 @@ vu.core = {
 		};
 		return vu.core._udata;
 	},
+	avanon: function() {
+		return core.config.ctvu.access.avanon.includes(location.pathname.split("/").pop().split(".")[0]);
+	},
 	udata: function(cb, allrooms, ukey, skipsets) {
 		if (vu.core._udata)
 			return cb(vu.core._udata);
-		if (!(ukey || user.core.get())) // cfg.access.anon must be true
-			return cb(vu.core.locd());
 		ukey = ukey || user.core.get("key");
+		if (!(ukey || vu.core.avanon())) // cfg.access.anon must be true
+			return cb(vu.core.locd());
 		vu.core.z({
 			action: "json",
 			key: ukey,
@@ -273,10 +283,13 @@ vu.core = {
 				CT.data.addSet(data[k]);
 			if (allrooms) {
 				vu.core._allrooms = data.rooms;
-				data.rooms = data.rooms.filter(function(r) {
-					return r.owners.includes(ukey);
-				});
+				if (ukey) {
+					data.rooms = data.rooms.filter(function(r) {
+						return r.owners.includes(ukey);
+					});
+				}
 			}
+			data.anon = !ukey;
 			vu.core._udata = data;
 			if (skipsets)
 				return cb(data);
