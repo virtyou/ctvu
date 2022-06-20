@@ -30,7 +30,9 @@ CT.require("vu.builders.play");
 CT.scriptImport("CT.lib.colorPicker");
 
 CT.onload(function() {
-	var camcfg = core.config.ctzero.camera;
+	var camcfg = core.config.ctzero.camera,
+		h = location.hash.slice(1);
+	h && CT.storage.set("room", h);
 	if (CT.info.mobile) {
 		camcfg.vr = true;
 		camcfg.cardboard = true;

@@ -233,9 +233,7 @@ vu.builders.play = {
 		}
 	},
 	menus: function() {
-		var section, _ = vu.builders.play._, selz = _.selectors,
-			h = location.hash.slice(1);
-		h && CT.storage.set("room", h);
+		var section, _ = vu.builders.play._, selz = _.selectors;
 		user.core.get() || CT.modal.modal(_.anonmsg,
 			CT.dom.id("helperoo").onclick);
 		_.setup();
