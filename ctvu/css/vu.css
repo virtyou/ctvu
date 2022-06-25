@@ -293,6 +293,10 @@ img.right.h30p.up5 {
 	white-space: normal;
 }
 
+.gmenu.voice, .gmenu.minimap {
+	max-width: 40%;
+}
+
 .gmenu.minimap {
 	width: 270px;
 	top: initial !important;
@@ -359,4 +363,21 @@ img.right.h30p.up5 {
 	background: none;
 	border-radius: 50%;
 	border: 1px dotted gray;
+}
+
+#ctheader.hamburgize #hambo {
+	color: green;
+}
+
+@media (max-width: 600px) {
+	.chatpage .gmenu.chat {
+		width: 100%;
+		font-size: 200%;
+		left: 5px !important;
+	}
+	.chatpage .gmenu.chat button {
+		height: auto;
+		font-size: 100%;
+		margin: -10px 0;
+	}
 }
