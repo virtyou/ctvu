@@ -33,7 +33,7 @@ CT.onload(function() {
 	var camcfg = core.config.ctzero.camera,
 		h = location.hash.slice(1);
 	h && CT.storage.set("room", h);
-	if (CT.info.mobile) {
+	if (CT.info.mobile && document.body.clientWidth > document.body.clientHeight) {
 		camcfg.vr = true;
 		camcfg.cardboard = true;
 		document.body.classList.add("unheadered");
