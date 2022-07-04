@@ -15,6 +15,7 @@ vu.builders.chat = {
 				pb.grow(0.2);
 				bs.bob.value = 15;
 				bs.weave.target = -20;
+				person.mutesfx();
 				CT.dom.setContent(_.langButt, vu.lang.button());
 				vu.live.meta(); // for lang
 			},
