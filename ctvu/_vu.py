@@ -1,4 +1,5 @@
 from cantools.web import respond, succeed, fail, cgi_get, read_file
+from cantools.util import shouldMoveMoov, transcode
 from ctone.spawners import person, thing, asset, room, exists
 from model import db, Member, Person, Room, Resource, Augmentation
 from cantools import config
@@ -20,6 +21,8 @@ def response():
 					variety=r.variety, owners=r.owners)
 			r.item = data
 			r.put()
+			if r.variety == "video":
+				shouldMoveMoov(r.item.path) and transcode(r.item.path)
 			succeed(r.json())
 		name = cgi_get("name")
 		variety = cgi_get("variety")
@@ -29,6 +32,8 @@ def response():
 			r = Resource(variety=variety, owners=owners,
 				name=name, kind=kind, item=data)
 			r.put()
+			if r.variety == "video":
+				shouldMoveMoov(r.item.path) and transcode(r.item.path)
 		else:
 			url = cgi_get("url")
 			r = Resource.query(Resource.url == url).get()
