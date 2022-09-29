@@ -119,11 +119,31 @@ vu.media = {
 			}, bone = zero.core.util.gear2bone(kind, side, sub, part);
 			if (bone != undefined)
 				oz.opts = { bone: bone };
+			if (base.template) {
+				oz.template = base.template;
+				oz.opts = CT.merge({
+					name: base.name,
+					kind: base.kind,
+					thing: base.thing
+				}, oz.opts);
+			}
 			vu.storage.edit(oz, cb);
 		},
 		thing: function(cb, kind, part, side, sub, partname) {
 			var up = function(thopts) {
-				var eoz = { base: thopts.key };
+				var eoz = thopts.key ? {
+					base: thopts.key,
+					template: null,
+					opts: {}
+				} : {
+					base: null,
+					template: thopts.template,
+					opts: {
+						name: thopts.name,
+						kind: thopts.kind,
+						thing: thopts.thing
+					}
+				};
 				if (kind == "hair") // clear opts!
 					eoz.opts = null;
 				part ? vu.storage.edit(CT.merge({
@@ -132,6 +152,8 @@ vu.media = {
 					kind, thopts, side, sub, partname);
 			}, imap = vu.storage.get(kind),
 				items = imap && Object.values(imap);
+			if (kind.startsWith("worn_"))
+				items = (items || []).concat(zero.base.clothes.procedurals(kind));
 			if (!items)
 				return alert("oops, nothing yet! add the first " + kind + " thing on the item page!");
 			if (false) { // fix 3d menus 1st...
