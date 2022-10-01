@@ -25,6 +25,7 @@ vu.builders.Gear = CT.Class({
 		var set = function(livepart) {
 			if (livepart.target) livepart = null; // is click event;
 			vu.media.prompt.thing(function(fullp) {
+				modpart[part] && per.ungear(modpart[part]);
 				modpart[part] = fullp.key;
 				per.gear(per.opts.gear);
 				peritem("gear", per.opts.gear);
@@ -45,7 +46,8 @@ vu.builders.Gear = CT.Class({
 			});
 		};
 		var adjust = function(livepart) {
-			if (livepart.opts.owners.includes(user.core.get("key"))) {
+			var lowners = livepart.opts.owners;
+			if (lowners && lowners.includes(user.core.get("key"))) {
 				CT.modal.choice({
 					prompt: "adjust base (thing) or just this instance (part)?",
 					data: ["part", "thing"],
