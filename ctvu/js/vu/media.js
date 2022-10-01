@@ -148,7 +148,10 @@ vu.media = {
 					eoz.opts = null;
 				part ? vu.storage.edit(CT.merge({
 					key: part.opts.key
-				}, eoz), cb) : vu.media.prompt.part(cb,
+				}, eoz), function(uppedpart) {
+					CT.data.add(uppedpart, true);
+					cb(uppedpart);
+				}) : vu.media.prompt.part(cb,
 					kind, thopts, side, sub, partname);
 			}, imap = vu.storage.get(kind),
 				items = imap && Object.values(imap);
