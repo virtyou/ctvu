@@ -35,9 +35,18 @@ vu.builders.Gear = CT.Class({
 				livepart, side, sub);
 		};
 		var adjusters = function(livepart, upthing) {
+			var varieties = ["position", "rotation", "scale"];
+			upthing || varieties.push("texture");
 			CT.modal.choice({
-				data: ["position", "rotation", "scale"],
+				data: varieties,
 				cb: function(variety) {
+					if (variety == "texture") {
+						return vu.media.swapper.texture(livepart, function(tx) {
+							vu.storage.setOpts(livepart.opts.key, {
+								texture: tx
+							});
+						}, true);
+					}
 					vu.media.prompt.adjusters(function(upobj) {
 						vu.storage.setOpts(livepart.opts[upthing
 							? "thing_key" : "key"], upobj);
