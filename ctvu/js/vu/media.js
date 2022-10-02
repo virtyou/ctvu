@@ -234,12 +234,12 @@ vu.media = {
 		}
 	},
 	swapper: {
-		texture: function(target, cb) {
+		texture: function(target, cb, trigger) {
 			var up = function(tx) {
 				target.setTexture(tx.item);
 				cb(tx);
 			};
-			return CT.dom.link("swap", function() {
+			var swap = function() {
 				vu.media.prompt.bu(function(which) {
 					if (which == "browse")
 						return vu.media.texture(up,
@@ -247,7 +247,9 @@ vu.media = {
 					vu.media.prompt.asset(up,
 						"texture", target.opts.kind);
 				});
-			});
+			};
+			trigger && swap();
+			return CT.dom.link("swap", swap);
 		},
 		audio: function(cb, kind, reqkey) {
 			vu.media.prompt.bu(function(which) {
