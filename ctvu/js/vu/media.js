@@ -157,7 +157,7 @@ vu.media = {
 				items = imap && Object.values(imap);
 			if (kind.startsWith("worn_"))
 				items = (items || []).concat(zero.base.clothes.procedurals(kind));
-			if (!items)
+			if (!items || !items.length)
 				return alert("oops, nothing yet! add the first " + kind + " thing on the item page!");
 			if (false) { // fix 3d menus 1st...
 				var m = new zero.core.Menu({
