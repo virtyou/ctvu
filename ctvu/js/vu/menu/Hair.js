@@ -109,7 +109,8 @@ vu.menu.Hair = CT.Class({
 			_.bspot = _.bspot || CT.dom.button("add " + oz.kind,
 				this.click, "abs mr5 mosthigh " + oz.buttpos);
 			CT.dom.addContent("vnode", _.bspot);
-			CT.dom[isbald ? "show" : "hide"](_.bspot);
+			CT.dom.setContent(_.bspot, isbald ? ("add " + oz.kind) : (oz.kind + ": " + oz.name));
+//			CT.dom[isbald ? "show" : "hide"](_.bspot);
 		}
 	},
 	custom: function() {
