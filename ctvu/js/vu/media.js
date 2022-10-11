@@ -129,7 +129,7 @@ vu.media = {
 			}
 			vu.storage.edit(oz, cb);
 		},
-		thing: function(cb, kind, part, side, sub, partname) {
+		thing: function(cb, kind, part, side, sub, partname, genkind) {
 			var up = function(thopts) {
 				var eoz = thopts.key ? {
 					base: thopts.key,
@@ -153,10 +153,10 @@ vu.media = {
 					cb(uppedpart);
 				}) : vu.media.prompt.part(cb,
 					kind, thopts, side, sub, partname);
-			}, imap = vu.storage.get(kind),
+			}, imap = vu.storage.get(genkind || kind),
 				items = imap && Object.values(imap);
 			if (kind.startsWith("worn_"))
-				items = (items || []).concat(zero.base.clothes.procedurals(kind));
+				items = (items || []).concat(zero.base.clothes.procedurals(genkind || kind));
 			if (!items || !items.length)
 				return alert("oops, nothing yet! add the first " + kind + " thing on the item page!");
 			if (false) { // fix 3d menus 1st...
