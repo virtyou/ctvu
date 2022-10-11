@@ -30,9 +30,9 @@ vu.builders.Gear = CT.Class({
 				per.gear(per.opts.gear);
 				peritem("gear", per.opts.gear);
 				up();
-			}, (gtype == "held") ? "held" :
-				("worn_" + ((sub == "hand") ? "finger" : part)),
-				livepart, side, sub);
+			}, (gtype == "held") ? "held" : ("worn_" + part),
+//				("worn_" + ((sub == "hand") ? "finger" : part)),
+				livepart, side, sub, null, zero.core.Hand.fingers.includes(part) && "worn_finger");
 		};
 		var adjusters = function(livepart, upthing) {
 			var varieties = ["position", "rotation", "scale"];
