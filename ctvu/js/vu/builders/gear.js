@@ -25,18 +25,28 @@ vu.builders.Gear = CT.Class({
 		var set = function(livepart) {
 			if (livepart.target) livepart = null; // is click event;
 			vu.media.prompt.thing(function(fullp) {
+				modpart[part] && per.ungear(modpart[part]);
 				modpart[part] = fullp.key;
 				per.gear(per.opts.gear);
 				peritem("gear", per.opts.gear);
 				up();
-			}, (gtype == "held") ? "held" :
-				("worn_" + ((sub == "hand") ? "finger" : part)),
-				livepart, side, sub);
+			}, (gtype == "held") ? "held" : ("worn_" + part),
+//				("worn_" + ((sub == "hand") ? "finger" : part)),
+				livepart, side, sub, null, zero.core.Hand.fingers.includes(part) && "worn_finger");
 		};
 		var adjusters = function(livepart, upthing) {
+			var varieties = ["position", "rotation", "scale"];
+			upthing || varieties.push("texture");
 			CT.modal.choice({
-				data: ["position", "rotation", "scale"],
+				data: varieties,
 				cb: function(variety) {
+					if (variety == "texture") {
+						return vu.media.swapper.texture(livepart, function(tx) {
+							vu.storage.setOpts(livepart.opts.key, {
+								texture: tx
+							});
+						}, true);
+					}
 					vu.media.prompt.adjusters(function(upobj) {
 						vu.storage.setOpts(livepart.opts[upthing
 							? "thing_key" : "key"], upobj);
@@ -45,7 +55,8 @@ vu.builders.Gear = CT.Class({
 			});
 		};
 		var adjust = function(livepart) {
-			if (livepart.opts.owners.includes(user.core.get("key"))) {
+			var lowners = livepart.opts.owners;
+			if (lowners && lowners.includes(user.core.get("key"))) {
 				CT.modal.choice({
 					prompt: "adjust base (thing) or just this instance (part)?",
 					data: ["part", "thing"],

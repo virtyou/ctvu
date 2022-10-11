@@ -119,20 +119,45 @@ vu.media = {
 			}, bone = zero.core.util.gear2bone(kind, side, sub, part);
 			if (bone != undefined)
 				oz.opts = { bone: bone };
+			if (base.template) {
+				oz.template = base.template;
+				oz.opts = CT.merge({
+					name: base.name,
+					kind: base.kind,
+					thing: base.thing
+				}, oz.opts);
+			}
 			vu.storage.edit(oz, cb);
 		},
-		thing: function(cb, kind, part, side, sub, partname) {
+		thing: function(cb, kind, part, side, sub, partname, genkind) {
 			var up = function(thopts) {
-				var eoz = { base: thopts.key };
+				var eoz = thopts.key ? {
+					base: thopts.key,
+					template: null,
+					opts: {}
+				} : {
+					base: null,
+					template: thopts.template,
+					opts: {
+						name: thopts.name,
+						kind: thopts.kind,
+						thing: thopts.thing
+					}
+				};
 				if (kind == "hair") // clear opts!
 					eoz.opts = null;
 				part ? vu.storage.edit(CT.merge({
 					key: part.opts.key
-				}, eoz), cb) : vu.media.prompt.part(cb,
+				}, eoz), function(uppedpart) {
+					CT.data.add(uppedpart, true);
+					cb(uppedpart);
+				}) : vu.media.prompt.part(cb,
 					kind, thopts, side, sub, partname);
-			}, imap = vu.storage.get(kind),
+			}, imap = vu.storage.get(genkind || kind),
 				items = imap && Object.values(imap);
-			if (!items)
+			if (kind.startsWith("worn_"))
+				items = (items || []).concat(zero.base.clothes.procedurals(genkind || kind));
+			if (!items || !items.length)
 				return alert("oops, nothing yet! add the first " + kind + " thing on the item page!");
 			if (false) { // fix 3d menus 1st...
 				var m = new zero.core.Menu({
@@ -209,12 +234,12 @@ vu.media = {
 		}
 	},
 	swapper: {
-		texture: function(target, cb) {
+		texture: function(target, cb, trigger) {
 			var up = function(tx) {
 				target.setTexture(tx.item);
 				cb(tx);
 			};
-			return CT.dom.link("swap", function() {
+			var swap = function() {
 				vu.media.prompt.bu(function(which) {
 					if (which == "browse")
 						return vu.media.texture(up,
@@ -222,7 +247,9 @@ vu.media = {
 					vu.media.prompt.asset(up,
 						"texture", target.opts.kind);
 				});
-			});
+			};
+			trigger && swap();
+			return CT.dom.link("swap", swap);
 		},
 		audio: function(cb, kind, reqkey) {
 			vu.media.prompt.bu(function(which) {
