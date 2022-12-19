@@ -45,12 +45,17 @@ vu.controls = {
 			["play", "scene"].includes(mode) && node.update();
 		} else {
 			var butt = CT.dom.button("far", function(e) {
+				if (!butt._baseY)
+					butt._baseY = zero.core.camera.position().y;
 				if (butt.innerHTML == "far") {
 					butt.innerHTML = "near";
-					zero.core.camera.move({ z: 160 });
-				} else {
+					zero.core.camera.move({ z: 160, y: butt._baseY });
+				} else if (butt.innerHTML == "near") {
+					butt.innerHTML = "face";
+					zero.core.camera.move({ z: 80, y: butt._baseY });
+				} else { // face
 					butt.innerHTML = "far";
-					zero.core.camera.move({ z: 80 });
+					zero.core.camera.move({ z: 30, y: 20 });
 				}
 				cb && cb(butt.innerHTML);
 				e.stopPropagation();
