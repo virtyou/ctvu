@@ -107,22 +107,31 @@ vu.builders.pop = {
 //				az.firstChild ? az.firstChild.onclick() : adder();
 			};
 		},
-		activity: function(act) { // {action[say|respond|move|wander|dance],value}
-			return CT.dom.div([
+		activity: function(act, remover) { // {action[say|respond|move|wander|dance],value}
+			var n = CT.dom.div([
+				CT.dom.button("remove", function() {
+					if (!confirm("really?")) return;
+					n.remove();
+					remover(act);
+				}, "bold red right"),
 				CT.dom.span(act.action, "bold"),
 				CT.dom.pad(),
 				CT.dom.span(act.value)
 			], "bordered padded margined round");
+			return n;
 		},
 		activities: function() {
 			var _ = vu.builders.pop._, selz = _.selectors;
 			selz.activities = CT.dom.div();
 			selz.activities.update = function() {
-				var actz = _.auto.activities, addAct = function(act) {
+				var actz = _.auto.activities, rmAct = function(act) {
+					CT.data.remove(actz, act);
+					vu.builders.pop.persist();
+				}, addAct = function(act) {
 					actz.push(act);
 					vu.builders.pop.persist();
 					(actz.length == 1) && _.auto.play();
-					CT.dom.addContent(az, _.activity(act));
+					CT.dom.addContent(az, _.activity(act, rmAct));
 				}, adder = function() {
 					CT.modal.choice({
 						prompt: "please select an action",
@@ -161,7 +170,7 @@ vu.builders.pop = {
 							}
 						}
 					});
-				}, az = CT.dom.div(actz.map(_.activity));
+				}, az = CT.dom.div(actz.map(a => _.activity(a, rmAct)));
 				CT.dom.setContent(selz.activities, [
 					CT.dom.button("add", adder, "up20 right"),
 					az
