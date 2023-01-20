@@ -221,26 +221,31 @@ vu.builders.pop = {
 				upd = {}, r = zero.core.current.room,
 				base = zero.core[CT.parse.capitalize(natcat)],
 				setter = base[CT.parse.capitalize(base.setter)];
-			var sel = CT.dom.link(oz[base.setter] || "none", function() {
+			var upnat = function(natset) {
+				natset && r.attach({
+					name: base.setter,
+					kind: "natural",
+					collection: natset,
+					subclass: setter
+				});
+				oz[base.setter] = upd[base.setter] = natset;
+				vu.storage.setOpts(oz.key, upd);
+				CT.dom.setContent(sel, natset);
+			}, sel = CT.dom.link(oz[base.setter] || "none", function() {
 				CT.modal.choice({
 					prompt: "please select a " + natcat + " set",
-					data: ["none"].concat(Object.keys(base.sets)),
+					data: ["none", "custom"].concat(Object.keys(base.sets)),
 					cb: function(natset) {
 						if (r[base.setter])
 							r.detach(base.setter);
-						if (natset == "none")
-							oz[base.setter] = upd[base.setter] = null;
-						else {
-							r.attach({
-								name: base.setter,
-								kind: "natural",
-								collection: natset,
-								subclass: setter
+						if (natset == "custom") {
+							CT.modal.choice({
+								style: "multiple-choice",
+								data: base.kinds,
+								cb: upnat
 							});
-							oz[base.setter] = upd[base.setter] = natset;
-						}
-						vu.storage.setOpts(oz.key, upd);
-						CT.dom.setContent(sel, natset);
+						} else
+							upnat((natset != "none") ? natset : null);
 					}
 				});
 			});
