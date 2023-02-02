@@ -516,6 +516,41 @@ vu.builders.zone = {
 				}
 			});
 		},
+		bookcode: function(cb) {
+			var burl = zero.core.Book.baseurl;
+			CT.modal.prompt({
+				prompt: "what's the link?",
+				cb: function(url) {
+					if (url.startsWith(burl))
+						return cb(url.slice(burl.length));
+					alert("use an archive.org link - should start with: " + burl);
+					vu.builders.zone._.bookcode(cb);
+				}
+			});
+		},
+		booktions: function(cb) {
+			var _ = vu.builders.zone._;
+			CT.modal.choice({
+				prompt: "select a color",
+				data: zero.core.util.colors,
+				cb: function(color) {
+					CT.modal.prompt({
+						prompt: "what's the book called?",
+						cb: function(name) {
+							_.bookcode(function(code) {
+								_.part(null, "book", cb, {
+									thing: "Book",
+									kind: "book",
+									name: name,
+									code: code,
+									cover: color
+								});
+							});
+						}
+					});
+				}
+			});
+		},
 		speaker: function(sp) {
 			var _ = vu.builders.zone._;
 			return _.furnishing(sp).concat([
@@ -572,6 +607,8 @@ vu.builders.zone = {
 			var _ = vu.builders.zone._;
 			if (kind == "swarm")
 				return _.swaptions(cb);
+			if (kind == "book")
+				return _.booktions(cb);
 			if (kind == "screen" || kind == "stream")
 				return _.part(null, kind, cb);
 			var options = vu.storage.get(kind);
@@ -591,7 +628,7 @@ vu.builders.zone = {
 				CT.dom.setContent(selz.furnishings, [
 					CT.dom.button("add", function() {
 						CT.modal.choice({
-							data: ["furnishing", "poster", "portal", "screen", "stream", "elemental", "speaker", "swarm"],
+							data: ["furnishing", "poster", "portal", "screen", "stream", "elemental", "speaker", "swarm", "book"],
 							cb: _.selfurn
 						});
 					}, "up20 right"),
