@@ -87,7 +87,8 @@ vu.builders.play = {
 						confirm("dunk this person?") && vu.live.emit("dunk", thing.opts.key);
 					}));
 				}
-			}
+			} else if (thing.opts.kind == "book")
+				other.push(CT.dom.button("read", () => zccp.get(thing, thing.read)));
 			zero.core.click.register(target, function() {
 				CT.dom.setContent(_.selectors.info, [
 					CT.dom.div(thing.name, "bigger"),
