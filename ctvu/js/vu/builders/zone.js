@@ -561,6 +561,10 @@ vu.builders.zone = {
 			// TODO: add specialized controllers for swarm
 			return vu.builders.zone._.furnishing(sw);
 		},
+		book: function(book) {
+			// TODO: add specialized controllers for book
+			return vu.builders.zone._.furnishing(book);
+		},
 		furn: function(furn) {
 			return CT.dom.div(vu.builders.zone._[furn.opts.kind](furn), "margined padded bordered round");
 		},
