@@ -149,10 +149,16 @@ vu.builders.pop = {
 									}
 								});
 							} else if (action == "wander") {
-
-								// TODO: floor selection
-								addAct({ action: "wander" });
-
+								CT.modal.choice({
+									prompt: "please select a zone",
+									data: ["room"].concat(Object.keys(zero.core.current.room.floor)),
+									cb: function(zone) {
+										addAct({
+											action: "wander",
+											value: zone
+										});
+									}
+								});
 							} else if (action == "move") {
 
 								alert("unimplemented!"); // TODO
