@@ -537,14 +537,20 @@ vu.builders.zone = {
 					CT.modal.prompt({
 						prompt: "what's the book called?",
 						cb: function(name) {
-							_.bookcode(function(code) {
-								_.part(null, "book", cb, {
-									thing: "Book",
-									kind: "book",
-									name: name,
-									code: code,
-									cover: color
-								});
+							CT.modal.prompt({
+								prompt: "who wrote it?",
+								cb: function(author) {
+									_.bookcode(function(code) {
+										_.part(null, "book", cb, {
+											thing: "Book",
+											kind: "book",
+											name: name,
+											code: code,
+											cover: color,
+											author: author
+										});
+									});
+								}
 							});
 						}
 					});
