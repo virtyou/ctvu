@@ -528,7 +528,7 @@ vu.builders.zone = {
 				}
 			});
 		},
-		booktions: function(cb) {
+		booksel: function(cb) {
 			var _ = vu.builders.zone._;
 			CT.modal.choice({
 				prompt: "select a color",
@@ -541,7 +541,7 @@ vu.builders.zone = {
 								prompt: "who wrote it?",
 								cb: function(author) {
 									_.bookcode(function(code) {
-										_.part(null, "book", cb, {
+										cb({
 											thing: "Book",
 											kind: "book",
 											name: name,
@@ -556,6 +556,10 @@ vu.builders.zone = {
 					});
 				}
 			});
+		},
+		booktions: function(cb) {
+			var _ = vu.builders.zone._;
+			_.booksel(opts => _.part(null, "book", cb, opts));
 		},
 		carp: function(cb) {
 			var _ = vu.builders.zone._;
@@ -572,6 +576,35 @@ vu.builders.zone = {
 				}
 			});
 		},
+		carpbooks: function(carp) {
+			var _ = vu.builders.zone._, upit = function() {
+				vu.storage.setOpts(carp.opts.key, {
+					items: carp.opts.items
+				});
+			}, booker = function(book) {
+				var bn = CT.dom.div([
+					CT.dom.button("remove", function() {
+						carp.removeItem(book);
+						bn.remove();
+						upit();
+					}, "right red"),
+					book.name
+				], "topmargined padded bordered round");
+				return bn;
+			}, n = CT.dom.div(carp.opts.items.map(booker));
+			return CT.dom.div([
+				CT.dom.button("add book", function() {
+					_.booksel(function(book) {
+						n.appendChild(booker(book));
+						carp.placeItem(book);
+						upit();
+					});
+				}, "right"),
+				CT.dom.link("Books", carp.closeup),
+				n
+			], "topbordered padded margined")
+
+		},
 		carpentry: function(carp) {
 			var _ = vu.builders.zone._;
 			return _.furnishing(carp).concat([
@@ -581,7 +614,8 @@ vu.builders.zone = {
 						Object.assign(carp.opts, txups);
 						vu.storage.setOpts(carp.opts.key, txups);
 					})
-				], "topbordered padded margined")
+				], "topbordered padded margined"),
+				_.carpbooks(carp)
 			]);
 		},
 		speaker: function(sp) {
