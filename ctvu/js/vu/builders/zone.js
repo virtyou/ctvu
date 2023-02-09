@@ -459,8 +459,7 @@ vu.builders.zone = {
 			return vu.builders.zone._.struct("obstacle", fopts, i);
 		},
 		furnishing: function(furn) {
-			var _ = vu.builders.zone._;
-			return [
+			var _ = vu.builders.zone._, d = [
 				_.unfurn(furn),
 				_.fname(furn),
 				_.fscale(furn),
@@ -474,9 +473,10 @@ vu.builders.zone = {
 							rotation: rot
 						});
 					}, 0, 6, furn.rotation().y, 0.01, "w1")
-				], "topbordered padded margined"),
-			 	furn.opts.material && Object.keys(furn.opts.material).length && _.materials(furn)
+				], "topbordered padded margined")
 			];
+			furn.opts.material && Object.keys(furn.opts.material).length && d.push(_.materials(furn));
+			return d;
 		},
 		elemental: function(el) {
 			// TODO: add specialized controllers for fire/pool
@@ -528,7 +528,7 @@ vu.builders.zone = {
 				}
 			});
 		},
-		booktions: function(cb) {
+		booksel: function(cb) {
 			var _ = vu.builders.zone._;
 			CT.modal.choice({
 				prompt: "select a color",
@@ -541,7 +541,7 @@ vu.builders.zone = {
 								prompt: "who wrote it?",
 								cb: function(author) {
 									_.bookcode(function(code) {
-										_.part(null, "book", cb, {
+										cb({
 											thing: "Book",
 											kind: "book",
 											name: name,
@@ -556,6 +556,66 @@ vu.builders.zone = {
 					});
 				}
 			});
+		},
+		booktions: function(cb) {
+			var _ = vu.builders.zone._;
+			_.booksel(opts => _.part(null, "book", cb, opts));
+		},
+		carp: function(cb) {
+			var _ = vu.builders.zone._;
+			CT.modal.choice({
+				prompt: "what kind of furniture?",
+				data: Object.keys(zero.base.carpentry),
+				cb: function(carp) {
+					_.part(null, "carp", cb, {
+						thing: "Shelf",
+						kind: "carpentry",
+						variety: carp,
+						name: carp + Math.floor(Math.random() * 1000)
+					});
+				}
+			});
+		},
+		carpbooks: function(carp) {
+			var _ = vu.builders.zone._, upit = function() {
+				vu.storage.setOpts(carp.opts.key, {
+					items: carp.opts.items
+				});
+			}, booker = function(book) {
+				var bn = CT.dom.div([
+					CT.dom.button("remove", function() {
+						carp.removeItem(book);
+						bn.remove();
+						upit();
+					}, "right red"),
+					book.name
+				], "topmargined padded bordered round");
+				return bn;
+			}, n = CT.dom.div(carp.opts.items.map(booker));
+			return CT.dom.div([
+				CT.dom.button("add book", function() {
+					_.booksel(function(book) {
+						n.appendChild(booker(book));
+						carp.placeItem(book);
+						upit();
+					});
+				}, "right"),
+				CT.dom.link("Books", carp.closeup),
+				n
+			], "topbordered padded margined");
+		},
+		carpentry: function(carp) {
+			var _ = vu.builders.zone._;
+			return _.furnishing(carp).concat([
+				CT.dom.div([
+					"Texture",
+					_.stx(carp, function(txups) {
+						Object.assign(carp.opts, txups);
+						vu.storage.setOpts(carp.opts.key, txups);
+					})
+				], "topbordered padded margined"),
+				_.carpbooks(carp)
+			]);
 		},
 		speaker: function(sp) {
 			var _ = vu.builders.zone._;
@@ -579,7 +639,7 @@ vu.builders.zone = {
 				parent: _.opts.key,
 				modelName: "furnishing"
 			}, zccr = zero.core.current.room;
-			if (thing) // not required for screen/swarm
+			if (thing) // not required for screen/swarm/book/carpentry
 				eopts.base = thing.key;
 			if (kind == "poster" || kind == "screen" || kind == "stream") { // TODO: probs do this elsewhere/better!
 				eopts.opts = {
@@ -619,6 +679,8 @@ vu.builders.zone = {
 				return _.swaptions(cb);
 			if (kind == "book")
 				return _.booktions(cb);
+			if (kind == "carpentry")
+				return _.carp(cb);
 			if (kind == "screen" || kind == "stream")
 				return _.part(null, kind, cb);
 			var options = vu.storage.get(kind);
@@ -638,7 +700,7 @@ vu.builders.zone = {
 				CT.dom.setContent(selz.furnishings, [
 					CT.dom.button("add", function() {
 						CT.modal.choice({
-							data: ["furnishing", "poster", "portal", "screen", "stream", "elemental", "speaker", "swarm", "book"],
+							data: ["furnishing", "carpentry", "poster", "portal", "screen", "stream", "elemental", "speaker", "swarm", "book"],
 							cb: _.selfurn
 						});
 					}, "up20 right"),
