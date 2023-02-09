@@ -459,8 +459,7 @@ vu.builders.zone = {
 			return vu.builders.zone._.struct("obstacle", fopts, i);
 		},
 		furnishing: function(furn) {
-			var _ = vu.builders.zone._;
-			return [
+			var _ = vu.builders.zone._, d = [
 				_.unfurn(furn),
 				_.fname(furn),
 				_.fscale(furn),
@@ -474,9 +473,10 @@ vu.builders.zone = {
 							rotation: rot
 						});
 					}, 0, 6, furn.rotation().y, 0.01, "w1")
-				], "topbordered padded margined"),
-			 	furn.opts.material && Object.keys(furn.opts.material).length && _.materials(furn)
+				], "topbordered padded margined")
 			];
+			furn.opts.material && Object.keys(furn.opts.material).length && d.push(_.materials(furn));
+			return d;
 		},
 		elemental: function(el) {
 			// TODO: add specialized controllers for fire/pool
@@ -566,7 +566,8 @@ vu.builders.zone = {
 					_.part(null, "carp", cb, {
 						thing: "Shelf",
 						kind: "carpentry",
-						variety: carp
+						variety: carp,
+						name: carp + Math.floor(Math.random() * 1000)
 					});
 				}
 			});
@@ -574,10 +575,13 @@ vu.builders.zone = {
 		carpentry: function(carp) {
 			var _ = vu.builders.zone._;
 			return _.furnishing(carp).concat([
-				_.stx(carp, function(txups) {
-					Object.assign(carp.opts, txups);
-					vu.storage.setOpts(carp.opts.key, txups);
-				})
+				CT.dom.div([
+					"Texture",
+					_.stx(carp, function(txups) {
+						Object.assign(carp.opts, txups);
+						vu.storage.setOpts(carp.opts.key, txups);
+					})
+				], "topbordered padded margined")
 			]);
 		},
 		speaker: function(sp) {
