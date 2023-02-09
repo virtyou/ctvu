@@ -602,8 +602,7 @@ vu.builders.zone = {
 				}, "right"),
 				CT.dom.link("Books", carp.closeup),
 				n
-			], "topbordered padded margined")
-
+			], "topbordered padded margined");
 		},
 		carpentry: function(carp) {
 			var _ = vu.builders.zone._;
