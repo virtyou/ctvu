@@ -143,7 +143,10 @@ vu.game.util = {
 		var step = script.shift();
 		if (!step)
 			return cb && cb(altered);
+		var curroom = zero.core.current.room;
 		vu.game.util.step(step, function() {
+			if (curroom != zero.core.current.room)
+				return CT.log("room/scene changed! ABORTING SCRIPT!!!");
 			setTimeout(vu.game.util.script, step.pause || 0,
 				script, cb, state, audio, altered);
 		}, state, audio, altered);
