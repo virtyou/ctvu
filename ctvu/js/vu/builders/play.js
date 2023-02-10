@@ -116,7 +116,7 @@ vu.builders.play = {
 		},
 		uplights: function() {
 			var _ = vu.builders.play._;
-			if (_.ownz())
+			if (vu.core.ownz())
 				_.selectors.lights.update();
 			else if (_.partified)
 				_.swap();
