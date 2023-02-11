@@ -151,8 +151,8 @@ vu.menu.Game = CT.Class({
 	},
 	shelf: function(item) {
 		var bz = item.opts.items, desc,
-			sings = ["catches your eye", "gathers dust", "seems neglected"],
-			plurs = ["catch your eye", "gather dust", "seem neglected"];
+			sings = ["catches your eye", "gathers dust", "seems neglected", "looks interesting"],
+			plurs = ["catch your eye", "gather dust", "seem neglected", "pique your curiosity"];
 		if (bz.length == 1)
 			desc = "a book " + CT.data.choice(sings);
 		else
