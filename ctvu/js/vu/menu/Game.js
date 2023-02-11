@@ -143,6 +143,25 @@ vu.menu.Game = CT.Class({
 		mod.show();
 		setTimeout(mod.hide, 5000);
 	},
+	book: function(item) {
+		this.info(item.name, [
+			item.opts.author,
+			item.readbutt()
+		], item);
+	},
+	shelf: function(item) {
+		var bz = item.opts.items, desc,
+			sings = ["catches your eye", "gathers dust", "seems neglected"],
+			plurs = ["catch your eye", "gather dust", "seem neglected"];
+		if (bz.length == 1)
+			desc = "a book " + CT.data.choice(sings);
+		else
+			desc = bz.length + " books " + CT.data.choice(plur);
+		this.info(item.variety, [
+			desc,
+			item.perusebutt()
+		], item);
+	},
 	item: function(item) {
 		var zcc = zero.core.current, per = zcc.person,
 			state = this.state, msg = "you get a " + item.name;
