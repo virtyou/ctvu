@@ -55,7 +55,7 @@ vu.game.Scene = CT.Class({
 		}
 	},
 	start: function() {
-		var _ = this._, zcc = zero.core.current,
+		var _ = this._, zcc = zero.core.current, book, carp,
 			rc = _.regClick, pers, prop, item, portal,
 			men = this.menus, tsa = this.state.actors,
 			state = this.state.scenes[this.name],
@@ -86,6 +86,14 @@ vu.game.Scene = CT.Class({
 			rc(zcc.room[portal], men.portal);
 		for (item in items)
 			_.item(items[item], i => rc(i, men.item));
+		for (item in zcc.room.book) {
+			book = zcc.room[item];
+			rc(book, men.book);
+		}
+		for (item in zcc.room.carpentry) {
+			carp = zcc.room[item];
+			carp.opts.items.length && rc(carp, men.shelf);
+		}
 		this.comp();
 		this.menus.minimap();
 		this.script(this.state.script);
