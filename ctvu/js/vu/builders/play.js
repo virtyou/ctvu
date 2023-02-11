@@ -89,6 +89,16 @@ vu.builders.play = {
 				}
 			} else if (thing.opts.kind == "book")
 				other.push(CT.dom.button("read", () => zccp.get(thing, thing.read)));
+			else if (thing.opts.kind == "carpentry" && thing.opts.items.length) {
+				other.push(CT.dom.button("peruse", function() {
+					thing.closeup();
+					CT.modal.choice({
+						prompt: "want to read a book?",
+						data: Object.keys(thing.book),
+						cb: bookname => zccp.get(thing, thing[bookname].read)
+					});
+				}));
+			}
 			zero.core.click.register(target, function() {
 				CT.dom.setContent(_.selectors.info, [
 					CT.dom.div(thing.name, "bigger"),
