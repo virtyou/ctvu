@@ -130,6 +130,20 @@ vu.builders.zone = {
 				modesel
 			];
 		},
+		fside: function(floor, cb) {
+			var fopts = floor.opts;
+			return CT.dom.select({
+				names: ["Front Side", "Back Side", "Double Side"],
+				values: [0, 1, 2],
+				curvalue: fopts.material && fopts.material.side,
+				onchange: function(val) {
+					if (!fopts.material)
+						fopts.material = {};
+					floor.material.side = fopts.material.side = parseInt(val);
+					cb(fopts.material);
+				}
+			});
+		},
 		plevel: function(furn, cb) {
 			var rbz = zero.core.current.room.bounds;
 			return CT.dom.div([
@@ -426,6 +440,10 @@ vu.builders.zone = {
 						_.strup(variety);
 					}));
 				} else if (variety == "floor") {
+					cont.push(_.fside(item, function(sopts) {
+						fopts.material = sopts;
+						_.strup(variety);
+					}));
 					cont.push(_.fscroll(item, function(sopts) {
 						fopts.scroll = sopts;
 						_.strup(variety);
