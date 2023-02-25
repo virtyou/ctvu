@@ -149,6 +149,8 @@ vu.builders.pop = {
 									}
 								});
 							} else if (action == "wander") {
+								if (!zero.core.current.room.floor)
+									return addAct({ action: "wander", value: "room" });
 								CT.modal.choice({
 									prompt: "please select a zone",
 									data: ["room"].concat(Object.keys(zero.core.current.room.floor)),
