@@ -672,8 +672,11 @@ vu.builders.zone = {
 					eopts.opts.name = kind + Math.floor(Math.random() * 1000);
 					eopts.opts.kind = kind; // no base necessary...
 				}
-			} else if (kind == "portal")
+			} else if (kind == "portal") {
 				eopts.opts = { wall: 0 };
+				if (!thing.key)
+					eopts.opts = CT.merge(eopts.opts, thing);
+			}
 			else if (eoptsopts)
 				eopts.opts = eoptsopts;
 			if (thing && zccr[thing.name]) {
@@ -705,11 +708,18 @@ vu.builders.zone = {
 				return _.carp(cb);
 			if (kind == "screen" || kind == "stream")
 				return _.part(null, kind, cb);
-			var options = vu.storage.get(kind);
-			if (!options)
+			var options = Object.values(vu.storage.get(kind) || {});
+			if (kind == "portal") {
+				options = [{
+					kind: "portal",
+					name: "flat",
+					planeGeometry: true
+				}].concat(options);
+			}
+			if (!options.length)
 				return alert("add something on the item page!");
 			CT.modal.choice({
-				data: Object.values(options),
+				data: options,
 				cb: function(thing) {
 					_.part(thing, kind, cb);
 				}
