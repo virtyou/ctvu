@@ -1089,15 +1089,23 @@ vu.builders.zone = {
 				if (!obj.thring)
 					return CT.dom.hide(selz.opacity.full);
 				CT.dom.show(selz.opacity.full);
-				CT.dom.setContent(selz.opacity, CT.dom.range(function(val) {
-					val = parseInt(val);
-					obj.opts.material.opacity = obj.thring.material.opacity = val;
-					obj.opts.material.transparent = obj.thring.material.transparent = !!val;
-					vu.storage.setMaterial(obj.opts.key, {
-						transparent: !!val,
-						opacity: val
-					});
-				}, 0.1, 1, obj.thring.material.opacity || 1, 0.1, "w1"));
+				CT.dom.setContent(selz.opacity, [
+					CT.dom.checkboxAndLabel("transparent", obj.opts.material.transparent,
+						null, null, "bordered round small right up20", function(cbox) {
+							obj.opts.material.transparent = obj.thring.material.transparent = cbox.checked;
+							vu.storage.setMaterial(obj.opts.key, {
+								transparent: cbox.checked
+							});
+						}
+					),
+					CT.dom.range(function(val) {
+						val = parseInt(val);
+						obj.opts.material.opacity = obj.thring.material.opacity = val;
+						vu.storage.setMaterial(obj.opts.key, {
+							opacity: val
+						});
+					}, 0.1, 1, obj.thring.material.opacity || 1, 0.1, "w1")
+				]);
 			};
 			selz.opacity.full = CT.dom.div([
 				"Opacity",
@@ -1161,6 +1169,7 @@ vu.builders.zone = {
 				selz.lights.update();
 				selz.cameras.update();
 				selz.minimap.update();
+				selz.opacity.update();
 				selz.controls.update();
 				selz.friction.update();
 				selz.specular.update();
