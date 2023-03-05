@@ -1083,10 +1083,32 @@ vu.builders.zone = {
 				selz.shininess
 			], "topbordered padded margined");
 
+			selz.opacity = CT.dom.div();
+			selz.opacity.update = function() {
+				obj = furn || zero.core.current.room;
+				if (!obj.thring)
+					return CT.dom.hide(selz.opacity.full);
+				CT.dom.show(selz.opacity.full);
+				CT.dom.setContent(selz.opacity, CT.dom.range(function(val) {
+					val = parseInt(val);
+					obj.opts.material.opacity = obj.thring.material.opacity = val;
+					obj.opts.material.transparent = obj.thring.material.transparent = !!val;
+					vu.storage.setMaterial(obj.opts.key, {
+						transparent: !!val,
+						opacity: val
+					});
+				}, 0.1, 1, obj.thring.material.opacity || 1, 0.1, "w1"));
+			};
+			selz.opacity.full = CT.dom.div([
+				"Opacity",
+				selz.opacity
+			], "topbordered padded margined");
+
 			if (furn) {
 				selz.color.update();
 				selz.specular.update();
 				selz.shininess.update();
+				selz.opacity.update();
 			}
 
 			return [
@@ -1098,7 +1120,8 @@ vu.builders.zone = {
 					"Specular",
 					selz.specular
 				], "topbordered padded margined"),
-				selz.shininess.full
+				selz.shininess.full,
+				selz.opacity.full
 			];
 		},
 		lightup: function(lnum, property, val, subprop) {
