@@ -306,6 +306,7 @@ vu.builders.zone = {
 			 	_.fname(portal),
 			 	_.fscale(portal),
 			 	_.materials(portal),
+				_.txupper(portal),
 			 	_.plinx(portal)
 			 ];
 		},
@@ -622,16 +623,19 @@ vu.builders.zone = {
 				n
 			], "topbordered padded margined");
 		},
+		txupper: function(item) {
+			return CT.dom.div([
+				"Texture",
+				vu.builders.zone._.stx(item, function(txups) {
+					Object.assign(item.opts, txups);
+					vu.storage.setOpts(item.opts.key, txups);
+				})
+			], "topbordered padded margined");
+		},
 		carpentry: function(carp) {
 			var _ = vu.builders.zone._;
 			return _.furnishing(carp).concat([
-				CT.dom.div([
-					"Texture",
-					_.stx(carp, function(txups) {
-						Object.assign(carp.opts, txups);
-						vu.storage.setOpts(carp.opts.key, txups);
-					})
-				], "topbordered padded margined"),
+				_.txupper(carp),
 				_.carpbooks(carp)
 			]);
 		},
