@@ -370,16 +370,21 @@ vu.builders.zone = {
 			 ];
 		},
 		stx: function(item, cb) {
-			var tlink = CT.dom.link("no texture", function() {
+			var iup = function(img) {
+				item.setTexture(img.item);
+				tname(img.item);
+				cb({ texture: img.item, vstrip: null });
+			}, tlink = CT.dom.link("no texture", function() {
 				CT.modal.choice({
 					prompt: "image or moving picture?",
 					data: ["image", "moving picture"],
 					cb: function(sel) {
 						if (sel == "image") {
-							vu.media.browse("background", function(img) {
-								item.setTexture(img.item);
-								tname(img.item);
-								cb({ texture: img.item, vstrip: null });
+							vu.media.prompt.bu(function(which) {
+								if (which == "browse")
+									return vu.media.browse("background", iup);
+								vu.media.prompt.asset(iup,
+									"texture", item.opts.kind);
 							});
 						} else {
 							var vidz = templates.one.vstrip;
