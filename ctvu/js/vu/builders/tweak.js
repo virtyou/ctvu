@@ -64,19 +64,27 @@ vu.builders.tweak = {
 			var _ = vu.builders.tweak._, k = target.opts.kind;
 			_.target = target;
 			nosay || zero.core.current.person.say(k);
+			target._has_vstrip = !!target.opts.vstrip;
 			CT.dom.setContent(_.selectors.partLabel, [
 				CT.dom[clicker ? "link" : "span"](target.name + " (" + k +")",
 					clicker),
 				CT.dom.pad(),
-				vu.media.swapper.texture(target, _.uptex)
+				vu.media.swapper.texmo(target, _.uptex, true)
 			]);
 		},
-		uptex: function(tx) {
-			var _ = vu.builders.tweak._;
+		uptex: function(txdata) {
+			var _ = vu.builders.tweak._, tar = _.target,
+				tx = txdata.texture, hasvstrip = !!txdata.vstrip;
 			vu.storage.edit({
-				key: _.target.opts.key,
-				texture: tx.key
+				key: tar.opts.key,
+				texture: tx && tx.key || null
 			});
+			if (txdata.vstrip || hasvstrip != tar._has_vstrip) {
+				vu.storage.setOpts(tar.opts.key, {
+					vstrip: txdata.vstrip
+				});
+				tar._has_vstrip = hasvstrip;
+			}
 		},
 		setMorphs: function(person, part) {
 			var _ = vu.builders.tweak._, bod = person[part],
