@@ -369,55 +369,12 @@ vu.builders.zone = {
 			 	_.fznsel(scr)
 			 ];
 		},
-		stx: function(item, cb) {
-			var iup = function(img) {
-				item.setTexture(img.item);
-				tname(img.item);
-				cb({ texture: img.item, vstrip: null });
-			}, tlink = CT.dom.link("no texture", function() {
-				CT.modal.choice({
-					prompt: "image or moving picture?",
-					data: ["image", "moving picture"],
-					cb: function(sel) {
-						if (sel == "image") {
-							vu.media.prompt.bu(function(which) {
-								if (which == "browse")
-									return vu.media.browse("background", iup);
-								vu.media.prompt.asset(iup,
-									"texture", item.opts.kind);
-							});
-						} else {
-							var vidz = templates.one.vstrip;
-							CT.modal.choice({
-								prompt: "select a moving picture",
-								data: Object.keys(vidz),
-								cb: function(vsel) {
-									var d = vidz[vsel];
-									item.update({
-										vstrip: d
-									});
-									tname(d.texture);
-									cb({
-										vstrip: d,
-										texture: null
-									});
-								}
-							});
-						}
-					}
-				});
-			}, null, "small right clearnode"), tname = function(tx) {
-				tlink.innerHTML = tx.split("/").pop().split(".").shift();
-			};
-			item.opts.texture && tname(item.opts.texture);
-			return tlink;
-		},
 		struct: function(variety, fopts, i) {
 			var _ = vu.builders.zone._,
 				item = zero.core.current.room[variety + i],
 				s3 = ["wall", "obstacle"].includes(variety);
 			var cont = [
-				_.stx(item, function(txups) {
+				vu.media.swapper.texmo(item, function(txups) {
 					Object.assign(fopts, txups);
 					_.strup(variety);
 				}),
@@ -631,8 +588,8 @@ vu.builders.zone = {
 		txupper: function(item) {
 			return CT.dom.div([
 				"Texture",
-				vu.builders.zone._.stx(item, function(txups) {
-					Object.assign(item.opts, txups);
+				vu.media.swapper.texmo(item, function(txups) {
+					Object.assign(item.opts, txups); // questionable ... necessary?
 					vu.storage.setOpts(item.opts.key, txups);
 				})
 			], "topbordered padded margined");
