@@ -271,7 +271,7 @@ vu.media = {
 								vu.media.prompt.asset(iup, "texture", item.opts.kind);
 							});
 						} else {
-							var vidz = templates.one.vstrip;
+							var vidz = CT.module("templates.one.vstrip");
 							CT.modal.choice({
 								prompt: "select a moving picture",
 								data: Object.keys(vidz),
