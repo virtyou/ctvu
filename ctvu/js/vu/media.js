@@ -50,11 +50,11 @@ vu.media = {
 			}),
 			image: [
 				"bg7.jpg", "bgBITZs4a.jpg", "bg_yan3.jpg", "bod.jpg",
-				"bunny_ears.jpg", "bunny_teeth.jpg", "eye_brown_basic.jpg",
+				"bunny_ears.jpg", "bunny_teeth.jpg", "cloth.jpg", "eye_brown_basic.jpg",
 				"graph_paper.jpg", "grid.jpg", "hair_alphaGimp3_2SMALL.png",
 				"hair_alphaGimp3a.png", "hairC5dHat.png", "hair.png",
 				"hairShrunk.png", "head.jpg", "head_UV2.jpg", "hole.png", "icon.jpg",
-				"leaves.jpg", "room1.jpg", "rug1.jpg", "rug2.jpg", "rug3.jpg",
+				"leaves.jpg", "loop.jpg", "room1.jpg", "rug1.jpg", "rug2.jpg", "rug3.jpg",
 				"rug4.jpg", "rug5.jpg", "shirt.jpg", "sky-day.jpg", "sky-night.png",
 				"stonestairs.png", "stonewall.jpg", "teeth256s.jpg", "white.jpg", "window.png"
 			].map(function(o) {
