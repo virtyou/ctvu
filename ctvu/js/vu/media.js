@@ -253,6 +253,49 @@ vu.media = {
 			trigger && swap();
 			return CT.dom.link("swap", swap);
 		},
+		texmo: function(item, cb, fulltx) {
+			var iup = function(img) {
+				item.setTexture(img.item);
+				tname(img.item);
+				cb({ texture: fulltx && img || img.item, vstrip: null });
+			}, tlink = CT.dom.link("no texture", function() {
+				CT.modal.choice({
+					prompt: "image or moving picture?",
+					data: ["image", "moving picture"],
+					cb: function(sel) {
+						if (sel == "image") {
+							vu.media.prompt.bu(function(which) {
+								if (which == "browse")
+									return fulltx ? vu.media.texture(iup, null, item.opts.kind,
+										true) : vu.media.browse("background", iup);
+								vu.media.prompt.asset(iup, "texture", item.opts.kind);
+							});
+						} else {
+							var vidz = templates.one.vstrip;
+							CT.modal.choice({
+								prompt: "select a moving picture",
+								data: Object.keys(vidz),
+								cb: function(vsel) {
+									var d = vidz[vsel];
+									item.update({
+										vstrip: d
+									});
+									tname(d.texture);
+									cb({
+										vstrip: d,
+										texture: null
+									});
+								}
+							});
+						}
+					}
+				});
+			}, null, "small right clearnode"), tname = function(tx) {
+				tlink.innerHTML = tx.split("/").pop().split(".").shift();
+			};
+			item.opts.texture && tname(item.opts.texture);
+			return tlink;
+		},
 		audio: function(cb, kind, reqkey) {
 			vu.media.prompt.bu(function(which) {
 				if (which == "browse")
