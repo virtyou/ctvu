@@ -121,7 +121,7 @@ vu.builders.pop = {
 			return n;
 		},
 		activities: function() {
-			var _ = vu.builders.pop._, selz = _.selectors;
+			var _ = vu.builders.pop._, selz = _.selectors, zcc = zero.core.current;
 			selz.activities = CT.dom.div();
 			selz.activities.update = function() {
 				var actz = _.auto.activities, rmAct = function(act) {
@@ -149,11 +149,11 @@ vu.builders.pop = {
 									}
 								});
 							} else if (action == "wander") {
-								if (!zero.core.current.room.floor)
+								if (!zcc.room.floor)
 									return addAct({ action: "wander", value: "room" });
 								CT.modal.choice({
 									prompt: "please select a zone",
-									data: ["room"].concat(Object.keys(zero.core.current.room.floor)),
+									data: ["room"].concat(Object.keys(zcc.room.floor)),
 									cb: function(zone) {
 										addAct({
 											action: "wander",
@@ -162,9 +162,24 @@ vu.builders.pop = {
 									}
 								});
 							} else if (action == "move") {
-
-								alert("unimplemented!"); // TODO
-
+								vu.media.prompt.adjusters(null, _.auto.person.body,
+									"position", zcc.room.bounds, 1, function() {
+										var abo = _.auto.person.body, mobj = abo.wbs(),
+											ospr = abo.springs.orientation;
+										CT.modal.modal([
+											"orientation",
+											CT.dom.range(function(val) {
+												ospr.target = parseFloat(val);
+											}, 0, 6, ospr.target, 1, "w1")
+										], function() {
+											mobj.orientation = ospr.target;
+											addAct({
+												action: "move",
+												value: mobj
+											});
+										});
+									}
+								);
 							} else { // say/respond
 								CT.modal.prompt({
 									prompt: action + " what?",
