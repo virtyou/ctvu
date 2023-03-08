@@ -84,8 +84,9 @@ vu.media = {
 		}
 	},
 	prompt: {
-		adjusters: function(cb, part, variety) {
-			var bz = { // move somewhere else
+		adjusters: function(cb, part, variety, bz, unit, ondone) {
+			unit = unit || 0.01;
+			bz = bz || { // move somewhere else
 				scale: {
 					min: 0.2,
 					max: 16
@@ -107,12 +108,12 @@ vu.media = {
 						axis,
 						CT.dom.range(function(val) {
 							var fval = upobj[variety][i] = parseFloat(val);
-							part.adjust(variety, axis, val);
-							cb(upobj);
-						}, bz.min, bz.max, cur[axis], 0.01, "w1")
+							part.adjust(variety, axis, fval);
+							cb && cb(upobj);
+						}, bz.min[axis] || bz.min, bz.max[axis] || bz.max, cur[axis], unit, "w1")
 					];
 				})
-			], "centered padded"));
+			], "centered padded"), ondone);
 		},
 		part: function(cb, kind, base, side, sub, part) { // worn/held!!
 			var oz = {
