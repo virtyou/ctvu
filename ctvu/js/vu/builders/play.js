@@ -35,6 +35,7 @@ vu.builders.play = {
 				_.regclix();
 				zero.core.click.trigger(person.body);
 				core.config.ctzero.camera.cardboard && vu.voice.listen();
+				vu.core.comp();
 			},
 			chat: function(person, msg) {
 				var zccp = zero.core.current.person, subs = [
@@ -54,6 +55,7 @@ vu.builders.play = {
 			},
 			enter: function(person) {
 				vu.builders.play._.clickreg(person);
+				vu.core.comp(person);
 			}
 		},
 		regclix: function() {
@@ -167,6 +169,7 @@ vu.builders.play = {
 						_.regclix();
 						vbp.minimap.refresh();
 						_.uplights();
+						vu.core.comp();
 					}
 				}, CT.data.get(target || CT.storage.get("room"))));
 				CT.pubsub.subscribe(cur.room.opts.key);
