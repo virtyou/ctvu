@@ -26,6 +26,19 @@ vu.core = {
 	jlo: function(v) {
 		return v.replace(/[^a-z]/g, '');
 	},
+	comp: function(target, extras) {
+		var zcc = zero.core.current, cz, pers;
+		if (target)
+			cz = target.components(true);
+		else {
+			cz = zcc.room.components();
+			for (pers in zcc.people)
+				cz = cz.concat(zcc.people[pers].components(true));
+		}
+		if (extras)
+			cz = extras.concat(cz);
+		cz.length && CT.cc.views(cz);
+	},
 	menu: function(section, origin, selector, header, onclick) {
 		return new CT.modal.Modal({
 			center: false,
