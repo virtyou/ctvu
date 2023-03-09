@@ -100,17 +100,14 @@ vu.game.Scene = CT.Class({
 	},
 	comp: function() {
 		var zcc = zero.core.current, oz = this.opts,
-			cz = zcc.room.components(), pers,
 			g = zcc.adventure.game, rt = zcc.room.opts.texture;
-		for (pers in zcc.people) // filter for anon mode
-			cz = cz.concat(zcc.people[pers].components().filter(cz => cz && cz.owners));
-		CT.cc.views([{
+		vu.core.comp(null, [{
 			identifier: "Game: " + g.name,
 			owners: g.owners
 		}, {
 			identifier: "Scene: " + oz.name,
 			owners: oz.owners
-		}].concat(cz));
+		}]);
 		rt.startsWith("http") && this.menus.attribution("seeing", "wallpaper",
 			null, rt.split("/")[2].split(".").slice(-2).join("."));
 	},
