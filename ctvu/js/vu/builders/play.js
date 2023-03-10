@@ -45,7 +45,7 @@ vu.builders.play = {
 				], mnode;
 				if (!vu.core.ischar(person.opts.key)) {
 					person.setVolume(zero.core.util.close2u(person.body));
-					if (person.language.code != zccp.language.code)
+					if (person.language && person.language.code != zccp.language.code)
 						subs.push(vu.lang.transer(msg, person.language, zccp.language));
 				}
 				mnode = CT.dom.div(subs);
@@ -75,12 +75,13 @@ vu.builders.play = {
 					var cbutt = CT.dom.button("chat", function() {
 						thing.automaton.pause();
 						thing.look(zccp.body, true);
-						zccp.onsay(statement => thing.respond(statement));
+						zccp.onsaid(statement => thing.respond(statement, null, true,
+							msg => vu.live.botchat(thing.name, msg)));
 						CT.dom.setContent(cbox, cstop);
 					}), cstop = CT.dom.button("stop chatting", function() {
 						thing.unlook();
 						thing.automaton.play();
-						zccp.onsay();
+						zccp.onsaid();
 						CT.dom.setContent(cbox, cbutt);
 					}), cbox = CT.dom.div(cbutt);
 					other.push(cbox);
