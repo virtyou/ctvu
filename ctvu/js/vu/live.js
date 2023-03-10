@@ -8,6 +8,9 @@ vu.live = {
 			chat: function(person, msg) {
 				vu.live._.cbs.chat(person, msg);
 			},
+			botchat: function(person, chdata) {
+				vu.live._.cbs.chat(zero.core.current.people[chdata.bot], chdata.msg);
+			},
 			inject: function(person, pkey) { // join
 				zero.core.current.room.inject(person, pkey && zero.core.Thing.get(pkey));
 //				person.body.show();
@@ -152,6 +155,15 @@ vu.live = {
 		CT.pubsub.publish(vu.live._.channel || zero.core.current.room.opts.key, {
 			action: action,
 			data: val
+		});
+	},
+	botchat: function(botname, val) {
+		CT.pubsub.publish(vu.live._.channel || zero.core.current.room.opts.key, {
+			action: "botchat",
+			data: {
+				msg: val,
+				bot: botname
+			}
 		});
 	},
 	zmeta: function(data) {
