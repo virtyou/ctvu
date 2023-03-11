@@ -37,13 +37,15 @@ vu.builders.play = {
 				core.config.ctzero.camera.cardboard && vu.voice.listen();
 				vu.core.comp();
 			},
-			chat: function(person, msg, squad) {
+			chat: function(person, msg, squad, squinvite) {
 				var zccp = zero.core.current.person, subs = [
 					CT.dom.span(person.name, "bold italic green")
 				], mnode;
 				squad && subs.push(CT.dom.span("[" + squad + "]", "bold"));
 				subs.push(CT.dom.pad());
 				subs.push(CT.dom.span(msg));
+				squinvite && subs.push(CT.dom.button("click here to join " + squinvite,
+					() => vu.squad.join(squinvite)));
 				if (!vu.core.ischar(person.opts.key)) {
 					person.setVolume(zero.core.util.close2u(person.body));
 					if (person.language && person.language.code != zccp.language.code)
@@ -103,6 +105,7 @@ vu.builders.play = {
 						"move around with wasd",
 						"SPACE for jump",
 						"SHIFT for run",
+						"ENTER to enter portal",
 						"1-9 for gestures",
 						"1-9 + SHIFT for dances",
 						"0 to ungesture",
