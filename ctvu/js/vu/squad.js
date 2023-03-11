@@ -32,6 +32,7 @@ vu.squad = {
 				if (chan == _.current)
 					_.current = "room";
 				CT.data.remove(_.squads, chan);
+				CT.pubsub.unsubscribe(chan);
 			}
 		});
 	},
