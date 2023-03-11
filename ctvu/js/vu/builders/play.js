@@ -37,12 +37,13 @@ vu.builders.play = {
 				core.config.ctzero.camera.cardboard && vu.voice.listen();
 				vu.core.comp();
 			},
-			chat: function(person, msg) {
+			chat: function(person, msg, squad) {
 				var zccp = zero.core.current.person, subs = [
-					CT.dom.span(person.name, "bold italic green"),
-					CT.dom.pad(),
-					CT.dom.span(msg)
+					CT.dom.span(person.name, "bold italic green")
 				], mnode;
+				squad && subs.push(CT.dom.span("[" + squad + "]", "bold"));
+				subs.push(CT.dom.pad());
+				subs.push(CT.dom.span(msg));
 				if (!vu.core.ischar(person.opts.key)) {
 					person.setVolume(zero.core.util.close2u(person.body));
 					if (person.language && person.language.code != zccp.language.code)
@@ -181,7 +182,7 @@ vu.builders.play = {
 		chatterbox: function() {
 			var zc = zero.core, zcu = zc.util, zcc = zc.current, out = CT.dom.div(null,
 			"out"), _ = vu.builders.play._, say = function(val, e) {
-				val && vu.live.emit("chat", val);
+				val && vu.squad.emit(val);
 				e && e.stopPropagation();
 				return "clear";
 			}, listButt = CT.dom.button("listen", function(e) {
@@ -205,11 +206,11 @@ vu.builders.play = {
 				vu.builders.play.minimap.help(zcc.person);
 				vu.live.meta();
 				e.stopPropagation();
-			}), singButt = zcu.singer(cbox, say);
+			}), squadButt = vu.squad.butt(), singButt = zcu.singer(cbox, say);
 			_.langButt = CT.dom.span();
 			cbox.onclick = function(e) { e.stopPropagation(); };
 			var n = CT.dom.div([
-				CT.dom.div([singButt, listButt, _.langButt, helpButt], "right up15"),
+				CT.dom.div([squadButt, singButt, listButt, _.langButt, helpButt], "right up15"),
 				out, cbox
 			]);
 			n.out = out;

@@ -8,6 +8,9 @@ vu.live = {
 			chat: function(person, msg) {
 				vu.live._.cbs.chat(person, msg);
 			},
+			squadchat: function(person, chdata) {
+				vu.live._.cbs.chat(person, chdata.msg, chdata.squad);
+			},
 			botchat: function(person, chdata) {
 				vu.live._.cbs.chat(zero.core.current.people[chdata.bot], chdata.msg);
 			},
@@ -151,19 +154,22 @@ vu.live = {
 	esync: function(data) {
 		vu.live.emit("environment", data);
 	},
-	emit: function(action, val) {
-		CT.pubsub.publish(vu.live._.channel || zero.core.current.room.opts.key, {
+	emit: function(action, val, chan) {
+		CT.pubsub.publish(chan || vu.live._.channel || zero.core.current.room.opts.key, {
 			action: action,
 			data: val
 		});
 	},
+	squadchat: function(squadname, val) {
+		vu.live.emit("squadchat", {
+			msg: val,
+			squad: squadname
+		}, squadname);
+	},
 	botchat: function(botname, val) {
-		CT.pubsub.publish(vu.live._.channel || zero.core.current.room.opts.key, {
-			action: "botchat",
-			data: {
-				msg: val,
-				bot: botname
-			}
+		vu.live.emit("botchat", {
+			msg: val,
+			bot: botname
 		});
 	},
 	zmeta: function(data) {
