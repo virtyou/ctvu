@@ -178,10 +178,70 @@ vu.builders.play = {
 					? "hide" : "show"]("ctmain");
 			});
 		},
+		joinSquad: function() {
+			var _ = vu.builders.play._;
+			CT.modal.prompt({
+				prompt: "what's the squad called?",
+				cb: function(sname) {
+					if (sname == "room") {
+						alert("sorry, you can't call your squad 'room' - please try again");
+						return _.joinSquad();
+					}
+					if (_.squads.includes(sname))
+						alert("you're already in the " + sname + " squad");
+					else {
+						_.squads.push(sname);
+						CT.pubsub.subscribe(sname);
+					}
+					_.squadName = sname;
+					alert("you're now speaking to the " + sname + " channel");
+				}
+			});
+		},
+		chanSwitch: function() {
+			var _ = vu.builders.play._;
+			CT.modal.choice({
+				prompt: "which channel do you want to talk in?",
+				data: ["room"].concat(_.squads),
+				cb: function(chan) {
+					if (chan == "room")
+						_.squadName = null;
+					else
+						_.squadName = chan;
+				}
+			});
+		},
+		squad: function(e) {
+			var _ = vu.builders.play._;
+			e.stopPropagation();
+			if (!_.squads.length)
+				return _.joinSquad();
+			CT.modal.choice({
+				prompt: "you're speaking to the " + (_.squadName || "room") + " channel",
+				data: ["switch channels", "join squad"],
+				cb: function(action) {
+					if (action == "join squad")
+						_.joinSquad();
+					else // switch
+						_.chanSwitch();
+				}
+			});
+		},
+		squadButt: function() {
+			var _ = vu.builders.play._;
+			_.squads = [];
+			_.squadName = null;
+			return CT.dom.button("squad", _.squad)
+		},
 		chatterbox: function() {
 			var zc = zero.core, zcu = zc.util, zcc = zc.current, out = CT.dom.div(null,
 			"out"), _ = vu.builders.play._, say = function(val, e) {
-				val && vu.live.emit("chat", val);
+				if (val) {
+					if (_.squadName)
+						vu.live.squadchat(_.squadName, val);
+					else
+						vu.live.emit("chat", val);
+				}
 				e && e.stopPropagation();
 				return "clear";
 			}, listButt = CT.dom.button("listen", function(e) {
@@ -205,11 +265,11 @@ vu.builders.play = {
 				vu.builders.play.minimap.help(zcc.person);
 				vu.live.meta();
 				e.stopPropagation();
-			}), singButt = zcu.singer(cbox, say);
+			}), squadButt = _.squadButt(), singButt = zcu.singer(cbox, say);
 			_.langButt = CT.dom.span();
 			cbox.onclick = function(e) { e.stopPropagation(); };
 			var n = CT.dom.div([
-				CT.dom.div([singButt, listButt, _.langButt, helpButt], "right up15"),
+				CT.dom.div([squadButt, singButt, listButt, _.langButt, helpButt], "right up15"),
 				out, cbox
 			]);
 			n.out = out;
