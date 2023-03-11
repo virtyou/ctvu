@@ -14,6 +14,9 @@ vu.live = {
 			botchat: function(person, chdata) {
 				vu.live._.cbs.chat(zero.core.current.people[chdata.bot], chdata.msg);
 			},
+			invite: function(person, squad) {
+				vu.live._.cbs.chat(person, "join my squad!", null, squad);
+			},
 			inject: function(person, pkey) { // join
 				zero.core.current.room.inject(person, pkey && zero.core.Thing.get(pkey));
 //				person.body.show();
@@ -171,6 +174,9 @@ vu.live = {
 			msg: val,
 			bot: botname
 		});
+	},
+	invite: function(squadname) {
+		vu.live.emit("invite", squadname);
 	},
 	zmeta: function(data) {
 		CT.pubsub.chmeta(vu.live._.channel || zero.core.current.room.opts.key, data);
