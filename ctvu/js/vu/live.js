@@ -9,7 +9,7 @@ vu.live = {
 				vu.live._.cbs.chat(person, msg);
 			},
 			squadchat: function(person, chdata) {
-				vu.live._.cbs.chat(person, "<b>[" + chdata.squad + "]</b> " + chdata.msg);
+				vu.live._.cbs.chat(person, chdata.msg, chdata.squad);
 			},
 			botchat: function(person, chdata) {
 				vu.live._.cbs.chat(zero.core.current.people[chdata.bot], chdata.msg);
