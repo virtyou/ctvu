@@ -23,6 +23,18 @@ vu.squad = {
 			}
 		});
 	},
+	quit: function() {
+		var _ = vu.squad._;
+		CT.modal.choice({
+			prompt: "which squad do you want to quit?",
+			data: _.squads,
+			cb: function(chan) {
+				if (chan == _.current)
+					_.current = "room";
+				CT.data.remove(_.squads, chan);
+			}
+		});
+	},
 	switch: function() {
 		var _ = vu.squad._;
 		CT.modal.choice({
@@ -37,9 +49,9 @@ vu.squad = {
 		var _ = vu.squad._;
 		e.stopPropagation();
 		if (!_.squads.length)
-			return _.joinSquad();
+			return vu.squad.join();
 		CT.modal.choice({
-			prompt: "you're speaking to the " + (_.current || "room") + " channel",
+			prompt: "you're speaking to the " + _.current + " channel",
 			data: ["switch channels", "join squad", "quit squad"],
 			cb: function(action) {
 				if (action == "switch channels")
