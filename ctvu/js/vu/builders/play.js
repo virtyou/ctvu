@@ -37,12 +37,13 @@ vu.builders.play = {
 				core.config.ctzero.camera.cardboard && vu.voice.listen();
 				vu.core.comp();
 			},
-			chat: function(person, msg) {
+			chat: function(person, msg, squad) {
 				var zccp = zero.core.current.person, subs = [
-					CT.dom.span(person.name, "bold italic green"),
-					CT.dom.pad(),
-					CT.dom.span(msg)
+					CT.dom.span(person.name, "bold italic green")
 				], mnode;
+				squad && subs.push(CT.dom.span("[" + squad + "]", "bold"));
+				subs.push(CT.dom.pad());
+				subs.push(CT.dom.span(msg));
 				if (!vu.core.ischar(person.opts.key)) {
 					person.setVolume(zero.core.util.close2u(person.body));
 					if (person.language && person.language.code != zccp.language.code)
