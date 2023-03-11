@@ -1,7 +1,7 @@
 vu.squad = {
 	_: {
 		current: "room",
-		squads: []
+		squads: CT.storage.get("squads") || []
 	},
 	join: function() {
 		var _ = vu.squad._;
@@ -16,6 +16,7 @@ vu.squad = {
 					alert("you're already in the " + sname + " squad");
 				else {
 					_.squads.push(sname);
+					CT.storage.set("squads", _.squads);
 					CT.pubsub.subscribe(sname);
 				}
 				_.current = sname;
@@ -32,6 +33,7 @@ vu.squad = {
 				if (chan == _.current)
 					_.current = "room";
 				CT.data.remove(_.squads, chan);
+				CT.storage.set("squads", _.squads);
 				CT.pubsub.unsubscribe(chan);
 			}
 		});
