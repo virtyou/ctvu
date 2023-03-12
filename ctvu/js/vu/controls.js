@@ -63,6 +63,18 @@ vu.controls = {
 			CT.dom.setContent(node, butt);
 		}
 	},
+	trigNode: function(trig, i, cb) {
+		return CT.dom.div(trig, "bordered padded margined inline-block hoverglow", null, {
+			onclick: function(e) {
+				e.stopPropagation();
+				cb(trig, i);
+			}
+		});
+	},
+	triggerMap: function(trigz, cb, notArray) {
+		return (notArray ? Object.keys(trigz)
+			: trigz).map((t, i) => vu.controls.trigNode(t, i, cb));
+	},
 	setTriggers: function(node, cb, person, trigzonly) {
 		person = person || zero.core.current.person;
 		var responses = person.opts.responses,
@@ -73,28 +85,18 @@ vu.controls = {
 			isgame = location.pathname == "/vu/adventure.html";
 		if (isgame)
 			CT.data.remove(trigz, "unintelligible");
-		content.push(trigz.map(function(trig) {
-			return CT.dom.div(trig, "bordered padded margined inline-block hoverglow", null, {
-				onclick: function(e) {
-					person.respond(trig);
-					vu.controls.setTriggers(node, cb, person, trigzonly);
-					e.stopPropagation();
-					cb && cb("trigger", trig, person);
-				}
-			});
+		content.push(vu.controls.triggerMap(trigz, function(trig) {
+			person.respond(trig);
+			vu.controls.setTriggers(node, cb, person, trigzonly);
+			cb && cb("trigger", trig, person);
 		}));
 		if (!isgame) {
 			content = content.concat([
 				"Vibes",
-				Object.keys(vibez).map(function(vibe) {
-					return CT.dom.div(vibe, "bordered padded margined inline-block hoverglow", null, {
-						onclick: function(e) {
-							person.vibe.update(vibe);
-							e.stopPropagation();
-							cb && cb("vibe", vibe);
-						}
-					});
-				})
+				vu.controls.triggerMap(vibez, function(vibe) {
+					person.vibe.update(vibe);
+					cb && cb("vibe", vibe);
+				}, true)
 			]);
 		}
 		CT.dom.setContent(node, content);
@@ -105,35 +107,20 @@ vu.controls = {
 			dances = person.opts.dances,
 			modz = person.opts.mods;
 		CT.dom.setContent(node, [
-			["ungesture"].concat(Object.keys(gestz)).map(function(gest, i) {
-				return CT.dom.div(gest, "bordered padded margined inline-block hoverglow", null, {
-					onclick: function(e) {
-						i ? person.gesture(gest) : person.ungesture();
-						e.stopPropagation();
-						cb && cb("gesture", gest);
-					}
-				});
-			}),
+			["ungesture"].concat(vu.controls.triggerMap(gestz, function(gest, i) {
+				i ? person.gesture(gest) : person.ungesture();
+				cb && cb("gesture", gest);
+			}, true)),
 			"Dances",
-			["undance"].concat(Object.keys(dances)).map(function(dance, i) {
-				return CT.dom.div(dance, "bordered padded margined inline-block hoverglow", null, {
-					onclick: function(e) {
-						i ? person.dance(dance) : person.undance();
-						e.stopPropagation();
-						cb && cb("dance", dance);
-					}
-				});
-			}),
+			["undance"].concat(vu.controls.triggerMap(dances, function(dance, i) {
+				i ? person.dance(dance) : person.undance();
+				cb && cb("dance", dance);
+			}, true)),
 			"Mods",
-			["unmod"].concat(Object.keys(modz)).map(function(m, i) {
-				return CT.dom.div(m, "bordered padded margined inline-block hoverglow", null, {
-					onclick: function(e) {
-						i ? person.mod(m) : person.unmod();
-						e.stopPropagation();
-						cb && cb("mod", m);
-					}
-				});
-			})
+			["unmod"].concat(vu.controls.triggerMap(modz, function(m, i) {
+				i ? person.mod(m) : person.unmod();
+				cb && cb("mod", m);
+			}, true))
 		]);
 	}
 };
