@@ -107,20 +107,20 @@ vu.controls = {
 			dances = person.opts.dances,
 			modz = person.opts.mods;
 		CT.dom.setContent(node, [
-			["ungesture"].concat(vu.controls.triggerMap(gestz, function(gest, i) {
+			vu.controls.triggerMap(["ungesture"].concat(Object.keys(gestz)), function(gest, i) {
 				i ? person.gesture(gest) : person.ungesture();
 				cb && cb("gesture", gest);
-			}, true)),
+			}),
 			"Dances",
-			["undance"].concat(vu.controls.triggerMap(dances, function(dance, i) {
+			vu.controls.triggerMap(["undance"].concat(Object.keys(dances)), function(dance, i) {
 				i ? person.dance(dance) : person.undance();
 				cb && cb("dance", dance);
-			}, true)),
+			}),
 			"Mods",
-			["unmod"].concat(vu.controls.triggerMap(modz, function(m, i) {
+			vu.controls.triggerMap(["unmod"].concat(Object.keys(modz)), function(m, i) {
 				i ? person.mod(m) : person.unmod();
 				cb && cb("mod", m);
-			}, true))
+			})
 		]);
 	}
 };
