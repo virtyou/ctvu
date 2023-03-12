@@ -19,6 +19,7 @@ CT.require("vu.media");
 CT.require("vu.audio");
 CT.require("vu.color");
 CT.require("vu.controls");
+CT.require("vu.help");
 CT.require("vu.storage");
 CT.require("vu.squad");
 CT.require("vu.lang");

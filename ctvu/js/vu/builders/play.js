@@ -5,6 +5,7 @@ vu.builders.play = {
 		menus: {
 			chat: "bottom",
 			cameras: "top",
+			auto: "left",
 			info: "topleft",
 			audio: "topleft",
 			lights: "topright",
@@ -64,7 +65,12 @@ vu.builders.play = {
 		regclix: function() {
 			var _ = vu.builders.play._, room = zero.core.current.room;
 			room.objects.forEach(_.clickreg);
-			room.automatons.forEach(a => a.onperson(_.clickreg));
+			room.automatons.forEach(a => a.onperson(_.autoset));
+		},
+		autoset: function(p) {
+			var _ = vu.builders.play._;
+			vu.help.triggerize(p.brain, _.selectors.auto, vu.squad.emit);
+			_.clickreg(p);
 		},
 		clickreg: function(thing) {
 			var _ = vu.builders.play._, zccp = zero.core.current.person,
@@ -80,13 +86,17 @@ vu.builders.play = {
 						thing.look(zccp.body, true);
 						zccp.onsaid(statement => thing.respond(statement, null, true,
 							msg => vu.live.botchat(thing.name, msg)));
-						CT.dom.setContent(cbox, cstop);
+						CT.dom.setContent(cbox, cchatting);
 					}), cstop = CT.dom.button("stop chatting", function() {
 						thing.unlook();
 						thing.automaton.play();
 						zccp.onsaid();
 						CT.dom.setContent(cbox, cbutt);
-					}), cbox = CT.dom.div(cbutt);
+					}), chelp = CT.dom.button("help!", function() {
+						vu.squad.emit("enable help mode");
+					}), cchatting = CT.dom.div([
+						cstop, chelp
+					]), cbox = CT.dom.div(cbutt);
 					other.push(cbox);
 				} else if (vu.core.ownz()) {
 					other.push(CT.dom.button("dunk", function() {
@@ -162,6 +172,7 @@ vu.builders.play = {
 				function() { vu.portal.port(); });
 			selz.chat = _.chatterbox();
 			selz.info = CT.dom.div();
+			selz.auto = CT.dom.div();
 			vu.portal.on("eject", function(portout) {
 				vu.live.emit("eject", portout);
 				CT.pubsub.unsubscribe(cur.room.opts.key);
@@ -252,7 +263,7 @@ vu.builders.play = {
 		for (section in _.menus) {
 			selz[section].modal = vu.core.menu(section, _.menus[section],
 				selz[section], _.head(section), _.collapse(section));
-			if (!["run_home", "lights", "audio"].includes(section))
+			if (!["run_home", "lights", "audio", "auto"].includes(section))
 				selz[section].modal.show("ctmain");
 		}
 	}
