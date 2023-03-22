@@ -49,7 +49,7 @@ vu.media = {
 				};
 			}),
 			image: [
-				"bg7.jpg", "bgBITZs4a.jpg", "bg_yan3.jpg", "bod.jpg",
+				"bg7.jpg", "bgBITZs4a.jpg", "bg_yan3.jpg", "bluefab.jpg", "bod.jpg",
 				"bunny_ears.jpg", "bunny_teeth.jpg", "cloth.jpg", "eye_brown_basic.jpg",
 				"graph_paper.jpg", "grid.jpg", "hair_alphaGimp3_2SMALL.png",
 				"hair_alphaGimp3a.png", "hairC5dHat.png", "hair.png",
