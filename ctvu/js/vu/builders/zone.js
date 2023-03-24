@@ -316,7 +316,8 @@ vu.builders.zone = {
 			 	_.unfurn(poster),
 			 	_.fname(poster),
 			 	_.fscale(poster),
-			 	_.materials(poster)
+			 	_.materials(poster),
+				_.txupper(poster)
 			 ];
 		},
 		vidsel: function(scr) {
@@ -630,7 +631,7 @@ vu.builders.zone = {
 					wall: 0,
 					planeGeometry: [100, 100] // TODO: should derive from img/video dims
 				};
-				if (kind != "poster") {
+				if ((kind != "poster") || !eopts.base) {
 					eopts.opts.name = kind + Math.floor(Math.random() * 1000);
 					eopts.opts.kind = kind; // no base necessary...
 				}
@@ -676,6 +677,11 @@ vu.builders.zone = {
 					kind: "portal",
 					name: "flat",
 					planeGeometry: true
+				}].concat(options);
+			} else if (kind == "poster") {
+				options = [{
+					kind: "poster",
+					name: "start blank"
 				}].concat(options);
 			}
 			if (!options.length)
