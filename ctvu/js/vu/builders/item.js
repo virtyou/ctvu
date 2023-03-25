@@ -4,9 +4,10 @@ vu.builders.item = {
 			"Binary", "BVH", "Collada", "DDS", "FBX", "GLTF", "HDRCubeTexture",
 			"KMZ", "MD2", "MMD", "MTL", "NRRD", "OBJ", "PCD", "PDB", "PlayCanvas",
 			"PLY", "PVR", "RGBE", "STL", "SVG", "TGA", "TTF", "UTF8", "VRML", "VTK"],
-		kinds: ["furnishing", "shell", "wallpaper", "poster", "portal",
-			"speaker", "clothing", "body", "head", "hair", "eye", "teeth",
-			"teeth_top", "tongue", "facial", "beard", "accessory", "held"
+		kinds: ["furnishing", "portal", "speaker", "held",
+			"shell", "wallpaper", "hair", "beard"
+//			"clothing", "body", "head", "eye", "teeth",
+//			"teeth_top", "tongue", "facial", "accessory"
 		].concat(zero.core.util.worns),
 		selectors: {},
 		formatted: function(ctfile) {
