@@ -254,11 +254,12 @@ vu.media = {
 			trigger && swap();
 			return CT.dom.link("swap", swap);
 		},
-		texmo: function(item, cb, fulltx) {
+		texmo: function(item, cb, fulltx, fulltxcb) {
 			var iup = function(img) {
 				item.setTexture(img.item);
 				tname(img.item);
 				cb({ texture: fulltx && img || img.item, vstrip: null });
+				fulltxcb && fulltxcb(img);
 			}, tlink = CT.dom.link("no texture", function() {
 				CT.modal.choice({
 					prompt: "image or moving picture?",
