@@ -51,7 +51,7 @@ vu.media = {
 			image: [
 				"bg7.jpg", "bgBITZs4a.jpg", "bg_yan3.jpg", "bluefab.jpg", "bod.jpg",
 				"bunny_ears.jpg", "bunny_teeth.jpg", "cloth.jpg", "eye_brown_basic.jpg",
-				"graph_paper.jpg", "grid.jpg", "hair_alphaGimp3_2SMALL.png",
+				"graph_paper.jpg", "grid.png", "hair_alphaGimp3_2SMALL.png",
 				"hair_alphaGimp3a.png", "hairC5dHat.png", "hair.png",
 				"hairShrunk.png", "head.jpg", "head_UV2.jpg", "hole.png", "icon.jpg",
 				"leaves.jpg", "loop.jpg", "room1.jpg", "rug1.jpg", "rug2.jpg", "rug3.jpg",
@@ -254,11 +254,12 @@ vu.media = {
 			trigger && swap();
 			return CT.dom.link("swap", swap);
 		},
-		texmo: function(item, cb, fulltx) {
+		texmo: function(item, cb, fulltx, fulltxcb) {
 			var iup = function(img) {
 				item.setTexture(img.item);
 				tname(img.item);
 				cb({ texture: fulltx && img || img.item, vstrip: null });
+				fulltxcb && fulltxcb(img);
 			}, tlink = CT.dom.link("no texture", function() {
 				CT.modal.choice({
 					prompt: "image or moving picture?",
@@ -267,8 +268,8 @@ vu.media = {
 						if (sel == "image") {
 							vu.media.prompt.bu(function(which) {
 								if (which == "browse")
-									return fulltx ? vu.media.texture(iup, null, item.opts.kind,
-										true) : vu.media.browse("background", iup);
+									return (fulltx || fulltxcb) ? vu.media.texture(iup, null,
+										item.opts.kind, true) : vu.media.browse("background", iup);
 								vu.media.prompt.asset(iup, "texture", item.opts.kind);
 							});
 						} else {
@@ -322,7 +323,7 @@ vu.media = {
 				tz.all.push(ass);
 			}
 			loader();
-		}, null, null, null, {
+		}, 1000, null, null, {
 			variety: "texture"
 		});
 		CT.db.get("resource", function(rez) {
@@ -335,7 +336,7 @@ vu.media = {
 				}
 			}
 			loader();
-		}, null, null, null, null, null, null, "json");
+		}, 1000, null, null, null, null, null, "json");
 	},
 	fetch: function(variety, cb) {
 		vu.media.init(function() {

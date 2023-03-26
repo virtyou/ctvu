@@ -310,6 +310,24 @@ vu.builders.zone = {
 			 	_.plinx(portal)
 			 ];
 		},
+		resizePoster: function(poster, img) {
+			var met = img.meta, orig = met && met.original,
+				isize = (orig && orig.dims) || (met && met.dims);
+			if (!isize) return;
+			var w, h, ow = isize.width, oh = isize.height;
+			if (ow < oh) {
+				w = 100;
+				h = 100 * oh / ow;
+			} else {
+				h = 100;
+				w = 100 * ow / oh;
+			}
+			var upz = {
+				planeGeometry: [w, h]
+			};
+			poster.update(upz);
+			vu.storage.setOpts(poster.opts.key, upz);
+		},
 		poster: function(poster) {
 			 var _ = vu.builders.zone._;
 			 return [
@@ -317,7 +335,7 @@ vu.builders.zone = {
 			 	_.fname(poster),
 			 	_.fscale(poster),
 			 	_.materials(poster),
-				_.txupper(poster)
+				_.txupper(poster, img => _.resizePoster(poster, img))
 			 ];
 		},
 		vidsel: function(scr) {
@@ -586,13 +604,13 @@ vu.builders.zone = {
 				n
 			], "topbordered padded margined");
 		},
-		txupper: function(item) {
+		txupper: function(item, fulltxcb) {
 			return CT.dom.div([
 				"Texture",
 				vu.media.swapper.texmo(item, function(txups) {
 					Object.assign(item.opts, txups); // questionable ... necessary?
 					vu.storage.setOpts(item.opts.key, txups);
-				})
+				}, false, fulltxcb)
 			], "topbordered padded margined");
 		},
 		carpentry: function(carp) {
@@ -624,17 +642,15 @@ vu.builders.zone = {
 				parent: _.opts.key,
 				modelName: "furnishing"
 			}, zccr = zero.core.current.room;
-			if (thing) // not required for screen/swarm/book/carpentry
+			if (thing) // not required for poster/screen/stream/swarm/book/carpentry
 				eopts.base = thing.key;
 			if (kind == "poster" || kind == "screen" || kind == "stream") { // TODO: probs do this elsewhere/better!
 				eopts.opts = {
 					wall: 0,
 					planeGeometry: [100, 100] // TODO: should derive from img/video dims
 				};
-				if ((kind != "poster") || !eopts.base) {
-					eopts.opts.name = kind + Math.floor(Math.random() * 1000);
-					eopts.opts.kind = kind; // no base necessary...
-				}
+				eopts.opts.name = kind + Math.floor(Math.random() * 1000);
+				eopts.opts.kind = kind; // no base necessary...
 			} else if (kind == "portal") {
 				eopts.opts = { wall: 0 };
 				if (!thing.key)
@@ -669,7 +685,7 @@ vu.builders.zone = {
 				return _.booktions(cb);
 			if (kind == "carpentry")
 				return _.carp(cb);
-			if (kind == "screen" || kind == "stream")
+			if (kind == "screen" || kind == "stream" || kind == "poster")
 				return _.part(null, kind, cb);
 			var options = Object.values(vu.storage.get(kind) || {});
 			if (kind == "portal") {
@@ -677,11 +693,6 @@ vu.builders.zone = {
 					kind: "portal",
 					name: "flat",
 					planeGeometry: true
-				}].concat(options);
-			} else if (kind == "poster") {
-				options = [{
-					kind: "poster",
-					name: "start blank"
 				}].concat(options);
 			}
 			if (!options.length)
