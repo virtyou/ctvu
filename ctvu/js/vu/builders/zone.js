@@ -311,7 +311,7 @@ vu.builders.zone = {
 			 ];
 		},
 		resizePoster: function(poster, img) {
-			var met = img.meta, orig = met && met.orig,
+			var met = img.meta, orig = met && met.original,
 				isize = (orig && orig.dims) || (met && met.dims);
 			if (!isize) return;
 			var w, h, ow = isize.width, oh = isize.height;
