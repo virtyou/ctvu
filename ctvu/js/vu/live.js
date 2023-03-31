@@ -62,7 +62,7 @@ vu.live = {
 				var _ = vu.live._, peeps = _.people,
 					vbp = vu.builders.play;
 				setTimeout(function() {
-					vbp && vpb.minimap.unperson(peeps[user].name);
+					vbp && vbp.minimap.unperson(peeps[user].name);
 					peeps[user].remove();
 					delete peeps[user];
 					if (Object.keys(peeps).length == 1)
@@ -104,16 +104,18 @@ vu.live = {
 				_.dance(person, meta);
 				if (person.helpMe != meta.helpMe) {
 					person.helpMe = meta.helpMe;
-					vbp && vu.core.ownz() && vbp.minimap.help(person);
+					vbp && (vu.core.ownz() || user.core.get("admin")) && vbp.minimap.help(person);
 				}
 			},
 			message: function(msg) {
-				var data = msg.message,
-					person = vu.live._.people[msg.user];
+				var _ = vu.live._, person = _.people[msg.user],
+					data = msg.message, action = _.actions[data.action];
 				if (person && person.body)
-					vu.live._.actions[data.action](person, data.data);
+					action(person, data.data);
+				else if (["squadchat", "invite", "roomvite"].includes(data.action))
+					action({ name: msg.user }, data.data);
 				else // probs still building
-					vu.live._.pending[msg.user] = msg;
+					_.pending[msg.user] = msg;
 			}
 		},
 		dance: function(person, meta) {
@@ -187,6 +189,9 @@ vu.live = {
 			msg: msg || "check out this zone",
 			room: zero.core.current.room.opts.key
 		}, squadname);
+	},
+	helpme: function() {
+		vu.live.roomvite("admin", "help me");
 	},
 	zmeta: function(data) {
 		CT.pubsub.chmeta(vu.live._.channel || zero.core.current.room.opts.key, data);
