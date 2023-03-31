@@ -17,6 +17,9 @@ vu.live = {
 			invite: function(person, squad) {
 				vu.live._.cbs.chat(person, "join my squad!", null, squad);
 			},
+			roomvite: function(person, rinvopts) {
+				vu.live._.cbs.chat(person, rinvopts.msg, rinvopts.squad, null, rinvopts.room);
+			},
 			inject: function(person, pkey) { // join
 				zero.core.current.room.inject(person, pkey && zero.core.Thing.get(pkey));
 //				person.body.show();
@@ -177,6 +180,13 @@ vu.live = {
 	},
 	invite: function(squadname) {
 		vu.live.emit("invite", squadname);
+	},
+	roomvite: function(squadname, msg) {
+		vu.live.emit("roomvite", {
+			squad: squadname,
+			msg: msg || "check out this zone",
+			room: zero.core.current.room.opts.key
+		}, squadname);
 	},
 	zmeta: function(data) {
 		CT.pubsub.chmeta(vu.live._.channel || zero.core.current.room.opts.key, data);
