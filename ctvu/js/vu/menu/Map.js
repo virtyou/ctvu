@@ -56,7 +56,9 @@ vu.menu.Map = CT.Class({
 		return n;
 	},
 	help: function(p) {
-		this._.people[p.name].style.background = p.helpMe ? "red" : "green";
+		var per = this._.people[p.name];
+		if (!per) return this.log("can't find " + p.name);
+		per.style.background = p.helpMe ? "red" : "green";
 	},
 	person: function(p) {
 		this._.people[p.name] = this.place(p.body,
