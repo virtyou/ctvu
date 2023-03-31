@@ -45,8 +45,7 @@ vu.live = {
 		},
 		events: {
 			subscribe: function(data) {
-				var _ = vu.live._, spawn = _.spawn,
-					roomchan = data.channel != "global" && data.channel != "admin";
+				var _ = vu.live._, spawn = _.spawn, roomchan = _.isroom(data.channel);
 				if (!roomchan)
 					return CT.log("skipping subscribe routine for non-room channel");
 				data.presence.forEach(function(u, i) {
@@ -59,13 +58,13 @@ vu.live = {
 					CT.event.unsubscribe("environment", vu.live.esync);
 			},
 			join: function(chan, user, meta) {
-				if (chan != "global" && chan != "admin")
-					vu.live._.spawn(user, meta, true);
+				var _ = vu.live._;
+				_.isroom(chan) && _.spawn(user, meta, true);
 			},
 			leave: function(chan, user) {
 				var _ = vu.live._, peeps = _.people,
 					vbp = vu.builders.play;
-				setTimeout(function() {
+				_.isroom(chan) && setTimeout(function() {
 					vbp && vbp.minimap.unperson(peeps[user].name);
 					peeps[user].remove();
 					delete peeps[user];
@@ -121,6 +120,9 @@ vu.live = {
 				else // probs still building
 					_.pending[msg.user] = msg;
 			}
+		},
+		isroom: function(chan) {
+			return chan == zero.core.current.room.opts.key;
 		},
 		dance: function(person, meta) {
 			if (meta.vibe != person.vibe.current)
