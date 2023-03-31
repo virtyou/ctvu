@@ -93,7 +93,7 @@ vu.lang = {
 		vu.lang._.init();
 		return vu.lang._.settings;
 	},
-	menu: function() {
+	menu: function(e) {
 		var _ = vu.lang._;
 		CT.modal.prompt({
 			prompt: "please select your language",
@@ -102,6 +102,7 @@ vu.lang = {
 			defaultIndex: _.settings.index,
 			cb: vu.lang.set
 		});
+		e && e.stopPropagation();
 	},
 	button: function() {
 		vu.lang._.init();
