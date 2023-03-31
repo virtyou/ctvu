@@ -40,15 +40,16 @@ vu.builders.play = {
 				CT.pubsub.subscribe("global");
 				user.core.get("admin") && CT.pubsub.subscribe("admin");
 			},
-			chat: function(person, msg, squad, squinvite) {
+			chat: function(person, msg, squad, squinvite, roomvite) {
 				var zccp = zero.core.current.person, subs = [
 					CT.dom.span(person.name, "bold italic green")
-				], mnode;
+				], _ = vu.builders.play._, mnode;
 				squad && subs.push(CT.dom.span("[" + squad + "]", "bold"));
 				subs.push(CT.dom.pad());
 				subs.push(CT.dom.span(msg));
 				squinvite && subs.push(CT.dom.button("click here to join " + squinvite,
 					() => vu.squad.join(squinvite)));
+				roomvite && subs.push(_.roomvite(roomvite));
 				if (!vu.core.ischar(person.opts.key)) {
 					person.setVolume(zero.core.util.close2u(person.body));
 					if (person.language && person.language.code != zccp.language.code)
@@ -56,13 +57,21 @@ vu.builders.play = {
 				}
 				mnode = CT.dom.div(subs);
 				person.say(msg, null, true);
-				CT.dom.addContent(vu.builders.play._.selectors.chat.out, mnode);
+				CT.dom.addContent(_.selectors.chat.out, mnode);
 				mnode.scrollIntoView();
 			},
 			enter: function(person) {
 				vu.builders.play._.clickreg(person);
 				vu.core.comp(person);
 			}
+		},
+		roomvite: function(rkey) {
+			var n = CT.dom.span();
+			CT.db.one(rkey, function(room) {
+				CT.dom.setContent(n, CT.dom.button("warp to " + room.name,
+					() => vu.portal.port(rkey) ));
+			}, "json");
+			return n;
 		},
 		regclix: function() {
 			var _ = vu.builders.play._, room = zero.core.current.room;
