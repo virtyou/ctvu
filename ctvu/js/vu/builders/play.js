@@ -47,16 +47,20 @@ vu.builders.play = {
 				squad && subs.push(CT.dom.span("[" + squad + "]", "bold"));
 				subs.push(CT.dom.pad());
 				subs.push(CT.dom.span(msg));
-				squinvite && subs.push(CT.dom.button("click here to join " + squinvite,
-					() => vu.squad.join(squinvite)));
+				squinvite && subs.push(CT.dom.button("click here to join " + squinvite, function(e) {
+					vu.squad.join(squinvite);
+					e.stopPropagation();
+				}));
 				roomvite && subs.push(_.roomvite(roomvite));
-				if (!vu.core.ischar(person.opts.key)) {
-					person.setVolume(zero.core.util.close2u(person.body));
-					if (person.language && person.language.code != zccp.language.code)
-						subs.push(vu.lang.transer(msg, person.language, zccp.language));
+				if (person.opts) { // otherwise, person is just {name}
+					if (!vu.core.ischar(person.opts.key)) {
+						person.setVolume(zero.core.util.close2u(person.body));
+						if (person.language && person.language.code != zccp.language.code)
+							subs.push(vu.lang.transer(msg, person.language, zccp.language));
+					}
+					person.say(msg, null, true);
 				}
 				mnode = CT.dom.div(subs);
-				person.say(msg, null, true);
 				CT.dom.addContent(_.selectors.chat.out, mnode);
 				mnode.scrollIntoView();
 			},
@@ -68,8 +72,10 @@ vu.builders.play = {
 		roomvite: function(rkey) {
 			var n = CT.dom.span();
 			CT.db.one(rkey, function(room) {
-				CT.dom.setContent(n, CT.dom.button("warp to " + room.name,
-					() => vu.portal.port(rkey) ));
+				CT.dom.setContent(n, CT.dom.button("warp to " + room.name, function(e) {
+					vu.portal.port(rkey);
+					e.stopPropagation();
+				}));
 			}, "json");
 			return n;
 		},
@@ -224,6 +230,7 @@ vu.builders.play = {
 				if (zcc.person.helpMe) {
 					helpButt.style.color = "red";
 					helpButt.innerText = "unhelp";
+					vu.live.helpme();
 				} else {
 					helpButt.style.color = "black";
 					helpButt.innerText = "help";
@@ -266,16 +273,20 @@ vu.builders.play = {
 		}
 	},
 	menus: function() {
-		var section, _ = vu.builders.play._, selz = _.selectors;
+		var sec, section, _ = vu.builders.play._, selz = _.selectors;
 		user.core.get() || CT.modal.modal(_.anonmsg,
 			CT.dom.id("helperoo").onclick);
 		_.setup();
 		if (core.config.ctzero.camera.cardboard) return; // no menus necessary
 		for (section in _.menus) {
-			selz[section].modal = vu.core.menu(section, _.menus[section],
-				selz[section], _.head(section), _.collapse(section));
-			if (!["run_home", "lights", "audio", "auto"].includes(section))
-				selz[section].modal.show("ctmain");
+			sec = selz[section];
+			sec.collapser = _.collapse(section);
+			sec.modal = vu.core.menu(section, _.menus[section],
+				sec, _.head(section), sec.collapser);
+			if (!["run_home", "lights", "audio", "auto"].includes(section)) {
+				sec.modal.show("ctmain");
+				(section == "chat") || setTimeout(sec.collapser);
+			}
 		}
 	}
 };

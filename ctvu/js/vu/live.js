@@ -45,7 +45,9 @@ vu.live = {
 		},
 		events: {
 			subscribe: function(data) {
-				var _ = vu.live._, spawn = _.spawn;
+				var _ = vu.live._, spawn = _.spawn, roomchan = _.isroom(data.channel);
+				if (!roomchan)
+					return CT.log("skipping subscribe routine for non-room channel");
 				data.presence.forEach(function(u, i) {
 					spawn(u, data.metamap[u], !vu.core.ischar(u));
 				});
@@ -56,13 +58,14 @@ vu.live = {
 					CT.event.unsubscribe("environment", vu.live.esync);
 			},
 			join: function(chan, user, meta) {
-				vu.live._.spawn(user, meta, true);
+				var _ = vu.live._;
+				_.isroom(chan) && _.spawn(user, meta, true);
 			},
 			leave: function(chan, user) {
 				var _ = vu.live._, peeps = _.people,
 					vbp = vu.builders.play;
-				setTimeout(function() {
-					vbp && vpb.minimap.unperson(peeps[user].name);
+				_.isroom(chan) && setTimeout(function() {
+					vbp && vbp.minimap.unperson(peeps[user].name);
 					peeps[user].remove();
 					delete peeps[user];
 					if (Object.keys(peeps).length == 1)
@@ -104,17 +107,22 @@ vu.live = {
 				_.dance(person, meta);
 				if (person.helpMe != meta.helpMe) {
 					person.helpMe = meta.helpMe;
-					vbp && vu.core.ownz() && vbp.minimap.help(person);
+					vbp && (vu.core.ownz() || user.core.get("admin")) && vbp.minimap.help(person);
 				}
 			},
 			message: function(msg) {
-				var data = msg.message,
-					person = vu.live._.people[msg.user];
+				var _ = vu.live._, person = _.people[msg.user],
+					data = msg.message, action = _.actions[data.action];
 				if (person && person.body)
-					vu.live._.actions[data.action](person, data.data);
+					action(person, data.data);
+				else if (["squadchat", "invite", "roomvite"].includes(data.action))
+					CT.db.one(msg.user, user => action({ name: user.name }, data.data), "json");
 				else // probs still building
-					vu.live._.pending[msg.user] = msg;
+					_.pending[msg.user] = msg;
 			}
+		},
+		isroom: function(chan) {
+			return chan == zero.core.current.room.opts.key;
 		},
 		dance: function(person, meta) {
 			if (meta.vibe != person.vibe.current)
@@ -187,6 +195,9 @@ vu.live = {
 			msg: msg || "check out this zone",
 			room: zero.core.current.room.opts.key
 		}, squadname);
+	},
+	helpme: function() {
+		vu.live.roomvite("admin", "help me");
 	},
 	zmeta: function(data) {
 		CT.pubsub.chmeta(vu.live._.channel || zero.core.current.room.opts.key, data);
