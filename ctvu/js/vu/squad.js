@@ -40,10 +40,11 @@ vu.squad = {
 		});
 	},
 	switch: function() {
-		var _ = vu.squad._;
+		var _ = vu.squad._, basechans = ["room", "global"];
+		user.core.get("admin") && basechans.push("admin");
 		CT.modal.choice({
 			prompt: "which channel do you want to talk in?",
-			data: ["room"].concat(_.squads),
+			data: basechans.concat(_.squads),
 			cb: function(chan) {
 				_.current = chan;
 			}
@@ -58,13 +59,13 @@ vu.squad = {
 		});
 	},
 	mod: function(e) {
-		var _ = vu.squad._;
+		var _ = vu.squad._, chans = ["switch channels", "join squad"];
 		e.stopPropagation();
-		if (!_.squads.length)
-			return vu.squad.joiner();
+		if (_.squads.length)
+			chans = chans.concat(["send invite", "quit squad"]);
 		CT.modal.choice({
 			prompt: "you're speaking to the " + _.current + " channel",
-			data: ["switch channels", "join squad", "quit squad", "send invite"],
+			data: chans,
 			cb: function(action) {
 				if (action == "switch channels")
 					vu.squad.switch();
