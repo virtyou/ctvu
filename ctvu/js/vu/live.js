@@ -117,7 +117,7 @@ vu.live = {
 				if (person && person.body)
 					action(person, data.data);
 				else if (["squadchat", "invite", "roomvite"].includes(data.action))
-					action({ name: "request" }, data.data);
+					CT.db.one(msg.user, user => action({ name: user.name }, data.data), "json");
 				else // probs still building
 					_.pending[msg.user] = msg;
 			}
