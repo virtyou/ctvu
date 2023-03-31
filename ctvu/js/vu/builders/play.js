@@ -273,16 +273,20 @@ vu.builders.play = {
 		}
 	},
 	menus: function() {
-		var section, _ = vu.builders.play._, selz = _.selectors;
+		var sec, section, _ = vu.builders.play._, selz = _.selectors;
 		user.core.get() || CT.modal.modal(_.anonmsg,
 			CT.dom.id("helperoo").onclick);
 		_.setup();
 		if (core.config.ctzero.camera.cardboard) return; // no menus necessary
 		for (section in _.menus) {
-			selz[section].modal = vu.core.menu(section, _.menus[section],
-				selz[section], _.head(section), _.collapse(section));
-			if (!["run_home", "lights", "audio", "auto"].includes(section))
-				selz[section].modal.show("ctmain");
+			sec = selz[section];
+			sec.collapser = _.collapse(section);
+			sec.modal = vu.core.menu(section, _.menus[section],
+				sec, _.head(section), sec.collapser);
+			if (!["run_home", "lights", "audio", "auto"].includes(section)) {
+				sec.modal.show("ctmain");
+				(section == "chat") || setTimeout(sec.collapser);
+			}
 		}
 	}
 };
