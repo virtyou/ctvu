@@ -45,7 +45,10 @@ vu.live = {
 		},
 		events: {
 			subscribe: function(data) {
-				var _ = vu.live._, spawn = _.spawn;
+				var _ = vu.live._, spawn = _.spawn,
+					roomchan = data.channel != "global" && data.channel != "admin";
+				if (!roomchan)
+					return CT.log("skipping subscribe routine for non-room channel");
 				data.presence.forEach(function(u, i) {
 					spawn(u, data.metamap[u], !vu.core.ischar(u));
 				});
@@ -56,7 +59,8 @@ vu.live = {
 					CT.event.unsubscribe("environment", vu.live.esync);
 			},
 			join: function(chan, user, meta) {
-				vu.live._.spawn(user, meta, true);
+				if (chan != "global" && chan != "admin")
+					vu.live._.spawn(user, meta, true);
 			},
 			leave: function(chan, user) {
 				var _ = vu.live._, peeps = _.people,
@@ -113,7 +117,7 @@ vu.live = {
 				if (person && person.body)
 					action(person, data.data);
 				else if (["squadchat", "invite", "roomvite"].includes(data.action))
-					action({ name: msg.user }, data.data);
+					action({ name: "request" }, data.data);
 				else // probs still building
 					_.pending[msg.user] = msg;
 			}
