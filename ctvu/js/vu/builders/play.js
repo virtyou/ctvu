@@ -37,6 +37,8 @@ vu.builders.play = {
 				zero.core.click.trigger(person.body);
 				core.config.ctzero.camera.cardboard && vu.voice.listen();
 				vu.core.comp();
+				CT.pubsub.subscribe("global");
+				user.core.get("admin") && CT.pubsub.subscribe("admin");
 			},
 			chat: function(person, msg, squad, squinvite) {
 				var zccp = zero.core.current.person, subs = [
