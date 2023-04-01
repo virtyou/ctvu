@@ -13,7 +13,8 @@ vu.controls = {
 					zero.core.camera.angle(perspective);
 					e.stopPropagation();
 				};
-			}, pov = CT.dom.button("pov", looker("pov")), bcams,
+			}, bcams, polar = CT.dom.button("polar", looker("polar")),
+				pov = CT.dom.button("pov", looker("pov")),
 				behind = CT.dom.button("behind", looker("behind")),
 				front = CT.dom.button("front", looker("front"));
 			node.update = function() {
@@ -22,8 +23,11 @@ vu.controls = {
 				if (mode == "scene") {
 					bcams = [];
 					tbutts.pop();
+				} else if (mode == "play") {
+					tbutts = [polar];
+					bcams = [pov, behind, front, cycbutt];
 				} else
-					bcams = [pov, behind, front];
+					bcams = [polar, pov, behind, front];
 				(mode == "zone") && tbutts.push(CT.dom.button("refresh", function(e) {
 					room.updateCameras();
 					node.update();

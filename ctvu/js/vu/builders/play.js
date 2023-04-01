@@ -198,7 +198,7 @@ vu.builders.play = {
 				zero.core.util.room(CT.merge({
 					onbuild: function(room) {
 						vu.live.emit("inject", portin);
-						room.cut();
+						zero.core.camera.cutifroom();
 						_.regclix();
 						vbp.minimap.refresh();
 						_.uplights();

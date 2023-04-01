@@ -1275,7 +1275,7 @@ vu.builders.zone = {
 			onbuild: function(room) {
 				room.objects.forEach(vu.builders.zone._.regObj);
 				cb && cb();
-				room.cut();
+				zero.core.camera.cutifroom();
 			}
 		}, vu.builders.zone._.opts));
 	},

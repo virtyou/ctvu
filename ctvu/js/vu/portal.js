@@ -24,7 +24,7 @@ vu.portal = {
 	arrive: function(portal) {
 		var zcc = zero.core.current, person = zcc.person;
 		zcc.room.inject(person, portal);
-		zcc.room.cut();
+		zero.core.camera.cutifroom();
 		person.watch(false, true);
 	},
 	depart: function() {
