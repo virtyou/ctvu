@@ -23,6 +23,9 @@ vu.controls = {
 				if (mode == "scene") {
 					bcams = [];
 					tbutts.pop();
+				} else if (mode == "play") {
+					tbutts = [polar];
+					bcams = [pov, behind, front, cycbutt];
 				} else
 					bcams = [polar, pov, behind, front];
 				(mode == "zone") && tbutts.push(CT.dom.button("refresh", function(e) {
