@@ -308,7 +308,7 @@ vu.builders.pop = {
 		zero.core.util.room(CT.merge({
 			onbuild: function(room) {
 				cb && cb();
-				room.cut();
+				zero.core.camera.cutifroom();
 			}
 		}, vu.builders.pop._.opts));
 	},
