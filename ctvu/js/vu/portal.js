@@ -47,7 +47,7 @@ vu.portal = {
 	},
 	check: function() {
 		var cur = zero.core.current, person = cur.person,
-			pos = person.body.group.position, _ = this._, hit = false;
+			pos = person.body.placer.position, _ = this._, hit = false;
 		cur.room.objects.filter(_.filter).forEach(function(portal) {
 			if (hit) return;
 			var dist = portal.position().distanceTo(pos);
