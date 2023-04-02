@@ -90,23 +90,24 @@ vu.builders.play = {
 			_.clickreg(p);
 		},
 		clickreg: function(thing) {
-			var _ = vu.builders.play._, zccp = zero.core.current.person,
-				isYou = vu.core.ischar(thing.opts.key),
+			var _ = vu.builders.play._, zc = zero.core, other = [
+				"SHIFT + click to approach"
+			], zccp = zc.current.person, cam = zc.camera,
 				target = thing.body || thing,
-				other = [
-					"SHIFT + click to approach"
-				];
+				isYou = vu.core.ischar(thing.opts.key);
 			if (thing.body) {
 				if (thing.automaton) {
 					var cbutt = CT.dom.button("chat", function() {
 						thing.automaton.pause();
 						thing.look(zccp.body, true);
+						cam.angle("front", thing.name);
 						zccp.onsaid(statement => thing.respond(statement, null, true,
 							msg => vu.live.botchat(thing.name, msg)));
 						CT.dom.setContent(cbox, cchatting);
 					}), cstop = CT.dom.button("stop chatting", function() {
 						thing.unlook();
 						thing.automaton.play();
+						cam.angle("polar");
 						zccp.onsaid();
 						CT.dom.setContent(cbox, cbutt);
 					}), chelp = CT.dom.button("help!", function() {
@@ -124,7 +125,7 @@ vu.builders.play = {
 				other.push(thing.readbutt());
 			else if (thing.opts.kind == "carpentry" && thing.opts.items.length)
 				other.push(thing.perusebutt());
-			zero.core.click.register(target, function() {
+			zc.click.register(target, function() {
 				CT.dom.setContent(_.selectors.info, [
 					CT.dom.div(thing.name, "bigger"),
 					isYou ? [
@@ -139,10 +140,10 @@ vu.builders.play = {
 						"0 + SHIFT to undance"
 					] : other
 				]);
-				zero.core.camera.follow(target.looker || target);
+				cam.follow(target.looker || target);
 				if (!isYou) {
 					target.playPause(_.audup);
-					CT.key.down("SHIFT") && zero.core.current.person.approach(target);
+					CT.key.down("SHIFT") && zccp.approach(target);
 				}
 			});
 		},
