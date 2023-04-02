@@ -33,7 +33,7 @@ vu.portal = {
 			if (person != cur.person)
 				person.remove();
 		});
-		zero.core.camera.perspective();
+		zero.core.camera.unPerNonCur();
 	},
 	portin: function(target, portin) {
 		var _ = vu.portal._;
