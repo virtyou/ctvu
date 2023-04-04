@@ -35,20 +35,35 @@ vu.builders.Gear = CT.Class({
 				livepart, side, sub, null, zero.core.Hand.fingers.includes(part) && "worn_finger");
 		};
 		var adjusters = function(livepart, upthing) {
-			var varieties = ["position", "rotation", "scale"];
-			upthing || varieties.push("texture");
+			var varieties = ["position", "rotation", "scale"], lopts = livepart.opts;
+			upthing || varieties.push(lopts.fzreen ? "fzn video stream" : "texture");
 			CT.modal.choice({
 				data: varieties,
 				cb: function(variety) {
 					if (variety == "texture") {
 						return vu.media.swapper.texture(livepart, function(tx) {
-							vu.storage.setOpts(livepart.opts.key, {
+							vu.storage.setOpts(lopts.key, {
 								texture: tx
 							});
 						}, true);
 					}
+					if (variety == "fzn video stream") {
+						return CT.modal.prompt({
+							prompt: "please enter the name of your fzn video stream",
+							cb: function(fchan) {
+								var vopts = {
+									video: "fzn:" + fchan
+								}, chweaks = {};
+								chweaks[lopts.fzreen] = vopts;
+								livepart[lopts.fzreen].update(vopts);
+								vu.storage.setOpts(lopts.key, {
+									chweaks: chweaks
+								});
+							}
+						});
+					}
 					vu.media.prompt.adjusters(function(upobj) {
-						vu.storage.setOpts(livepart.opts[upthing
+						vu.storage.setOpts(lopts[upthing
 							? "thing_key" : "key"], upobj);
 					}, livepart, variety);
 				}
