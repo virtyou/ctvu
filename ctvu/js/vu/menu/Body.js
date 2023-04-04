@@ -18,7 +18,7 @@ vu.menu.Body = CT.Class({
 		},
 		joined: function(person) {
 			var _ = this._, mprop = this.opts.main;
-			zero.core.util.setCurPer(person);
+			zero.core.util.setCurPer(person, true);
 			_.initCamera();
 			if (!Object.keys(person.opts[mprop]).length)
 				this.initMain();
