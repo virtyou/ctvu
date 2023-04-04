@@ -160,6 +160,7 @@ vu.builders.play = {
 					bod.unstreamify();
 					b.innerHTML = "start streaming";
 				}
+				vu.live.meta();
 			}), bod = zero.core.current.person.body;
 			return b;
 		},
