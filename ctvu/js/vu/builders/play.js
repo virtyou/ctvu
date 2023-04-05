@@ -137,7 +137,8 @@ vu.builders.play = {
 						"1-9 for gestures",
 						"1-9 + SHIFT for dances",
 						"0 to ungesture",
-						"0 + SHIFT to undance"
+						"0 + SHIFT to undance",
+						_.streamer()
 					] : other
 				]);
 				cam.follow(target.looker || target);
@@ -146,6 +147,20 @@ vu.builders.play = {
 					CT.key.down("SHIFT") && zccp.approach(target);
 				}
 			});
+		},
+		streamer: function() {
+			var b = CT.dom.button("start streaming", function() {
+				b._streaming = !b._streaming;
+				if (b._streaming) {
+					bod.streamify(CT.data.token(), true);
+					b.innerHTML = "stop streaming";
+				} else {
+					bod.unstreamify();
+					b.innerHTML = "start streaming";
+				}
+				vu.live.meta();
+			}), bod = zero.core.current.person.body;
+			return b;
 		},
 		action: function() {
 			// TODO: other actions.....

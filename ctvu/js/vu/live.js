@@ -89,15 +89,16 @@ vu.live = {
 				// TODO: video etc
 			},
 			meta: function(data) {
-				var _ = vu.live._, person = _.people[data.user],
+				var _ = vu.live._, person = _.people[data.user], meta = data.meta,
 					zcc = zero.core.current, vbp = vu.builders.play;
 				if (zcc.person && data.user == zcc.person.opts.key)
 					return;
 				if (!(person && person.body))
 					return; // will handle meta when spawn is complete
-				var s = person.body.springs, meta = data.meta;
 				person.language = meta.language;
 				if (_.cbs.frozen) return;
+				var bod = person.body, s = bod.springs;
+				bod.streamify(meta.fznchan);
 				_.springs.forEach(function(prop) {
 					s[prop].target = meta[prop].target;
 				});
@@ -204,7 +205,7 @@ vu.live = {
 	},
 	meta: function() {
 		var zcc = zero.core.current, person = zcc.person,
-			s = person.body.springs, _ = vu.live._, targets;
+			bod = person.body, s = bod.springs, _ = vu.live._, targets;
 		if (_.cbs.frozen) {
 			targets = {
 				language: person.language
@@ -216,7 +217,8 @@ vu.live = {
 				vibe: person.vibe.current,
 				dance: person.activeDance,
 				gesture: person.activeGesture,
-				language: person.language
+				language: person.language,
+				fznchan: bod.fznchan
 			};
 			_.springs.forEach(function(prop) {
 				targets[prop] = { target: s[prop].target };
