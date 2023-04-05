@@ -152,11 +152,9 @@ vu.builders.play = {
 			var b = CT.dom.button("start streaming", function() {
 				b._streaming = !b._streaming;
 				if (b._streaming) {
-					b.chan = CT.data.token();
-					bod.streamify(b.chan, true);
+					bod.streamify(CT.data.token(), true);
 					b.innerHTML = "stop streaming";
 				} else {
-					delete b.chan;
 					bod.unstreamify();
 					b.innerHTML = "start streaming";
 				}
