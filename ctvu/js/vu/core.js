@@ -1,6 +1,6 @@
 vu.core = {
 	bgen: function(opts) {
-		return opts.template ? eval(opts.template) : function() {
+		return opts.template ? CT.module(opts.template) : function() {
 //			opts.joints = zero.base.joints();
 //			opts.springs = zero.base.springs();
 //			opts.aspects = zero.base.aspects();
