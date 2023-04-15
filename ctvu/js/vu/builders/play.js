@@ -152,6 +152,7 @@ vu.builders.play = {
 		},
 		streamer: function() {
 			var b = CT.dom.button("start streaming", function() {
+				zero.core.current.person.sfx("bwip");
 				b._streaming = !b._streaming;
 				if (b._streaming) {
 					bod.streamify(CT.data.token(), true);
