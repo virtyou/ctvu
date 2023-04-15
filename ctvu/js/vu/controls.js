@@ -1,8 +1,11 @@
 vu.controls = {
 	initCamera: function(node, cb) {
-		var mode = location.pathname.split("/").pop().split(".")[0];
+		var bwip = function() {
+			zero.core.current.person.sfx("bwip");
+		}, mode = location.pathname.split("/").pop().split(".")[0];
 		if (["zone", "play", "scene", "adventure", "pop"].indexOf(mode) != -1) {
 			var cycbutt = CT.dom.button("cycle", function(e) {
+				bwip();
 				if (zero.core.camera.cycle())
 					cycbutt.innerHTML = "stop cycling";
 				else
@@ -10,6 +13,7 @@ vu.controls = {
 				e.stopPropagation();
 			}), room, tbutts, per, dim, bl, looker = function(perspective) {
 				return function(e) {
+					bwip();
 					zero.core.camera.angle(perspective);
 					e.stopPropagation();
 				};
@@ -29,6 +33,7 @@ vu.controls = {
 				} else
 					bcams = [polar, pov, behind, front];
 				(mode == "zone") && tbutts.push(CT.dom.button("refresh", function(e) {
+					bwip();
 					room.updateCameras();
 					node.update();
 					vu.builders.zone.persist({
@@ -40,6 +45,7 @@ vu.controls = {
 					CT.dom.div(tbutts, "right up20"),
 					CT.dom.div(bcams.concat(room.cameras.map(function(cam, i) {
 						return CT.dom.button("cam " + i, function(e) {
+							bwip();
 							room.cut(i);
 							e.stopPropagation();
 						});
@@ -49,6 +55,7 @@ vu.controls = {
 			["play", "scene"].includes(mode) && node.update();
 		} else {
 			var butt = CT.dom.button("far", function(e) {
+				bwip();
 				if (!butt._baseY)
 					butt._baseY = zero.core.camera.position().y;
 				if (butt.innerHTML == "far") {
@@ -65,6 +72,7 @@ vu.controls = {
 				e.stopPropagation();
 			});
 			CT.dom.setContent(node, butt);
+			zero.core.camera.perspective();
 		}
 	},
 	trigNode: function(trig, i, cb) {
