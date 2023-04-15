@@ -92,23 +92,23 @@ vu.builders.play = {
 		clickreg: function(thing) {
 			var _ = vu.builders.play._, zc = zero.core, other = [
 				"SHIFT + click to approach"
-			], zccp = zc.current.person, cam = zc.camera,
+			], zcc = zc.current, cam = zc.camera,
 				target = thing.body || thing,
 				isYou = vu.core.ischar(thing.opts.key);
 			if (thing.body) {
 				if (thing.automaton) {
 					var cbutt = CT.dom.button("chat", function() {
 						thing.automaton.pause();
-						thing.look(zccp.body, true);
+						thing.look(zcc.person.body, true);
 						cam.angle("front", thing.name);
-						zccp.onsaid(statement => thing.respond(statement, null, true,
+						zcc.person.onsaid(statement => thing.respond(statement, null, true,
 							msg => vu.live.botchat(thing.name, msg)));
 						CT.dom.setContent(cbox, cchatting);
 					}), cstop = CT.dom.button("stop chatting", function() {
 						thing.unlook();
 						thing.automaton.play();
 						cam.angle("polar");
-						zccp.onsaid();
+						zcc.person.onsaid();
 						CT.dom.setContent(cbox, cbutt);
 					}), chelp = CT.dom.button("help!", function() {
 						vu.squad.emit("enable help mode");
@@ -141,10 +141,12 @@ vu.builders.play = {
 						_.streamer()
 					] : other
 				]);
+				zcc.person.sfx("bwip");
+				CT.trans.glow(_.selectors.info);
 				cam.follow(target.looker || target);
 				if (!isYou) {
 					target.playPause(_.audup);
-					CT.key.down("SHIFT") && zccp.approach(target);
+					CT.key.down("SHIFT") && zcc.person.approach(target);
 				}
 			});
 		},
