@@ -61,6 +61,7 @@ vu.builders.play = {
 					person.say(msg, null, true);
 				}
 				mnode = CT.dom.div(subs);
+				CT.trans.glow(_.selectors.chat.previousSibling);
 				CT.dom.addContent(_.selectors.chat.out, mnode);
 				mnode.scrollIntoView();
 			},
@@ -141,7 +142,7 @@ vu.builders.play = {
 						_.streamer()
 					] : other
 				]);
-				zcc.person.sfx("bwip");
+				zc.audio.ux("blipon");
 				CT.trans.glow(_.selectors.info);
 				cam.follow(target.looker || target);
 				if (!isYou) {
@@ -152,7 +153,7 @@ vu.builders.play = {
 		},
 		streamer: function() {
 			var b = CT.dom.button("start streaming", function() {
-				zero.core.current.person.sfx("bwip");
+				zero.core.audio.ux("blipon");
 				b._streaming = !b._streaming;
 				if (b._streaming) {
 					bod.streamify(CT.data.token(), true);
@@ -273,6 +274,7 @@ vu.builders.play = {
 			if (_.swappers.includes(section)) return;
 			return function() {
 				sel._collapsed = !sel._collapsed;
+				zero.core.audio.ux(sel._collapsed ? "blipoff" : "blipon");
 				sel.modal.node.classList[sel._collapsed ? "add" : "remove"]("collapsed");
 			};
 		},

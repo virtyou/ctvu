@@ -1,7 +1,7 @@
 vu.controls = {
 	initCamera: function(node, cb) {
 		var bwip = function() {
-			zero.core.current.person.sfx("bwip");
+			zero.core.audio.ux("blipon");
 		}, mode = location.pathname.split("/").pop().split(".")[0];
 		if (["zone", "play", "scene", "adventure", "pop"].indexOf(mode) != -1) {
 			var cycbutt = CT.dom.button("cycle", function(e) {
