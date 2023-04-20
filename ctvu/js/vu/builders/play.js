@@ -131,7 +131,8 @@ vu.builders.play = {
 					CT.dom.div(thing.name, "bigger"),
 					isYou ? [
 						CT.dom.div("(you)", "up20 right"),
-						"move around with wasd",
+						"move around with WASD",
+						"rotate with Q and E",
 						"SPACE for jump",
 						"SHIFT for run",
 						"ENTER to enter portal",

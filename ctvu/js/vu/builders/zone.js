@@ -819,7 +819,8 @@ vu.builders.zone = {
 					CT.dom.div(target.name, "bigger"),
 					target.body ? [
 						"(for scale)",
-						"move around with wasd",
+						"move around with WASD",
+						"rotate with Q and E",
 						"SPACE for jump",
 						"1-9 for gestures (0 to ungesture)",
 						"1-9 + SHIFT for dances (0 to undance)"
