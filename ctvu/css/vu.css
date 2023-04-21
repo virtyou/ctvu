@@ -186,6 +186,12 @@ img.right.h30p.up5 {
     white-space: initial;
 }
 
+.gmenu.cameras button.active {
+	border: 2px solid yellow;
+	background: black;
+	color: green;
+}
+
 .gmenu.cameras button:not(.right) {
 	margin: 10px 10px 0 0;
 }
