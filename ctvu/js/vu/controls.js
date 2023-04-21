@@ -94,14 +94,19 @@ vu.controls = {
 		return (notArray ? Object.keys(trigz)
 			: trigz).map((t, i) => vu.controls.trigNode(t, i, cb));
 	},
+	help: function(sections) {
+		return CT.dom.link("?", () => vu.help.set(sections),
+			null, "right up15 bigger bold hoverglow");
+	},
 	setTriggers: function(node, cb, person, trigzonly) {
 		person = person || zero.core.current.person;
-		var responses = person.opts.responses,
-			triggers = person.brain.triggers,
+		var responses = person.opts.responses, content = [
+			vu.controls.help(["talk", "vibe"])
+		], triggers = person.brain.triggers,
 			tkz = Object.keys(triggers),
 			trigz = trigzonly ? tkz : CT.data.uniquify(Object.keys(responses).concat(tkz)),
-			vibez = person.vibe.opts.vibes, content = [],
-			isgame = location.pathname == "/vu/adventure.html";
+			isgame = location.pathname == "/vu/adventure.html",
+			vibez = person.vibe.opts.vibes;
 		if (isgame)
 			CT.data.remove(trigz, "unintelligible");
 		content.push(vu.controls.triggerMap(trigz, function(trig) {
@@ -126,6 +131,7 @@ vu.controls = {
 			dances = person.opts.dances,
 			modz = person.opts.mods;
 		CT.dom.setContent(node, [
+			vu.controls.help(["gesture", "mod"]),
 			vu.controls.triggerMap(["ungesture"].concat(Object.keys(gestz)), function(gest, i) {
 				i ? person.gesture(gest) : person.ungesture();
 				cb && cb("gesture", gest);
