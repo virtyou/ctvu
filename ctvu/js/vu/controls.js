@@ -42,7 +42,7 @@ vu.controls = {
 					e.stopPropagation();
 				}));
 				CT.dom.setContent(node, [
-					CT.dom.div(tbutts, "right up20"),
+					CT.dom.div(tbutts, "right up25"),
 					CT.dom.div(bcams.concat(room.cameras.map(function(cam, i) {
 						return CT.dom.button("cam " + i, function(e) {
 							bwip();
