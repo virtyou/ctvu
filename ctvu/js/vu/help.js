@@ -53,6 +53,7 @@ vu.help = {
 			}, null, "abs ctl"));
 		}
 		m = CT.modal.modal(CT.dom.div(cont, className));
+		return m;
 	},
 	full: function() {
 		var h = vu.help;
@@ -62,14 +63,22 @@ vu.help = {
 		var h = vu.help;
 		h.modal(topics.map(h.one), h.page, "big");
 	},
-	flow: function(name) {
+	generals: function() {
+		var h = vu.help, m = h.modal(h.part("general help topics", Object.keys(h.general).map(function(name) {
+			return CT.dom.button(name, function() {
+				m.hide();
+				h.flow(name, h.generals);
+			});
+		})), h.page);
+	},
+	flow: function(name, more) {
 		var h = vu.help, f = h.flows[name],
-			blurb = h.general[name], more = h.page;
+			blurb = h.general[name];
 		if (f) {
 			blurb = f.blurb;
 			more = () => h.set(f.more);
 		}
-		h.modal(h.part(name, blurb), more, "biggest");
+		h.modal(h.part(name, blurb), more || h.page, "biggest");
 	},
 	part: function(title, blurb) {
 		return [
