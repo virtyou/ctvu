@@ -251,6 +251,10 @@ img.right.h30p.up5 {
 	top: initial !important;
 }
 
+.gmenu.chat button {
+	padding: 1px 2px;
+}
+
 .gmenu.chat .out {
 	clear: both;
 	overflow-y: auto;
@@ -365,7 +369,7 @@ img.right.h30p.up5 {
 
 .gmenu.collapsed {
 	max-height: 40px;
-	max-width: 200px;
+	max-width: 210px;
 	overflow: hidden;
 }
 

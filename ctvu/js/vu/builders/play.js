@@ -15,7 +15,11 @@ vu.builders.play = {
 			gestures: "bottomright"
 		},
 		swappers: ["lights", "minimap", "audio", "info"],
-		anonmsg: CT.dom.div("playing anonymously - log in to craft your own avatar!", "bigger padded bold"),
+		anonmsg: CT.dom.div([
+			"playing anonymously - log in to craft your own avatar!",
+			"tap menus to expand and retract them.",
+			"click the green question marks for more information!"
+		], "bigger padded bold centered"),
 		cbs: {
 			joined: function(person) { // (you)
 				var vbp = vu.builders.play, _ = vbp._,
@@ -128,6 +132,7 @@ vu.builders.play = {
 				other.push(thing.perusebutt());
 			zc.click.register(target, function() {
 				CT.dom.setContent(_.selectors.info, [
+					vu.controls.help("info"),
 					CT.dom.div(thing.name, "bigger"),
 					isYou ? [
 						CT.dom.div("(you)", "up20 right"),
@@ -263,6 +268,7 @@ vu.builders.play = {
 			_.langButt = CT.dom.span();
 			cbox.onclick = function(e) { e.stopPropagation(); };
 			var n = CT.dom.div([
+				vu.controls.help("chatterbox"),
 				CT.dom.div([squadButt, singButt, listButt, _.langButt, helpButt], "right up15"),
 				out, cbox
 			]);
@@ -297,7 +303,7 @@ vu.builders.play = {
 	menus: function() {
 		var sec, section, _ = vu.builders.play._, selz = _.selectors;
 		user.core.get() || CT.modal.modal(_.anonmsg,
-			CT.dom.id("helperoo").onclick);
+			CT.dom.id("helperoo").onclick, null, true);
 		_.setup();
 		if (core.config.ctzero.camera.cardboard) return; // no menus necessary
 		for (section in _.menus) {

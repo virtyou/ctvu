@@ -5,7 +5,7 @@ vu.help = {
         test: "Test various things about your characters on the test page. This includes the conversational triggers you specified on the talk page, the vibes (mood vector configurations) you crafted on the vibe page, the gestures and dances you created on the gesture page, and the mods you built on the mod page.",
         vibe: "Create mood configurations (vibes) on the vibe page. Each vibe consists of a specific value for each of 8 mood vectors. Modify your default vibe, tweak your 6 basic preconfigured vibes (suspicious, worried, mad, curious, sad, happy), and make up some new ones. Go wild!",
         mod: "Morph it up on the mod page. Create as many named mods as you want, including (if you want) a default (which is automatically applied). Each mod is a collection of bone scales. So you could have giant hands and a tiny head, or, you know, whatever you want. Use the far cam to mess with legs. Use the near cam to mess with arms.",
-        gesture: "Choreograph gestures and dances on the gesture page. Each gesture is some combination of joint rotations. Each dance is some combination of gestures, along with an interval. Use the near cam to mess with arms and the spine. Use the far cam to mess with legs and dances. You start with basic (crappy) gestures for jump, left, and right, as well as a basic walk consisting of left and right (gestures).",
+        gesture: "Choreograph gestures and dances on the gesture page. Each gesture is some combination of joint rotations. Each dance is some combination of gestures, along with an interval. Use the near cam to mess with arms and the spine. Use the far cam to mess with legs and dances. You start with a few simple (crappy) gestures like jump, as well as basic walk, swim, and fly dances.",
         zone: "Build, furnish, and connect zones on the zone page. Use the left menu to swap in a new shell, change your wallpaper, or mess with scale, friction, color, specular, and shininess. Use the Lights menu, on the right, to add/remove/adjust lights (variety, position, direction, color, intensity). Click 'Lights' (at the top of the Lights menu) to swap in the Furnishings menu, where you can add/remove furnishings, posters, portals, and video screens, and adjust their basic properties (position, scale, color, specular, shininess). The Furnishings menu also supports portal linkages for connecting your zones to the rest of the world. The Portal Requests menu, at the bottom, is for approving/denying incoming portal requests.",
         pop: "Add flora, fauna, and programmable automatons to your zones!",
         item: "Upload, skin, and scale your 3d models on the item page. Various stripset formats are supported - we recommend .obj files. Which 'kind' you select determines how you can use your object. For instance, 'held' and 'worn_' (worn_head, worn_finger, worn_knee, etc) kind objects may be used on the gear page to dress up your avatar. Objects of other kinds, such as 'shell' and 'wallpaper' (as well as furnishing, poster, and portal), can be loaded up in zones on the zone page. And 'hair', 'beard', 'eye' etc objects can be applied to your avatar on the tweak page.",
@@ -21,10 +21,22 @@ vu.help = {
 	},
 	general: {
 		navigation: "Use the W, A, S, and D keys to move your avatar. Rotate with Q and E. Press SPACE to jump. Hold SHIFT to run. Press ENTER to enter a portal.",
-		cameras: "Use the camera menu at the top of the page to switch between polar, pov, behind, front, and numbered room cameras. The arrow keys either (for default polar cam) rotate the camera around your character, or cycle between room cameras, or (for pov, behind, and front cameras) gently tilt your avatar's neck, thereby moving the camera. Navigation is easiest with the (default) polar camera.",
+		cameras: "Use the camera menu at the top of the page to switch between polar, pov, behind, front, and numbered room cameras. The arrow keys either (for default polar cam) rotate the camera around your character, or cycle between room cameras, or (for pov, behind, and front cameras) gently tilt your avatar's neck, thereby moving the camera. Zoom with PERIOD and COMMA keys. You can also drag your mouse to pan and use your mousewheel (or double-finger scroll) to zoom. Most players find navigation to be easiest with the (default) polar or behind cameras.",
 		portals: "Press ENTER to go through a portal. Add portals and link them to other portals (in other zones) on the zone page. Use the game builder to connect scenes via linked portals.",
 		books: "Click on a book to read it. Add a book on the zone page.",
-		automatons: "I am an automaton. You can customize my responses and set a fallback AI on the talk page, alter my appearance on the tweak page, configure my emotions on the vibe page, program morphs on the mod page, teach me to dance on the gesture page, dress me up on the gear page, add me to a zone on the pop page, and incorporate me into a game on the make page! We automatons love to talk, so feel free to click any of us to start a conversation, and just say 'enable help mode' if you have any questions."
+		automatons: "I am an automaton. You can customize my responses and set a fallback AI on the talk page, alter my appearance on the tweak page, configure my emotions on the vibe page, program morphs on the mod page, teach me to dance on the gesture page, dress me up on the gear page, add me to a zone on the pop page, and incorporate me into a game on the make page! We automatons love to talk, so feel free to click any of us to start a conversation, and just say 'enable help mode' if you have any questions.",
+		chatterbox: "Click the squad button to switch channels, join/quit a squad, or send a warp link (room invite). Type a message and click sing to compose a melody. Click listen if you prefer to speak. Click the language button to set your preferred language. Click help to summon an admin.",
+		info: "Click any person or thing to load interaction options on the info menu. To return the info menu to yourself, click your avatar. If you can't see yourself, click your preferred (such as polar or behind) camera button."
+	},
+	flows: {
+		"triggers and vibes": {
+			blurb: "Set up conversational triggers on the talk page. Configure vibes on the vibe page.",
+			more: ["talk", "vibe"]
+		},
+		"gestures dances and mods": {
+			blurb: "Define gestures and dances on the gesture page. Create mods on the mod page.",
+			more: ["gesture", "mod"]
+		}
 	},
 	p2n: {
 		play: "explore (play)",
@@ -32,28 +44,49 @@ vu.help = {
 		game: "game (make)",
 		arcraft: "ar (arcraft)"
 	},
+	modal: function(cont, morer, className) {
+		var m;
+		if (morer) {
+			cont.unshift(CT.dom.link("more help", function() {
+				m.hide();
+				morer();
+			}, null, "abs ctl"));
+		}
+		m = CT.modal.modal(CT.dom.div(cont, className));
+	},
 	full: function() {
 		var h = vu.help;
-		CT.modal.modal(Object.keys(h.sections).map(h.one));
+		h.modal(Object.keys(h.sections).map(h.one));
+	},
+	set: function(topics) {
+		var h = vu.help;
+		h.modal(topics.map(h.one), h.page, "big");
+	},
+	flow: function(name) {
+		var h = vu.help, f = h.flows[name],
+			blurb = h.general[name], more = h.page;
+		if (f) {
+			blurb = f.blurb;
+			more = () => h.set(f.more);
+		}
+		h.modal(h.part(name, blurb), more, "biggest");
+	},
+	part: function(title, blurb) {
+		return [
+			CT.dom.div(title, "big centered"),
+			CT.dom.div(blurb, "bottompadded")
+		];
 	},
 	one: function(p) {
 		var h = vu.help;
-		return [
-			CT.dom.div((h.p2n[p] || p) + " page", "big centered"),
-			CT.dom.div(h.sections[p], "bottompadded")
-		];
+		return h.part((h.p2n[p] || p) + " page", h.sections[p]);
 	},
 	page: function() {
 		var p = location.pathname.split("/").pop().split(".")[0],
 			h = vu.help, m, cont;
 		if (!(p in h.sections))
 			return h.full();
-		cont = h.one(p);
-		cont.unshift(CT.dom.link("more help", function() {
-			m.hide();
-			vu.help.full();
-		}, null, "abs ctl"));
-		m = CT.modal.modal(cont);
+		h.modal(h.one(p), vu.help.full, "bigger");
 	},
 	triggerize: function(brain, tnode, emitter) {
 		var disabler = {
