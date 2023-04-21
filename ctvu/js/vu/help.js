@@ -25,7 +25,8 @@ vu.help = {
 		portals: "Press ENTER to go through a portal. Add portals and link them to other portals (in other zones) on the zone page. Use the game builder to connect scenes via linked portals.",
 		books: "Click on a book to read it. Add a book on the zone page.",
 		automatons: "I am an automaton. You can customize my responses and set a fallback AI on the talk page, alter my appearance on the tweak page, configure my emotions on the vibe page, program morphs on the mod page, teach me to dance on the gesture page, dress me up on the gear page, add me to a zone on the pop page, and incorporate me into a game on the make page! We automatons love to talk, so feel free to click any of us to start a conversation, and just say 'enable help mode' if you have any questions.",
-		chatterbox: "Click the squad button to switch channels, join/quit a squad, or send a warp link (room invite). Type a message and click sing to compose a melody. Click listen if you prefer to speak. Click the language button to set your preferred language. Click help to summon an admin."
+		chatterbox: "Click the squad button to switch channels, join/quit a squad, or send a warp link (room invite). Type a message and click sing to compose a melody. Click listen if you prefer to speak. Click the language button to set your preferred language. Click help to summon an admin.",
+		info: "Click any person or thing to load interaction options on the info menu. To return the info menu to yourself, click your avatar. If you can't see yourself, click your preferred (such as polar or behind) camera button."
 	},
 	flows: {
 		"triggers and vibes": {
