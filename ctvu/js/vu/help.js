@@ -21,10 +21,20 @@ vu.help = {
 	},
 	general: {
 		navigation: "Use the W, A, S, and D keys to move your avatar. Rotate with Q and E. Press SPACE to jump. Hold SHIFT to run. Press ENTER to enter a portal.",
-		cameras: "Use the camera menu at the top of the page to switch between polar, pov, behind, front, and numbered room cameras. The arrow keys either (for default polar cam) rotate the camera around your character, or cycle between room cameras, or (for pov, behind, and front cameras) gently tilt your avatar's neck, thereby moving the camera. Navigation is easiest with the (default) polar camera.",
+		cameras: "Use the camera menu at the top of the page to switch between polar, pov, behind, front, and numbered room cameras. The arrow keys either (for default polar cam) rotate the camera around your character, or cycle between room cameras, or (for pov, behind, and front cameras) gently tilt your avatar's neck, thereby moving the camera. Zoom with PERIOD and COMMA keys. You can also drag your mouse to pan and use your mousewheel (or double-finger scroll) to zoom. Most players find navigation to be easiest with the (default) polar or behind cameras.",
 		portals: "Press ENTER to go through a portal. Add portals and link them to other portals (in other zones) on the zone page. Use the game builder to connect scenes via linked portals.",
 		books: "Click on a book to read it. Add a book on the zone page.",
 		automatons: "I am an automaton. You can customize my responses and set a fallback AI on the talk page, alter my appearance on the tweak page, configure my emotions on the vibe page, program morphs on the mod page, teach me to dance on the gesture page, dress me up on the gear page, add me to a zone on the pop page, and incorporate me into a game on the make page! We automatons love to talk, so feel free to click any of us to start a conversation, and just say 'enable help mode' if you have any questions."
+	},
+	flows: {
+		"triggers and vibes": {
+			blurb: "Set up conversational triggers on the talk page. Configure vibes on the vibe page.",
+			more: ["talk", "vibe"]
+		},
+		"gestures dances and mods": {
+			blurb: "Define gestures and dances on the gesture page. Create mods on the mod page.",
+			more: ["gesture", "mod"]
+		}
 	},
 	p2n: {
 		play: "explore (play)",
@@ -50,12 +60,19 @@ vu.help = {
 		var h = vu.help;
 		h.modal(topics.map(h.one), h.page);
 	},
+	flow: function(name) {
+		var h = vu.help, f = h.flows[name];
+		h.modal(h.part(name, f.blurb), () => h.set(f.more));
+	},
+	part: function(title, blurb) {
+		return [
+			CT.dom.div(title, "big centered"),
+			CT.dom.div(blurb, "bottompadded")
+		];
+	},
 	one: function(p) {
 		var h = vu.help;
-		return [
-			CT.dom.div((h.p2n[p] || p) + " page", "big centered"),
-			CT.dom.div(h.sections[p], "bottompadded")
-		];
+		return h.part((h.p2n[p] || p) + " page", h.sections[p]);
 	},
 	page: function() {
 		var p = location.pathname.split("/").pop().split(".")[0],
