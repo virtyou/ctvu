@@ -5,7 +5,7 @@ vu.help = {
         test: "Test various things about your characters on the test page. This includes the conversational triggers you specified on the talk page, the vibes (mood vector configurations) you crafted on the vibe page, the gestures and dances you created on the gesture page, and the mods you built on the mod page.",
         vibe: "Create mood configurations (vibes) on the vibe page. Each vibe consists of a specific value for each of 8 mood vectors. Modify your default vibe, tweak your 6 basic preconfigured vibes (suspicious, worried, mad, curious, sad, happy), and make up some new ones. Go wild!",
         mod: "Morph it up on the mod page. Create as many named mods as you want, including (if you want) a default (which is automatically applied). Each mod is a collection of bone scales. So you could have giant hands and a tiny head, or, you know, whatever you want. Use the far cam to mess with legs. Use the near cam to mess with arms.",
-        gesture: "Choreograph gestures and dances on the gesture page. Each gesture is some combination of joint rotations. Each dance is some combination of gestures, along with an interval. Use the near cam to mess with arms and the spine. Use the far cam to mess with legs and dances. You start with basic (crappy) gestures for jump, left, and right, as well as a basic walk consisting of left and right (gestures).",
+        gesture: "Choreograph gestures and dances on the gesture page. Each gesture is some combination of joint rotations. Each dance is some combination of gestures, along with an interval. Use the near cam to mess with arms and the spine. Use the far cam to mess with legs and dances. You start with a few simple (crappy) gestures like jump, as well as basic walk, swim, and fly dances.",
         zone: "Build, furnish, and connect zones on the zone page. Use the left menu to swap in a new shell, change your wallpaper, or mess with scale, friction, color, specular, and shininess. Use the Lights menu, on the right, to add/remove/adjust lights (variety, position, direction, color, intensity). Click 'Lights' (at the top of the Lights menu) to swap in the Furnishings menu, where you can add/remove furnishings, posters, portals, and video screens, and adjust their basic properties (position, scale, color, specular, shininess). The Furnishings menu also supports portal linkages for connecting your zones to the rest of the world. The Portal Requests menu, at the bottom, is for approving/denying incoming portal requests.",
         pop: "Add flora, fauna, and programmable automatons to your zones!",
         item: "Upload, skin, and scale your 3d models on the item page. Various stripset formats are supported - we recommend .obj files. Which 'kind' you select determines how you can use your object. For instance, 'held' and 'worn_' (worn_head, worn_finger, worn_knee, etc) kind objects may be used on the gear page to dress up your avatar. Objects of other kinds, such as 'shell' and 'wallpaper' (as well as furnishing, poster, and portal), can be loaded up in zones on the zone page. And 'hair', 'beard', 'eye' etc objects can be applied to your avatar on the tweak page.",
@@ -32,9 +32,23 @@ vu.help = {
 		game: "game (make)",
 		arcraft: "ar (arcraft)"
 	},
+	modal: function(cont, morer) {
+		var m;
+		if (morer) {
+			cont.unshift(CT.dom.link("more help", function() {
+				m.hide();
+				morer();
+			}, null, "abs ctl"));
+		}
+		m = CT.modal.modal(cont);
+	},
 	full: function() {
 		var h = vu.help;
-		CT.modal.modal(Object.keys(h.sections).map(h.one));
+		h.modal(Object.keys(h.sections).map(h.one));
+	},
+	set: function(topics) {
+		var h = vu.help;
+		h.modal(topics.map(h.one), h.page);
 	},
 	one: function(p) {
 		var h = vu.help;
@@ -48,12 +62,7 @@ vu.help = {
 			h = vu.help, m, cont;
 		if (!(p in h.sections))
 			return h.full();
-		cont = h.one(p);
-		cont.unshift(CT.dom.link("more help", function() {
-			m.hide();
-			vu.help.full();
-		}, null, "abs ctl"));
-		m = CT.modal.modal(cont);
+		h.modal(h.one(p), vu.help.full);
 	},
 	triggerize: function(brain, tnode, emitter) {
 		var disabler = {
