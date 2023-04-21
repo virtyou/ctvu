@@ -42,7 +42,7 @@ vu.help = {
 		game: "game (make)",
 		arcraft: "ar (arcraft)"
 	},
-	modal: function(cont, morer) {
+	modal: function(cont, morer, className) {
 		var m;
 		if (morer) {
 			cont.unshift(CT.dom.link("more help", function() {
@@ -50,7 +50,7 @@ vu.help = {
 				morer();
 			}, null, "abs ctl"));
 		}
-		m = CT.modal.modal(cont);
+		m = CT.modal.modal(CT.dom.div(cont, className));
 	},
 	full: function() {
 		var h = vu.help;
@@ -58,13 +58,16 @@ vu.help = {
 	},
 	set: function(topics) {
 		var h = vu.help;
-		h.modal(topics.map(h.one), h.page);
+		h.modal(topics.map(h.one), h.page, "big");
 	},
 	flow: function(name) {
-		var h = vu.help, f = h.flows[name];
-		if (f) // flows{} case ... else, look in general{}
-			return h.modal(h.part(name, f.blurb), () => h.set(f.more));
-		h.modal(h.part(name, h.general[name]), h.page);
+		var h = vu.help, f = h.flows[name],
+			blurb = h.general[name], more = h.page;
+		if (f) {
+			blurb = f.blurb;
+			more = () => h.set(f.more);
+		}
+		h.modal(h.part(name, blurb), more, "biggest");
 	},
 	part: function(title, blurb) {
 		return [
@@ -81,7 +84,7 @@ vu.help = {
 			h = vu.help, m, cont;
 		if (!(p in h.sections))
 			return h.full();
-		h.modal(h.one(p), vu.help.full);
+		h.modal(h.one(p), vu.help.full, "bigger");
 	},
 	triggerize: function(brain, tnode, emitter) {
 		var disabler = {
