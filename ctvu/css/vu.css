@@ -251,6 +251,10 @@ img.right.h30p.up5 {
 	top: initial !important;
 }
 
+.gmenu.chat button {
+	padding: 1px 2px;
+}
+
 .gmenu.chat .out {
 	clear: both;
 	overflow-y: auto;
