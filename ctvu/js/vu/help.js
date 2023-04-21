@@ -68,8 +68,8 @@ vu.help = {
 			return CT.dom.button(name, function() {
 				m.hide();
 				h.flow(name, h.generals);
-			});
-		})), h.page);
+			}, "margined");
+		})), h.page, "biggest biggerbutts centered");
 	},
 	flow: function(name, more) {
 		var h = vu.help, f = h.flows[name],
