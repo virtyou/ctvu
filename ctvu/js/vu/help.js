@@ -62,7 +62,9 @@ vu.help = {
 	},
 	flow: function(name) {
 		var h = vu.help, f = h.flows[name];
-		h.modal(h.part(name, f.blurb), () => h.set(f.more));
+		if (f) // flows{} case ... else, look in general{}
+			return h.modal(h.part(name, f.blurb), () => h.set(f.more));
+		h.modal(h.part(name, h.general[name]), h.page);
 	},
 	part: function(title, blurb) {
 		return [
