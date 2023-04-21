@@ -263,6 +263,7 @@ vu.builders.play = {
 			_.langButt = CT.dom.span();
 			cbox.onclick = function(e) { e.stopPropagation(); };
 			var n = CT.dom.div([
+				vu.controls.help("chatterbox"),
 				CT.dom.div([squadButt, singButt, listButt, _.langButt, helpButt], "right up15"),
 				out, cbox
 			]);
