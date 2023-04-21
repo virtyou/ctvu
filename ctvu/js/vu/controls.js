@@ -97,6 +97,7 @@ vu.controls = {
 	},
 	help: function(flow) {
 		return CT.dom.link("?", function(e) {
+			zero.core.audio.ux("blipon");
 			vu.help.flow(flow);
 			e.stopPropagation();
 		}, null, "right up15 bigger bold hoverglow");
