@@ -132,6 +132,7 @@ vu.builders.play = {
 				other.push(thing.perusebutt());
 			zc.click.register(target, function() {
 				CT.dom.setContent(_.selectors.info, [
+					vu.controls.help("info"),
 					CT.dom.div(thing.name, "bigger"),
 					isYou ? [
 						CT.dom.div("(you)", "up20 right"),
