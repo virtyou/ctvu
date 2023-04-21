@@ -94,14 +94,14 @@ vu.controls = {
 		return (notArray ? Object.keys(trigz)
 			: trigz).map((t, i) => vu.controls.trigNode(t, i, cb));
 	},
-	help: function(sections) {
-		return CT.dom.link("?", () => vu.help.set(sections),
+	help: function(flow) {
+		return CT.dom.link("?", () => vu.help.flow(flow),
 			null, "right up15 bigger bold hoverglow");
 	},
 	setTriggers: function(node, cb, person, trigzonly) {
 		person = person || zero.core.current.person;
 		var responses = person.opts.responses, content = [
-			vu.controls.help(["talk", "vibe"])
+			vu.controls.help("triggers and vibes")
 		], triggers = person.brain.triggers,
 			tkz = Object.keys(triggers),
 			trigz = trigzonly ? tkz : CT.data.uniquify(Object.keys(responses).concat(tkz)),
@@ -131,7 +131,7 @@ vu.controls = {
 			dances = person.opts.dances,
 			modz = person.opts.mods;
 		CT.dom.setContent(node, [
-			vu.controls.help(["gesture", "mod"]),
+			vu.controls.help("gestures dances and mods"),
 			vu.controls.triggerMap(["ungesture"].concat(Object.keys(gestz)), function(gest, i) {
 				i ? person.gesture(gest) : person.ungesture();
 				cb && cb("gesture", gest);
