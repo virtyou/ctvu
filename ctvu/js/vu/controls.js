@@ -1,11 +1,17 @@
 vu.controls = {
 	initCamera: function(node, cb) {
-		var bwip = function() {
+		var activeCam, activate = function(node) {
+			if (activeCam)
+				activeCam.classList.remove("active");
+			activeCam = node;
+			activeCam.classList.add("active");
+		}, bwip = function(e) {
+			activate(e.target);
 			zero.core.audio.ux("blipon");
 		}, mode = location.pathname.split("/").pop().split(".")[0];
 		if (["zone", "play", "scene", "adventure", "pop"].indexOf(mode) != -1) {
 			var cycbutt = CT.dom.button("cycle", function(e) {
-				bwip();
+				bwip(e);
 				if (zero.core.camera.cycle())
 					cycbutt.innerHTML = "stop cycling";
 				else
@@ -13,7 +19,7 @@ vu.controls = {
 				e.stopPropagation();
 			}), room, tbutts, per, dim, bl, looker = function(perspective) {
 				return function(e) {
-					bwip();
+					bwip(e);
 					zero.core.camera.angle(perspective);
 					e.stopPropagation();
 				};
@@ -21,6 +27,7 @@ vu.controls = {
 				pov = CT.dom.button("pov", looker("pov")),
 				behind = CT.dom.button("behind", looker("behind")),
 				front = CT.dom.button("front", looker("front"));
+			activate(polar);
 			node.update = function() {
 				room = zero.core.current.room;
 				tbutts = [cycbutt];
@@ -33,7 +40,7 @@ vu.controls = {
 				} else
 					bcams = [polar, pov, behind, front];
 				(mode == "zone") && tbutts.push(CT.dom.button("refresh", function(e) {
-					bwip();
+					bwip(e);
 					room.updateCameras();
 					node.update();
 					vu.builders.zone.persist({
@@ -45,7 +52,7 @@ vu.controls = {
 					CT.dom.div(tbutts, "right up25"),
 					CT.dom.div(bcams.concat(room.cameras.map(function(cam, i) {
 						return CT.dom.button("cam " + i, function(e) {
-							bwip();
+							bwip(e);
 							room.cut(i);
 							e.stopPropagation();
 						});
@@ -55,7 +62,7 @@ vu.controls = {
 			["play", "scene"].includes(mode) && node.update();
 		} else {
 			var butt = CT.dom.button("far", function(e) {
-				bwip();
+				bwip(e);
 				if (!butt._baseY)
 					butt._baseY = zero.core.camera.position().y;
 				if (butt.innerHTML == "far") {
