@@ -96,8 +96,10 @@ vu.controls = {
 			: trigz).map((t, i) => vu.controls.trigNode(t, i, cb));
 	},
 	help: function(flow) {
-		return CT.dom.link("?", () => vu.help.flow(flow),
-			null, "right up15 bigger bold hoverglow");
+		return CT.dom.link("?", function(e) {
+			vu.help.flow(flow);
+			e.stopPropagation();
+		}, null, "right up15 bigger bold hoverglow");
 	},
 	setTriggers: function(node, cb, person, trigzonly) {
 		person = person || zero.core.current.person;
