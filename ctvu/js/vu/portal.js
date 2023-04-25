@@ -34,6 +34,7 @@ vu.portal = {
 				person.remove();
 		});
 		zero.core.camera.unPerNonCur();
+		zero.core.click.trigger(cur.person.body);
 	},
 	portin: function(target, portin) {
 		var _ = vu.portal._;
@@ -44,6 +45,9 @@ vu.portal = {
 		var vp = vu.portal, _ = vp._;
 		_.eject(portout);
 		setTimeout(vp.portin, 500, target, portin);
+	},
+	rand: function() {
+		vu.portal.port(CT.data.choice(vu.storage.get("rooms")).key);
 	},
 	check: function() {
 		var cur = zero.core.current, person = cur.person,

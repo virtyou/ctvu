@@ -1,35 +1,71 @@
 vu.controls = {
-	initCamera: function(node, cb) {
-		var activeCam, activate = function(node) {
-			if (activeCam)
-				activeCam.classList.remove("active");
-			activeCam = node;
-			activeCam.classList.add("active");
-		}, bwip = function(e) {
-			activate(e.target);
-			zero.core.audio.ux("blipon");
-		}, mode = location.pathname.split("/").pop().split(".")[0];
-		if (["zone", "play", "scene", "adventure", "pop"].indexOf(mode) != -1) {
-			var cycbutt = CT.dom.button("cycle", function(e) {
-				bwip(e);
-				if (zero.core.camera.cycle())
-					cycbutt.innerHTML = "stop cycling";
+	_: {
+		cams: {},
+		freeCams: ["zone", "play", "scene", "adventure", "pop"],
+		cammers: {
+			looker: function(perspective) {
+				var zc = zero.core;
+				if (perspective.startsWith("cam "))
+					zc.current.room.cut(parseInt(perspective.slice(4)));
 				else
-					cycbutt.innerHTML = "cycle";
+					zc.camera.angle(perspective);
+			},
+			cycle: function() {
+				var _ = vu.controls._, cbutt = _.cams["cycle"];
+				if (zero.core.camera.cycle())
+					cbutt.innerHTML = "stop cycling";
+				else
+					cbutt.innerHTML = "cycle";
+			},
+			refresh: function() {
+				var _ = vu.controls._, room = zero.core.current.room;
+				room.updateCameras();
+				_.camNode.update();
+				vu.builders.zone.persist({
+					cameras: room.cameras
+				});
+			}
+		},
+		camButt: function(name) {
+			var vc = vu.controls, _ = vc._;
+			_.cams[name] = CT.dom.button(name, function(e) {
+				vc.setCam(name);
 				e.stopPropagation();
-			}), room, tbutts, per, dim, bl, looker = function(perspective) {
-				return function(e) {
-					bwip(e);
-					zero.core.camera.angle(perspective);
-					e.stopPropagation();
-				};
-			}, bcams, polar = CT.dom.button("polar", looker("polar")),
-				pov = CT.dom.button("pov", looker("pov")),
-				behind = CT.dom.button("behind", looker("behind")),
-				front = CT.dom.button("front", looker("front"));
-			activate(polar);
+			});
+			return _.cams[name];
+		},
+		camButtActivate: function(name) {
+			var _ = vu.controls._;
+			if (_.activeCam)
+				_.activeCam.classList.remove("active");
+			_.activeCam = _.cams[name];
+			_.activeCam.classList.add("active");
+		},
+		bwip: function() {
+			zero.core.audio.ux("blipon");
+		}
+	},
+	setCam: function(name, skipcb) {
+		var _ = vu.controls._, cz = _.cammers;
+		skipcb || (cz[name] || cz.looker)(name);
+		_.camButtActivate(name);
+		_.bwip();
+	},
+	initCamera: function(node, cb) {
+		var vc = vu.controls, _ = vc._,
+			mode = location.pathname.split("/").pop().split(".")[0];
+		_.camNode = node;
+		if (_.freeCams.includes(mode)) {
+			var cycbutt = _.camButt("cycle"),
+				polar = _.camButt("polar"),
+				pov = _.camButt("pov"),
+				behind = _.camButt("behind"),
+				front = _.camButt("front"),
+				room, rcz, tbutts, bcams;
+			vc.setCam("polar", true); // zone page not ready / will handle
 			node.update = function() {
 				room = zero.core.current.room;
+				rcz = room.cameras;
 				tbutts = [cycbutt];
 				if (mode == "scene") {
 					bcams = [];
@@ -39,31 +75,18 @@ vu.controls = {
 					bcams = [pov, front, cycbutt];
 				} else
 					bcams = [polar, pov, behind, front];
-				(mode == "zone") && tbutts.push(CT.dom.button("refresh", function(e) {
-					bwip(e);
-					room.updateCameras();
-					node.update();
-					vu.builders.zone.persist({
-						cameras: room.cameras
-					});
-					e.stopPropagation();
-				}));
+				(mode == "zone") && tbutts.push(_.camButt("refresh"));
 				CT.dom.setContent(node, [
 					vu.controls.help("cameras"),
 					CT.dom.div(tbutts, "right up25"),
-					CT.dom.div(bcams.concat(room.cameras.map(function(cam, i) {
-						return CT.dom.button("cam " + i, function(e) {
-							bwip(e);
-							room.cut(i);
-							e.stopPropagation();
-						});
-					})), "centered clearnode")
+					CT.dom.div(bcams.concat(rcz.map((cam, i) => _.camButt("cam " + i))),
+						"centered clearnode")
 				]);
 			};
 			["play", "scene"].includes(mode) && node.update();
 		} else {
 			var butt = CT.dom.button("far", function(e) {
-				bwip(e);
+				_.bwip();
 				if (!butt._baseY)
 					butt._baseY = zero.core.camera.position().y;
 				if (butt.innerHTML == "far") {
