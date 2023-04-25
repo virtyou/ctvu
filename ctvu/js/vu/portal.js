@@ -45,6 +45,9 @@ vu.portal = {
 		_.eject(portout);
 		setTimeout(vp.portin, 500, target, portin);
 	},
+	rand: function() {
+		vu.portal.port(CT.data.choice(vu.storage.get("rooms")).key);
+	},
 	check: function() {
 		var cur = zero.core.current, person = cur.person,
 			pos = person.body.placer.position, _ = this._, hit = false;
