@@ -11,9 +11,11 @@ vu.builders.play = {
 			lights: "topright",
 			minimap: "topright",
 			run_home: "topleft",
+			ran_drop: "topleft",
 			triggers: "bottomleft",
 			gestures: "bottomright"
 		},
+		norets: ["run_home", "ran_drop"],
 		swappers: ["lights", "minimap", "audio", "info"],
 		anonmsg: CT.dom.div([
 			"playing anonymously - log in to craft your own avatar!",
@@ -206,7 +208,7 @@ vu.builders.play = {
 			});
 		},
 		setup: function() {
-			var vbp = vu.builders.play, _ = vbp._,
+			var vbp = vu.builders.play, _ = vbp._, atHome,
 				selz = _.selectors, cur = zero.core.current,
 				popts = _.opts = vu.storage.get("person") || _.opts;
 			_.raw = vu.core.person(popts);
@@ -217,8 +219,9 @@ vu.builders.play = {
 			selz.minimap = CT.dom.div();
 			selz.audio = vu.party.audio(_.audup);
 			selz.lights = vu.party.lights(_.lightup);
-			selz.run_home = CT.dom.img("/img/vu/home.png", null,
-				function() { vu.portal.port(); });
+			selz.run_home = CT.dom.img("/img/vu/home.png",
+				null, () => vu.portal.port());
+			selz.ran_drop = CT.dom.img("/img/vu/home.png", null, vu.portal.rand);
 			selz.chat = _.chatterbox();
 			selz.info = CT.dom.div();
 			selz.auto = CT.dom.div();
@@ -238,8 +241,9 @@ vu.builders.play = {
 					}
 				}, CT.data.get(target || CT.storage.get("room"))));
 				CT.pubsub.subscribe(cur.room.opts.key);
-				selz.run_home.modal[vu.core.isroom(cur.room.opts.key)
-					? "hide" : "show"]("ctmain");
+				atHome = vu.core.isroom(cur.room.opts.key);
+				selz.run_home.modal[atHome ? "hide" : "show"]("ctmain");
+				selz.ran_drop.modal[atHome ? "show" : "hide"]("ctmain");
 			});
 		},
 		chatterbox: function() {
@@ -284,7 +288,7 @@ vu.builders.play = {
 		collapse: function(section) {
 			var _ = vu.builders.play._, selz = _.selectors,
 				sel = selz[section];
-			if (_.swappers.includes(section)) return;
+			if (_.swappers.includes(section) || _.norets.includes(section)) return;
 			return function() {
 				sel._collapsed = !sel._collapsed;
 				zero.core.audio.ux(sel._collapsed ? "blipoff" : "blipon");
