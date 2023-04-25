@@ -132,6 +132,8 @@ vu.builders.play = {
 				other.push(thing.readbutt());
 			else if (thing.opts.kind == "carpentry" && thing.opts.items.length)
 				other.push(thing.perusebutt());
+			else if (thing.opts.kind == "portal")
+				other.push(CT.dom.button("enter", () => zcc.person.approach(thing, _.action)));
 			zc.click.register(target, function() {
 				CT.dom.setContent(_.selectors.info, [
 					vu.controls.help("info"),
