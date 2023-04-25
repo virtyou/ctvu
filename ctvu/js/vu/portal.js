@@ -34,6 +34,7 @@ vu.portal = {
 				person.remove();
 		});
 		zero.core.camera.unPerNonCur();
+		zero.core.click.trigger(cur.person.body);
 	},
 	portin: function(target, portin) {
 		var _ = vu.portal._;
