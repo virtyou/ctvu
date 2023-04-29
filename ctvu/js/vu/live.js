@@ -204,7 +204,7 @@ vu.live = {
 	},
 	meta: function() {
 		var zcc = zero.core.current, person = zcc.person,
-			bod = person.body, s = bod.springs, _ = vu.live._, targets;
+			bod = person.body, s, sz = bod.springs, _ = vu.live._, targets;
 		if (_.cbs.frozen) {
 			targets = {
 				language: person.language
@@ -219,17 +219,17 @@ vu.live = {
 				language: person.language,
 				fznchan: bod.fznchan
 			};
-			_.springs.forEach(function(prop) {
-				targets[prop] = {
-					boost: s[prop].boost,
-					value: s[prop].value
+			for (s of _.springs) {
+				targets[s] = {
+					boost: sz[s].boost || 0,
+					value: sz[s].value,
+					target: sz[s].target
 				};
-			});
+			}
 			targets.orientation.hard = false; // meh hacky
 			targets.bob = {};
-			_.bsprops.forEach(function(bsp) {
-				targets.bob[bsp] = s.bob[bsp];
-			});
+			for (s of _.bsprops)
+				targets.bob[s] = sz.bob[s];
 		}
 		CT.pubsub.meta(_.channel || zcc.room.opts.key, targets);
 	},
