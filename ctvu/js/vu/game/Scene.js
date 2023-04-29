@@ -123,7 +123,7 @@ vu.game.Scene = CT.Class({
 			zc = zero.core, zcc = zc.current, start = this.start;
 		this.player.gear = this.state.inventory.gear;
 		for (p of oz.actors) {
-			p.grippy = false;
+//			p.grippy = false;
 			p.positioners = this.state.actors[p.name].positioners;
 		}
 		cfg.room = oz.room;
