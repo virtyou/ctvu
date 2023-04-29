@@ -49,7 +49,7 @@ vu.live = {
 				if (!roomchan)
 					return CT.log("skipping subscribe routine for non-room channel");
 				data.presence.forEach(function(u, i) {
-					spawn(u, data.metamap[u], !vu.core.ischar(u));
+					spawn(u, data.metamap[u]);//, !vu.core.ischar(u));
 				});
 				_.events.chmeta({ meta: data.meta.channel });
 				if (data.presence.length == 1)
@@ -59,7 +59,7 @@ vu.live = {
 			},
 			join: function(chan, user, meta) {
 				var _ = vu.live._;
-				_.isroom(chan) && _.spawn(user, meta, true);
+				_.isroom(chan) && _.spawn(user, meta);//, true);
 			},
 			leave: function(chan, user) {
 				var _ = vu.live._, peeps = _.people,
@@ -97,14 +97,13 @@ vu.live = {
 					return; // will handle meta when spawn is complete
 				person.language = meta.language;
 				if (_.cbs.frozen) return;
-				var bod = person.body, s = bod.springs;
+				var bod = person.body, sz = bod.springs, s, prop;
 				bod.streamify(meta.fznchan);
-				_.springs.forEach(function(prop) {
-					s[prop].target = meta[prop].target;
-				});
-				_.bsprops.forEach(function(bsp) {
-					s.bob[bsp] = meta.bob[bsp];
-				});
+				for (s of _.springs)
+					for (prop in meta[s])
+						sz[s][prop] = meta[s][prop];
+				for (s of _.bsprops)
+					sz.bob[s] = meta.bob[s];
 				_.dance(person, meta);
 				if (person.helpMe != meta.helpMe) {
 					person.helpMe = meta.helpMe;
@@ -221,8 +220,12 @@ vu.live = {
 				fznchan: bod.fznchan
 			};
 			_.springs.forEach(function(prop) {
-				targets[prop] = { target: s[prop].target };
+				targets[prop] = {
+					boost: s[prop].boost,
+					value: s[prop].value
+				};
 			});
+			targets.orientation.hard = false; // meh hacky
 			targets.bob = {};
 			_.bsprops.forEach(function(bsp) {
 				targets.bob[bsp] = s.bob[bsp];
