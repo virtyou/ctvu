@@ -29,7 +29,7 @@ vu.builders.play = {
 				var vbp = vu.builders.play, _ = vbp._,
 					cur = zero.core.current;
 				zero.core.util.setCurPer(person);
-				CT.dom.setContent(_.langButt, vu.lang.button());
+				vu.multi.setLang();
 				vu.controls.initCamera(_.selectors.cameras);
 				vu.controls.setTriggers(_.selectors.triggers, vu.live.meta);
 				vu.controls.setGestures(_.selectors.gestures, vu.live.meta);
@@ -222,7 +222,7 @@ vu.builders.play = {
 			selz.run_home = CT.dom.img("/img/vu/home.png",
 				null, () => vu.portal.port());
 			selz.ran_drop = CT.dom.img("/img/vu/home.png", null, vu.portal.rand);
-			selz.chat = _.chatterbox();
+			selz.chat = vu.multi.chatterbox();
 			selz.info = CT.dom.div();
 			selz.auto = CT.dom.div();
 			vu.portal.on("eject", function(portout) {
@@ -245,45 +245,6 @@ vu.builders.play = {
 				selz.run_home.modal[atHome ? "hide" : "show"]("ctmain");
 				selz.ran_drop.modal[atHome ? "show" : "hide"]("ctmain");
 			});
-		},
-		chatterbox: function() {
-			var zc = zero.core, zcu = zc.util, zcc = zc.current, out = CT.dom.div(null,
-			"out"), _ = vu.builders.play._, say = function(val, e) {
-				val && vu.squad.emit(val);
-				e && e.stopPropagation();
-				return "clear";
-			}, listButt = CT.dom.button("listen", function(e) {
-				listButt.style.color = "red";
-				zero.core.rec.listen(function(phrase) {
-					say(phrase);
-					listButt.style.color = "black";
-				});
-				e.stopPropagation();
-			}), cbox = CT.dom.smartField(say,
-				"w1 block mt5", null, null, null,
-			core.config.ctvu.blurs.talk), helpButt = CT.dom.button("help", function(e) {
-				zcc.person.helpMe = !zcc.person.helpMe;
-				if (zcc.person.helpMe) {
-					helpButt.style.color = "red";
-					helpButt.innerText = "unhelp";
-					vu.live.helpme();
-				} else {
-					helpButt.style.color = "black";
-					helpButt.innerText = "help";
-				}
-				vu.builders.play.minimap.help(zcc.person);
-				vu.live.meta();
-				e.stopPropagation();
-			}), squadButt = vu.squad.butt(), singButt = zcu.singer(cbox, say);
-			_.langButt = CT.dom.span();
-			cbox.onclick = function(e) { e.stopPropagation(); };
-			var n = CT.dom.div([
-				vu.controls.help("chatterbox"),
-				CT.dom.div([squadButt, singButt, listButt, _.langButt, helpButt], "right up15"),
-				out, cbox
-			]);
-			n.out = out;
-			return n;
 		},
 		collapse: function(section) {
 			var _ = vu.builders.play._, selz = _.selectors,
