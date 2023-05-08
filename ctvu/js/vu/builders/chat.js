@@ -19,22 +19,6 @@ vu.builders.chat = {
 				vu.multi.setLang();
 				vu.live.meta(); // for lang
 			},
-			chat: function(person, msg) {
-				var zccp = zero.core.current.person, subs = [
-					CT.dom.span(person.name, "bold italic green"),
-					CT.dom.pad(),
-					CT.dom.span(msg)
-				], mnode;
-				if (!vu.core.ischar(person.opts.key)) {
-					person.setVolume(zero.core.util.close2u(person.body));
-					if (person.language && person.language.code != zccp.language.code)
-						subs.push(vu.lang.transer(msg, person.language, zccp.language));
-				}
-				mnode = CT.dom.div(subs);
-				person.say(msg);
-				CT.dom.addContent(vu.builders.chat._.selectors.chat.out, mnode);
-				mnode.scrollIntoView();
-			},
 			enter: function(person) {
 				person.watch(false, true);
 				person.look(zero.core.camera);
