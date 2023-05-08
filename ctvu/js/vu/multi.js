@@ -32,10 +32,45 @@ vu.multi = {
 				vu.live.meta();
 				e.stopPropagation();
 			});
+		},
+		roomvite: function(rkey) {
+			var n = CT.dom.span();
+			CT.db.one(rkey, function(room) {
+				CT.dom.setContent(n, CT.dom.button("warp to " + room.name, function(e) {
+					vu.portal.port(rkey);
+					e.stopPropagation();
+				}));
+			}, "json");
+			return n;
 		}
 	},
 	setLang: function() {
 		CT.dom.setContent(vu.multi._.langButt, vu.lang.button());
+	},
+	chat: function(person, msg, squad, squinvite, roomvite) {
+		var zccp = zero.core.current.person, subs = [
+			CT.dom.span(person.name, "bold italic green")
+		], _ = vu.multi._, mnode;
+		squad && subs.push(CT.dom.span("[" + squad + "]", "bold"));
+		subs.push(CT.dom.pad());
+		subs.push(CT.dom.span(msg));
+		squinvite && subs.push(CT.dom.button("click here to join " + squinvite, function(e) {
+			vu.squad.join(squinvite);
+			e.stopPropagation();
+		}));
+		roomvite && subs.push(_.roomvite(roomvite));
+		if (person.opts) { // otherwise, person is just {name}
+			if (!vu.core.ischar(person.opts.key)) {
+				person.setVolume(zero.core.util.close2u(person.body));
+				if (person.language && person.language.code != zccp.language.code)
+					subs.push(vu.lang.transer(msg, person.language, zccp.language));
+			}
+			person.say(msg, null, true);
+		}
+		mnode = CT.dom.div(subs);
+		CT.trans.glow(_.cbox.previousSibling);
+		CT.dom.addContent(_.cbox.out, mnode);
+		mnode.scrollIntoView();
 	},
 	chatterbox: function() {
 		var _ = vu.multi._, zc = zero.core, zcu = zc.util, zcc = zc.current,
@@ -48,7 +83,7 @@ vu.multi = {
 			butts.push(_.helper());
 		}
 		cbox.onclick = e => e.stopPropagation();
-		var n = CT.dom.div([
+		var n = _.cbox = CT.dom.div([
 			vu.controls && vu.controls.help("chatterbox"),
 			CT.dom.div(butts, "right up15"),
 			out, cbox
