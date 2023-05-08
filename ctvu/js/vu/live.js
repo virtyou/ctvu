@@ -6,19 +6,19 @@ vu.live = {
 		bsprops: ["target", "value", "boost", "floored", "hard"], // overkill?
 		actions: { // message types
 			chat: function(person, msg) {
-				vu.live._.cbs.chat(person, msg);
+				vu.multi.chat(person, msg);
 			},
 			squadchat: function(person, chdata) {
-				vu.live._.cbs.chat(person, chdata.msg, chdata.squad);
+				vu.multi.chat(person, chdata.msg, chdata.squad);
 			},
 			botchat: function(person, chdata) {
-				vu.live._.cbs.chat(zero.core.current.people[chdata.bot], chdata.msg);
+				vu.multi.chat(zero.core.current.people[chdata.bot], chdata.msg);
 			},
 			invite: function(person, squad) {
-				vu.live._.cbs.chat(person, "join my squad!", null, squad);
+				vu.multi.chat(person, "join my squad!", null, squad);
 			},
 			roomvite: function(person, rinvopts) {
-				vu.live._.cbs.chat(person, rinvopts.msg, rinvopts.squad, null, rinvopts.room);
+				vu.multi.chat(person, rinvopts.msg, rinvopts.squad, null, rinvopts.room);
 			},
 			inject: function(person, pkey) { // join
 				zero.core.current.room.inject(person, pkey && zero.core.Thing.get(pkey));
