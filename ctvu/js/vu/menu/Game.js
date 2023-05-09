@@ -34,7 +34,7 @@ vu.menu.Game = CT.Class({
 		},
 		sayer: function(statement, person) {
 			this._.interactional("say", "top", person.name,
-				CT.dom.div(statement, "biggest"), true).show("ctmain");
+				CT.dom.div(statement, "biggest nonowrap"), true).show("ctmain");
 		},
 		convo: function(person) {
 			setTimeout(function() { // ... meh
@@ -61,7 +61,7 @@ vu.menu.Game = CT.Class({
 			return iz[itype];
 		},
 		info: function(name, info) {
-			return this._.interactional("info", "bottom", name, info);
+			return this._.interactional("info", "topleft", name, info);
 		},
 		seeing: function(name, info) {
 			return this._.interactional("seeing", "right", name, info);
@@ -133,7 +133,7 @@ vu.menu.Game = CT.Class({
 		}, 500);
 	},
 	info: function(name, info, thing) {
-		this._.info(name, info).show();
+		this._.info(name, info).show("ctmain");
 		zero.core.camera.follow(thing);
 	},
 	attribution: function(atype, name, info, source) {
