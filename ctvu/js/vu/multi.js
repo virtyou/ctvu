@@ -42,12 +42,21 @@ vu.multi = {
 				}));
 			}, "json");
 			return n;
+		},
+		gamevite: function(gkey) {
+			var n = CT.dom.span();
+			CT.db.one(gkey, function(game) {
+				CT.dom.setContent(n, CT.dom.button("warp to " + game.name, function() {
+					location = "/vu/adventure.html#" + gkey;
+				}));
+			});
+			return n;
 		}
 	},
 	setLang: function() {
 		CT.dom.setContent(vu.multi._.langButt, vu.lang.button());
 	},
-	chat: function(person, msg, squad, squinvite, roomvite) {
+	chat: function(person, msg, squad, squinvite, roomvite, gamevite) {
 		var zccp = zero.core.current.person, subs = [
 			CT.dom.span(person.name, "bold italic green")
 		], _ = vu.multi._, mnode;
@@ -59,6 +68,7 @@ vu.multi = {
 			e.stopPropagation();
 		}));
 		roomvite && subs.push(_.roomvite(roomvite));
+		gamevite && subs.push(_.gamevite(gamevite));
 		if (person.opts) { // otherwise, person is just {name}
 			if (!vu.core.ischar(person.opts.key)) {
 				person.setVolume(zero.core.util.close2u(person.body));
