@@ -71,7 +71,7 @@ vu.menu.Game = CT.Class({
 		},
 		setup: function() {
 			var _ = this._, selz = _.selectors, cam = zero.core.camera;
-			selz.story = CT.dom.div(null, "scrolly kidvp mt5 hm400p");
+			selz.story = CT.dom.div(null, "scrolly kidvp mt5 hm200p");
 			selz.camera = CT.dom.div();
 			selz.minimap = CT.dom.div();
 			_.minimap = new vu.menu.Map({
@@ -123,7 +123,7 @@ vu.menu.Game = CT.Class({
 			}, "abs ctr shiftup"),
 			s.story
 		]);
-		mod.show();
+		mod.show("ctmain");
 		if (snode.classList.contains("collapsed"))
 			snode.classList.remove("collapsed");
 		setTimeout(function() { // TODO: fix this!!
