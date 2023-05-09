@@ -20,6 +20,9 @@ vu.live = {
 			roomvite: function(person, rinvopts) {
 				vu.multi.chat(person, rinvopts.msg, rinvopts.squad, null, rinvopts.room);
 			},
+			gamevite: function(person, ginvopts) {
+				vu.multi.chat(person, ginvopts.msg, ginvopts.squad, null, null, ginvopts.game);
+			},
 			inject: function(person, pkey) { // join
 				zero.core.current.room.inject(person, pkey && zero.core.Thing.get(pkey));
 //				person.body.show();
@@ -194,6 +197,13 @@ vu.live = {
 			squad: squadname,
 			msg: msg || "check out this zone",
 			room: zero.core.current.room.opts.key
+		}, squadname);
+	},
+	gamevite: function(squadname, msg) {
+		vu.live.emit("gamevite", {
+			squad: squadname,
+			msg: msg || "check out this game",
+			game: zero.core.current.adventure.game.key
 		}, squadname);
 	},
 	helpme: function() {
