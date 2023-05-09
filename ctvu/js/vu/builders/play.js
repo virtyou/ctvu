@@ -215,11 +215,7 @@ vu.builders.play = {
 			var _ = vu.builders.play._, selz = _.selectors,
 				sel = selz[section];
 			if (_.swappers.includes(section) || _.norets.includes(section)) return;
-			return function() {
-				sel._collapsed = !sel._collapsed;
-				zero.core.audio.ux(sel._collapsed ? "blipoff" : "blipon");
-				sel.modal.node.classList[sel._collapsed ? "add" : "remove"]("collapsed");
-			};
+			return () => vu.core.collapse(sel);
 		},
 		swap: function() {
 			var _ = vu.builders.play._, selz = _.selectors;
