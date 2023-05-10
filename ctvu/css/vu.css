@@ -307,8 +307,9 @@ img.right.h30p.up5 {
 }
 
 .gmenu.info {
-	max-width: 50%;
-	margin-right: 160px;
+	max-width: 25%;
+	max-height: 50%;
+/*	margin-right: 160px;*/
 	white-space: normal;
 }
 
@@ -318,6 +319,7 @@ img.right.h30p.up5 {
 
 .gmenu.minimap {
 	width: 270px;
+	max-width: 25%;
 	top: initial !important;
 }
 

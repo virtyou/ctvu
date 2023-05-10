@@ -31,6 +31,12 @@ vu.game.Scene = CT.Class({
 			return true;
 		}
 	},
+	personalize: function(person) {
+
+		// TODO: register click handler!!! > see vu.live.autochatter()
+
+		vu.core.comp(person);
+	},
 	refresh: function(altered) {
 		this.log("refresh", altered.story, altered.state);
 		if (altered.story || altered.state) {
@@ -64,14 +70,8 @@ vu.game.Scene = CT.Class({
 		zero.core.util.setCurPer(zcc.people[this.player.name]);
 		adv.controls.setCb(_.action);
 		adv.controls.setTarget(zcc.person, true);
-		vu.portal.on("filter", function(obj) {
-			return obj.name in portals;
-		});
-		vu.portal.on("inject", function(troom, pkey) {
-			zcc.injector = pkey;
-			adv.scene(portals[vu.portal.ejector.name].target);
-		});
 		zcc.room.setBounds();
+		CT.pubsub.subscribe(zcc.room.opts.key);
 		slz && zcc.room.lights.forEach(function(l, i) {
 			l.setIntensity(slz[i]);
 		});

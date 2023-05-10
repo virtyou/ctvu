@@ -6,19 +6,22 @@ vu.live = {
 		bsprops: ["target", "value", "boost", "floored", "hard"], // overkill?
 		actions: { // message types
 			chat: function(person, msg) {
-				vu.live._.cbs.chat(person, msg);
+				vu.multi.chat(person, msg);
 			},
 			squadchat: function(person, chdata) {
-				vu.live._.cbs.chat(person, chdata.msg, chdata.squad);
+				vu.multi.chat(person, chdata.msg, chdata.squad);
 			},
 			botchat: function(person, chdata) {
-				vu.live._.cbs.chat(zero.core.current.people[chdata.bot], chdata.msg);
+				vu.multi.chat(zero.core.current.people[chdata.bot], chdata.msg);
 			},
 			invite: function(person, squad) {
-				vu.live._.cbs.chat(person, "join my squad!", null, squad);
+				vu.multi.chat(person, "join my squad!", null, squad);
 			},
 			roomvite: function(person, rinvopts) {
-				vu.live._.cbs.chat(person, rinvopts.msg, rinvopts.squad, null, rinvopts.room);
+				vu.multi.chat(person, rinvopts.msg, rinvopts.squad, null, rinvopts.room);
+			},
+			gamevite: function(person, ginvopts) {
+				vu.multi.chat(person, ginvopts.msg, ginvopts.squad, null, null, ginvopts.game);
 			},
 			inject: function(person, pkey) { // join
 				zero.core.current.room.inject(person, pkey && zero.core.Thing.get(pkey));
@@ -122,7 +125,8 @@ vu.live = {
 			}
 		},
 		isroom: function(chan) {
-			return chan == zero.core.current.room.opts.key;
+			var zccr = zero.core.current.room;
+			return zccr && zccr.opts.key == chan;
 		},
 		dance: function(person, meta) {
 			if (meta.vibe != person.vibe.current)
@@ -141,12 +145,13 @@ vu.live = {
 				person.unmod();
 		},
 		spawn: function(pkey, meta, unfric, invis) {
-			var _ = vu.live._, isYou = vu.core.ischar(pkey);
+			var _ = vu.live._, isYou = vu.core.ischar(pkey),
+				zc = zero.core, zcu = zc.util, zcc = zc.current;
 			if (isYou && pkey in _.people) return; // you switching rooms
 			CT.db.one(pkey, function(pdata) {
 				if (meta && !invis && !_.cbs.frozen)
 					pdata.body.position = [meta.weave.target, meta.bob.target, meta.slide.target];
-				zero.core.util.join(vu.core.person(pdata, invis), function(person) {
+				var loadPer = function(person) {
 					_.people[pdata.key] = person;
 					_.cbs.enter(person);
 					if (isYou)
@@ -161,9 +166,35 @@ vu.live = {
 						user: pkey,
 						meta: meta
 					});
-				}, !isYou);
+				};
+				if (pdata.name in zcc.people)
+					loadPer(zcc.people[pdata.name]);
+				else
+					zcu.join(vu.core.person(pdata, invis), loadPer, !isYou);
 			}, "json");
 		}
+	},
+	autochatter: function(thing) { // thing = autobot (person)
+		var zc = zero.core, zcc = zc.current, cam = zc.camera;
+		var cbutt = CT.dom.button("chat", function() {
+			thing.automaton.pause();
+			thing.look(zcc.person.body, true);
+			cam.angle("front", thing.name);
+			zcc.person.onsaid(statement => thing.respond(statement, null, true,
+				msg => vu.live.botchat(thing.name, msg)));
+			CT.dom.setContent(cbox, cchatting);
+		}), cstop = CT.dom.button("stop chatting", function() {
+			thing.unlook();
+			thing.automaton.play();
+			cam.angle("polar");
+			zcc.person.onsaid();
+			CT.dom.setContent(cbox, cbutt);
+		}), chelp = CT.dom.button("help!", function() {
+			vu.squad.emit("enable help mode");
+		}), cchatting = CT.dom.div([
+			cstop, chelp
+		]), cbox = CT.dom.div(cbutt);
+		return cbox;
 	},
 	esync: function(data) {
 		vu.live.emit("environment", data);
@@ -194,6 +225,13 @@ vu.live = {
 			squad: squadname,
 			msg: msg || "check out this zone",
 			room: zero.core.current.room.opts.key
+		}, squadname);
+	},
+	gamevite: function(squadname, msg) {
+		vu.live.emit("gamevite", {
+			squad: squadname,
+			msg: msg || "check out this game",
+			game: zero.core.current.adventure.game.key
 		}, squadname);
 	},
 	helpme: function() {
@@ -238,15 +276,17 @@ vu.live = {
 		CT.pubsub.subscribe(channel);
 	},
 	init: function(cbs) {
-		var _ = vu.live._;
-		_.cbs = cbs;
+		var _ = vu.live._, zcc = zero.core.current;
+		cbs = _.cbs = cbs || {};
 		["subscribe", "join", "leave", "meta", "chmeta", "message"].forEach(function(ename) {
 			CT.pubsub.set_cb(ename, _.events[ename]);
 		});
 		CT.pubsub.connect(location.hostname, 8888, CT.storage.get("person"));
 		if (cbs.find)
 			cbs.find(vu.live.channel);
-		else
-			CT.pubsub.subscribe(zero.core.current.room.opts.key);
+		else if (zcc.room)
+			CT.pubsub.subscribe(zcc.room.opts.key);
+		CT.pubsub.subscribe("global");
+		user.core.get("admin") && CT.pubsub.subscribe("admin");
 	}
 };

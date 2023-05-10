@@ -16,24 +16,8 @@ vu.builders.chat = {
 				bs.bob.value = 15;
 				bs.weave.target = -20;
 				person.mutesfx();
-				CT.dom.setContent(_.langButt, vu.lang.button());
+				vu.multi.setLang();
 				vu.live.meta(); // for lang
-			},
-			chat: function(person, msg) {
-				var zccp = zero.core.current.person, subs = [
-					CT.dom.span(person.name, "bold italic green"),
-					CT.dom.pad(),
-					CT.dom.span(msg)
-				], mnode;
-				if (!vu.core.ischar(person.opts.key)) {
-					person.setVolume(zero.core.util.close2u(person.body));
-					if (person.language && person.language.code != zccp.language.code)
-						subs.push(vu.lang.transer(msg, person.language, zccp.language));
-				}
-				mnode = CT.dom.div(subs);
-				person.say(msg);
-				CT.dom.addContent(vu.builders.chat._.selectors.chat.out, mnode);
-				mnode.scrollIntoView();
 			},
 			enter: function(person) {
 				person.watch(false, true);
@@ -66,32 +50,7 @@ vu.builders.chat = {
 				selz = _.selectors, cur = zero.core.current,
 				popts = _.opts = vu.storage.get("person") || _.opts;
 			_.raw = vu.core.person(popts);
-			selz.chat = _.chatterbox();
-		},
-		chatterbox: function() {
-			var zc = zero.core, zcu = zc.util, zcc = zc.current, out = CT.dom.div(null,
-			"out"), _ = vu.builders.chat._, say = function(val, e) {
-				val && vu.live.emit("chat", val);
-				e && e.stopPropagation();
-				return "clear";
-			}, listButt = CT.dom.button("listen", function(e) {
-				listButt.style.color = "red";
-				zero.core.rec.listen(function(phrase) {
-					say(phrase);
-					listButt.style.color = "black";
-				});
-				e.stopPropagation();
-			}), cbox = CT.dom.smartField(say,
-				"w1 block mt5", null, null, null,
-			core.config.ctvu.blurs.talk), singButt = zcu.singer(cbox, say);
-			_.langButt = CT.dom.span();
-			cbox.onclick = function(e) { e.stopPropagation(); };
-			var n = CT.dom.div([
-				CT.dom.div([singButt, listButt, _.langButt], "right up15"),
-				out, cbox
-			]);
-			n.out = out;
-			return n;
+			selz.chat = vu.multi.chatterbox();
 		}
 	},
 	menus: function() {

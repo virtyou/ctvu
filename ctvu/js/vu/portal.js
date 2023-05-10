@@ -49,6 +49,10 @@ vu.portal = {
 	rand: function() {
 		vu.portal.port(CT.data.choice(vu.storage.get("rooms")).key);
 	},
+	options: function() {
+		var zcc = zero.core.current, scene = zcc.scene;
+		return scene.state.scenes[scene.name].portals;
+	},
 	check: function() {
 		var cur = zero.core.current, person = cur.person,
 			pos = person.body.placer.position, _ = this._, hit = false;

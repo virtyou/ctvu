@@ -128,7 +128,6 @@ vu.controls = {
 	setTriggers: function(node, cb, person, trigzonly) {
 		person = person || zero.core.current.person;
 		var responses = person.opts.responses, content = [
-			vu.controls.help("triggers and vibes")
 		], triggers = person.brain.triggers,
 			tkz = Object.keys(triggers),
 			trigz = trigzonly ? tkz : CT.data.uniquify(Object.keys(responses).concat(tkz)),
@@ -136,6 +135,8 @@ vu.controls = {
 			vibez = person.vibe.opts.vibes;
 		if (isgame)
 			CT.data.remove(trigz, "unintelligible");
+		else
+			content.push(vu.controls.help("triggers and vibes"));
 		content.push(vu.controls.triggerMap(trigz, function(trig) {
 			person.respond(trig);
 			vu.controls.setTriggers(node, cb, person, trigzonly);

@@ -1,4 +1,9 @@
 vu.core = {
+	collapse: function(sel) { // for modal menus
+		sel._collapsed = !sel._collapsed;
+		zero.core.audio.ux(sel._collapsed ? "blipoff" : "blipon");
+		sel.modal.node.classList[sel._collapsed ? "add" : "remove"]("collapsed");
+	},
 	bgen: function(opts) {
 		return opts.template ? CT.module(opts.template) : function() {
 //			opts.joints = zero.base.joints();

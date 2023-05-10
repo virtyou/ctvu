@@ -2,6 +2,16 @@ vu.game.Adventure = CT.Class({
 	CLASSNAME: "vu.game.Adventure",
 	_: {
 		scenes: {},
+		cbs: {
+			enter: function(person) {
+				this.log("enter", person.name);
+				zero.core.current.scene.personalize(person);
+			},
+			joined: function(person) {
+				this.log("joined", person.name);
+//				zero.core.current.adventure = new vu.game.Adventure(vu.builders.adventure._.aopts);
+			}
+		},
 		setState: function() {
 			var s = this.state;
 			s.script = s.script || "start";
@@ -36,6 +46,22 @@ vu.game.Adventure = CT.Class({
 				});
 			} else
 				_.setState();
+		},
+		start: function() {
+			var zcc = zero.core.current, vp = vu.portal;
+			vu.live.init(this._.cbs);
+			vp.on("filter", function(obj) {
+				return obj.name in vp.options();
+			});
+			vu.portal.on("eject", function(portout) {
+				vu.live.emit("eject", portout);
+				CT.pubsub.unsubscribe(zcc.room.opts.key);
+			});
+			vp.on("inject", function(troom, pkey) { // Scene.start() handles subscribe
+				zcc.injector = pkey;
+				zcc.adventure.scene(vp.options()[vp.ejector.name].target);
+				vu.live.emit("inject", pkey);
+			});
 		}
 	},
 	reset: function() {
@@ -54,6 +80,8 @@ vu.game.Adventure = CT.Class({
 		this.state.scene = key;
 		if (zcc.scene)
 			zcc.scene.unload();
+		else
+			_.start();
 		if (key in _.scenes)
 			_.scenes[key].load();
 		else {
@@ -92,7 +120,9 @@ vu.game.Adventure = CT.Class({
 		this.menus = new vu.menu.Game({
 			state: this.state
 		});
-		this.controls = new zero.core.Controls();
+		this.controls = new zero.core.Controls({
+			moveCb: vu.live.meta
+		});
 		CT.modal.modal(CT.dom.div([
 			CT.dom.div(opts.game.name, "bigger"),
 			opts.game.description,

@@ -63,22 +63,30 @@ vu.squad = {
 			cb: vu.live.invite
 		});
 	},
-	roomvite: function() {
-		var _ = vu.squad._, squads;
-		if (_.current != "room")
-			return vu.live.roomvite(_.current);
-		squads = vu.squad.chans(true);
+	invite2squad: function(iname, noroom) {
+		var _ = vu.squad._, squads, inviter = vu.live[iname];
+		if (noroom && _.current != "room")
+			return inviter(_.current);
+		squads = vu.squad.chans(noroom);
 		if (squads.length == 1)
-			return vu.live.roomvite("global");
+			return inviter("global");
 		CT.modal.choice({
 			prompt: "which squad are you telling?",
 			data: squads,
-			cb: vu.live.roomvite
+			cb: inviter
 		});
+	},
+	roomvite: function() {
+		vu.squad.invite2squad("roomvite", true);
+	},
+	gamevite: function() {
+		vu.squad.invite2squad("gamevite");
 	},
 	mod: function(e) {
 		var _ = vu.squad._, chans = ["switch channels", "join squad", "send room invite"];
 		e.stopPropagation();
+		if (location.pathname.includes("adventure"))
+			chans.push("send game invite");
 		if (_.squads.length)
 			chans = chans.concat(["send squad invite", "quit squad"]);
 		CT.modal.choice({
@@ -95,6 +103,8 @@ vu.squad = {
 					vu.squad.invite();
 				else if (action == "quit squad")
 					vu.squad.quit();
+				else if (action == "send game invite")
+					vu.squad.gamevite();
 			}
 		});
 	},

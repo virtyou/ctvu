@@ -14,8 +14,10 @@ CT.require("user.core");
 CT.require("zero.core");
 CT.require("vu.core");
 CT.require("vu.storage");
+CT.require("vu.squad");
 CT.require("vu.lang");
 CT.require("vu.live");
+CT.require("vu.multi");
 CT.require("vu.builders.core");
 CT.require("vu.builders.chat");
 

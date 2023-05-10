@@ -25,6 +25,7 @@ CT.require("vu.storage");
 CT.require("vu.squad");
 CT.require("vu.lang");
 CT.require("vu.live");
+CT.require("vu.multi");
 CT.require("vu.voice");
 CT.require("vu.party");
 CT.require("vu.portal");
