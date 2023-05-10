@@ -145,12 +145,13 @@ vu.live = {
 				person.unmod();
 		},
 		spawn: function(pkey, meta, unfric, invis) {
-			var _ = vu.live._, isYou = vu.core.ischar(pkey);
+			var _ = vu.live._, isYou = vu.core.ischar(pkey),
+				zc = zero.core, zcu = zc.util, zcc = zc.current;
 			if (isYou && pkey in _.people) return; // you switching rooms
 			CT.db.one(pkey, function(pdata) {
 				if (meta && !invis && !_.cbs.frozen)
 					pdata.body.position = [meta.weave.target, meta.bob.target, meta.slide.target];
-				zero.core.util.join(vu.core.person(pdata, invis), function(person) {
+				var loadPer = function(person) {
 					_.people[pdata.key] = person;
 					_.cbs.enter(person);
 					if (isYou)
@@ -165,7 +166,11 @@ vu.live = {
 						user: pkey,
 						meta: meta
 					});
-				}, !isYou);
+				};
+				if (pdata.name in zcc.people)
+					loadPer(zcc.people[pdata.name]);
+				else
+					zcu.join(vu.core.person(pdata, invis), loadPer, !isYou);
 			}, "json");
 		}
 	},
