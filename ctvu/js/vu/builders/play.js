@@ -45,8 +45,6 @@ vu.builders.play = {
 				zero.core.click.trigger(person.body);
 				core.config.ctzero.camera.cardboard && vu.voice.listen();
 				vu.core.comp();
-				CT.pubsub.subscribe("global");
-				user.core.get("admin") && CT.pubsub.subscribe("admin");
 			},
 			enter: function(person) {
 				vu.builders.play._.clickreg(person);
@@ -70,27 +68,9 @@ vu.builders.play = {
 				target = thing.body || thing,
 				isYou = vu.core.ischar(thing.opts.key);
 			if (thing.body) {
-				if (thing.automaton) {
-					var cbutt = CT.dom.button("chat", function() {
-						thing.automaton.pause();
-						thing.look(zcc.person.body, true);
-						cam.angle("front", thing.name);
-						zcc.person.onsaid(statement => thing.respond(statement, null, true,
-							msg => vu.live.botchat(thing.name, msg)));
-						CT.dom.setContent(cbox, cchatting);
-					}), cstop = CT.dom.button("stop chatting", function() {
-						thing.unlook();
-						thing.automaton.play();
-						cam.angle("polar");
-						zcc.person.onsaid();
-						CT.dom.setContent(cbox, cbutt);
-					}), chelp = CT.dom.button("help!", function() {
-						vu.squad.emit("enable help mode");
-					}), cchatting = CT.dom.div([
-						cstop, chelp
-					]), cbox = CT.dom.div(cbutt);
-					other.push(cbox);
-				} else if (vu.core.ownz()) {
+				if (thing.automaton)
+					other.push(vu.live.autochatter(thing));
+				else if (vu.core.ownz()) {
 					other.push(CT.dom.button("dunk", function() {
 						confirm("dunk this person?") && vu.live.emit("dunk", thing.opts.key);
 					}));
