@@ -125,7 +125,8 @@ vu.live = {
 			}
 		},
 		isroom: function(chan) {
-			return chan == zero.core.current.room.opts.key;
+			var zccr = zero.core.current.room;
+			return zccr && zccr.opts.key == chan;
 		},
 		dance: function(person, meta) {
 			if (meta.vibe != person.vibe.current)
@@ -167,6 +168,28 @@ vu.live = {
 				}, !isYou);
 			}, "json");
 		}
+	},
+	autochatter: function(thing) { // thing = autobot (person)
+		var zc = zero.core, zcc = zc.current, cam = zc.camera;
+		var cbutt = CT.dom.button("chat", function() {
+			thing.automaton.pause();
+			thing.look(zcc.person.body, true);
+			cam.angle("front", thing.name);
+			zcc.person.onsaid(statement => thing.respond(statement, null, true,
+				msg => vu.live.botchat(thing.name, msg)));
+			CT.dom.setContent(cbox, cchatting);
+		}), cstop = CT.dom.button("stop chatting", function() {
+			thing.unlook();
+			thing.automaton.play();
+			cam.angle("polar");
+			zcc.person.onsaid();
+			CT.dom.setContent(cbox, cbutt);
+		}), chelp = CT.dom.button("help!", function() {
+			vu.squad.emit("enable help mode");
+		}), cchatting = CT.dom.div([
+			cstop, chelp
+		]), cbox = CT.dom.div(cbutt);
+		return cbox;
 	},
 	esync: function(data) {
 		vu.live.emit("environment", data);
@@ -248,15 +271,17 @@ vu.live = {
 		CT.pubsub.subscribe(channel);
 	},
 	init: function(cbs) {
-		var _ = vu.live._;
-		_.cbs = cbs;
+		var _ = vu.live._, zcc = zero.core.current;
+		cbs = _.cbs = cbs || {};
 		["subscribe", "join", "leave", "meta", "chmeta", "message"].forEach(function(ename) {
 			CT.pubsub.set_cb(ename, _.events[ename]);
 		});
 		CT.pubsub.connect(location.hostname, 8888, CT.storage.get("person"));
 		if (cbs.find)
 			cbs.find(vu.live.channel);
-		else
-			CT.pubsub.subscribe(zero.core.current.room.opts.key);
+		else if (zcc.room)
+			CT.pubsub.subscribe(zcc.room.opts.key);
+		CT.pubsub.subscribe("global");
+		user.core.get("admin") && CT.pubsub.subscribe("admin");
 	}
 };
