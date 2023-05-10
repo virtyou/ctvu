@@ -21,6 +21,7 @@ CT.require("vu.lang");
 CT.require("vu.live");
 CT.require("vu.multi");
 CT.require("vu.controls");
+CT.require("vu.help");
 CT.require("vu.game");
 CT.require("vu.portal");
 CT.require("vu.menu.Map");
