@@ -85,7 +85,7 @@ vu.squad = {
 	mod: function(e) {
 		var _ = vu.squad._, chans = ["switch channels", "join squad", "send room invite"];
 		e.stopPropagation();
-		if ("adventure" in location.pathname)
+		if (location.pathname.includes("adventure"))
 			chans.push("send game invite");
 		if (_.squads.length)
 			chans = chans.concat(["send squad invite", "quit squad"]);
