@@ -108,7 +108,8 @@ vu.game.Adventure = CT.Class({
 				portals: {},
 				initial: {},
 				victory: {},
-				defeat: {}
+				defeat: {},
+				score: {}
 			}
 		});
 		zero.core.current.adventure = this;
