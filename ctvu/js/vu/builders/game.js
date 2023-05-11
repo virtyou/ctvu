@@ -194,6 +194,10 @@ vu.builders.game = {
 				_.conditions(game)
 			], "bordered padded margined round"),
 			CT.dom.div([
+				"score",
+				vu.game.hopper.view(game)
+			], "bordered padded margined round"),
+			CT.dom.div([
 				"live",
 				CT.dom.checkboxAndLabel("list on games page",
 					game.live, null, null, null, function(cb) {
