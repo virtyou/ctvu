@@ -52,9 +52,13 @@ vu.game.hopper = {
 			], "bordered padded margined round");
 		},
 		onpounce: function(pouncer) {
-			var h = vu.game.hopper, fcfg = h.pcfg().fauna,
-				pn = pouncer.name, pk = pouncer.opts.kind;
-			h.log(pn + " pounced on player for " + fcfg[pk] + " points");
+			var h = vu.game.hopper, pd = pouncer.direction,
+				pn = pouncer.name, pk = pouncer.opts.kind, pv = h.pcfg().fauna[pk],
+				pbs = zero.core.current.person.body.springs, mag = pv * 1000;
+			h.log(pn + " pounced on player for " + pv + " points");
+			zero.core.current.person.sfx("thud");
+			pbs.weave.shove = pd.x * mag;
+			pbs.slide.shove = pd.z * mag;
 		}
 	},
 	directions: {
