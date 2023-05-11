@@ -50,14 +50,23 @@ vu.game.hopper = {
 				h.directions[variety],
 				Object.keys(pz).map(p => p + ": " + pz[p])
 			], "bordered padded margined round");
+		},
+		onpounce: function(pouncer) {
+			var h = vu.game.hopper, fcfg = h.pcfg().fauna,
+				pn = pouncer.name, pk = pouncer.opts.kind;
+			h.log(pn + " pounced on player for " + fcfg[pk] + " points");
 		}
 	},
 	directions: {
 		fauna: "fauna pouncing on player",
 		player: "player pouncing on fauna"
 	},
+	log: function(msg) {
+		CT.log("hopper: " + msg);
+	},
 	pcfg: function(game) {
-		var scfg = (game || zero.core.current.scene.game).score;
+		var zcc = zero.core.current,
+			scfg = (game || zcc.scene.game || zcc.adventure.game).score;
 		if (!scfg.pounce)
 			scfg.pounce = { fauna: {}, player: {} };
 		return scfg.pounce;
@@ -82,5 +91,16 @@ vu.game.hopper = {
 			"pounce dynamics",
 			_.vgroup("player", game), _.vgroup("fauna", game)
 		], "bordered padded margined round");
+	},
+	init: function() {
+		var h = vu.game.hopper,
+			men = zero.core.current.room.menagerie,
+			hunters = Object.keys(h.pcfg().fauna);
+		if (!men)
+			return h.log("skipping init() - no menagerie");
+		if (!hunters.length)
+			return h.log("skipping init() - no hunters");
+		h.log("activating " + hunters.length + " hunters");
+		men.huntPlayer(hunters, h._.onpounce);
 	}
 };
