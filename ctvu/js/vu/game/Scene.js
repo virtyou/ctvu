@@ -96,6 +96,7 @@ vu.game.Scene = CT.Class({
 		}
 		this.comp();
 		this.menus.minimap();
+		vu.game.hopper.init();
 		this.script(this.state.script);
 	},
 	comp: function() {
@@ -119,8 +120,8 @@ vu.game.Scene = CT.Class({
 		delete zcc.room;
 	},
 	load: function() {
-		var oz = this.opts, cfg = core.config.ctzero, p,
-			zc = zero.core, zcc = zc.current, start = this.start;
+		var oz = this.opts, cfg = core.config.ctzero, start = this.start,
+			zc = zero.core, zcc = zc.current, zcu = zc.util, p;
 		this.player.gear = this.state.inventory.gear;
 		for (p of oz.actors) {
 //			p.grippy = false;
@@ -130,15 +131,15 @@ vu.game.Scene = CT.Class({
 		cfg.people = oz.actors.slice();
 
 		if (zcc.scene) {
-			zc.util.refresh(function(lastp, room) {
+			zcu.refresh(function(lastp, room) {
 				zcc.people[zcc.person.name] = zcc.person;
 				vu.portal.arrive(zcc.injector &&
-					zero.core.Thing.get(zcc.injector));
+					zc.Thing.get(zcc.injector));
 				start();
 			});
 		} else {
 			cfg.people.push(this.player);
-			zc.util.init(null, start);
+			zcu.init(null, start);
 		}
 		zcc.scene = this;
 	},
@@ -156,6 +157,8 @@ vu.game.Scene = CT.Class({
 		});
 		var a = this.adventure = opts.adventure,
 			s = this.state = a.state, osa = s.actors;
+		if (!s.scenes)
+			s.scenes = {};
 		if (!s.scenes[opts.name]) // scene w/ no initial state
 			s.scenes[opts.name] = {};
 		this.name = opts.name;
