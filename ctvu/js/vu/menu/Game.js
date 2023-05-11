@@ -5,6 +5,7 @@ vu.menu.Game = CT.Class({
 		menus: {
 			minimap: "topright",
 			story: "bottomleft",
+			score: "bottomleft",
 			camera: "bottomright"
 		},
 		interactionals: {},
@@ -72,6 +73,7 @@ vu.menu.Game = CT.Class({
 		setup: function() {
 			var _ = this._, selz = _.selectors, cam = zero.core.camera;
 			selz.story = CT.dom.div(null, "scrolly kidvp mt5 hm200p");
+			selz.score = CT.dom.div();
 			selz.camera = CT.dom.div();
 			selz.minimap = CT.dom.div();
 			_.minimap = new vu.menu.Map({
@@ -99,9 +101,24 @@ vu.menu.Game = CT.Class({
 			mod.node.classList.remove("collapsed");
 		mod.show("ctmain", _.minimap.refresh);
 	},
-	story: function() {
-		var sel = this._.selectors.story, s = this.state,
+	score: function() {
+		var selz = this._.selectors, sel = selz.score,
 			mod = sel.modal, snode = mod.node;
+		CT.dom.setContent(sel, [
+
+
+			// TODO
+
+
+		]);
+		mod.show("ctmain");
+		selz.story.modal.hide();
+		if (snode.classList.contains("collapsed"))
+			snode.classList.remove("collapsed");
+	},
+	story: function() {
+		var selz = this._.selectors, sel = selz.story,
+			s = this.state, mod = sel.modal, snode = mod.node;
 		CT.dom.setContent(sel, [
 			CT.dom.button("state", function() {
 				CT.modal.modal([
@@ -124,6 +141,7 @@ vu.menu.Game = CT.Class({
 			s.story
 		]);
 		mod.show("ctmain");
+		selz.score.modal.hide();
 		if (snode.classList.contains("collapsed"))
 			snode.classList.remove("collapsed");
 		setTimeout(function() { // TODO: fix this!!
@@ -140,7 +158,7 @@ vu.menu.Game = CT.Class({
 		var mod = this._[atype](CT.dom.div(name, "big"), CT.dom.div([
 			info, CT.dom.div(source, "biggest")
 		], "centered"));
-		mod.show();
+		mod.show("ctmain");
 		setTimeout(mod.hide, 5000);
 	},
 	book: function(item) {
