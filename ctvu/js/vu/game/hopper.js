@@ -8,9 +8,8 @@ vu.game.hopper = {
 			});
 		},
 		addhop: function(variety) {
-			var _ = vu.game.hopper._, zcc = zero.core.current,
-				scfg = zcc.scene.game.score, kinds,
-				pz = scfg.pounce[variety], men = zcc.room.menagerie;
+			var h = vu.game.hopper, _ = h._, pz = h.pcfg()[variety],
+				kinds, men = zero.core.current.room.menagerie;
 			if (!men)
 				return alert("this room has no associated menagerie - please add one on the pop page!");
 			kinds = men.kinds.filter(k => !(k in pz));
@@ -18,7 +17,7 @@ vu.game.hopper = {
 				return alert("all animals are accounted for!");
 			CT.modal.choice({
 				prompt: [
-					CT.dom.div(vu.game.hopper.directions[variety], "bold"),
+					CT.dom.div(h.directions[variety], "bold"),
 					"please select an animal"
 				],
 				data: kinds,
@@ -30,11 +29,10 @@ vu.game.hopper = {
 			});
 		},
 		egroup: function(variety) { // player or fauna
-			var _ = vu.game.hopper._, zcc = zero.core.current,
-				scfg = zcc.scene.game.score, pz = scfg.pounce[variety];
+			var h = vu.game.hopper, _ = h._, pz = h.pcfg()[variety];
 			return CT.dom.div([
 				CT.dom.button("add", () => _.addhop(variety), "right"),
-				vu.game.hopper.directions[variety],
+				h.directions[variety],
 				Object.keys(pz).map(function(p) {
 					return [
 						p,
@@ -45,18 +43,28 @@ vu.game.hopper = {
 					];
 				})
 			], "bordered padded margined round");
+		},
+		vgroup: function(variety, game) {
+			var h = vu.game.hopper, pz = h.pcfg(game)[variety];
+			return CT.dom.div([
+				h.directions[variety],
+				Object.keys(pz).map(p => p + ": " + pz[p])
+			], "bordered padded margined round");
 		}
 	},
 	directions: {
 		fauna: "fauna pouncing on player",
 		player: "player pouncing on fauna"
 	},
-	modder: function() { // { fauna: { dog: 2, cat: 10 }, player: { cat: 1 } }
-		var _ = vu.game.hopper._, node, pounces = CT.dom.div(),
-			scfg = zero.core.current.scene.game.score;
+	pcfg: function(game) {
+		var scfg = (game || zero.core.current.scene.game).score;
 		if (!scfg.pounce)
 			scfg.pounce = { fauna: {}, player: {} };
-		node = _.editor = CT.dom.div([
+		return scfg.pounce;
+	},
+	modder: function() { // { fauna: { dog: 2, cat: 10 }, player: { cat: 1 } }
+		var _ = vu.game.hopper._, pounces = CT.dom.div();
+		var node = _.editor = CT.dom.div([
 			CT.dom.div("pounce dynamics", "big"),
 			pounces
 		], "bordered padded margined round");
@@ -67,5 +75,12 @@ vu.game.hopper = {
 		};
 		node.refresh();
 		return node;
+	},
+	view: function(game) {
+		var _ = vu.game.hopper._;
+		return CT.dom.div([
+			"pounce dynamics",
+			_.vgroup("player", game), _.vgroup("fauna", game)
+		], "bordered padded margined round");
 	}
 };
