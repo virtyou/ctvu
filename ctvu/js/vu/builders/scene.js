@@ -177,6 +177,64 @@ vu.builders.scene = {
 				pz
 			]);
 		},
+		pouncer: function() { // { fauna: { dog: 2, cat: 10 }, player: { cat: 1 } }
+			var zcc = zero.core.current, game = zcc.scene.game, scfg = game.score, pdirs = {
+				fauna: "fauna pouncing on player",
+				player: "player pouncing on fauna"
+			}, upscore = function() {
+				vu.storage.edit({
+					key: game.key,
+					score: scfg
+				});
+			}, pz, men, kinds, padd = function(variety) {
+				pz = scfg.pounce[variety];
+				men = zcc.room.menagerie;
+				if (!men)
+					return alert("this room has no associated menagerie - please add one on the pop page!");
+				kinds = men.kinds.filter(k => !(k in pz));
+				if (!kinds.length)
+					return alert("all animals are accounted for!");
+				CT.modal.choice({
+					prompt: [
+						CT.dom.div(pdirs[variety], "bold"),
+						"please select an animal"
+					],
+					data: kinds,
+					cb: function(kind) {
+						pz[kind] = 1;
+						upscore();
+						node.refresh();
+					}
+				});
+			}, pgroup = function(variety) { // player or fauna
+				pz = scfg.pounce[variety];
+				return CT.dom.div([
+					CT.dom.button("add", () => padd(variety), "right"),
+					pdirs[variety],
+					Object.keys(pz).map(function(p) {
+						return [
+							p,
+							CT.dom.range(function(val) {
+								pz[p] = parseInt(val);
+								upscore();
+							}, 1, 10, pz[p], 1, "w1 block")
+						];
+					})
+				], "bordered padded margined round");
+			}, pounces = CT.dom.div(), node = CT.dom.div([
+				CT.dom.div("pounce dynamics", "big"),
+				pounces
+			], "bordered padded margined round");
+			if (!scfg.pounce)
+				scfg.pounce = { fauna: {}, player: {} };
+			node.refresh = function() {
+				CT.dom.setContent(pounces, [
+					pgroup("player"), pgroup("fauna")
+				]);
+			};
+			node.refresh();
+			return node;
+		},
 		prop: function(p) {
 			var zcc = zero.core.current, scene = zcc.scene,
 				pobj = scene.props[p.name] = scene.props[p.name] || { name: p.name };
@@ -391,6 +449,9 @@ vu.builders.scene = {
 			snode,
 			"Scripts",
 			selz.scripts
+		]);
+		CT.dom.setContent(selz.score, [
+			_.pouncer()
 		]);
 		vu.game.step.setSels(selz);
 		vu.game.step.setAudio(_.audio);
