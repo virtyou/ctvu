@@ -61,6 +61,7 @@ class Game(db.TimeStampedBase):
 	initial = db.JSON(default={})
 	victory = db.JSON(default={})
 	defeat = db.JSON(default={})
+	score = db.JSON(default={})
 	live = db.Boolean(default=False) # games page list
 
 	def json(self):
