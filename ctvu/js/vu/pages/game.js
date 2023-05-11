@@ -14,6 +14,7 @@ CT.require("zero.core");
 CT.require("vu.core");
 CT.require("vu.storage");
 CT.require("vu.game.util");
+CT.require("vu.game.hopper");
 CT.require("vu.builders.game");
 
 // TODO: rm some imports!!
