@@ -54,20 +54,19 @@ vu.game.hopper = {
 		onpounce: function(pouncer) {
 			var h = vu.game.hopper, pd = pouncer.direction,
 				pn = pouncer.name, pk = pouncer.opts.kind, pv = h.pcfg().fauna[pk],
-				pbs = zero.core.current.person.body.springs, mag = pv * 1000;
+				zcc = zero.core.current, adv = zcc.adventure,
+				pbs = zcc.person.body.springs, mag = pv * 1000;
 			h.log(pn + " pounced on player for " + pv + " points");
 			zero.core.current.person.sfx("thud");
 			pbs.weave.shove = pd.x * mag;
 			pbs.slide.shove = pd.z * mag;
-			// TODO: score!!!
+			adv.score(-pv);
 		},
 		onsplat: function(prey) {
 			var h = vu.game.hopper;
 			h.log("you splatted " + prey.name);
-			// TODO:
-			// 1 sfx!
-			// 2 score!
-			// 3 recycle (down and up elsewhere?)
+			zero.core.current.adventure.score(h.pcfg().player[prey.opts.kind]);
+			// TODO: recycle (down and up elsewhere?)!!!
 		}
 	},
 	directions: {
