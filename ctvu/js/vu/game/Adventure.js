@@ -97,6 +97,16 @@ vu.game.Adventure = CT.Class({
 		this.state.script = "start";
 		this.setScene(this.scenemap[name]);
 	},
+	average: function(people) {
+		var zcc = zero.core.current, pz = zcc.people,
+			sum = people.map(p => pz[p].score).reduce((a, b) => a + b, 0),
+			average = Math.ceil(sum / people.length), name;
+		for (name of people)
+			pz[name].score = average;
+		this.menus.score();
+		zcc.person.sfx("splat");
+		vu.game.hopper.zombify();
+	},
 	score: function(amount, person) {
 		var isYou = !person;
 		if (isYou) { // additive!
@@ -107,7 +117,7 @@ vu.game.Adventure = CT.Class({
 		this.menus.score();
 		if (isYou) {
 			vu.live.meta();
-			vu.game.hopper.zombify(person.score < 0);
+			vu.game.hopper.zombify();
 		}
 	},
 	init: function(opts) {
