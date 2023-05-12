@@ -59,6 +59,15 @@ vu.game.hopper = {
 			zero.core.current.person.sfx("thud");
 			pbs.weave.shove = pd.x * mag;
 			pbs.slide.shove = pd.z * mag;
+			// TODO: score!!!
+		},
+		onsplat: function(prey) {
+			var h = vu.game.hopper;
+			h.log("you splatted " + prey.name);
+			// TODO:
+			// 1 sfx!
+			// 2 score!
+			// 3 recycle (down and up elsewhere?)
 		}
 	},
 	directions: {
@@ -97,14 +106,19 @@ vu.game.hopper = {
 		], "bordered padded margined round");
 	},
 	init: function() {
-		var h = vu.game.hopper,
-			men = zero.core.current.room.menagerie,
-			hunters = Object.keys(h.pcfg().fauna);
+		var h = vu.game.hopper, zcc = zero.core.current,
+			men = zcc.room.menagerie, pcfg = h.pcfg(),
+			hunters = Object.keys(pcfg.fauna),
+			prey = Object.keys(pcfg.player), _ = h._;
 		if (!men)
 			return h.log("skipping init() - no menagerie");
-		if (!hunters.length)
-			return h.log("skipping init() - no hunters");
-		h.log("activating " + hunters.length + " hunters");
-		men.huntPlayer(hunters, h._.onpounce);
+		if (hunters.length) {
+			h.log("activating " + hunters.length + " hunter varieties");
+			men.huntPlayer(hunters, _.onpounce);
+		}
+		if (prey.length) {
+			h.log("activating " + prey.length + " prey varieties");
+			zcc.person.onland(() => men.splat(prey, _.onsplat));
+		}
 	}
 };
