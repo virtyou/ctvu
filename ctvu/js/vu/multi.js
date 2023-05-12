@@ -28,7 +28,7 @@ vu.multi = {
 					helpButt.style.color = "black";
 					helpButt.innerText = "help";
 				}
-				vu.builders.play.minimap.help(zcc.person);
+				zcc.minimap.help(zcc.person);
 				vu.live.meta();
 				e.stopPropagation();
 			});
