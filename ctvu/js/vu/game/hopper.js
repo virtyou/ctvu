@@ -51,6 +51,13 @@ vu.game.hopper = {
 				Object.keys(pz).map(p => p + ": " + pz[p])
 			], "bordered padded margined round");
 		},
+		initial: function() {
+			var h = vu.game.hopper, scfg = h.scfg();
+			return CT.dom.range(function(val) {
+				scfg.initial = parseInt(val);
+				h._.upscore();
+			}, 0, 10, scfg.initial, 1, "w1 block");
+		},
 		onpounce: function(pouncer) {
 			var h = vu.game.hopper, pd = pouncer.direction,
 				pn = pouncer.name, pk = pouncer.opts.kind, pv = h.pcfg().fauna[pk],
@@ -97,16 +104,23 @@ vu.game.hopper = {
 	log: function(msg) {
 		CT.log("hopper: " + msg);
 	},
-	pcfg: function(game) {
+	scfg: function(game) {
 		var zcc = zero.core.current,
 			scfg = (game || zcc.scene.game || zcc.adventure.game).score;
 		if (!scfg.pounce)
 			scfg.pounce = { fauna: {}, player: {} };
-		return scfg.pounce;
+		if (!scfg.initial)
+			scfg.initial = 0;
+		return scfg;
+	},
+	pcfg: function(game) {
+		return vu.game.hopper.scfg(game).pounce;
 	},
 	modder: function() { // { fauna: { dog: 2, cat: 10 }, player: { cat: 1 } }
 		var _ = vu.game.hopper._, pounces = CT.dom.div();
 		var node = _.editor = CT.dom.div([
+			CT.dom.div("initial score", "big"),
+			_.initial(),
 			CT.dom.div("pounce dynamics", "big"),
 			pounces
 		], "bordered padded margined round");
@@ -119,8 +133,9 @@ vu.game.hopper = {
 		return node;
 	},
 	view: function(game) {
-		var _ = vu.game.hopper._;
+		var h = vu.game.hopper, _ = h._;
 		return CT.dom.div([
+			"initial score: " + h.scfg(game).initial,
 			"pounce dynamics",
 			_.vgroup("player", game), _.vgroup("fauna", game)
 		], "bordered padded margined round");
