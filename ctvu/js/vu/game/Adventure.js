@@ -5,11 +5,11 @@ vu.game.Adventure = CT.Class({
 		cbs: {
 			enter: function(person) {
 				this.log("enter", person.name);
-				person.score = person.score || 0;
 				zero.core.current.scene.personalize(person);
 			},
 			joined: function(person) {
 				this.log("joined", person.name);
+				person.score = person.score || 0;
 //				zero.core.current.adventure = new vu.game.Adventure(vu.builders.adventure._.aopts);
 			}
 		},
@@ -98,9 +98,12 @@ vu.game.Adventure = CT.Class({
 		this.setScene(this.scenemap[name]);
 	},
 	score: function(amount, person) {
-		person = person || zero.core.current.person;
-		person.score += amount;
+		if (!person) // is you - additive!
+			zero.core.current.person.score += amount;
+		else
+			person.score = amount;
 		this.menus.score();
+		person || vu.live.meta();
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
