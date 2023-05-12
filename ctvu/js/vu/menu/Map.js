@@ -1,27 +1,27 @@
 vu.menu.Map = CT.Class({
 	CLASSNAME: "vu.menu.Map",
 	_: {
+		structurals: ["floor", "wall", "ramp", "obstacle"],
 		center: { x: 0, z: 0 },
+		styler: {},
 		b2p: function(bz, p) {
 			var _ = this._, s = _.scale, o = _.offsets,
-				min = bz.min, max = bz.max;
+				min = bz.min, max = bz.max, styler = _.styler;
 			p = p || _.center;
-			return {
-				top: s * (min.z + o.z + p.z) + "px",
-				left: s * (min.x + o.x + p.x) + "px",
-				width: s * (max.x - min.x) + "px",
-				height: s * (max.z - min.z) + "px"
-			};
+			styler.top = s * (min.z + o.z + p.z) + "px";
+			styler.left = s * (min.x + o.x + p.x) + "px";
+			styler.width = s * (max.x - min.x) + "px";
+			styler.height = s * (max.z - min.z) + "px";
+			return styler;
 		},
 		r2p: function(r, p) {
-			var _ = this._, s = _.scale, o = _.offsets;
+			var _ = this._, s = _.scale, o = _.offsets, styler = _.styler;
 			p = p || _.center;
-			return {
-				top: s * (o.z + p.z - r.z) + "px",
-				left: s * (o.x + p.x - r.x) + "px",
-				width: s * (r.x * 2) + "px",
-				height: s * (r.z * 2) + "px"
-			};
+			styler.top = s * (o.z + p.z - r.z) + "px";
+			styler.left = s * (o.x + p.x - r.x) + "px";
+			styler.width = s * (r.x * 2) + "px";
+			styler.height = s * (r.z * 2) + "px";
+			return styler;
 		}
 	},
 	tick: function() {
@@ -94,7 +94,7 @@ vu.menu.Map = CT.Class({
 		_.people = {};
 		_.movers = {};
 		this.frame(r.bounds);
-		for (k of ["floor", "wall", "ramp", "obstacle"])
+		for (k of _.structurals)
 			for (o in r[k])
 				this.place(r[k][o], k);
 		r.objects.forEach(o => this.place(o, "object"));
