@@ -108,7 +108,7 @@ vu.menu.Game = CT.Class({
 	score: function() {
 		var selz = this._.selectors, sel = selz.score,
 			mod = sel.modal, snode = mod.node, sclass,
-			pz = Object.values(zero.core.current.people);
+			pz = Object.values(zero.core.current.people).filter(b => !isNaN(b.score));
 		pz.sort((a, b) => b.score - a.score);
 		CT.dom.setContent(sel, pz.map(function(p) {
 			sclass = "right bold";
