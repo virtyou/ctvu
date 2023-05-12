@@ -23,6 +23,12 @@ vu.live = {
 			gamevite: function(person, ginvopts) {
 				vu.multi.chat(person, ginvopts.msg, ginvopts.squad, null, null, ginvopts.game);
 			},
+			game: function(person, gdata) {
+				var adv = zero.core.current.adventure;
+				if (!adv || gdata.game != adv.game.key) return;
+				if (gdata.action == "average")
+					adv.average(gdata.data)
+			},
 			inject: function(person, pkey) { // join
 				zero.core.current.room.inject(person, pkey && zero.core.Thing.get(pkey));
 //				person.body.show();
@@ -235,6 +241,13 @@ vu.live = {
 			msg: msg || "check out this game",
 			game: zero.core.current.adventure.game.key
 		}, squadname);
+	},
+	game: function(action, data) {
+		vu.live.emit("game", {
+			action: action,
+			data: data,
+			game: zero.core.current.adventure.game.key
+		});
 	},
 	helpme: function() {
 		vu.live.roomvite("admin", "help me");
