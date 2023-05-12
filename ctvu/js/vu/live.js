@@ -120,10 +120,10 @@ vu.live = {
 					data = msg.message, action = _.actions[data.action];
 				if (person && person.body)
 					action(person, data.data);
-				else if (["squadchat", "invite", "roomvite"].includes(data.action))
+				else
 					CT.db.one(msg.user, user => action({ name: user.name }, data.data), "json");
-				else // probs still building
-					_.pending[msg.user] = msg;
+//				else // probs still building
+//					_.pending[msg.user] = msg;     <-- necessary in some cases???
 			}
 		},
 		isroom: function(chan) {
