@@ -39,7 +39,7 @@ vu.builders.play = {
 					target: person,
 					moveCb: vu.live.meta
 				});
-				vbp.minimap = new vu.menu.Map({ node: _.selectors.minimap });
+				vbp.minimap = cur.minimap = new vu.menu.Map({ node: _.selectors.minimap });
 				vu.core.ownz() && _.selectors.lights.update();
 				_.regclix();
 				zero.core.click.trigger(person.body);
@@ -198,12 +198,10 @@ vu.builders.play = {
 			return () => vu.core.collapse(sel);
 		},
 		swap: function() {
-			var _ = vu.builders.play._, selz = _.selectors;
+			var _ = vu.builders.play._;
 			if (!vu.core.ownz() && !_.partified) return;
 			_.partified = !_.partified;
-			_.swappers.forEach(function(section) {
-				selz[section].modal.showHide("ctmain");
-			});
+			vu.core.swap(_.swappers, _.selectors);
 		},
 		head: function(section) {
 			var n = CT.dom.node(CT.parse.key2title(section));

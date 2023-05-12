@@ -4,12 +4,13 @@ vu.builders.scene = {
 		menus: {
 			cameras: "top",
 			main: "topleft",
+			score: "topleft",
 			props: "topright",
 			portals: "topright",
 			steps: "bottomleft",
 			actors: "bottomright"
 		},
-		swappers: ["props", "portals"],
+		swappers: ["props", "portals", "main", "score"],
 		state: function(ofScene, sub) {
 			var i = zero.core.current.scene.game.initial;
 			if (!ofScene) return i;
@@ -328,17 +329,11 @@ vu.builders.scene = {
 			CT.dom.addContent(selz.props, selz.items);
 			CT.dom.addContent(selz.main, selz.lights);
 		},
-		swapem: function() {
-			var _ = vu.builders.scene._, selz = _.selectors;
-			_.swappers.forEach(function(section) {
-				selz[section].modal.showHide("ctmain");
-			});
-		},
 		head: function(section) {
 			var n = CT.dom.node(CT.parse.key2title(section)),
 				_ = vu.builders.scene._;
 			if (_.swappers.indexOf(section) != -1)
-				n.onclick = _.swapem;
+				n.onclick = () => vu.core.swap(_.swappers, _.selectors);
 			return n;
 		},
 		swap: function() {
@@ -396,6 +391,9 @@ vu.builders.scene = {
 			snode,
 			"Scripts",
 			selz.scripts
+		]);
+		CT.dom.setContent(selz.score, [
+			vu.game.hopper.modder()
 		]);
 		vu.game.step.setSels(selz);
 		vu.game.step.setAudio(_.audio);
@@ -476,6 +474,7 @@ vu.builders.scene = {
 	setup: function() {
 		var selz = vu.builders.scene._.selectors;
 		selz.main = CT.dom.div();
+		selz.score = CT.dom.div();
 		selz.scripts = CT.dom.div();
 		selz.steps = CT.dom.div();
 		selz.actors = CT.dom.div();
@@ -490,7 +489,7 @@ vu.builders.scene = {
 		for (section in _.menus) {
 			selz[section].modal = vu.core.menu(section,
 				_.menus[section], selz[section], _.head(section));
-			(section == "portals") || selz[section].modal.show("ctmain");
+			["portals", "score"].includes(section) || selz[section].modal.show("ctmain");
 		}
 	},
 	init: function() {

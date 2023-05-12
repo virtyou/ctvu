@@ -5,6 +5,7 @@ vu.menu.Game = CT.Class({
 		menus: {
 			minimap: "topright",
 			story: "bottomleft",
+			score: "bottomleft",
 			camera: "bottomright"
 		},
 		interactionals: {},
@@ -69,14 +70,19 @@ vu.menu.Game = CT.Class({
 		hearing: function(name, info) {
 			return this._.interactional("hearing", "left", name, info);
 		},
+		onmapready: function() {
+			vu.game.hopper.init();
+		},
 		setup: function() {
-			var _ = this._, selz = _.selectors, cam = zero.core.camera;
+			var _ = this._, selz = _.selectors, zc = zero.core, cam = zc.camera;
 			selz.story = CT.dom.div(null, "scrolly kidvp mt5 hm200p");
+			selz.score = CT.dom.div();
 			selz.camera = CT.dom.div();
 			selz.minimap = CT.dom.div();
-			_.minimap = new vu.menu.Map({
+			_.minimap = zc.current.minimap = new vu.menu.Map({
 				wait: true,
-				node: selz.minimap
+				node: selz.minimap,
+				onready: _.onmapready
 			});
 			selz.camera.update = function() {
 				CT.dom.setContent(selz.camera, [
@@ -99,9 +105,30 @@ vu.menu.Game = CT.Class({
 			mod.node.classList.remove("collapsed");
 		mod.show("ctmain", _.minimap.refresh);
 	},
+	score: function() {
+		var selz = this._.selectors, sel = selz.score,
+			mod = sel.modal, snode = mod.node, sclass,
+			pz = Object.values(zero.core.current.people).filter(b => !isNaN(b.score));
+		pz.sort((a, b) => b.score - a.score);
+		CT.dom.setContent(sel, pz.map(function(p) {
+			sclass = "right bold";
+			if (p.score > 0)
+				sclass += " green";
+			else if (p.score < 0)
+				sclass += " red";
+			return CT.dom.div([
+				CT.dom.div(p.score, sclass),
+				p.name
+			], "bordered padded margined round");
+		}));
+		mod.show("ctmain");
+		selz.story.modal.hide();
+		if (snode.classList.contains("collapsed"))
+			snode.classList.remove("collapsed");
+	},
 	story: function() {
-		var sel = this._.selectors.story, s = this.state,
-			mod = sel.modal, snode = mod.node;
+		var selz = this._.selectors, sel = selz.story,
+			s = this.state, mod = sel.modal, snode = mod.node;
 		CT.dom.setContent(sel, [
 			CT.dom.button("state", function() {
 				CT.modal.modal([
@@ -124,6 +151,7 @@ vu.menu.Game = CT.Class({
 			s.story
 		]);
 		mod.show("ctmain");
+		selz.score.modal.hide();
 		if (snode.classList.contains("collapsed"))
 			snode.classList.remove("collapsed");
 		setTimeout(function() { // TODO: fix this!!
@@ -140,7 +168,7 @@ vu.menu.Game = CT.Class({
 		var mod = this._[atype](CT.dom.div(name, "big"), CT.dom.div([
 			info, CT.dom.div(source, "biggest")
 		], "centered"));
-		mod.show();
+		mod.show("ctmain");
 		setTimeout(mod.hide, 5000);
 	},
 	book: function(item) {

@@ -23,6 +23,12 @@ vu.live = {
 			gamevite: function(person, ginvopts) {
 				vu.multi.chat(person, ginvopts.msg, ginvopts.squad, null, null, ginvopts.game);
 			},
+			game: function(person, gdata) {
+				var adv = zero.core.current.adventure;
+				if (!adv || gdata.game != adv.game.key) return;
+				if (gdata.action == "average")
+					adv.average(gdata.data)
+			},
 			inject: function(person, pkey) { // join
 				zero.core.current.room.inject(person, pkey && zero.core.Thing.get(pkey));
 //				person.body.show();
@@ -66,9 +72,9 @@ vu.live = {
 			},
 			leave: function(chan, user) {
 				var _ = vu.live._, peeps = _.people,
-					vbp = vu.builders.play;
+					minimap = zero.core.current.minimap;
 				_.isroom(chan) && setTimeout(function() {
-					vbp && vbp.minimap.unperson(peeps[user].name);
+					minimap.unperson(peeps[user].name);
 					peeps[user].remove();
 					delete peeps[user];
 					if (Object.keys(peeps).length == 1)
@@ -93,7 +99,7 @@ vu.live = {
 			},
 			meta: function(data) {
 				var _ = vu.live._, person = _.people[data.user], meta = data.meta,
-					zcc = zero.core.current, vbp = vu.builders.play;
+					zcc = zero.core.current;
 				if (zcc.person && data.user == zcc.person.opts.key)
 					return;
 				if (!(person && person.body))
@@ -110,18 +116,20 @@ vu.live = {
 				_.dance(person, meta);
 				if (person.helpMe != meta.helpMe) {
 					person.helpMe = meta.helpMe;
-					vbp && (vu.core.ownz() || user.core.get("admin")) && vbp.minimap.help(person);
+					(vu.core.ownz() || user.core.get("admin")) && zcc.minimap.help(person);
 				}
+				if (person.score != meta.score)
+					zcc.adventure && zcc.adventure.score(meta.score, person);
 			},
 			message: function(msg) {
 				var _ = vu.live._, person = _.people[msg.user],
 					data = msg.message, action = _.actions[data.action];
 				if (person && person.body)
 					action(person, data.data);
-				else if (["squadchat", "invite", "roomvite"].includes(data.action))
+				else
 					CT.db.one(msg.user, user => action({ name: user.name }, data.data), "json");
-				else // probs still building
-					_.pending[msg.user] = msg;
+//				else // probs still building
+//					_.pending[msg.user] = msg;     <-- necessary in some cases???
 			}
 		},
 		isroom: function(chan) {
@@ -234,6 +242,13 @@ vu.live = {
 			game: zero.core.current.adventure.game.key
 		}, squadname);
 	},
+	game: function(action, data) {
+		vu.live.emit("game", {
+			action: action,
+			data: data,
+			game: zero.core.current.adventure.game.key
+		});
+	},
 	helpme: function() {
 		vu.live.roomvite("admin", "help me");
 	},
@@ -255,7 +270,8 @@ vu.live = {
 				dance: person.activeDance,
 				gesture: person.activeGesture,
 				language: person.language,
-				fznchan: bod.fznchan
+				fznchan: bod.fznchan,
+				score: person.score
 			};
 			for (s of _.springs) {
 				targets[s] = {

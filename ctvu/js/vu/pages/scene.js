@@ -13,6 +13,7 @@ CT.require("core");
 CT.require("user.core");
 CT.require("zero.core");
 CT.require("vu.core");
+CT.require("vu.help");
 CT.require("vu.media");
 CT.require("vu.audio");
 CT.require("vu.storage");
@@ -20,6 +21,7 @@ CT.require("vu.controls");
 CT.require("vu.game.util");
 CT.require("vu.game.step");
 CT.require("vu.game.stepper");
+CT.require("vu.game.hopper");
 CT.require("vu.builders.scene");
 
 CT.onload(function() {

@@ -271,6 +271,9 @@ img.right.h30p.up5 {
 	max-width: 180px;
 }*/
 
+.gmenu.score {
+	width: 320px;
+}
 .gmenu.main {
 	max-height: 50%;
 	max-width: 282px;
@@ -336,7 +339,8 @@ img.right.h30p.up5 {
 .gmenu.minimap .frame .obstacle,
 .gmenu.minimap .frame .object,
 .gmenu.minimap .frame .people,
-.gmenu.minimap .frame .person {
+.gmenu.minimap .frame .person,
+.gmenu.minimap .frame .monster {
 	position: absolute;
 	opacity: 0.9;
 }
@@ -359,7 +363,8 @@ img.right.h30p.up5 {
 }
 
 .gmenu.minimap .frame .people,
-.gmenu.minimap .frame .person {
+.gmenu.minimap .frame .person,
+.gmenu.minimap .frame .monster {
 	opacity: 1;
 	padding: 5px;
 	border-radius: 50%;
@@ -369,6 +374,10 @@ img.right.h30p.up5 {
 
 .gmenu.minimap .frame .person {
 	background: green;
+}
+
+.gmenu.minimap .frame .monster {
+	background: red;
 }
 
 .gmenu.collapsed {

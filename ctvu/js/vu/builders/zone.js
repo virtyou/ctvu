@@ -1253,16 +1253,11 @@ vu.builders.zone = {
 				vu.builders.zone._.selectors.controls.update(furn);
 			});
 		},
-		swap: function() {
-			var _ = vu.builders.zone._, selz = _.selectors;
-			_.swappers.forEach(function(section) {
-				selz[section].modal.showHide("ctmain");
-			});
-		},
 		head: function(section) {
-			var n = CT.dom.node(CT.parse.key2title(section));
-			if (vu.builders.zone._.swappers.indexOf(section) != -1)
-				n.onclick = vu.builders.zone._.swap;
+			var n = CT.dom.node(CT.parse.key2title(section)),
+				_ = vu.builders.zone._, swappers = _.swappers;
+			if (swappers.indexOf(section) != -1)
+				n.onclick = () => vu.core.swap(swappers, _.selectors);
 			return n;
 		}
 	},
