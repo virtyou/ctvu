@@ -71,12 +71,12 @@ vu.menu.Game = CT.Class({
 			return this._.interactional("hearing", "left", name, info);
 		},
 		setup: function() {
-			var _ = this._, selz = _.selectors, cam = zero.core.camera;
+			var _ = this._, selz = _.selectors, zc = zero.core, cam = zc.camera;
 			selz.story = CT.dom.div(null, "scrolly kidvp mt5 hm200p");
 			selz.score = CT.dom.div();
 			selz.camera = CT.dom.div();
 			selz.minimap = CT.dom.div();
-			_.minimap = new vu.menu.Map({
+			_.minimap = zc.current.minimap = new vu.menu.Map({
 				wait: true,
 				node: selz.minimap
 			});

@@ -39,7 +39,7 @@ vu.builders.play = {
 					target: person,
 					moveCb: vu.live.meta
 				});
-				vbp.minimap = new vu.menu.Map({ node: _.selectors.minimap });
+				vbp.minimap = cur.minimap = new vu.menu.Map({ node: _.selectors.minimap });
 				vu.core.ownz() && _.selectors.lights.update();
 				_.regclix();
 				zero.core.click.trigger(person.body);

@@ -66,9 +66,9 @@ vu.live = {
 			},
 			leave: function(chan, user) {
 				var _ = vu.live._, peeps = _.people,
-					vbp = vu.builders.play;
+					minimap = zero.core.current.minimap;
 				_.isroom(chan) && setTimeout(function() {
-					vbp && vbp.minimap.unperson(peeps[user].name);
+					minimap.unperson(peeps[user].name);
 					peeps[user].remove();
 					delete peeps[user];
 					if (Object.keys(peeps).length == 1)
@@ -93,7 +93,7 @@ vu.live = {
 			},
 			meta: function(data) {
 				var _ = vu.live._, person = _.people[data.user], meta = data.meta,
-					zcc = zero.core.current, vbp = vu.builders.play;
+					zcc = zero.core.current;
 				if (zcc.person && data.user == zcc.person.opts.key)
 					return;
 				if (!(person && person.body))
@@ -110,7 +110,7 @@ vu.live = {
 				_.dance(person, meta);
 				if (person.helpMe != meta.helpMe) {
 					person.helpMe = meta.helpMe;
-					vbp && (vu.core.ownz() || user.core.get("admin")) && vbp.minimap.help(person);
+					(vu.core.ownz() || user.core.get("admin")) && zcc.minimap.help(person);
 				}
 			},
 			message: function(msg) {
