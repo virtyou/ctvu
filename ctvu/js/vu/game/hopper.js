@@ -67,6 +67,28 @@ vu.game.hopper = {
 			h.log("you splatted " + prey.name);
 			zero.core.current.adventure.score(h.pcfg().player[prey.opts.kind]);
 			// TODO: recycle (down and up elsewhere?)!!!
+		},
+		ztick: function() {
+			var zc = zero.core, zcc = zc.current, person = zcc.person, p, target,
+				_ = vu.game.hopper._, ztick = _.ztick, touching = zc.util.touching;
+			person.score += 1;
+			person.zombified = person.score < 0;
+			zcc.adventure.menus.score();
+			setTimeout(vu.live.meta, 600);
+			if (!person.zombified)
+				return zc.camera.angle(_.prevCam);
+			for (p in zcc.people) {
+				target = zcc.people[p];
+				if (!isNaN(target.score) && target.score >= 0) {
+					if (touching(target.body, person.body, 100)) {
+						vu.live.game("average", [target.name, person.name]);
+						setTimeout(ztick, 500);
+					} else
+						person.approach(target.body, ztick, false, false, 1000, true);
+					return;
+				}
+			}
+			person.wander("room", ztick, 1000);
 		}
 	},
 	directions: {
@@ -103,6 +125,14 @@ vu.game.hopper = {
 			"pounce dynamics",
 			_.vgroup("player", game), _.vgroup("fauna", game)
 		], "bordered padded margined round");
+	},
+	zombify: function() {
+		var zc = zero.core, _ = vu.game.hopper._,
+			person = zc.current.person, zombied = person.score < 0;
+		if (zombied == person.zombified) return;
+		person.zombified = zombied;
+		_.prevCam = zc.camera.current;
+		zombied && setTimeout(_.ztick, 1000);
 	},
 	init: function() {
 		var h = vu.game.hopper, zcc = zero.core.current,
