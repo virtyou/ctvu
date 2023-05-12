@@ -103,14 +103,20 @@ vu.menu.Game = CT.Class({
 	},
 	score: function() {
 		var selz = this._.selectors, sel = selz.score,
-			mod = sel.modal, snode = mod.node;
-		CT.dom.setContent(sel, [
-
-
-			// TODO
-
-
-		]);
+			mod = sel.modal, snode = mod.node, sclass,
+			pz = Object.values(zero.core.current.people);
+		pz.sort((a, b) => b.score - a.score);
+		CT.dom.setContent(sel, pz.map(function(p) {
+			sclass = "right bold";
+			if (p.score > 0)
+				sclass += " green";
+			else if (p.score < 0)
+				sclass += " red";
+			return CT.dom.div([
+				CT.dom.div(p.score, sclass),
+				p.name
+			], "bordered padded margined round");
+		}));
 		mod.show("ctmain");
 		selz.story.modal.hide();
 		if (snode.classList.contains("collapsed"))
