@@ -98,12 +98,17 @@ vu.game.Adventure = CT.Class({
 		this.setScene(this.scenemap[name]);
 	},
 	score: function(amount, person) {
-		if (!person) // is you - additive!
-			zero.core.current.person.score += amount;
-		else
+		var isYou = !person;
+		if (isYou) { // additive!
+			person = zero.core.current.person;
+			person.score += amount;
+		} else
 			person.score = amount;
 		this.menus.score();
-		person || vu.live.meta();
+		if (isYou) {
+			vu.live.meta();
+			vu.game.hopper.zombify(person.score < 0);
+		}
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
