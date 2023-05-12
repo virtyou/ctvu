@@ -5,6 +5,7 @@ vu.game.Adventure = CT.Class({
 		cbs: {
 			enter: function(person) {
 				this.log("enter", person.name);
+				person.score = person.score || 0;
 				zero.core.current.scene.personalize(person);
 			},
 			joined: function(person) {
@@ -95,6 +96,11 @@ vu.game.Adventure = CT.Class({
 	scene: function(name) {
 		this.state.script = "start";
 		this.setScene(this.scenemap[name]);
+	},
+	score: function(amount, person) {
+		person = person || zero.core.current.person;
+		person.score += amount;
+		this.menus.score();
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
