@@ -66,7 +66,6 @@ vu.game.hopper = {
 			var h = vu.game.hopper;
 			h.log("you splatted " + prey.name);
 			zero.core.current.adventure.score(h.pcfg().player[prey.opts.kind]);
-			// TODO: recycle (down and up elsewhere?)!!!
 		},
 		ztick: function() {
 			var zc = zero.core, zcc = zc.current, person = zcc.person, p, target,
