@@ -96,7 +96,6 @@ vu.game.Scene = CT.Class({
 		}
 		this.comp();
 		this.menus.minimap();
-		vu.game.hopper.init();
 		this.script(this.state.script);
 	},
 	comp: function() {

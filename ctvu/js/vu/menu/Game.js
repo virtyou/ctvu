@@ -70,6 +70,9 @@ vu.menu.Game = CT.Class({
 		hearing: function(name, info) {
 			return this._.interactional("hearing", "left", name, info);
 		},
+		onmapready: function() {
+			vu.game.hopper.init();
+		},
 		setup: function() {
 			var _ = this._, selz = _.selectors, zc = zero.core, cam = zc.camera;
 			selz.story = CT.dom.div(null, "scrolly kidvp mt5 hm200p");
@@ -78,7 +81,8 @@ vu.menu.Game = CT.Class({
 			selz.minimap = CT.dom.div();
 			_.minimap = zc.current.minimap = new vu.menu.Map({
 				wait: true,
-				node: selz.minimap
+				node: selz.minimap,
+				onready: _.onmapready
 			});
 			selz.camera.update = function() {
 				CT.dom.setContent(selz.camera, [
