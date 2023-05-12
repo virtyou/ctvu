@@ -9,7 +9,7 @@ vu.game.Adventure = CT.Class({
 			},
 			joined: function(person) {
 				this.log("joined", person.name);
-				person.score = person.score || 0;
+				person.score = person.score || vu.game.hopper.scfg().initial;
 //				zero.core.current.adventure = new vu.game.Adventure(vu.builders.adventure._.aopts);
 			}
 		},
