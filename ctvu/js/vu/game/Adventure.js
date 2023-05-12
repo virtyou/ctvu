@@ -104,7 +104,7 @@ vu.game.Adventure = CT.Class({
 		for (name of people)
 			pz[name].score = average;
 		this.menus.score();
-		zcc.person.sfx("splat");
+		zcc.room.bump(pz[people[0]].body, pz[people[1]].body); // if > 2, whatever....
 		vu.game.hopper.zombify();
 	},
 	score: function(amount, person) {
