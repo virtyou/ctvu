@@ -112,6 +112,8 @@ vu.live = {
 					person.helpMe = meta.helpMe;
 					(vu.core.ownz() || user.core.get("admin")) && zcc.minimap.help(person);
 				}
+				if (person.score != meta.score)
+					zcc.adventure && zcc.adventure.score(meta.score, person);
 			},
 			message: function(msg) {
 				var _ = vu.live._, person = _.people[msg.user],
@@ -255,7 +257,8 @@ vu.live = {
 				dance: person.activeDance,
 				gesture: person.activeGesture,
 				language: person.language,
-				fznchan: bod.fznchan
+				fznchan: bod.fznchan,
+				score: person.score
 			};
 			for (s of _.springs) {
 				targets[s] = {
