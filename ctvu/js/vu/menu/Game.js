@@ -30,7 +30,8 @@ vu.menu.Game = CT.Class({
 			var zc = zero.core, iz = this._.interactionals;
 			return function() {
 				iz[menu].hide();
-				cambak && zc.camera.follow(zc.current.person.body);
+				cambak && zc.camera.angle("preferred");
+//				cambak && zc.camera.follow(zc.current.person.body);
 			};
 		},
 		sayer: function(statement, person) {
@@ -160,8 +161,14 @@ vu.menu.Game = CT.Class({
 			});
 		}, 500);
 	},
+	basic: function(name, info, glowy) {
+		var m = this._.info(name, info);
+		m.show("ctmain");
+		glowy && setTimeout(() => CT.trans.glow(m.node));
+		return m;
+	},
 	info: function(name, info, thing) {
-		this._.info(name, info).show("ctmain");
+		this.basic(name, info);
 		zero.core.camera.follow(thing);
 	},
 	attribution: function(atype, name, info, source) {
