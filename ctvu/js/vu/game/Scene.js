@@ -32,9 +32,7 @@ vu.game.Scene = CT.Class({
 		}
 	},
 	personalize: function(person) {
-
-		// TODO: register click handler!!! > see vu.live.autochatter()
-
+		vu.clix.register(person);
 		vu.core.comp(person);
 	},
 	refresh: function(altered) {
@@ -71,6 +69,7 @@ vu.game.Scene = CT.Class({
 		adv.controls.setCb(_.action);
 		adv.controls.setTarget(zcc.person, true);
 		zcc.room.setBounds();
+		vu.clix.room();
 		CT.pubsub.subscribe(zcc.room.opts.key);
 		slz && zcc.room.lights.forEach(function(l, i) {
 			l.setIntensity(slz[i]);
