@@ -14,9 +14,6 @@ vu.game.Scene = CT.Class({
 				}
 			}, vu.storage.get(iopts.kind)[iopts.name]));
 		},
-		action: function() { // TODO: other actions...
-			vu.portal.check();
-		},
 		satisfies: function(condsec) {
 			var zcc = zero.core.current, a = zcc.adventure,
 				astate = a.state.actors, target = a.game[condsec],
@@ -66,7 +63,7 @@ vu.game.Scene = CT.Class({
 			slz = state.lights, items = state.items,
 			portals = state.portals, adv = this.adventure;
 		zero.core.util.setCurPer(zcc.people[this.player.name]);
-		adv.controls.setCb(_.action);
+		adv.controls.setCb(vu.clix.action);
 		adv.controls.setTarget(zcc.person, true);
 		zcc.room.setBounds();
 		vu.clix.room();
