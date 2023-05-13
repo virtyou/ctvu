@@ -18,6 +18,7 @@ CT.require("zero.core.xr");
 CT.require("vu.core");
 CT.require("vu.media");
 CT.require("vu.audio");
+CT.require("vu.clix");
 CT.require("vu.color");
 CT.require("vu.controls");
 CT.require("vu.help");
