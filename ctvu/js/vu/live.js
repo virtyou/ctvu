@@ -184,21 +184,24 @@ vu.live = {
 	},
 	autochatter: function(thing) { // thing = autobot (person)
 		var zc = zero.core, zcc = zc.current, cam = zc.camera;
-		var cbutt = CT.dom.button("chat", function() {
+		var cbutt = CT.dom.button("chat", function(e) {
 			thing.automaton.pause();
 			thing.look(zcc.person.body, true);
 			cam.angle("front", thing.name);
 			zcc.person.onsaid(statement => thing.respond(statement, null, true,
 				msg => vu.live.botchat(thing.name, msg)));
 			CT.dom.setContent(cbox, cchatting);
-		}), cstop = CT.dom.button("stop chatting", function() {
+			e.stopPropagation();
+		}), cstop = CT.dom.button("stop chatting", function(e) {
 			thing.unlook();
 			thing.automaton.play();
 			cam.angle("polar");
 			zcc.person.onsaid();
 			CT.dom.setContent(cbox, cbutt);
-		}), chelp = CT.dom.button("help!", function() {
+			e.stopPropagation();
+		}), chelp = CT.dom.button("help!", function(e) {
 			vu.squad.emit("enable help mode");
+			e.stopPropagation();
 		}), cchatting = CT.dom.div([
 			cstop, chelp
 		]), cbox = CT.dom.div(cbutt);

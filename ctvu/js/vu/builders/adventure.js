@@ -2,7 +2,8 @@ vu.builders.adventure = {
 	_: {
 		selectors: {},
 		menus: {
-			chat: "bottom"
+			chat: "bottom",
+			auto: "left"
 		},
 		anonmsg: CT.dom.div("playing anonymously - log in to save your progress!", "bigger padded bold"),
 		newa: function(gkey, pkey, fullg, fullp) {
@@ -43,11 +44,15 @@ vu.builders.adventure = {
 			zero.core.current.adventure = new vu.game.Adventure(aopts);
 		},
 		setup: function() {
-			var gkey = location.hash.slice(1),
-				_ = vu.builders.adventure._, u = user.core.get();
+			var gkey = location.hash.slice(1), u = user.core.get(),
+				_ = vu.builders.adventure._, selz = _.selectors;
 			if (!gkey)
 				return alert("no game specified!");
-			_.selectors.chat = vu.multi.chatterbox();
+			selz.chat = vu.multi.chatterbox();
+			selz.auto = CT.dom.div();
+			vu.clix.init({
+				auto: selz.auto
+			});
 			if (!u)
 				return _.begin(gkey);
 			CT.db.get("adventure", function(advz) {
@@ -69,7 +74,7 @@ vu.builders.adventure = {
 			sec.collapser = () => vu.core.collapse(sec);
 			sec.modal = vu.core.menu(section, _.menus[section],
 				sec, null, sec.collapser);
-			sec.modal.show("ctmain");
 		}
+		selz.chat.modal.show("ctmain");
 	}
 };

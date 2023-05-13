@@ -35,80 +35,21 @@ vu.builders.play = {
 				vu.controls.setGestures(_.selectors.gestures, vu.live.meta);
 				cur.controls = _.controls = new zero.core.Controls({
 					cams: true,
-					cb: _.action,
+					cb: vu.clix.action,
 					target: person,
 					moveCb: vu.live.meta
 				});
 				vbp.minimap = cur.minimap = new vu.menu.Map({ node: _.selectors.minimap });
 				vu.core.ownz() && _.selectors.lights.update();
-				_.regclix();
+				vu.clix.room();
 				zero.core.click.trigger(person.body);
 				core.config.ctzero.camera.cardboard && vu.voice.listen();
 				vu.core.comp();
 			},
 			enter: function(person) {
-				vu.builders.play._.clickreg(person);
+				vu.clix.register(person);
 				vu.core.comp(person);
 			}
-		},
-		regclix: function() {
-			var _ = vu.builders.play._, room = zero.core.current.room;
-			room.objects.forEach(_.clickreg);
-			room.automatons.forEach(a => a.onperson(_.autoset));
-		},
-		autoset: function(p) {
-			var _ = vu.builders.play._;
-			vu.help.triggerize(p.brain, _.selectors.auto, vu.squad.emit);
-			_.clickreg(p);
-		},
-		clickreg: function(thing) {
-			var _ = vu.builders.play._, zc = zero.core, other = [
-				"SHIFT + click to approach"
-			], zcc = zc.current, cam = zc.camera,
-				target = thing.body || thing,
-				isYou = vu.core.ischar(thing.opts.key);
-			if (thing.body) {
-				if (thing.automaton)
-					other.push(vu.live.autochatter(thing));
-				else if (vu.core.ownz()) {
-					other.push(CT.dom.button("dunk", function() {
-						confirm("dunk this person?") && vu.live.emit("dunk", thing.opts.key);
-					}));
-				}
-			} else if (thing.opts.kind == "book")
-				other.push(thing.readbutt());
-			else if (thing.opts.kind == "carpentry" && thing.opts.items.length)
-				other.push(thing.perusebutt());
-			else if (thing.opts.kind == "portal")
-				other.push(CT.dom.button("enter", () => zcc.person.approach(thing, _.action)));
-			zc.click.register(target, function() {
-				CT.dom.setContent(_.selectors.info, [
-					vu.controls.help("info"),
-					CT.dom.div(thing.name, "bigger"),
-					isYou ? [
-						CT.dom.div("(you)", "up20 right"),
-						"move around with WASD",
-						"rotate with Q and E",
-						"adjust the camera with ARROWS",
-						"zoom with PERIOD and COMMA",
-						"SPACE for jump",
-						"SHIFT for run",
-						"ENTER to enter portal",
-						"1-9 for gestures",
-						"1-9 + SHIFT for dances",
-						"0 to ungesture",
-						"0 + SHIFT to undance",
-						_.streamer()
-					] : other
-				]);
-				zc.audio.ux("blipon");
-				CT.trans.glow(_.selectors.info);
-				cam.follow(target.looker || target);
-				if (!isYou) {
-					target.playPause(_.audup);
-					CT.key.down("SHIFT") && zcc.person.approach(target);
-				}
-			});
 		},
 		streamer: function() {
 			var b = CT.dom.button("start streaming", function() {
@@ -124,10 +65,6 @@ vu.builders.play = {
 				vu.live.meta();
 			}), bod = zero.core.current.person.body;
 			return b;
-		},
-		action: function() {
-			// TODO: other actions.....
-			vu.portal.check();
 		},
 		uplights: function() {
 			var _ = vu.builders.play._;
@@ -170,6 +107,12 @@ vu.builders.play = {
 			selz.chat = vu.multi.chatterbox();
 			selz.info = CT.dom.div();
 			selz.auto = CT.dom.div();
+			vu.clix.init({
+				audup: _.audup,
+				auto: selz.auto,
+				info: selz.info,
+				streamer: _.streamer
+			});
 			vu.portal.on("eject", function(portout) {
 				vu.live.emit("eject", portout);
 				CT.pubsub.unsubscribe(cur.room.opts.key);
@@ -179,7 +122,7 @@ vu.builders.play = {
 					onbuild: function(room) {
 						vu.live.emit("inject", portin);
 						zero.core.camera.cutifroom();
-						_.regclix();
+						vu.clix.room();
 						vbp.minimap.refresh();
 						_.uplights();
 						vu.core.comp();

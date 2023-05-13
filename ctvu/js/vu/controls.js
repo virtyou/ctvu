@@ -106,17 +106,20 @@ vu.controls = {
 			zero.core.camera.perspective();
 		}
 	},
-	trigNode: function(trig, i, cb) {
-		return CT.dom.div(trig, "bordered padded margined inline-block hoverglow", null, {
+	trigNode: function(trig, i, cb, extraClasses) {
+		var classes = "bordered padded margined inline-block hoverglow";
+		if (extraClasses)
+			classes += " " + extraClasses;
+		return CT.dom.div(trig, classes, null, {
 			onclick: function(e) {
 				e.stopPropagation();
 				cb(trig, i);
 			}
 		});
 	},
-	triggerMap: function(trigz, cb, notArray) {
+	triggerMap: function(trigz, cb, notArray, extraClasses) {
 		return (notArray ? Object.keys(trigz)
-			: trigz).map((t, i) => vu.controls.trigNode(t, i, cb));
+			: trigz).map((t, i) => vu.controls.trigNode(t, i, cb, extraClasses));
 	},
 	help: function(flow) {
 		return CT.dom.link("?", function(e) {
