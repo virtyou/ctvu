@@ -110,7 +110,7 @@ vu.builders.play = {
 			vu.clix.init({
 				audup: _.audup,
 				auto: selz.auto,
-				inode: selz.info,
+				info: selz.info,
 				streamer: _.streamer
 			});
 			vu.portal.on("eject", function(portout) {
