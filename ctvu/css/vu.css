@@ -248,9 +248,17 @@ img.right.h30p.up5 {
 	white-space: normal;
 }
 
+.gmenu.triggers.collapsed, .gmenu.gestures.collapsed {
+	max-width: 100px;
+}
+
 .gmenu.chat, .gmenu.info {
 	max-height: 250px;
 	top: initial !important;
+}
+
+.gmenu.chat.collapsed {
+	max-width: 275px;
 }
 
 .gmenu.chat button {
