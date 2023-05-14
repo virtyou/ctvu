@@ -1,4 +1,13 @@
 vu.core = {
+	anonmsg: function(cb) {
+		CT.modal.modal(CT.dom.div([
+			"playing anonymously - log in to craft your own avatar!",
+			"tap menus to expand and retract them.",
+			"click the green question marks for more information!",
+			CT.dom.button("tell me how to play", vu.help.generals),
+			CT.dom.button("just let me play")
+		], "bigger padded bold centered"), cb, null, true);
+	},
 	collapse: function(sel) { // for modal menus
 		sel._collapsed = !sel._collapsed;
 		zero.core.audio.ux(sel._collapsed ? "blipoff" : "blipon");
