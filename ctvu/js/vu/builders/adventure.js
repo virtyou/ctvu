@@ -15,7 +15,7 @@ vu.builders.adventure = {
 				game: gkey
 			}, _.resume) : CT.modal.modal(_.anonmsg, function() {
 				_.resume({
-					player: zero.core.util.person(vu.core.bgen(fullp.body), fullp.name || "you", null, fullp, fullp.body),
+					player: vu.core.person(fullp),
 					state: fullg.initial,
 					game: fullg
 				});
