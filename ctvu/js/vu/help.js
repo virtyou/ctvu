@@ -52,7 +52,9 @@ vu.help = {
 				morer();
 			}, null, "abs ctl"));
 		}
-		m = CT.modal.modal(CT.dom.div(cont, className));
+		m = CT.modal.modal(CT.dom.div(cont, className), null, {
+			className: "basicpopup mosthigh"
+		});
 		return m;
 	},
 	full: function() {

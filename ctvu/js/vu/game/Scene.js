@@ -62,9 +62,6 @@ vu.game.Scene = CT.Class({
 			state = this.state.scenes[this.name],
 			slz = state.lights, items = state.items,
 			portals = state.portals, adv = this.adventure;
-		zero.core.util.setCurPer(zcc.people[this.player.name]);
-		adv.controls.setCb(vu.clix.action);
-		adv.controls.setTarget(zcc.person, true);
 		zcc.room.setBounds();
 		vu.clix.room();
 		CT.pubsub.subscribe(zcc.room.opts.key);
@@ -132,10 +129,8 @@ vu.game.Scene = CT.Class({
 					zc.Thing.get(zcc.injector));
 				start();
 			});
-		} else {
-			cfg.people.push(this.player);
+		} else
 			zcu.init(null, start);
-		}
 		zcc.scene = this;
 	},
 	init: function(opts) {

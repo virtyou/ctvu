@@ -1,7 +1,7 @@
 {
     "access" : {
         "anon": true,
-        "avanon": ["play"]
+        "avanon": ["play", "adventure"]
     },
     "storage": {
         "mode": "local",

@@ -10,7 +10,10 @@ vu.game.Adventure = CT.Class({
 			joined: function(person) {
 				this.log("joined", person.name);
 				person.score = person.score || vu.game.hopper.scfg().initial;
-//				zero.core.current.adventure = new vu.game.Adventure(vu.builders.adventure._.aopts);
+				zero.core.util.setCurPer(person);
+				this.controls.setCb(vu.clix.action);
+				this.controls.setTarget(person, true);
+				vu.game.hopper.init();
 			}
 		},
 		setState: function() {
@@ -54,7 +57,7 @@ vu.game.Adventure = CT.Class({
 			vp.on("filter", function(obj) {
 				return obj.name in vp.options();
 			});
-			vu.portal.on("eject", function(portout) {
+			vp.on("eject", function(portout) {
 				vu.live.emit("eject", portout);
 				CT.pubsub.unsubscribe(zcc.room.opts.key);
 			});
