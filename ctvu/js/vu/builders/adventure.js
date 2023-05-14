@@ -28,6 +28,8 @@ vu.builders.adventure = {
 				var gonew = function(player) {
 					_.newa(gkey, player.key, gopts, player);
 				}, playpro = function(players) {
+					if (!user.core.get())
+						return gonew(CT.data.choice(players));
 					(players.length == 1) ? gonew(players[0]) : CT.modal.choice({
 						prompt: "please select your player",
 						data: players,
