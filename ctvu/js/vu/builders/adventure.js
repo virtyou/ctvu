@@ -5,7 +5,6 @@ vu.builders.adventure = {
 			chat: "bottom",
 			auto: "left"
 		},
-		anonmsg: CT.dom.div("playing anonymously - log in to save your progress!", "bigger padded bold"),
 		newa: function(gkey, pkey, fullg, fullp) {
 			var _ = vu.builders.adventure._, u = user.core.get();
 			u ? vu.storage.edit({
@@ -13,14 +12,13 @@ vu.builders.adventure = {
 				owner: u.key,
 				player: pkey,
 				game: gkey
-			}, _.resume) : CT.modal.modal(_.anonmsg, function() {
+			}, _.resume) : vu.core.anonmsg(function() {
 				_.resume({
 					player: vu.core.person(fullp),
 					state: fullg.initial,
 					game: fullg
 				});
-				CT.dom.id("helperoo").onclick();
-			}, { noClose: true }, true);
+			});
 		},
 		begin: function(gkey) {
 			var _ = vu.builders.adventure._;
