@@ -54,7 +54,7 @@ vu.game.Adventure = CT.Class({
 			vp.on("filter", function(obj) {
 				return obj.name in vp.options();
 			});
-			vu.portal.on("eject", function(portout) {
+			vp.on("eject", function(portout) {
 				vu.live.emit("eject", portout);
 				CT.pubsub.unsubscribe(zcc.room.opts.key);
 			});
