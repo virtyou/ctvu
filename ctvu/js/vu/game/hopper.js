@@ -69,7 +69,7 @@ vu.game.hopper = {
 					pcfg.zombifying, null, null, null, function(cbox) {
 						pcfg.zombifying = cbox.checked;
 						_.upscore();
-					}));
+					}, p));
 			}
 			return CT.dom.div(cont, "bordered padded margined round");
 		},
