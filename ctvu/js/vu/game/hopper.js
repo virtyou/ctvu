@@ -31,24 +31,46 @@ vu.game.hopper = {
 			});
 		},
 		hop: function(p, pz, variety) {
-			if (!isNaN(pz[p])) {
-				pz[p] = {
+			var _ = vu.game.hopper._, pcfg = pz[p], cont, autosource;
+			if (!isNaN(pcfg)) {
+				pcfg = pz[p] = {
 					value: pz[p]
 				};
 			}
-			var _ = vu.game.hopper._, pcfg = pz[p], cont = [
+			cont = [
 				p,
 				CT.dom.range(function(val) {
 					pcfg.value = parseInt(val);
 					_.upscore();
 				}, 1, 10, pcfg.value, 1, "w1 block")
 			];
-			(variety == "fauna") && cont.push(CT.dom.checkboxAndLabel("zombifying",
-				pcfg.zombifying, null, null, null, function(cbox) {
-					pcfg.zombifying = cbox.checked;
-					_.upscore();
-				})
-			);
+			if (variety == "player") {
+				autosource = CT.dom.div();
+				autosource.update = function() {
+					CT.dom.setContent(autosource, [
+						CT.dom.button("change", function() {
+							CT.modal.choice({
+								prompt: "choose an automaton",
+								data: zero.core.current.room.automatons.map(a => a.person.name),
+								cb: function(aname) {
+									pcfg.source = aname;
+									autosource.update();
+									_.upscore();
+								}
+							});
+						}, "right"),
+						"spawns from " + (pcfg.source || "room")
+					]);
+				};
+				autosource.update();
+				cont.push(autosource);
+			} else { // fauna
+				cont.push(CT.dom.checkboxAndLabel("zombifying",
+					pcfg.zombifying, null, null, null, function(cbox) {
+						pcfg.zombifying = cbox.checked;
+						_.upscore();
+					}));
+			}
 			return CT.dom.div(cont, "bordered padded margined round");
 		},
 		egroup: function(variety) { // player or fauna
@@ -178,7 +200,8 @@ vu.game.hopper = {
 		}
 		if (prey.length) {
 			h.log("activating " + prey.length + " prey varieties");
-			zcc.person.onland(() => men.splat(prey, _.onsplat));
+			zcc.person.onland(() => men.splat(prey, _.onsplat,
+				pcfg.player[prey].source));
 		}
 	}
 };
