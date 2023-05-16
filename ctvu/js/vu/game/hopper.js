@@ -22,26 +22,41 @@ vu.game.hopper = {
 				],
 				data: kinds,
 				cb: function(kind) {
-					pz[kind] = 1;
+					pz[kind] = {
+						value: 1
+					};
 					_.upscore();
 					_.editor.refresh();
 				}
 			});
+		},
+		hop: function(p, pz, variety) {
+			if (!isNaN(pz[p])) {
+				pz[p] = {
+					value: pz[p]
+				};
+			}
+			var _ = vu.game.hopper._, pcfg = pz[p], cont = [
+				p,
+				CT.dom.range(function(val) {
+					pcfg.value = parseInt(val);
+					_.upscore();
+				}, 1, 10, pcfg.value, 1, "w1 block")
+			];
+			(variety == "fauna") && cont.push(CT.dom.checkboxAndLabel("zombifying",
+				pcfg.zombifying, null, null, null, function(cbox) {
+					pcfg.zombifying = cbox.checked;
+					_.upscore();
+				})
+			);
+			return CT.dom.div(cont, "bordered padded margined round");
 		},
 		egroup: function(variety) { // player or fauna
 			var h = vu.game.hopper, _ = h._, pz = h.pcfg()[variety];
 			return CT.dom.div([
 				CT.dom.button("add", () => _.addhop(variety), "right"),
 				h.directions[variety],
-				Object.keys(pz).map(function(p) {
-					return [
-						p,
-						CT.dom.range(function(val) {
-							pz[p] = parseInt(val);
-							_.upscore();
-						}, 1, 10, pz[p], 1, "w1 block")
-					];
-				})
+				Object.keys(pz).map(p => _.hop(p, pz, variety))
 			], "bordered padded margined round");
 		},
 		vgroup: function(variety, game) {
@@ -60,21 +75,21 @@ vu.game.hopper = {
 		},
 		onpounce: function(pouncer) {
 			var h = vu.game.hopper, pd = pouncer.direction,
-				pn = pouncer.name, pk = pouncer.opts.kind, pv = h.pcfg().fauna[pk],
-				zcc = zero.core.current, adv = zcc.adventure,
+				pn = pouncer.name, pk = pouncer.opts.kind, pcfg = h.pcfg().fauna[pk],
+				pv = pcfg.value, zcc = zero.core.current, adv = zcc.adventure,
 				per = zcc.person, pbs = per.body.springs, mag = pv * 1000;
 			h.log(pn + " pounced on player for " + pv + " points");
 			per.sfx("thud");
 			pbs.weave.shove = pd.x * mag;
 			pbs.slide.shove = pd.z * mag;
-			adv.score(-pv);
 			vu.color.splash(per.score < 0 ? "green" : "red");
+			(pcfg.zombifying || (per.score - pv >= 0)) && adv.score(-pv);
 		},
 		onsplat: function(prey) {
 			var h = vu.game.hopper;
 			h.log("you splatted " + prey.name);
 			vu.color.splash("blue");
-			zero.core.current.adventure.score(h.pcfg().player[prey.opts.kind]);
+			zero.core.current.adventure.score(h.pcfg().player[prey.opts.kind].value);
 		},
 		ztick: function() {
 			var zc = zero.core, zcc = zc.current, person = zcc.person, p, target,
