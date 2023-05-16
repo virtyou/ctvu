@@ -1,4 +1,14 @@
 vu.color = {
+	_: {
+		primaries: {
+			red: { r: 1, g: 0, b: 0 },
+			green: { r: 0, g: 1, b: 0 },
+			blue: { r: 0, g: 0, b: 1 }
+		}
+	},
+	splash: function(color) {
+		zero.core.current.person.splash(vu.color._.primaries[color]);
+	},
 	set: function(target, color, prop, lnum, uplight) {
 		var copts = {}, rgb = zero.core.util.hex2rgb(color);
 		color = parseInt(color.slice(1), 16);

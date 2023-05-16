@@ -16,6 +16,7 @@ CT.require("zero.core");
 CT.require("vu.core");
 CT.require("vu.audio");
 CT.require("vu.clix");
+CT.require("vu.color");
 CT.require("vu.storage");
 CT.require("vu.squad");
 CT.require("vu.lang");

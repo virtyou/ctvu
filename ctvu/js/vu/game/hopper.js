@@ -62,16 +62,18 @@ vu.game.hopper = {
 			var h = vu.game.hopper, pd = pouncer.direction,
 				pn = pouncer.name, pk = pouncer.opts.kind, pv = h.pcfg().fauna[pk],
 				zcc = zero.core.current, adv = zcc.adventure,
-				pbs = zcc.person.body.springs, mag = pv * 1000;
+				per = zcc.person, pbs = per.body.springs, mag = pv * 1000;
 			h.log(pn + " pounced on player for " + pv + " points");
-			zero.core.current.person.sfx("thud");
+			per.sfx("thud");
 			pbs.weave.shove = pd.x * mag;
 			pbs.slide.shove = pd.z * mag;
 			adv.score(-pv);
+			vu.color.splash(per.score < 0 ? "green" : "red");
 		},
 		onsplat: function(prey) {
 			var h = vu.game.hopper;
 			h.log("you splatted " + prey.name);
+			vu.color.splash("blue");
 			zero.core.current.adventure.score(h.pcfg().player[prey.opts.kind]);
 		},
 		ztick: function() {
