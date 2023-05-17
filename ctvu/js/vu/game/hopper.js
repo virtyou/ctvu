@@ -105,7 +105,8 @@ vu.game.hopper = {
 			pbs.weave.shove = pd.x * mag;
 			pbs.slide.shove = pd.z * mag;
 			(pcfg.zombifying || (per.score - pv >= 0)) && adv.score(-pv);
-			vu.color.splash(per.score < 0 ? "green" : "red");
+			vu.color.splash(per.zombified ? "green" : "red");
+			return per.zombified && pcfg.zombifying;
 		},
 		onsplat: function(prey) {
 			var h = vu.game.hopper, zcc = zero.core.current;
