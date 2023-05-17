@@ -108,10 +108,11 @@ vu.game.hopper = {
 			(pcfg.zombifying || (per.score - pv >= 0)) && adv.score(-pv);
 		},
 		onsplat: function(prey) {
-			var h = vu.game.hopper;
+			var h = vu.game.hopper, zcc = zero.core.current;
 			h.log("you splatted " + prey.name);
 			vu.color.splash("blue");
-			zero.core.current.adventure.score(h.pcfg().player[prey.opts.kind].value);
+			zcc.sploder.splode(prey.position());
+			zcc.adventure.score(h.pcfg().player[prey.opts.kind].value);
 		},
 		ztick: function() {
 			var zc = zero.core, zcc = zc.current, person = zcc.person, p, target,
@@ -188,7 +189,7 @@ vu.game.hopper = {
 		zombied && setTimeout(_.ztick, 1000);
 	},
 	init: function() {
-		var h = vu.game.hopper, zcc = zero.core.current,
+		var h = vu.game.hopper, zc = zero.core, zcc = zc.current,
 			men = zcc.room.menagerie, pcfg = h.pcfg(),
 			hunters = Object.keys(pcfg.fauna),
 			prey = Object.keys(pcfg.player), _ = h._;
@@ -202,6 +203,7 @@ vu.game.hopper = {
 			h.log("activating " + prey.length + " prey varieties");
 			zcc.person.onland(() => men.splat(prey, _.onsplat,
 				pcfg.player[prey].source));
+			zcc.sploder = new zc.Sploder();
 		}
 	}
 };
