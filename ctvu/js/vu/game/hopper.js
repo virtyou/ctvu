@@ -30,6 +30,13 @@ vu.game.hopper = {
 				}
 			});
 		},
+		hopCheck: function(property, animal, pcfg) {
+			return CT.dom.checkboxAndLabel(property,
+				pcfg[property], null, null, null, function(cbox) {
+					pcfg[property] = cbox.checked;
+					vu.game.hopper._.upscore();
+				}, animal);
+		},
 		hop: function(p, pz, variety) {
 			var _ = vu.game.hopper._, pcfg = pz[p], cont, autosource;
 			if (!isNaN(pcfg)) {
@@ -64,13 +71,9 @@ vu.game.hopper = {
 				};
 				autosource.update();
 				cont.push(autosource);
-			} else { // fauna
-				cont.push(CT.dom.checkboxAndLabel("zombifying",
-					pcfg.zombifying, null, null, null, function(cbox) {
-						pcfg.zombifying = cbox.checked;
-						_.upscore();
-					}, p));
-			}
+				cont.push(_.hopCheck("mega", p, pcfg));
+			} else // fauna
+				cont.push(_.hopCheck("zombifying", p, pcfg));
 			return CT.dom.div(cont, "bordered padded margined round");
 		},
 		egroup: function(variety) { // player or fauna
