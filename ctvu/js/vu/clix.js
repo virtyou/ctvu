@@ -4,13 +4,12 @@ vu.clix = {
 			var oz = vu.clix.opts;
 			return [
 				CT.dom.div("(you)", "up20 right"),
-				"move around with WASD",
-				"rotate with Q and E",
-				"adjust the camera with ARROWS",
-				"zoom with PERIOD and COMMA",
+				"move around with WASDZC",
+				"move cam w/ ARROWS or QERF",
+				"zoom w/ PERIOD/T & COMMA/G",
 				"SPACE for jump",
 				"SHIFT for run",
-				"ENTER to enter portal",
+				"ENTER or X to enter portal",
 				"1-9 for gestures",
 				"1-9 + SHIFT for dances",
 				"0 to ungesture",
