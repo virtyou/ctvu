@@ -123,7 +123,7 @@ vu.game.hopper = {
 				h.setCritter(prey, pcfg);
 				zcc.sploder.splode(prey.position());
 				zcc.adventure.score(pcfg.value * pcfg.level);
-				pcfg.source && h.incLevel(zcc.people[pcfg.source].body);
+				pcfg.source && pcfg.mega && h.incLevel(zcc.people[pcfg.source].body);
 				return true;
 			}
 		},
