@@ -60,6 +60,7 @@ vu.core = {
 		return new CT.modal.Modal({
 			center: false,
 			noClose: true,
+			notlatest: true,
 			onclick: onclick,
 			transition: "slide",
 			resizeRecenter: ["top", "bottom"].includes(origin),
