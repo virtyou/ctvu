@@ -110,7 +110,7 @@ vu.game.hopper = {
 			pbs.slide.shove = pd.z * mag;
 			(pcfg.zombifying || (per.score - pv >= 0)) && adv.score(-pv);
 			vu.color.splash(per.zombified ? "green" : "red");
-			ppcfg && ppcfg.source && h.decLevel(zcc.people[ppcfg.source].body);
+			h._.megasource(ppcfg) && h.decLevel(zcc.people[ppcfg.source].body);
 			return per.zombified && pcfg.zombifying;
 		},
 		onsplat: function(prey) {
@@ -123,9 +123,12 @@ vu.game.hopper = {
 				h.setCritter(prey, pcfg);
 				zcc.sploder.splode(prey.position());
 				zcc.adventure.score(pcfg.value * pcfg.level);
-				pcfg.source && pcfg.mega && h.incLevel(zcc.people[pcfg.source].body);
+				h._.megasource(pcfg) && h.incLevel(zcc.people[pcfg.source].body);
 				return true;
 			}
+		},
+		megasource: function(pcfg) {
+			return pcfg && pcfg.source && pcfg.mega;
 		},
 		ztick: function() {
 			var zc = zero.core, zcc = zc.current, person = zcc.person, p, target,
