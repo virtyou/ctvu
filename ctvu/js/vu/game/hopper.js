@@ -102,8 +102,9 @@ vu.game.hopper = {
 			var h = vu.game.hopper, pd = pouncer.direction,
 				pn = pouncer.name, pk = pouncer.opts.kind,
 				hcfg = h.pcfg(), pcfg = hcfg.fauna[pk], ppcfg = hcfg.player[pk],
-				pv = pcfg.value, zcc = zero.core.current, adv = zcc.adventure,
-				per = zcc.person, pbs = per.body.springs, mag = pv * 1000;
+				pv = pcfg.value * (pouncer.level || 1), mag = pv * 1000,
+				zcc = zero.core.current, adv = zcc.adventure,
+				per = zcc.person, pbs = per.body.springs;
 			h.log(pn + " pounced on player for " + pv + " points");
 			per.sfx("thud");
 			pbs.weave.shove = pd.x * mag;
