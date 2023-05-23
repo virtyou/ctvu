@@ -30,6 +30,13 @@ vu.game.hopper = {
 				}
 			});
 		},
+		hopCheck: function(property, animal, pcfg) {
+			return CT.dom.checkboxAndLabel(property,
+				pcfg[property], null, null, null, function(cbox) {
+					pcfg[property] = cbox.checked;
+					vu.game.hopper._.upscore();
+				}, animal);
+		},
 		hop: function(p, pz, variety) {
 			var _ = vu.game.hopper._, pcfg = pz[p], cont, autosource;
 			if (!isNaN(pcfg)) {
@@ -64,13 +71,9 @@ vu.game.hopper = {
 				};
 				autosource.update();
 				cont.push(autosource);
-			} else { // fauna
-				cont.push(CT.dom.checkboxAndLabel("zombifying",
-					pcfg.zombifying, null, null, null, function(cbox) {
-						pcfg.zombifying = cbox.checked;
-						_.upscore();
-					}, p));
-			}
+				cont.push(_.hopCheck("mega", p, pcfg));
+			} else // fauna
+				cont.push(_.hopCheck("zombifying", p, pcfg));
 			return CT.dom.div(cont, "bordered padded margined round");
 		},
 		egroup: function(variety) { // player or fauna
@@ -97,7 +100,8 @@ vu.game.hopper = {
 		},
 		onpounce: function(pouncer) {
 			var h = vu.game.hopper, pd = pouncer.direction,
-				pn = pouncer.name, pk = pouncer.opts.kind, pcfg = h.pcfg().fauna[pk],
+				pn = pouncer.name, pk = pouncer.opts.kind,
+				hcfg = h.pcfg(), pcfg = hcfg.fauna[pk], ppcfg = hcfg.player[pk],
 				pv = pcfg.value, zcc = zero.core.current, adv = zcc.adventure,
 				per = zcc.person, pbs = per.body.springs, mag = pv * 1000;
 			h.log(pn + " pounced on player for " + pv + " points");
@@ -106,14 +110,25 @@ vu.game.hopper = {
 			pbs.slide.shove = pd.z * mag;
 			(pcfg.zombifying || (per.score - pv >= 0)) && adv.score(-pv);
 			vu.color.splash(per.zombified ? "green" : "red");
+			h._.megasource(ppcfg) && h.decLevel(zcc.people[ppcfg.source].body);
 			return per.zombified && pcfg.zombifying;
 		},
 		onsplat: function(prey) {
-			var h = vu.game.hopper, zcc = zero.core.current;
-			h.log("you splatted " + prey.name);
+			var h = vu.game.hopper, zcc = zero.core.current, pcfg;
+			h.log("you splatted " + prey.name + " @ " + prey.hp);
 			vu.color.splash("blue");
-			zcc.sploder.splode(prey.position());
-			zcc.adventure.score(h.pcfg().player[prey.opts.kind].value);
+			prey.hp -= 1;
+			if (!prey.hp) {
+				pcfg = h.pcfg().player[prey.opts.kind];
+				h.setCritter(prey, pcfg);
+				zcc.sploder.splode(prey.position());
+				zcc.adventure.score(pcfg.value * pcfg.level);
+				h._.megasource(pcfg) && h.incLevel(zcc.people[pcfg.source].body);
+				return true;
+			}
+		},
+		megasource: function(pcfg) {
+			return pcfg && pcfg.source && pcfg.mega;
 		},
 		ztick: function() {
 			var zc = zero.core, zcc = zc.current, person = zcc.person, p, target,
@@ -189,11 +204,28 @@ vu.game.hopper = {
 		_.prevCam = zc.camera.current;
 		zombied && setTimeout(_.ztick, 1000);
 	},
+	setCritter: function(creature, ccfg) {
+		var zccpz = zero.core.current.people, hp = ccfg.hp,
+			level = ccfg.source ? zccpz[ccfg.source].body.level : ccfg.level;
+		vu.game.hopper.setLevel(creature, level);
+		creature.hp = hp * level;
+	},
+	setLevel: function(creature, level) {
+		creature.level = level;
+		creature.scale(level, true);
+	},
+	incLevel: function(creature) {
+		vu.game.hopper.setLevel(creature, creature.level + 1);
+	},
+	decLevel: function(creature, subone) {
+		if (subone || creature.level > 1)
+			vu.game.hopper.setLevel(creature, creature.level - 1);
+	},
 	init: function() {
 		var h = vu.game.hopper, zc = zero.core, zcc = zc.current,
 			men = zcc.room.menagerie, pcfg = h.pcfg(),
-			hunters = Object.keys(pcfg.fauna),
-			prey = Object.keys(pcfg.player), _ = h._;
+			hunters = Object.keys(pcfg.fauna), ccfg, _ = h._,
+			ppcfg = pcfg.player, prey = Object.keys(ppcfg);
 		if (!men)
 			return h.log("skipping init() - no menagerie");
 		if (hunters.length) {
@@ -202,9 +234,15 @@ vu.game.hopper = {
 		}
 		if (prey.length) {
 			h.log("activating " + prey.length + " prey varieties");
-			zcc.person.onland(() => men.splat(prey, _.onsplat,
-				pcfg.player[prey].source));
+			zcc.person.onland(() => men.splat(prey, _.onsplat, ppcfg));
 			zcc.sploder = new zc.Sploder();
+			prey.forEach(function(p) {
+				ccfg = ppcfg[p];
+				ccfg.hp = ccfg.hp || 1;
+				ccfg.level = ccfg.level || 1;
+				men.setProp(p, "hp", ccfg.hp * ccfg.level);
+				ccfg.source && h.setLevel(zcc.people[ccfg.source].body, ccfg.level);
+			});
 		}
 	}
 };
