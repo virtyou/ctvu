@@ -282,6 +282,9 @@ img.right.h30p.up5 {
 .gmenu.score {
 	width: 348px;
 }
+#adventurepage .gmenu.score {
+	width: 310px;
+}
 .gmenu.main {
 	max-height: 50%;
 	max-width: 282px;
