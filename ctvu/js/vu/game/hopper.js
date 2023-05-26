@@ -72,6 +72,7 @@ vu.game.hopper = {
 				autosource.update();
 				cont.push(autosource);
 				cont.push(_.hopCheck("mega", p, pcfg));
+				cont.push(_.hopCheck("powerjump", p, pcfg));
 			} else // fauna
 				cont.push(_.hopCheck("zombifying", p, pcfg));
 			return CT.dom.div(cont, "bordered padded margined round");
@@ -115,18 +116,24 @@ vu.game.hopper = {
 			return per.zombified && pcfg.zombifying;
 		},
 		onsplat: function(prey) {
-			var h = vu.game.hopper, zcc = zero.core.current, pcfg;
+			var h = vu.game.hopper, zcc = zero.core.current,
+				pcfg = h.pcfg().player[prey.opts.kind], zccp = zcc.person;
 			h.log("you splatted " + prey.name + " @ " + prey.hp);
 			vu.color.splash("blue");
-			prey.hp -= 1;
-			if (!prey.hp) {
-				pcfg = h.pcfg().player[prey.opts.kind];
+			prey.hp -= zccp.powerjumping ? 2 : 1;
+			zccp.powerjumping && pcfg.powerjump && zccp.shouldFly();
+			zccp.powerjumping = pcfg.powerjump;
+			zccp.powerjumping && setTimeout(() => zcc.adventure.controls.jump(2));
+			if (prey.hp < 1) {
 				h.setCritter(prey, pcfg);
 				zcc.sploder.splode(prey.position());
 				zcc.adventure.score(pcfg.value * prey.level);
 				h._.megasource(pcfg) && h.incLevel(zcc.people[pcfg.source].body);
 				return true;
 			}
+		},
+		nosplat: function() {
+			zero.core.current.person.powerjumping = false;
 		},
 		megasource: function(pcfg) {
 			return pcfg && pcfg.source && pcfg.mega;
@@ -235,7 +242,7 @@ vu.game.hopper = {
 		}
 		if (prey.length) {
 			h.log("activating " + prey.length + " prey varieties");
-			zcc.person.onland(() => men.splat(prey, _.onsplat, ppcfg));
+			zcc.person.onland(() => men.splat(prey, _.onsplat, ppcfg, _.nosplat));
 			zcc.sploder = new zc.Sploder();
 			prey.forEach(function(p) {
 				ccfg = ppcfg[p];
