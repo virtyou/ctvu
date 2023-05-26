@@ -120,15 +120,10 @@ vu.game.hopper = {
 				pcfg = h.pcfg().player[prey.opts.kind], zccp = zcc.person;
 			h.log("you splatted " + prey.name + " @ " + prey.hp);
 			vu.color.splash("blue");
-			if (pcfg.powerjump) {
-
-				// TODO: if already powerjumping, fly
-
-				zccp.powerjumping = true;
-				setTimeout(() => zcc.adventure.controls.jump(2));
-			}
 			prey.hp -= zccp.powerjumping ? 2 : 1;
-			zccp.powerjumping = false;
+			zccp.powerjumping && pcfg.powerjump && zccp.shouldFly();
+			zccp.powerjumping = pcfg.powerjump;
+			zccp.powerjumping && setTimeout(() => zcc.adventure.controls.jump(2));
 			if (prey.hp < 1) {
 				h.setCritter(prey, pcfg);
 				zcc.sploder.splode(prey.position());
@@ -136,6 +131,9 @@ vu.game.hopper = {
 				h._.megasource(pcfg) && h.incLevel(zcc.people[pcfg.source].body);
 				return true;
 			}
+		},
+		nosplat: function() {
+			zero.core.current.person.powerjumping = false;
 		},
 		megasource: function(pcfg) {
 			return pcfg && pcfg.source && pcfg.mega;
@@ -244,7 +242,7 @@ vu.game.hopper = {
 		}
 		if (prey.length) {
 			h.log("activating " + prey.length + " prey varieties");
-			zcc.person.onland(() => men.splat(prey, _.onsplat, ppcfg));
+			zcc.person.onland(() => men.splat(prey, _.onsplat, ppcfg, _.nosplat));
 			zcc.sploder = new zc.Sploder();
 			prey.forEach(function(p) {
 				ccfg = ppcfg[p];
