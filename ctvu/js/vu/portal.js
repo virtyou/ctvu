@@ -51,7 +51,7 @@ vu.portal = {
 	},
 	options: function() {
 		var zcc = zero.core.current, scene = zcc.scene;
-		return scene.state.scenes[scene.name].portals;
+		return scene.state.scenes[scene.name].portals || {};
 	},
 	check: function() {
 		var cur = zero.core.current, person = cur.person,
