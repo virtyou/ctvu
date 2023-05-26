@@ -72,6 +72,7 @@ vu.game.hopper = {
 				autosource.update();
 				cont.push(autosource);
 				cont.push(_.hopCheck("mega", p, pcfg));
+				cont.push(_.hopCheck("powerjump", p, pcfg));
 			} else // fauna
 				cont.push(_.hopCheck("zombifying", p, pcfg));
 			return CT.dom.div(cont, "bordered padded margined round");
@@ -115,12 +116,20 @@ vu.game.hopper = {
 			return per.zombified && pcfg.zombifying;
 		},
 		onsplat: function(prey) {
-			var h = vu.game.hopper, zcc = zero.core.current, pcfg;
+			var h = vu.game.hopper, zcc = zero.core.current,
+				pcfg = h.pcfg().player[prey.opts.kind], zccp = zcc.person;
 			h.log("you splatted " + prey.name + " @ " + prey.hp);
 			vu.color.splash("blue");
-			prey.hp -= 1;
-			if (!prey.hp) {
-				pcfg = h.pcfg().player[prey.opts.kind];
+			if (pcfg.powerjump) {
+
+				// TODO: if already powerjumping, fly
+
+				zccp.powerjumping = true;
+				setTimeout(() => zcc.adventure.controls.jump(2));
+			}
+			prey.hp -= zccp.powerjumping ? 2 : 1;
+			zccp.powerjumping = false;
+			if (prey.hp < 1) {
 				h.setCritter(prey, pcfg);
 				zcc.sploder.splode(prey.position());
 				zcc.adventure.score(pcfg.value * prey.level);
