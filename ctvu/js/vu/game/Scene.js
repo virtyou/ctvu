@@ -56,7 +56,7 @@ vu.game.Scene = CT.Class({
 		}
 	},
 	start: function() {
-		var _ = this._, zcc = zero.core.current, book, carp,
+		var _ = this._, zc = zero.core, zcc = zc.current, book, carp,
 			rc = _.regClick, pers, prop, item, portal,
 			men = this.menus, tsa = this.state.actors,
 			state = this.state.scenes[this.name],
@@ -88,8 +88,8 @@ vu.game.Scene = CT.Class({
 			carp.opts.items.length && rc(carp, men.shelf);
 		}
 		this.comp();
-		this.menus.minimap();
 		this.script(this.state.script);
+		zc.util.onperson(this.menus.minimap);
 	},
 	comp: function() {
 		var zcc = zero.core.current, oz = this.opts,
