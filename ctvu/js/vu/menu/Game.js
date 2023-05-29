@@ -79,7 +79,8 @@ vu.menu.Game = CT.Class({
 			selz.minimap = CT.dom.div();
 			_.minimap = zc.current.minimap = new vu.menu.Map({
 				wait: true,
-				node: selz.minimap
+				node: selz.minimap,
+				onready: vu.game.hopper.init
 			});
 			selz.camera.update = function() {
 				CT.dom.setContent(selz.camera, [

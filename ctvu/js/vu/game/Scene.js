@@ -89,7 +89,7 @@ vu.game.Scene = CT.Class({
 		}
 		this.comp();
 		this.script(this.state.script);
-		zc.util.onperson(this.menus.minimap);
+		zc.util.onCurPer(this.menus.minimap);
 	},
 	comp: function() {
 		var zcc = zero.core.current, oz = this.opts,
@@ -114,7 +114,8 @@ vu.game.Scene = CT.Class({
 	load: function() {
 		var oz = this.opts, cfg = core.config.ctzero, start = this.start,
 			zc = zero.core, zcc = zc.current, zcu = zc.util, p;
-		this.player.gear = this.state.inventory.gear;
+		zcc.inventory = this.state.inventory;
+//		this.player.gear = this.state.inventory.gear;
 		for (p of oz.actors) {
 //			p.grippy = false;
 			p.positioners = this.state.actors[p.name].positioners;

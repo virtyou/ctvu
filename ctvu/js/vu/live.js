@@ -178,7 +178,7 @@ vu.live = {
 				if (pdata.name in zcc.people)
 					loadPer(zcc.people[pdata.name]);
 				else
-					zcu.join(vu.core.person(pdata, invis), loadPer, !isYou);
+					zcu.join(vu.core.person(pdata, invis), loadPer, !isYou, false, isYou);
 			}, "json");
 		}
 	},
