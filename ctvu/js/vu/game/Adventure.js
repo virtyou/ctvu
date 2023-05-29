@@ -50,19 +50,19 @@ vu.game.Adventure = CT.Class({
 				_.setState();
 		},
 		start: function() {
-			var zcc = zero.core.current, vp = vu.portal;
+			var zcc = zero.core.current, vp = vu.portal, scene = this.scene;
 			vu.live.init(this._.cbs);
 			vp.on("filter", function(obj) {
 				return obj.name in vp.options();
 			});
 			vp.on("eject", function(portout) {
 				vu.live.emit("eject", portout);
+				vp.ejector = portout && zero.core.Thing.get(portout);
 				CT.pubsub.unsubscribe(zcc.room.opts.key);
 			});
 			vp.on("inject", function(troom, pkey) { // Scene.start() handles subscribe
 				zcc.injector = pkey;
-				zcc.adventure.scene(vp.options()[vp.ejector.name].target);
-				vu.live.emit("inject", pkey);
+				scene(vp.options()[vp.ejector.name].target);
 			});
 		}
 	},
@@ -80,10 +80,7 @@ vu.game.Adventure = CT.Class({
 		var _ = this._, thaz = this, zcc = zero.core.current;
 		key = key || this.state.scene || this.game.scenes[0];
 		this.state.scene = key;
-		if (zcc.scene)
-			zcc.scene.unload();
-		else
-			_.start();
+		zcc.scene || _.start();
 		if (key in _.scenes)
 			_.scenes[key].load();
 		else {

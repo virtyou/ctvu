@@ -62,9 +62,13 @@ vu.game.Scene = CT.Class({
 			state = this.state.scenes[this.name],
 			slz = state.lights, items = state.items,
 			portals = state.portals, adv = this.adventure;
-		zcc.room.setBounds();
 		vu.clix.room();
+		zcc.room.setBounds();
 		CT.pubsub.subscribe(zcc.room.opts.key);
+		if (zcc.person) {
+			zcc.people[zcc.person.name] = zcc.person;
+			vu.live.emit("inject", zcc.injector);
+		}
 		slz && zcc.room.lights.forEach(function(l, i) {
 			l.setIntensity(slz[i]);
 		});
@@ -104,13 +108,6 @@ vu.game.Scene = CT.Class({
 		rt.startsWith("http") && this.menus.attribution("seeing", "wallpaper",
 			null, rt.split("/")[2].split(".").slice(-2).join("."));
 	},
-	unload: function() {
-		// people removed by vu.portal.portin()
-		// everything else is on the room right...?
-		var zcc = zero.core.current;
-		zcc.room.unload();
-		delete zcc.room;
-	},
 	load: function() {
 		var oz = this.opts, cfg = core.config.ctzero, start = this.start,
 			zc = zero.core, zcc = zc.current, zcu = zc.util, p;
@@ -123,15 +120,7 @@ vu.game.Scene = CT.Class({
 		cfg.room = oz.room;
 		cfg.people = oz.actors.slice();
 
-		if (zcc.scene) {
-			zcu.refresh(function(lastp, room) {
-				zcc.people[zcc.person.name] = zcc.person;
-				vu.portal.arrive(zcc.injector &&
-					zc.Thing.get(zcc.injector));
-				start();
-			});
-		} else
-			zcu.init(null, start);
+		zcc.scene ? zcu.refresh(start) : zcu.init(null, start);
 		zcc.scene = this;
 	},
 	init: function(opts) {
