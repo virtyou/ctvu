@@ -1,5 +1,11 @@
 vu.clix = {
 	_: {
+		roomclix: [],
+		unclixroom: function() {
+			var _ = vu.clix._;
+			_.roomclix.forEach(zero.core.click.unregister);
+			_.roomclix.length = 0;
+		},
 		yinfo: function() {
 			var oz = vu.clix.opts;
 			return [
@@ -24,6 +30,7 @@ vu.clix = {
 	},
 	room: function() {
 		var vc = vu.clix, room = zero.core.current.room;
+		vc._.unclixroom();
 		room.objects.forEach(vc.register);
 		room.automatons.forEach(a => a.onperson(vc.auto));
 	},
@@ -47,7 +54,7 @@ vu.clix = {
 		zero.core.audio.ux("blipon");
 	},
 	register: function(thing) {
-		var zc = zero.core, vc = vu.clix, other = [
+		var zc = zero.core, vc = vu.clix, _ = vc._, other = [
 			"SHIFT + click to approach"
 		], zcc = zc.current, cam = zc.camera,
 			target = thing.body || thing, oz = vc.opts,
@@ -67,13 +74,14 @@ vu.clix = {
 		else if (thing.opts.kind == "portal")
 			other.push(CT.dom.button("enter", () => zcc.person.approach(thing, vc.action)));
 		zc.click.register(target, function() {
-			vc.info(thing.name, isYou ? vc._.yinfo() : other);
+			vc.info(thing.name, isYou ? _.yinfo() : other);
 			cam.follow(target.looker || target);
 			if (!isYou) {
 				target.playPause(oz.audup);
 				CT.key.down("SHIFT") && zcc.person.approach(target);
 			}
 		});
+		isYou || _.roomclix.push(thing);
 	},
 	init: function(opts) { // {info,streamer,audup,auto}
 		vu.clix.opts = opts;
