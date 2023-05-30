@@ -225,6 +225,10 @@ vu.game.hopper = {
 	},
 	incLevel: function(creature) {
 		vu.game.hopper.setLevel(creature, creature.level + 1);
+		if (creature.level == 5) {
+			// TODO: initiate boss mode!
+			zero.core.current.scene.drop(creature.position());
+		}
 	},
 	decLevel: function(creature, subone) {
 		if (subone || creature.level > 1)
