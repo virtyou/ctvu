@@ -52,6 +52,7 @@ vu.game.Scene = CT.Class({
 			return this.log("aborting drop - no undropped items");
 		if (!Array.isArray(position))
 			position = [position.x, position.y, position.z];
+		this.log("dropping", name, "at", position);
 		this.itemize({
 			name: name,
 			kind: kind,
