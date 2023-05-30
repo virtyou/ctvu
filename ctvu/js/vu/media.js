@@ -158,7 +158,7 @@ vu.media = {
 					kind, thopts, side, sub, partname);
 			}, imap = vu.storage.get(genkind || kind),
 				items = imap && Object.values(imap);
-			if (kind.startsWith("worn_"))
+			if (kind == "held" || kind.startsWith("worn_"))
 				items = (items || []).concat(zero.base.clothes.procedurals(genkind || kind));
 			if (!items || !items.length)
 				return alert("oops, nothing yet! add the first " + kind + " thing on the item page!");
