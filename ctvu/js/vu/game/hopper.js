@@ -219,6 +219,7 @@ vu.game.hopper = {
 		creature.hp = hp * level;
 	},
 	setLevel: function(creature, level) {
+		vu.game.hopper.log(creature.name + ": level " + level);
 		creature.level = level;
 		creature.scale(level, true);
 	},
