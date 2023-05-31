@@ -192,10 +192,10 @@ vu.game.stepper = {
 		var zcc = zero.core.current;
 		CT.modal.choice({
 			prompt: "please select an angle",
-			data: ["front", "behind", "pov", "cycle",
+			data: ["front", "behind", "pov", "polar", "cycle",
 				"0", "1", "2", "3", "4", "5", "6", "7", "8"],
 			cb: function(angle) {
-				if (!["front", "behind", "pov"].includes(angle))
+				if (!["front", "behind", "pov", "polar"].includes(angle))
 					return cb({ camera: angle });
 				CT.modal.choice({
 					prompt: "please select a target",
