@@ -264,8 +264,8 @@ vu.game.hopper = {
 			zcc.sploder = new zc.Sploder();
 			prey.forEach(function(p) {
 				ccfg = ppcfg[p];
-				ccfg.hp = ccfg.hp || 1;
 				ccfg.level = ccfg.level || 1;
+				ccfg.hp = ccfg.hp || ccfg.value || 1;
 				men.setProp(p, "hp", ccfg.hp * ccfg.level);
 				ccfg.source && h.setLevel(zcc.people[ccfg.source].body, ccfg.level);
 			});
