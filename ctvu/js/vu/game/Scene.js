@@ -56,13 +56,12 @@ vu.game.Scene = CT.Class({
 			name = CT.data.choice(options);
 		if (!name) // also check for non-dropped items?
 			return this.log("aborting drop - no undropped items");
-		position = [position.x, position.y, position.z];
-		this.log("dropping", name, "at", position);
+		this.log("dropping", name);
 		this.itemize({
 			name: name,
 			kind: kind,
-			position: position,
-			description: CT.data.choice(_.droptex)
+			description: CT.data.choice(_.droptex),
+			position: [position.x, position.y, position.z]
 		}, true, _.idrop);
 	},
 	refresh: function(altered) {
