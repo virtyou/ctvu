@@ -259,8 +259,8 @@ vu.game.hopper = {
 		}
 		if (prey.length) {
 			h.log("activating " + prey.length + " prey varieties");
-			zcc.person.onland(() => men.splat(prey, h.on.splat, ppcfg, _.nosplat));
-			zcc.person.body.onthrust(side => men.knock(prey, h.on.knock, ppcfg, side));
+			zcc.person.onland(() => zc.knocker.splat(prey, h.on.splat, ppcfg, _.nosplat));
+			zcc.person.body.onthrust(side => zc.knocker.knock(prey, h.on.knock, ppcfg, side));
 			zcc.sploder = new zc.Sploder();
 			prey.forEach(function(p) {
 				ccfg = ppcfg[p];
