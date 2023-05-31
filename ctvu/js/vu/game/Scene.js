@@ -15,6 +15,12 @@ vu.game.Scene = CT.Class({
 				}
 			}, vu.storage.get(iopts.kind)[iopts.name]));
 		},
+		idrop: function(item) {
+			var zc = zero.core;
+			item.drop();
+			zc.audio.ux("confetti");
+			zc.current.sploder.confettize(item.position());
+		},
 		satisfies: function(condsec) {
 			var zcc = zero.core.current, a = zcc.adventure,
 				astate = a.state.actors, target = a.game[condsec],
@@ -50,15 +56,14 @@ vu.game.Scene = CT.Class({
 			name = CT.data.choice(options);
 		if (!name) // also check for non-dropped items?
 			return this.log("aborting drop - no undropped items");
-		if (!Array.isArray(position))
-			position = [position.x, position.y, position.z];
+		position = [position.x, position.y, position.z];
 		this.log("dropping", name, "at", position);
 		this.itemize({
 			name: name,
 			kind: kind,
 			position: position,
 			description: CT.data.choice(_.droptex)
-		}, true, i => i.drop());
+		}, true, _.idrop);
 	},
 	refresh: function(altered) {
 		this.log("refresh", altered.story, altered.state);
