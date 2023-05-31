@@ -21,6 +21,16 @@ vu.game.Scene = CT.Class({
 			zc.audio.ux("confetti");
 			zc.current.sploder.confettize(item.position());
 		},
+		dfilt: function(iname) {
+			var zc = zero.core, ph = zc.current.person.opts.gear.held;
+			if (ph) {
+				if (ph.left && zc.Thing.get(ph.left).name == iname)
+					return false;
+				if (ph.right && zc.Thing.get(ph.right).name == iname)
+					return false;
+			}
+			return !(iname in this._.drops);
+		},
 		satisfies: function(condsec) {
 			var zcc = zero.core.current, a = zcc.adventure,
 				astate = a.state.actors, target = a.game[condsec],
@@ -52,9 +62,9 @@ vu.game.Scene = CT.Class({
 	drop: function(position, kind) { // item{name,kind,description,position[]}
 		kind = kind || "held";
 		var _ = this._, items = vu.storage.get(kind),
-			options = Object.keys(items).filter(i => !(i in _.drops)),
+			options = Object.keys(items).filter(_.dfilt),
 			name = CT.data.choice(options);
-		if (!name) // also check for non-dropped items?
+		if (!name)
 			return this.log("aborting drop - no undropped items");
 		this.log("dropping", name);
 		this.itemize({
