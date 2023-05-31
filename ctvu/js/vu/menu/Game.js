@@ -195,12 +195,14 @@ vu.menu.Game = CT.Class({
 		], item);
 	},
 	item: function(item) {
-		var zcc = zero.core.current, per = zcc.person,
+		var zc = zero.core, zcc = zc.current, per = zcc.person,
+			cam = zc.camera, cangle = cam.current,
 			state = this.state, msg = "you get a " + item.name;
 		this.info(item.name, [
 			item.opts.description,
 			CT.dom.button("get", function() {
 				per.get(item, function() {
+					cam.angle(cangle);
 					vu.game.util.text(msg);
 					state.story.push(msg);
 					if (item.opts.kind == "held")

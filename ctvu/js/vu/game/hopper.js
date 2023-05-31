@@ -99,39 +99,6 @@ vu.game.hopper = {
 				h._.upscore();
 			}, 0, 10, scfg.initial, 1, "w1 block");
 		},
-		onpounce: function(pouncer) {
-			var h = vu.game.hopper, pd = pouncer.direction,
-				pn = pouncer.name, pk = pouncer.opts.kind,
-				hcfg = h.pcfg(), pcfg = hcfg.fauna[pk], ppcfg = hcfg.player[pk],
-				pv = pcfg.value * (pouncer.level || 1), mag = pv * 1000,
-				zcc = zero.core.current, adv = zcc.adventure,
-				per = zcc.person, pbs = per.body.springs;
-			h.log(pn + " pounced on player for " + pv + " points");
-			per.sfx("thud");
-			pbs.weave.shove = pd.x * mag;
-			pbs.slide.shove = pd.z * mag;
-			(pcfg.zombifying || (per.score - pv >= 0)) && adv.score(-pv);
-			vu.color.splash(per.zombified ? "green" : "red");
-			h._.megasource(ppcfg) && h.decLevel(zcc.people[ppcfg.source].body);
-			return per.zombified && pcfg.zombifying;
-		},
-		onsplat: function(prey) {
-			var h = vu.game.hopper, zcc = zero.core.current,
-				pcfg = h.pcfg().player[prey.opts.kind], zccp = zcc.person;
-			h.log("you splatted " + prey.name + " @ " + prey.hp);
-			vu.color.splash("blue");
-			prey.hp -= zccp.powerjumping ? 2 : 1;
-			zccp.powerjumping && pcfg.powerjump && zccp.shouldFly();
-			zccp.powerjumping = pcfg.powerjump;
-			zccp.powerjumping && setTimeout(() => zcc.adventure.controls.jump(2));
-			if (prey.hp < 1) {
-				h.setCritter(prey, pcfg);
-				zcc.sploder.splode(prey.position());
-				zcc.adventure.score(pcfg.value * prey.level);
-				h._.megasource(pcfg) && h.incLevel(zcc.people[pcfg.source].body);
-				return true;
-			}
-		},
 		nosplat: function() {
 			zero.core.current.person.powerjumping = false;
 		},
@@ -159,6 +126,51 @@ vu.game.hopper = {
 				}
 			}
 			person.wander("room", ztick, 1000);
+		},
+		smack: function(prey, amount) {
+			var h = vu.game.hopper, zcc = zero.core.current,
+				pcfg = h.pcfg().player[prey.opts.kind];
+			h.log("you smacked " + prey.name + " @ " + prey.hp);
+			vu.color.splash("blue");
+			prey.hp -= amount;
+			if (prey.hp < 1) {
+				h.setCritter(prey, pcfg);
+				zcc.sploder.splode(prey.position());
+				zcc.adventure.score(pcfg.value * prey.level);
+				h._.megasource(pcfg) && h.incLevel(zcc.people[pcfg.source].body);
+				return true;
+			}
+		}
+	},
+	on: {
+		pounce: function(pouncer) {
+			var h = vu.game.hopper, pd = pouncer.direction,
+				pn = pouncer.name, pk = pouncer.opts.kind,
+				hcfg = h.pcfg(), pcfg = hcfg.fauna[pk], ppcfg = hcfg.player[pk],
+				pv = pcfg.value * (pouncer.level || 1), mag = pv * 1000,
+				zcc = zero.core.current, adv = zcc.adventure,
+				per = zcc.person, pbs = per.body.springs;
+			h.log(pn + " pounced on player for " + pv + " points");
+			per.sfx("thud");
+			pbs.weave.shove = pd.x * mag;
+			pbs.slide.shove = pd.z * mag;
+			(pcfg.zombifying || (per.score - pv >= 0)) && adv.score(-pv);
+			vu.color.splash(per.zombified ? "green" : "red");
+			h._.megasource(ppcfg) && h.decLevel(zcc.people[ppcfg.source].body);
+			return per.zombified && pcfg.zombifying;
+		},
+		knock: function(prey, side) {
+			return vu.game.hopper._.smack(prey,
+				zero.core.current.person.held(side) ? 2 : 1);
+		},
+		splat: function(prey) {
+			var h = vu.game.hopper, _ = h._, zcc = zero.core.current,
+				pcfg = h.pcfg().player[prey.opts.kind], zccp = zcc.person,
+				amount = zccp.powerjumping ? 2 : 1;
+			zccp.powerjumping && pcfg.powerjump && zccp.shouldFly();
+			zccp.powerjumping = pcfg.powerjump;
+			zccp.powerjumping && setTimeout(() => zcc.adventure.controls.jump(2));
+			return _.smack(prey, amount);
 		}
 	},
 	directions: {
@@ -219,11 +231,16 @@ vu.game.hopper = {
 		creature.hp = hp * level;
 	},
 	setLevel: function(creature, level) {
+		vu.game.hopper.log(creature.name + ": level " + level);
 		creature.level = level;
 		creature.scale(level, true);
 	},
 	incLevel: function(creature) {
 		vu.game.hopper.setLevel(creature, creature.level + 1);
+		if (creature.level == 5) {
+			// TODO: initiate boss mode!
+			zero.core.current.scene.drop(creature.position());
+		}
 	},
 	decLevel: function(creature, subone) {
 		if (subone || creature.level > 1)
@@ -238,16 +255,17 @@ vu.game.hopper = {
 			return h.log("skipping init() - no menagerie");
 		if (hunters.length) {
 			h.log("activating " + hunters.length + " hunter varieties");
-			men.huntPlayer(hunters, _.onpounce);
+			men.huntPlayer(hunters, h.on.pounce);
 		}
 		if (prey.length) {
 			h.log("activating " + prey.length + " prey varieties");
-			zcc.person.onland(() => men.splat(prey, _.onsplat, ppcfg, _.nosplat));
+			zcc.person.onland(() => men.splat(prey, h.on.splat, ppcfg, _.nosplat));
+			zcc.person.body.onthrust(side => men.knock(prey, h.on.knock, ppcfg, side));
 			zcc.sploder = new zc.Sploder();
 			prey.forEach(function(p) {
 				ccfg = ppcfg[p];
-				ccfg.hp = ccfg.hp || 1;
 				ccfg.level = ccfg.level || 1;
+				ccfg.hp = ccfg.hp || ccfg.value || 1;
 				men.setProp(p, "hp", ccfg.hp * ccfg.level);
 				ccfg.source && h.setLevel(zcc.people[ccfg.source].body, ccfg.level);
 			});

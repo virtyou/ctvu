@@ -6,11 +6,12 @@ vu.game.Scene = CT.Class({
 				cb(target);
 			});
 		},
-		item: function(iopts, onbuild) {
+		item: function(iopts, onbuild, postbuild) {
 			return zero.core.current.room.attach(CT.merge(iopts, {
 				onbuild: function(item) {
 					item.setBounds();
 					onbuild(item);
+					postbuild && postbuild(item);
 				}
 			}, vu.storage.get(iopts.kind)[iopts.name]));
 		},
@@ -26,11 +27,38 @@ vu.game.Scene = CT.Class({
 						return false;
 			}
 			return true;
-		}
+		},
+		drops: {},
+		droptex: ["what have we here?", "what's this?", "any takers?", "give it a try!"]
 	},
 	personalize: function(person) {
 		vu.clix.register(person);
 		vu.core.comp(person);
+	},
+	itemize: function(item, dropper, postbuild) {
+		var _ = this._;
+		_.item(item, i => _.regClick(i, this.menus.item), postbuild);
+		if (dropper) {
+			this.state.scenes[this.name].items[item.name] = item;
+			_.drops[item.name] = item;
+		}
+	},
+	drop: function(position, kind) { // item{name,kind,description,position[]}
+		kind = kind || "held";
+		var _ = this._, items = vu.storage.get(kind),
+			options = Object.keys(items).filter(i => !(i in _.drops)),
+			name = CT.data.choice(options);
+		if (!name) // also check for non-dropped items?
+			return this.log("aborting drop - no undropped items");
+		if (!Array.isArray(position))
+			position = [position.x, position.y, position.z];
+		this.log("dropping", name, "at", position);
+		this.itemize({
+			name: name,
+			kind: kind,
+			position: position,
+			description: CT.data.choice(_.droptex)
+		}, true, i => i.drop());
 	},
 	refresh: function(altered) {
 		this.log("refresh", altered.story, altered.state);
@@ -82,7 +110,7 @@ vu.game.Scene = CT.Class({
 		for (portal in portals)
 			rc(zcc.room[portal], men.portal);
 		for (item in items)
-			_.item(items[item], i => rc(i, men.item));
+			this.itemize(items[item]);
 		for (item in zcc.room.book) {
 			book = zcc.room[item];
 			rc(book, men.book);
@@ -141,6 +169,8 @@ vu.game.Scene = CT.Class({
 			s.scenes = {};
 		if (!s.scenes[opts.name]) // scene w/ no initial state
 			s.scenes[opts.name] = {};
+		if (!s.scenes[opts.name].items)
+			s.scenes[opts.name].items = {};
 		this.name = opts.name;
 		this.menus = a.menus;
 		this.player = a.player;
