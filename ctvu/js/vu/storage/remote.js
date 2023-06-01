@@ -44,19 +44,12 @@ vu.storage.remote = {
 	has: function(ent_type) {
 		return !!(vu.core._udata[ent_type] || vu.storage._extras[ent_type]);
 	},
+	_basics: ["person", "people", "room", "rooms"],
 	get: function(ent_type) {
 		var vc = vu.core, vcu = vc._udata,
-			ex = vu.storage._extras;
-		if (vcu) {
-			if (ent_type == "person")
-				return vcu.person;
-			else if (ent_type == "people")
-				return vcu.people;
-			else if (ent_type == "room")
-				return vcu.room;
-			else if (ent_type == "rooms")
-				return vcu.rooms;
-		}
+			vs = vu.storage, ex = vs._extras;
+		if (vcu && vs._basics.includes(ent_type))
+			return vcu[ent_type];
 		if (ent_type == "allrooms")
 			return vc._allrooms;
 		else if (ex && ent_type in ex)
