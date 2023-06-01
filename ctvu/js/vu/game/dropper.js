@@ -1,17 +1,18 @@
 vu.game.dropper = {
 	_: {
+		ops: {},
 		drops: {},
 		droptex: ["what have we here?", "what's this?", "any takers?", "give it a try!"],
-		regClick: function(target, cb) {
+		click: function(target, cb) {
 			zero.core.click.register(target, () => cb(target));
 		},
-		idrop: function(item) {
+		drop: function(item) {
 			var zc = zero.core;
 			item.drop();
 			zc.audio.ux("confetti");
 			zc.current.sploder.confettize(item.position());
 		},
-		dfilt: function(iname) {
+		filt: function(iname) {
 			var zc = zero.core, ph = zc.current.person.opts.gear.held;
 			if (ph) {
 				if (ph.left && zc.Thing.get(ph.left).name == iname)
@@ -20,6 +21,22 @@ vu.game.dropper = {
 					return false;
 			}
 			return !(iname in vu.game.dropper._.drops);
+		},
+		options: function(kind) {
+			kind = kind || "held";
+			var d = vu.game.dropper, _ = d._;
+			if (!_.ops[kind]) {
+				_.ops[kind] = CT.merge(vu.storage.get(kind),
+					zero.base.clothes.procedurals(kind, true, true));
+			}
+			return _.ops[kind];
+		},
+		item: function(name, kind) { // ad-hoc keys?
+			return vu.game.dropper._.options(kind)[name];
+		},
+		names: function(kind) {
+			var _ = vu.game.dropper._;
+			return Object.keys(_.options(kind)).filter(_.filt);
 		}
 	},
 	log: function(msg) {
@@ -27,7 +44,7 @@ vu.game.dropper = {
 	},
 	itemize: function(item, dropper, postbuild) {
 		var d = vu.game.dropper, _ = d._, scene = zero.core.current.scene;
-		d.item(item, i => _.regClick(i, scene.menus.item), postbuild);
+		d.item(item, i => _.click(i, scene.menus.item), postbuild);
 		if (dropper) {
 			scene.state.scenes[scene.name].items[item.name] = item;
 			_.drops[item.name] = item;
@@ -40,13 +57,11 @@ vu.game.dropper = {
 				onbuild(item);
 				postbuild && postbuild(item);
 			}
-		}, vu.storage.get(iopts.kind)[iopts.name])); // || {key:token}?
+		}, vu.game.dropper._.item(iopts.name, iopts.kind)));
 	},
-	drop: function(position, kind) { // item{name,kind,description,position[]}
+	drop: function(position, kind) {
 		kind = kind || "held";
-		var d = vu.game.dropper, _ = d._, items = vu.storage.get(kind),
-			options = Object.keys(items).concat(zero.base.clothes.procedurals(kind)).filter(_.dfilt),
-			name = CT.data.choice(options);
+		var d = vu.game.dropper, _ = d._, name = CT.data.choice(_.names(kind));
 		if (!name)
 			return d.log("aborting drop - no undropped items");
 		d.log("dropping " + name);
@@ -55,6 +70,6 @@ vu.game.dropper = {
 			kind: kind,
 			description: CT.data.choice(_.droptex),
 			position: [position.x, position.y, position.z]
-		}, true, _.idrop);
+		}, true, _.drop);
 	}
 };
