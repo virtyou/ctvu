@@ -2,34 +2,7 @@ vu.game.Scene = CT.Class({
 	CLASSNAME: "vu.game.Scene",
 	_: {
 		regClick: function(target, cb) {
-			zero.core.click.register(target.body || target, function() {
-				cb(target);
-			});
-		},
-		item: function(iopts, onbuild, postbuild) {
-			return zero.core.current.room.attach(CT.merge(iopts, {
-				onbuild: function(item) {
-					item.setBounds();
-					onbuild(item);
-					postbuild && postbuild(item);
-				}
-			}, vu.storage.get(iopts.kind)[iopts.name]));
-		},
-		idrop: function(item) {
-			var zc = zero.core;
-			item.drop();
-			zc.audio.ux("confetti");
-			zc.current.sploder.confettize(item.position());
-		},
-		dfilt: function(iname) {
-			var zc = zero.core, ph = zc.current.person.opts.gear.held;
-			if (ph) {
-				if (ph.left && zc.Thing.get(ph.left).name == iname)
-					return false;
-				if (ph.right && zc.Thing.get(ph.right).name == iname)
-					return false;
-			}
-			return !(iname in this._.drops);
+			zero.core.click.register(target.body || target, () => cb(target));
 		},
 		satisfies: function(condsec) {
 			var zcc = zero.core.current, a = zcc.adventure,
@@ -43,36 +16,11 @@ vu.game.Scene = CT.Class({
 						return false;
 			}
 			return true;
-		},
-		drops: {},
-		droptex: ["what have we here?", "what's this?", "any takers?", "give it a try!"]
+		}
 	},
 	personalize: function(person) {
 		vu.clix.register(person);
 		vu.core.comp(person);
-	},
-	itemize: function(item, dropper, postbuild) {
-		var _ = this._;
-		_.item(item, i => _.regClick(i, this.menus.item), postbuild);
-		if (dropper) {
-			this.state.scenes[this.name].items[item.name] = item;
-			_.drops[item.name] = item;
-		}
-	},
-	drop: function(position, kind) { // item{name,kind,description,position[]}
-		kind = kind || "held";
-		var _ = this._, items = vu.storage.get(kind),
-			options = Object.keys(items).filter(_.dfilt),
-			name = CT.data.choice(options);
-		if (!name)
-			return this.log("aborting drop - no undropped items");
-		this.log("dropping", name);
-		this.itemize({
-			name: name,
-			kind: kind,
-			description: CT.data.choice(_.droptex),
-			position: [position.x, position.y, position.z]
-		}, true, _.idrop);
 	},
 	refresh: function(altered) {
 		this.log("refresh", altered.story, altered.state);
