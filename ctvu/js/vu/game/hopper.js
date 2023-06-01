@@ -129,22 +129,27 @@ vu.game.hopper = {
 		},
 		smack: function(prey, amount) {
 			var h = vu.game.hopper, zcc = zero.core.current,
-				pcfg = h.pcfg().player[prey.opts.kind];
+				_ = h._, pcfg = h.pcfg().player[prey.opts.kind];
 			h.log("you smacked " + prey.name + " @ " + prey.hp);
 			vu.color.splash("blue");
 			prey.hp -= amount;
 			if (prey.hp < 1) {
 				h.setCritter(prey, pcfg);
-				zcc.sploder.splode(prey.position());
-				zcc.adventure.score(pcfg.value * prey.level);
-				h._.megasource(pcfg) && h.incLevel(zcc.people[pcfg.source].body);
+				_.splode(prey, pcfg);
+				_.megasource(pcfg) && h.incLevel(zcc.people[pcfg.source].body);
 				return true;
 			}
+		},
+		splode: function(prey, pcfg) {
+			var h = vu.game.hopper, zcc = zero.core.current;
+			pcfg = pcfg || h.pcfg().player[prey.opts.kind];
+			zcc.sploder.splode(prey.position());
+			zcc.adventure.score(pcfg.value * prey.level);
 		}
 	},
 	on: {
 		pounce: function(pouncer) {
-			var h = vu.game.hopper, pd = pouncer.direction,
+			var h = vu.game.hopper, pd = pouncer.direction || pouncer.getDirection(),
 				pn = pouncer.name, pk = pouncer.opts.kind,
 				hcfg = h.pcfg(), pcfg = hcfg.fauna[pk], ppcfg = hcfg.player[pk],
 				pv = pcfg.value * (pouncer.level || 1), mag = pv * 1000,
@@ -171,6 +176,16 @@ vu.game.hopper = {
 			zccp.powerjumping = pcfg.powerjump;
 			zccp.powerjumping && setTimeout(() => zcc.adventure.controls.jump(2));
 			return _.smack(prey, amount);
+		},
+		crash: function(prey) {
+			var h = vu.game.hopper, _ = h._;
+			h.log(prey.name + " crashed into " + prey.source);
+			_.splode(prey);
+			zero.core.util.invert(prey.direction);
+			vu.game.dropper.drop(prey.position());
+
+			// TODO: boss stuff!
+
 		}
 	},
 	directions: {
@@ -248,7 +263,7 @@ vu.game.hopper = {
 	},
 	init: function() {
 		var h = vu.game.hopper, zc = zero.core, zcc = zc.current,
-			men = zcc.room.menagerie, pcfg = h.pcfg(),
+			men = zcc.room.menagerie, pcfg = h.pcfg(), source,
 			hunters = Object.keys(pcfg.fauna), ccfg, _ = h._,
 			ppcfg = pcfg.player, prey = Object.keys(ppcfg);
 		if (!men)
@@ -267,7 +282,12 @@ vu.game.hopper = {
 				ccfg.level = ccfg.level || 1;
 				ccfg.hp = ccfg.hp || ccfg.value || 1;
 				men.setProp(p, "hp", ccfg.hp * ccfg.level);
-				ccfg.source && h.setLevel(zcc.people[ccfg.source].body, ccfg.level);
+				if (ccfg.source) {
+					source = zcc.people[ccfg.source];
+					source.body.oncrash = h.on.crash;
+					h.setLevel(source.body, ccfg.level);
+					men.setProp(p, "source", ccfg.source);
+				}
 			});
 		}
 	}
