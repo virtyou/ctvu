@@ -130,7 +130,8 @@ vu.game.hopper = {
 		smack: function(prey, amount) {
 			var h = vu.game.hopper, zcc = zero.core.current,
 				_ = h._, pcfg = h.pcfg().player[prey.opts.kind];
-			h.log("you smacked " + prey.name + " @ " + prey.hp);
+			amount = amount || 1;
+			h.log("you smacked " + prey.name + " @ " + prey.hp + " for " + amount);
 			vu.color.splash("blue");
 			prey.hp -= amount;
 			if (prey.hp < 1) {
@@ -180,8 +181,8 @@ vu.game.hopper = {
 		crash: function(prey) {
 			var h = vu.game.hopper, _ = h._;
 			h.log(prey.name + " crashed into " + prey.source);
-			_.splode(prey);
 			h.bosses[prey.source].crash(prey);
+			_.smack(prey);
 		}
 	},
 	directions: {
