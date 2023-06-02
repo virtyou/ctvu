@@ -72,7 +72,7 @@ vu.game.Scene = CT.Class({
 		for (portal in portals)
 			rc(zcc.room[portal], men.portal);
 		for (item in items)
-			this.itemize(items[item]);
+			vu.game.dropper.itemize(items[item]);
 		for (item in zcc.room.book) {
 			book = zcc.room[item];
 			rc(book, men.book);
