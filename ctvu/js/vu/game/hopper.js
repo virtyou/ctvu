@@ -136,7 +136,7 @@ vu.game.hopper = {
 			if (prey.hp < 1) {
 				h.setCritter(prey, pcfg);
 				_.splode(prey, pcfg);
-				_.megasource(pcfg) && h.incLevel(zcc.people[pcfg.source].body);
+				_.megasource(pcfg) && h.bosses[pcfg.source].incLevel();
 				return true;
 			}
 		},
@@ -161,7 +161,7 @@ vu.game.hopper = {
 			pbs.slide.shove = pd.z * mag;
 			(pcfg.zombifying || (per.score - pv >= 0)) && adv.score(-pv);
 			vu.color.splash(per.zombified ? "green" : "red");
-			h._.megasource(ppcfg) && h.decLevel(zcc.people[ppcfg.source].body);
+			h._.megasource(ppcfg) && h.bosses[ppcfg.source].decLevel();
 			return per.zombified && pcfg.zombifying;
 		},
 		knock: function(prey, side) {
@@ -181,17 +181,14 @@ vu.game.hopper = {
 			var h = vu.game.hopper, _ = h._;
 			h.log(prey.name + " crashed into " + prey.source);
 			_.splode(prey);
-			zero.core.util.invert(prey.direction);
-			vu.game.dropper.drop(prey.position());
-
-			// TODO: boss stuff!
-
+			h.bosses[prey.source].crash(prey);
 		}
 	},
 	directions: {
 		fauna: "fauna pouncing on player",
 		player: "player pouncing on fauna"
 	},
+	bosses: {},
 	log: function(msg) {
 		CT.log("hopper: " + msg);
 	},
@@ -240,26 +237,12 @@ vu.game.hopper = {
 		zombied && setTimeout(_.ztick, 1000);
 	},
 	setCritter: function(creature, ccfg) {
-		var zccpz = zero.core.current.people, hp = ccfg.hp,
-			level = ccfg.source ? zccpz[ccfg.source].body.level : ccfg.level;
-		vu.game.hopper.setLevel(creature, level);
-		creature.hp = hp * level;
-	},
-	setLevel: function(creature, level) {
+		var h = vu.game.hopper, hp = ccfg.hp,
+			level = ccfg.source ? h.bosses[ccfg.source].level : ccfg.level;
 		vu.game.hopper.log(creature.name + ": level " + level);
 		creature.level = level;
+		creature.hp = hp * level;
 		creature.scale(level, true);
-	},
-	incLevel: function(creature) {
-		vu.game.hopper.setLevel(creature, creature.level + 1);
-		if (creature.level == 5) {
-			// TODO: initiate boss mode!
-			vu.game.dropper.drop(creature.position());
-		}
-	},
-	decLevel: function(creature, subone) {
-		if (subone || creature.level > 1)
-			vu.game.hopper.setLevel(creature, creature.level - 1);
 	},
 	init: function() {
 		var h = vu.game.hopper, zc = zero.core, zcc = zc.current,
@@ -283,10 +266,12 @@ vu.game.hopper = {
 				ccfg.hp = ccfg.hp || ccfg.value || 1;
 				men.setProp(p, "hp", ccfg.hp * ccfg.level);
 				if (ccfg.source) {
-					source = zcc.people[ccfg.source];
-					source.body.oncrash = h.on.crash;
-					h.setLevel(source.body, ccfg.level);
 					men.setProp(p, "source", ccfg.source);
+					h.bosses[ccfg.source] = new vu.game.Boss({
+						name: ccfg.source,
+						level: ccfg.level,
+						oncrash: h.on.crash
+					});
 				}
 			});
 		}
