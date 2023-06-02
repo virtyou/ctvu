@@ -1,7 +1,7 @@
 vu.game.Boss = CT.Class({
 	CLASSNAME: "vu.game.Boss",
 	crash: function(critter) {
-		this.shove(critter.direction);
+		this.shove(critter.direction, critter.level);
 		zero.core.util.invert(critter.direction);
 		this.drop();
 	},
@@ -17,27 +17,35 @@ vu.game.Boss = CT.Class({
 	drop: function() {
 		vu.game.dropper.drop(this.position());
 	},
+	wileOut: function() {
+		this.climax = true;
+		this.drop();
+	},
 	setLevel: function(level) {
 		this.log("level", level);
 		this.level = level;
 		this.scale(level);
 	},
 	incLevel: function() {
+		if (this.climax)
+			return this.log("incLevel skipped - @ climax");
 		this.setLevel(this.level + 1);
-		if (this.level == 5) {
-			// TODO: initiate boss mode!
-			this.drop();
-		}
+		(this.level == this.opts.cap) && this.wileOut();
 	},
 	decLevel: function() {
-		if (this.level > 1)
+		if (this.climax)
+			this.log("decLevel skipped - @ climax")
+		else if (this.level > this.opts.floor)
 			this.setLevel(this.level - 1);
 		else
-			this.log("defeated!!!")
+			this.log("decLevel skipped - @ floor");
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
-			level: 1
+			level: 1,
+			floor: 1,
+			cap: 5,
+			hp: 10
 		});
 		if (!opts.person)
 			opts.person = zero.core.current.people[opts.name];
