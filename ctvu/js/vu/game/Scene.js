@@ -59,9 +59,7 @@ vu.game.Scene = CT.Class({
 			zcc.people[zcc.person.name] = zcc.person;
 			vu.live.emit("inject", zcc.injector);
 		}
-		slz && zcc.room.lights.forEach(function(l, i) {
-			l.setIntensity(slz[i]);
-		});
+		slz && zcc.room.lights.forEach((l, i) => l.setIntensity(slz[i]));
 		for (pers in zcc.people) {
 			rc(zcc.people[pers], men.person);
 			if (tsa[pers] && tsa[pers].vibe)
