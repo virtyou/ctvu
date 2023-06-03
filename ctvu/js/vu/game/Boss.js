@@ -81,7 +81,7 @@ vu.game.Boss.Meter = CT.Class({
 		this.menu.show("ctmain");
 	},
 	initMenu: function() {
-		this.bloodLine = CT.dom.div(null, "h40p redback");
+		this.bloodLine = CT.dom.div(null, "h15p redback");
 		this.lifeLine = CT.dom.div(this.bloodLine, "bordered noflow");
 		this.bloodLine.style.width = this.lifeLine.style.width = this._.width();
 		this.menu = vu.core.menu("battle", "top", this.lifeLine);
