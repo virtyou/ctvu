@@ -269,6 +269,7 @@ vu.game.hopper = {
 				if (ccfg.source) {
 					men.setProp(p, "source", ccfg.source);
 					h.bosses[ccfg.source] = new vu.game.Boss({
+						critter: p,
 						name: ccfg.source,
 						level: ccfg.level,
 						oncrash: h.on.crash
