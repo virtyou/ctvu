@@ -1,9 +1,58 @@
 vu.game.Boss = CT.Class({
 	CLASSNAME: "vu.game.Boss",
+	_: {
+		taunts: ["is that the best you can do?", "don't make me laugh!",
+			"you gotta be kidding me", "that's pathetic", "just give up!",
+			"nice try, you runt!", "you're no match for me!", "i'll get you!",
+			"come back here!", "get over here!", "i'll show you!", "you can't stop me!"],
+		laments: ["uh oh", "oh no", "oh man", "oops!", "i was wrong!",
+			"you got me", "i misjudged you", "how could you beat me?"],
+		toss: function(hand, target) {
+			this.person.body.unthrust(hand.opts.side);
+			target.knock(this.person.direction());
+		},
+		windUp: function(hand, target) {
+			target.stick(hand);
+			this.person.body.thrust(hand.opts.side);
+			this.person.orient(zero.core.current.person.body);
+			setTimeout(() => this._.toss(hand, target), 400);
+		},
+		closest: function(critname) {
+			return zero.core.current.room.menagerie.near(critname, this.person.body);
+		},
+		die: function() {
+			var zc = zero.core;
+			zc.audio.ux("confetti");
+			zc.current.room.eject(this.person);
+			zc.current.sploder.confettize(this.person.body.position());
+		}
+	},
+	moves: { // TODO: jump, charge, punch, kick...
+		taunt: function() { // (neg)
+			this.person.say(CT.data.choice(this._.taunts));
+		},
+		throw: function() {
+			var _ = this._;
+			if (this.opts.critter) {
+				var crit = _.closest(this.opts.critter);
+				crit && this.person.touch(crit, null, null, null, _.windUp);
+			} else { // orbs [fire/ice/acid]
+
+			}
+		}
+	},
+	tick: function() {
+		var _ = this._;
+		if (this.hp < 1) { // TODO: actual defeat...
+			this.person.say(CT.data.choice(_.laments), _.die);
+			return this.log("defeated!!!!!");
+		}
+		this.moves[CT.data.choice(Object.keys(this.moves))]();
+		setTimeout(this.tick, 3000);
+	},
 	crash: function(critter) {
 		this.shove(critter.getDirection(), critter.level);
 		this.person.dance("fall", 800);
-//		zero.core.util.invert(critter.direction);
 		this.drop();
 	},
 	shove: function(direction, amount) {
@@ -13,9 +62,6 @@ vu.game.Boss = CT.Class({
 	hit: function(amount) {
 		this.hp -= (amount || 1);
 		this.meter.set(this.hp);
-		if (this.hp < 1) { // TODO: actual defeat...
-			this.log("defeated!!!!!");
-		}
 	},
 	scale: function(s) {
 		this.person.body.scale(s, true);
@@ -28,8 +74,9 @@ vu.game.Boss = CT.Class({
 	},
 	wileOut: function() {
 		this.climax = true;
-		this.drop();
 		this.meter.show();
+		this.drop();
+		this.tick();
 	},
 	setLevel: function(level) {
 		this.log("level", level);
