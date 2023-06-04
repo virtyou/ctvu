@@ -101,7 +101,7 @@ vu.game.Boss = CT.Class({
 		this.opts = opts = CT.merge(opts, {
 			level: 1,
 			floor: 1,
-			cap: 5,
+			cap: 4,
 			hp: 100
 		});
 		if (!opts.person)
