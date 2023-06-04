@@ -1,8 +1,8 @@
 vu.game.Boss = CT.Class({
 	CLASSNAME: "vu.game.Boss",
 	crash: function(critter) {
-		this.shove(critter.direction, critter.level);
-		this.person.dance("fall");
+		this.shove(critter.getDirection(), critter.level);
+		this.person.dance("fall", 800);
 //		zero.core.util.invert(critter.direction);
 		this.drop();
 	},
