@@ -73,6 +73,7 @@ vu.game.Boss = CT.Class({
 		vu.game.dropper.drop(this.position());
 	},
 	wileOut: function() {
+		this.person.mood.update({ mad: 1 });
 		this.climax = true;
 		this.meter.show();
 		this.drop();
