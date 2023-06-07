@@ -95,6 +95,17 @@ vu.menu.Game = CT.Class({
 				selz.camera.modal.show();
 			};
 			cam.onchange(selz.camera.update);
+		},
+		score: function(p) {
+			var sclass = "right bold";
+			if (p.score > 0)
+				sclass += " green";
+			else if (p.score < 0)
+				sclass += " red";
+			return CT.dom.div([
+				CT.dom.div(p.score, sclass),
+				p.name
+			], "bordered padded margined round");
 		}
 	},
 	minimap: function() {
@@ -104,48 +115,44 @@ vu.menu.Game = CT.Class({
 		mod.show("ctmain", _.minimap.refresh);
 	},
 	score: function() {
-		var selz = this._.selectors, sel = selz.score,
-			mod = sel.modal, snode = mod.node, sclass,
+		var _ = this._, selz = _.selectors, sel = selz.score,
+			mod = sel.modal, snode = mod.node,
 			pz = Object.values(zero.core.current.people).filter(b => !isNaN(b.score));
 		pz.sort((a, b) => b.score - a.score);
-		CT.dom.setContent(sel, pz.map(function(p) {
-			sclass = "right bold";
-			if (p.score > 0)
-				sclass += " green";
-			else if (p.score < 0)
-				sclass += " red";
-			return CT.dom.div([
-				CT.dom.div(p.score, sclass),
-				p.name
-			], "bordered padded margined round");
-		}));
+		CT.dom.setContent(sel, [
+			CT.dom.button("story", this.story, "abs ctr shiftup"),
+			pz.map(_.score)
+		]);
 		mod.show("ctmain");
 		selz.story.modal.hide();
 		if (snode.classList.contains("collapsed"))
 			snode.classList.remove("collapsed");
 	},
 	story: function() {
-		var selz = this._.selectors, sel = selz.story,
+		var selz = this._.selectors, sel = selz.story, fll,
 			s = this.state, mod = sel.modal, snode = mod.node;
 		CT.dom.setContent(sel, [
-			CT.dom.button("state", function() {
-				CT.modal.modal([
-					CT.dom.button("reset", function() {
-						if (!(confirm("are you sure you want to start over?") && confirm("really delete all your progress?")))
-							return;
-						zero.core.current.adventure.reset();
-					}, "abs ctl shiftup"),
-					CT.dom.div("known state", "big centered"),
-					Object.keys(s.actors).map(function(a) {
-						return CT.dom.div([
-							CT.dom.div(a, "bold"),
-							Object.keys(s.actors[a]).filter(p => p != "positioners").map(function(p) {
-								return p + ": " + s.actors[a][p];
-							})
-						], "bordered padded margined round");
-					})
-				], null, null, true);
-			}, "abs ctr shiftup"),
+			CT.dom.div([
+				CT.dom.button("state", function() {
+					CT.modal.modal([
+						CT.dom.button("reset", function() {
+							if (!(confirm("are you sure you want to start over?") && confirm("really delete all your progress?")))
+								return;
+							zero.core.current.adventure.reset();
+						}, "abs ctl shiftup"),
+						CT.dom.div("known state", "big centered"),
+						Object.keys(s.actors).map(function(a) {
+							return CT.dom.div([
+								CT.dom.div(a, "bold"),
+								Object.keys(s.actors[a]).filter(p => p != "positioners").map(function(p) {
+									return p + ": " + s.actors[a][p];
+								})
+							], "bordered padded margined round");
+						})
+					], null, null, true);
+				}),
+				CT.dom.button("score", this.score)
+			], "abs ctr shiftup"),
 			s.story
 		]);
 		mod.show("ctmain");
@@ -153,7 +160,8 @@ vu.menu.Game = CT.Class({
 		if (snode.classList.contains("collapsed"))
 			snode.classList.remove("collapsed");
 		setTimeout(function() { // TODO: fix this!!
-			sel.firstChild.lastChild.lastChild.scrollIntoView({
+			fll = sel.firstChild.lastChild.lastChild;
+			fll && fll.scrollIntoView({
 				behavior: "smooth"
 			});
 		}, 500);
