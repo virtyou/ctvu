@@ -92,7 +92,7 @@ vu.game.hopper = {
 				Object.keys(pz).map(p => p + ": " + pz[p])
 			], "bordered padded margined round");
 		},
-		initial: function() {
+		initial: function() { // deprecated!
 			var h = vu.game.hopper, scfg = h.scfg();
 			return CT.dom.range(function(val) {
 				scfg.initial = parseInt(val);
@@ -108,15 +108,15 @@ vu.game.hopper = {
 		ztick: function() {
 			var zc = zero.core, zcc = zc.current, person = zcc.person, p, target,
 				_ = vu.game.hopper._, ztick = _.ztick, touching = zc.util.touching;
-			person.score += 1;
-			person.zombified = person.score < 0;
+			person.score.ztick -= 1;
+			person.zombified = person.score.ztick > 0;
 			zcc.adventure.menus.score();
 			setTimeout(vu.live.meta, 600);
 			if (!person.zombified)
 				return zc.camera.angle(_.prevCam);
 			for (p in zcc.people) {
 				target = zcc.people[p];
-				if (!isNaN(target.score) && target.score >= 0) {
+				if (target.score && !target.score.ztick) {
 					if (touching(target.body, person.body, 100)) {
 						vu.live.game("average", [target.name, person.name]);
 						setTimeout(ztick, 500);
@@ -160,7 +160,10 @@ vu.game.hopper = {
 			per.sfx("thud");
 			pbs.weave.shove = pd.x * mag;
 			pbs.slide.shove = pd.z * mag;
-			(pcfg.zombifying || (per.score - pv >= 0)) && adv.score(-pv);
+
+			adv.damage(pv, pcfg.zombifying);
+//			(pcfg.zombifying || (per.score - pv >= 0)) && adv.damage(pv);
+
 			vu.color.splash(per.zombified ? "green" : "red");
 			h._.megasource(ppcfg) && h.bosses[ppcfg.source].decLevel();
 			return per.zombified && pcfg.zombifying;
@@ -198,8 +201,8 @@ vu.game.hopper = {
 			scfg = (game || zcc.scene.game || zcc.adventure.game).score;
 		if (!scfg.pounce)
 			scfg.pounce = { fauna: {}, player: {} };
-		if (!scfg.initial)
-			scfg.initial = 0;
+//		if (!scfg.initial)
+//			scfg.initial = 0;
 		return scfg;
 	},
 	pcfg: function(game) {
@@ -208,8 +211,8 @@ vu.game.hopper = {
 	modder: function() { // { fauna: { dog: 2, cat: 10 }, player: { cat: 1 } }
 		var _ = vu.game.hopper._, pounces = CT.dom.div();
 		var node = _.editor = CT.dom.div([
-			CT.dom.div("initial score", "big"),
-			_.initial(),
+//			CT.dom.div("initial score", "big"),
+//			_.initial(),
 			CT.dom.div("pounce dynamics", "big"),
 			pounces
 		], "bordered padded margined round");
@@ -224,18 +227,18 @@ vu.game.hopper = {
 	view: function(game) {
 		var h = vu.game.hopper, _ = h._;
 		return CT.dom.div([
-			"initial score: " + h.scfg(game).initial,
+//			"initial score: " + h.scfg(game).initial,
 			"pounce dynamics",
 			_.vgroup("player", game), _.vgroup("fauna", game)
 		], "bordered padded margined round");
 	},
-	zombify: function() {
+	zombify: function(zval) {
 		var zc = zero.core, _ = vu.game.hopper._,
-			person = zc.current.person, zombied = person.score < 0;
-		if (zombied == person.zombified) return;
-		person.zombified = zombied;
-		_.prevCam = zc.camera.current;
-		zombied && setTimeout(_.ztick, 1000);
+			person = zc.current.person;
+		person.zombified = true;
+		person.score.ztick = zval;
+		_.prevCam = zc.camera.current; // TODO: improve?
+		setTimeout(_.ztick, 1000);
 	},
 	setCritter: function(creature, ccfg) {
 		var h = vu.game.hopper, hp = ccfg.hp,
