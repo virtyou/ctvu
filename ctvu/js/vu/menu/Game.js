@@ -96,14 +96,14 @@ vu.menu.Game = CT.Class({
 			};
 			cam.onchange(selz.camera.update);
 		},
-		score: function(p) {
-			var sclass = "right bold";
+		score: function(p) { // {hp,xp,level,ztick} ; xpcap = level * 100 ; hpcap = level * 10
+			var sclass = "right bold", ps = p.score;
 			if (p.score > 0)
 				sclass += " green";
-			else if (p.score < 0)
+			else if (p.score.xp < 0) // TODO: change this logic, and meterize everything
 				sclass += " red";
 			return CT.dom.div([
-				CT.dom.div(p.score, sclass),
+				CT.dom.div("hp:" + ps.hp + " xp:" + ps.xp + " level:" + ps.level, sclass),
 				p.name
 			], "bordered padded margined round");
 		}
@@ -117,8 +117,8 @@ vu.menu.Game = CT.Class({
 	score: function() {
 		var _ = this._, selz = _.selectors, sel = selz.score,
 			mod = sel.modal, snode = mod.node,
-			pz = Object.values(zero.core.current.people).filter(b => !isNaN(b.score));
-		pz.sort((a, b) => b.score - a.score);
+			pz = Object.values(zero.core.current.people).filter(b => !!b.score);
+		pz.sort((a, b) => b.score.xp - a.score.xp);
 		CT.dom.setContent(sel, [
 			CT.dom.button("story", this.story, "abs ctr shiftup"),
 			pz.map(_.score)
