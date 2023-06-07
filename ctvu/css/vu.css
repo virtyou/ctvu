@@ -317,6 +317,7 @@ img.right.h30p.up5 {
 .gmenu.story {
 	max-width: 30%;
 	max-height: 50%;
+	min-width: 155px;
 	white-space: normal;
 }
 
