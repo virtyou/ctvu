@@ -69,9 +69,10 @@ vu.clix = {
 			}
 		} else if (thing.opts.kind == "book")
 			other.push(thing.readbutt());
-		else if (thing.opts.kind == "carpentry" && thing.opts.items.length)
-			other.push(thing.perusebutt());
-		else if (thing.opts.kind == "portal")
+		else if (thing.opts.kind == "carpentry") {
+			thing.opts.items.length && other.push(thing.perusebutt());
+			thing.openable() && other.push(thing.openbutt());
+		} else if (thing.opts.kind == "portal")
 			other.push(CT.dom.button("enter", () => zcc.person.approach(thing, vc.action)));
 		zc.click.register(target, function() {
 			vc.info(thing.name, isYou ? _.yinfo() : other);
