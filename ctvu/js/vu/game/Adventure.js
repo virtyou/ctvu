@@ -25,9 +25,7 @@ vu.game.Adventure = CT.Class({
 		die: function() {
 			CT.log("YOU DIE!");
 			zero.core.current.person.dance("fall");
-			CT.modal.modal("You died! Better luck next time...", function() {
-				location = location; // kinda hacky...
-			});
+			CT.modal.modal("You died! Better luck next time...", () => location.reload());
 		},
 		setState: function() {
 			var s = this.state;
@@ -124,6 +122,7 @@ vu.game.Adventure = CT.Class({
 		var ps = zero.core.current.person.score;
 		ps.hp -= amount;
 		vu.live.meta();
+		this.menus.score();
 		ps.hp < 0 && this._.die();
 		zombifying && CT.data.random() && vu.game.hopper.zombify(amount);
 	},
