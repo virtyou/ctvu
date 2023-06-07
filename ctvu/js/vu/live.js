@@ -98,8 +98,8 @@ vu.live = {
 				// TODO: video etc
 			},
 			meta: function(data) {
-				var _ = vu.live._, person = _.people[data.user], meta = data.meta,
-					zcc = zero.core.current;
+				var _ = vu.live._, person = _.people[data.user],
+					meta = data.meta, zc = zero.core, zcc = zc.current;
 				if (zcc.person && data.user == zcc.person.opts.key)
 					return;
 				if (!(person && person.body))
@@ -118,7 +118,7 @@ vu.live = {
 					person.helpMe = meta.helpMe;
 					(vu.core.ownz() || user.core.get("admin")) && zcc.minimap.help(person);
 				}
-				if (person.score != meta.score)
+				if (!zc.util.same(person.score, meta.score))
 					zcc.adventure && zcc.adventure.score(meta.score, person);
 			},
 			message: function(msg) {
