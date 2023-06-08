@@ -238,24 +238,9 @@ vu.menu.Game = CT.Class({
 		], item);
 	},
 	item: function(item) {
-		var zc = zero.core, zcc = zc.current, per = zcc.person,
-			cam = zc.camera, cangle = cam.current,
-			state = this.state, msg = "you get a " + item.name;
 		this.info(item.name, [
 			item.opts.description,
-			CT.dom.button("get", function() {
-				per.get(item, function() {
-					cam.angle(cangle);
-					vu.game.util.text(msg);
-					state.story.push(msg);
-					if (item.opts.kind == "held")
-						state.inventory.gear.held = per.opts.gear.held;
-					else
-						state.inventory.gear.worn = per.opts.gear.worn;
-					delete state.scenes[zcc.scene.name].items[item.name];
-					zcc.adventure.upstate();
-				});
-			}, "w1 mv5")
+			CT.dom.button("get", () => vu.game.dropper.get(item), "w1 mv5")
 		], item);
 	},
 	portal: function(portal) {
