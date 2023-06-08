@@ -11,7 +11,8 @@ vu.game.Meter = CT.Class({
 	set: function(val, cap) {
 		this.value = Math.max(val, 0);
 		if (cap)
-			this.opts.cap = isNaN(cap) ? Math.max(val, this.opts.cap) : cap;
+			this.opts.cap = (cap === true) ? Math.max(val, this.opts.cap) : cap;
+		this.log("value:", this.value, "cap:", this.opts.cap);
 		this.counter.style.width = this._.width();
 	},
 	show: function() {
