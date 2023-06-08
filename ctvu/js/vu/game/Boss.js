@@ -111,6 +111,10 @@ vu.game.Boss = CT.Class({
 		this.person = opts.person;
 		this.setLevel(opts.level);
 		this.person.body.oncrash = opts.oncrash;
-		this.meter = new vu.game.Meter({ cap: opts.hp, menu: true });
+		this.meter = new vu.game.Meter({
+			menu: true,
+			cap: opts.hp,
+			lineWidth: "400px"
+		});
 	}
 });
