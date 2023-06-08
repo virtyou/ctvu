@@ -44,10 +44,12 @@ vu.game.dropper = {
 	},
 	check: function() {
 		var zc = zero.core, zcc = zc.current,
-			pbod = zcc.person.body, iname;
-		for (iname in vu.game.dropper._.drops)
-			if (zc.util.touching(pbod, zcc.room[iname], 100))
-				return zcc.room[iname];
+			pbod = zcc.person.body, iname, item;
+		for (iname in vu.game.dropper._.drops) {
+			item = zcc.room[iname];
+			if (item && zc.util.touching(pbod, item, 100))
+				return item;
+		}
 	},
 	get: function(item) {
 		var zc = zero.core, zcc = zc.current, per = zcc.person,
