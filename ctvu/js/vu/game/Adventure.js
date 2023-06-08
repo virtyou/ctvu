@@ -121,10 +121,10 @@ vu.game.Adventure = CT.Class({
 	damage: function(amount, zombifying) {
 		var ps = zero.core.current.person.score;
 		ps.hp -= amount;
-		vu.live.meta();
-		this.menus.score();
 		ps.hp < 0 && this._.die();
 		zombifying && CT.data.random() && vu.game.hopper.zombify(amount);
+		vu.live.meta();
+		this.menus.score();
 	},
 	score: function(score, person) { // xp
 		var isYou = !person, ps, xpcap;
