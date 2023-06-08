@@ -26,6 +26,11 @@ vu.clix = {
 	},
 	action: function() {
 		// TODO: other actions.....
+		if (vu.game) {
+			var item = vu.game.dropper.check();
+			if (item)
+				return vu.game.dropper.get(item);
+		}
 		vu.portal.check();
 	},
 	room: function() {
