@@ -14,13 +14,36 @@ vu.game.Adventure = CT.Class({
 				person.score = {
 					xp: 0,
 					hp: 10,
-					level: 1
+					level: 1,
+					breath: 10
 				};
 //				person.score = person.score || vu.game.hopper.scfg().initial;
 
 				this.controls.setCb(vu.clix.action);
 				this.controls.setTarget(person, true);
+				this._.ptick();
 			}
+		},
+		ptick: function() {
+			var p = zero.core.current.person, t = 5000, unChanged,
+				w = p.body.within, s = p.score, cap = s.level * 10;
+			if (w && w.opts.state == "liquid") {
+				if (s.breath && !w.opts.lava)
+					s.breath -= 1;
+				else
+					s.hp -= 1;
+				t = 1000;
+			} else if (s.breath < cap)
+				s.breath += 1;
+			else if (s.hp < cap)
+				s.hp += 1
+			else
+				unChanged = true;
+			if (!unChanged) {
+				vu.live.meta();
+				this.menus.score();
+			}
+			setTimeout(this._.ptick, t);
 		},
 		die: function() {
 			CT.log("YOU DIE!");
