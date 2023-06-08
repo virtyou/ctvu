@@ -8,12 +8,18 @@ vu.game.Meter = CT.Class({
 	status: function() {
 		return this.value + "/" + this.opts.cap;
 	},
+	full: function() {
+		return this.value == this.opts.cap;
+	},
 	set: function(val, cap) {
 		this.value = Math.max(val, 0);
 		if (cap)
 			this.opts.cap = (cap === true) ? Math.max(val, this.opts.cap) : cap;
 		this.log("value:", this.value, "cap:", this.opts.cap);
 		this.counter.style.width = this._.width();
+	},
+	setVisibility: function(isVis) {
+		isVis ? this.show() : this.hide();
 	},
 	show: function() {
 		this.menu ? this.menu.show("ctmain") : CT.dom.show(this.line);
