@@ -98,34 +98,38 @@ vu.menu.Game = CT.Class({
 			cam.onchange(selz.camera.update);
 		},
 		scoreMeters: function(p) {
-			var _ = this._, mz = _.scores[p.name], ps = p.score;
+			var _ = this._, mz = _.scores[p.name], ps = p.score,
+				locap = ps.level * 10, hicap = locap * 10;
 			if (!mz) {
 				mz = _.scores[p.name] = {};
 				mz.hp = new vu.game.Meter({
-					value: ps.hp,
-					cap: ps.level * 10
+					cap: locap,
+					value: ps.hp
 				});
 				mz.xp = new vu.game.Meter({
+					cap: hicap,
 					value: ps.xp,
-					cap: ps.level * 100,
 					counterClass: "h10p blueback"
 				});
+				mz.breath = new vu.game.Meter({
+					cap: locap,
+					value: ps.breath,
+					counterClass: "h10p yellowback"
+				});
 				mz.zombie = new vu.game.Meter({
-					value: ps.ztick || 0,
 					cap: ps.ztick || 10,
+					value: ps.ztick || 0,
 					counterClass: "h10p greenback"
 				});
-				p.zombified || mz.zombie.hide();
-				mz.all = [mz.hp.line, mz.xp.line, mz.zombie.line];
+				mz.all = [mz.hp.line, mz.xp.line, mz.breath.line, mz.zombie.line];
 			} else { // update
-				mz.hp.set(ps.hp, ps.level * 10);
-				mz.xp.set(ps.xp, ps.level * 100);
-				if (p.zombified) {
-					mz.zombie.set(ps.ztick, true);
-					mz.zombie.show();
-				} else
-					mz.zombie.hide();
+				mz.hp.set(ps.hp, locap);
+				mz.xp.set(ps.xp, hicap);
+				mz.breath.set(ps.breath, locap);
+				p.zombified && mz.zombie.set(ps.ztick, true);
 			}
+			mz.breath.setVisibility(!mz.breath.full());
+			mz.zombie.setVisibility(p.zombified);
 			return mz;
 		},
 		score: function(p) { // {hp,xp,level,ztick} ; xpcap = level * 100 ; hpcap = level * 10
