@@ -122,7 +122,7 @@ vu.game.Adventure = CT.Class({
 		var ps = zero.core.current.person.score;
 		ps.hp -= amount;
 		ps.hp < 0 && this._.die();
-		zombifying && CT.data.random() && vu.game.hopper.zombify(amount);
+		zombifying && CT.data.random() && vu.game.hopper.zombify(amount * 2);
 		vu.live.meta();
 		this.menus.score();
 	},
