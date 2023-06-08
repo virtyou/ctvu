@@ -42,6 +42,29 @@ vu.game.dropper = {
 	log: function(msg) {
 		CT.log("dropper: " + msg);
 	},
+	check: function() {
+		var zc = zero.core, zcc = zc.current,
+			pbod = zcc.person.body, iname;
+		for (iname in vu.game.dropper._.drops)
+			if (zc.util.touching(pbod, zcc.room[iname], 100))
+				return zcc.room[iname];
+	},
+	get: function(item) {
+		var zc = zero.core, zcc = zc.current, per = zcc.person,
+			cam = zc.camera, cangle = cam.current,
+			state = zcc.adventure.state, msg = "you get a " + item.name;
+		per.get(item, function() {
+			cam.angle(cangle);
+			vu.game.util.text(msg);
+			state.story.push(msg);
+			if (item.opts.kind == "held")
+				state.inventory.gear.held = per.opts.gear.held;
+			else
+				state.inventory.gear.worn = per.opts.gear.worn;
+			delete state.scenes[zcc.scene.name].items[item.name];
+			zcc.adventure.upstate();
+		});
+	},
 	itemize: function(item, dropper, postbuild) {
 		var d = vu.game.dropper, _ = d._, scene = zero.core.current.scene;
 		d.item(item, i => _.click(i, scene.menus.item), postbuild);
