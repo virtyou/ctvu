@@ -48,7 +48,8 @@ vu.game.Adventure = CT.Class({
 		die: function() {
 			CT.log("YOU DIE!");
 			zero.core.current.person.dance("fall");
-			CT.modal.modal("You died! Better luck next time...", () => location.reload());
+			CT.modal.modal("You died! Better luck next time...",
+				() => location.reload(), { noClose: true }, true);
 		},
 		setState: function() {
 			var s = this.state;
