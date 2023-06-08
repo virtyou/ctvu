@@ -1,14 +1,15 @@
 vu.menu.Game = CT.Class({
 	CLASSNAME: "vu.menu.Game",
 	_: {
+		scores: {},
 		selectors: {},
+		interactionals: {},
 		menus: {
 			minimap: "topright",
 			story: "bottomleft",
 			score: "bottomleft",
 			camera: "bottomright"
 		},
-		interactionals: {},
 		collapse: function(section) {
 			var sel = this._.selectors[section];
 			return function() {
@@ -96,16 +97,49 @@ vu.menu.Game = CT.Class({
 			};
 			cam.onchange(selz.camera.update);
 		},
+		scoreMeters: function(p) {
+			var _ = this._, mz = _.scores[p.name], ps = p.score;
+			if (!mz) {
+				mz = _.scores[p.name] = {};
+				mz.hp = new vu.game.Meter({
+					value: ps.hp,
+					cap: ps.level * 10
+				});
+				mz.xp = new vu.game.Meter({
+					value: ps.xp,
+					cap: ps.level * 100,
+					counterClass: "h10p blueback"
+				});
+				mz.zombie = new vu.game.Meter({
+					value: ps.ztick || 0,
+					cap: ps.ztick || 10,
+					counterClass: "h10p greenback"
+				});
+				p.zombified || mz.zombie.hide();
+				mz.all = [mz.hp.line, mz.xp.line, mz.zombie.line];
+			} else { // update
+				mz.hp.set(ps.hp, ps.level * 10);
+				mz.xp.set(ps.xp, ps.level * 100);
+				if (p.zombified) {
+					mz.zombie.set(ps.ztick, true);
+					mz.zombie.show();
+				} else
+					mz.zombie.hide();
+			}
+			return mz;
+		},
 		score: function(p) { // {hp,xp,level,ztick} ; xpcap = level * 100 ; hpcap = level * 10
-			var sclass = "right bold", ps = p.score,
-				pstr = "hp:" + ps.hp + "/" + (ps.level * 10) + " xp:" + ps.xp + "/" + (ps.level * 100) + " level:" + ps.level;
-			if (p.score > 0)
-				sclass += " green";
-			else if (p.score.xp < 0) // TODO: change this logic, and meterize everything
-				sclass += " red";
+			var mz = this._.scoreMeters(p);
 			return CT.dom.div([
-				CT.dom.div(pstr, sclass),
-				p.name
+				CT.dom.div([
+					CT.dom.span(mz.hp.status(), "red"),
+					CT.dom.pad(),
+					CT.dom.span(mz.xp.status(), "blueblue"),
+					CT.dom.pad(),
+					CT.dom.span("level " + p.score.level, p.zombified ? "green" : "white")
+				], "right bold small"),
+				p.name,
+				mz.all
 			], "bordered padded margined round");
 		}
 	},
