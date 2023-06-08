@@ -130,7 +130,7 @@ vu.game.hopper = {
 		smack: function(prey, amount) {
 			var h = vu.game.hopper, zcc = zero.core.current,
 				_ = h._, pcfg = h.pcfg().player[prey.opts.kind];
-			amount = amount || 1;
+			amount = (amount || 1) * zcc.person.score.level;
 			h.log("you smacked " + prey.name + " @ " + prey.hp + " for " + amount);
 			vu.color.splash("blue");
 			prey.hp -= amount;
