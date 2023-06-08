@@ -1,14 +1,15 @@
 vu.menu.Game = CT.Class({
 	CLASSNAME: "vu.menu.Game",
 	_: {
+		scores: {},
 		selectors: {},
+		interactionals: {},
 		menus: {
 			minimap: "topright",
 			story: "bottomleft",
 			score: "bottomleft",
 			camera: "bottomright"
 		},
-		interactionals: {},
 		collapse: function(section) {
 			var sel = this._.selectors[section];
 			return function() {
@@ -95,6 +96,55 @@ vu.menu.Game = CT.Class({
 				selz.camera.modal.show();
 			};
 			cam.onchange(selz.camera.update);
+		},
+		scoreMeters: function(p) {
+			var _ = this._, mz = _.scores[p.name], ps = p.score,
+				locap = ps.level * 10, hicap = locap * 10;
+			if (!mz) {
+				mz = _.scores[p.name] = {};
+				mz.hp = new vu.game.Meter({
+					cap: locap,
+					value: ps.hp
+				});
+				mz.xp = new vu.game.Meter({
+					cap: hicap,
+					value: ps.xp,
+					counterClass: "h10p blueback"
+				});
+				mz.breath = new vu.game.Meter({
+					cap: locap,
+					value: ps.breath,
+					counterClass: "h10p yellowback"
+				});
+				mz.zombie = new vu.game.Meter({
+					cap: ps.ztick || 10,
+					value: ps.ztick || 0,
+					counterClass: "h10p greenback"
+				});
+				mz.all = [mz.hp.line, mz.xp.line, mz.breath.line, mz.zombie.line];
+			} else { // update
+				mz.hp.set(ps.hp, locap);
+				mz.xp.set(ps.xp, hicap);
+				mz.breath.set(ps.breath, locap);
+				p.zombified && mz.zombie.set(ps.ztick, true);
+			}
+			mz.breath.setVisibility(!mz.breath.full());
+			mz.zombie.setVisibility(p.zombified);
+			return mz;
+		},
+		score: function(p) { // {hp,xp,level,ztick} ; xpcap = level * 100 ; hpcap = level * 10
+			var mz = this._.scoreMeters(p);
+			return CT.dom.div([
+				CT.dom.div([
+					CT.dom.span(mz.hp.status(), "red"),
+					CT.dom.pad(),
+					CT.dom.span(mz.xp.status(), "blueblue"),
+					CT.dom.pad(),
+					CT.dom.span("level " + p.score.level, p.zombified ? "green" : "white")
+				], "right bold small"),
+				p.name,
+				mz.all
+			], "bordered padded margined round");
 		}
 	},
 	minimap: function() {
@@ -104,48 +154,44 @@ vu.menu.Game = CT.Class({
 		mod.show("ctmain", _.minimap.refresh);
 	},
 	score: function() {
-		var selz = this._.selectors, sel = selz.score,
-			mod = sel.modal, snode = mod.node, sclass,
-			pz = Object.values(zero.core.current.people).filter(b => !isNaN(b.score));
-		pz.sort((a, b) => b.score - a.score);
-		CT.dom.setContent(sel, pz.map(function(p) {
-			sclass = "right bold";
-			if (p.score > 0)
-				sclass += " green";
-			else if (p.score < 0)
-				sclass += " red";
-			return CT.dom.div([
-				CT.dom.div(p.score, sclass),
-				p.name
-			], "bordered padded margined round");
-		}));
+		var _ = this._, selz = _.selectors, sel = selz.score,
+			mod = sel.modal, snode = mod.node,
+			pz = Object.values(zero.core.current.people).filter(b => !!b.score);
+		pz.sort((a, b) => b.score.xp - a.score.xp);
+		CT.dom.setContent(sel, [
+			CT.dom.button("story", this.story, "abs ctr shiftup"),
+			pz.map(_.score)
+		]);
 		mod.show("ctmain");
 		selz.story.modal.hide();
 		if (snode.classList.contains("collapsed"))
 			snode.classList.remove("collapsed");
 	},
 	story: function() {
-		var selz = this._.selectors, sel = selz.story,
+		var selz = this._.selectors, sel = selz.story, fll,
 			s = this.state, mod = sel.modal, snode = mod.node;
 		CT.dom.setContent(sel, [
-			CT.dom.button("state", function() {
-				CT.modal.modal([
-					CT.dom.button("reset", function() {
-						if (!(confirm("are you sure you want to start over?") && confirm("really delete all your progress?")))
-							return;
-						zero.core.current.adventure.reset();
-					}, "abs ctl shiftup"),
-					CT.dom.div("known state", "big centered"),
-					Object.keys(s.actors).map(function(a) {
-						return CT.dom.div([
-							CT.dom.div(a, "bold"),
-							Object.keys(s.actors[a]).filter(p => p != "positioners").map(function(p) {
-								return p + ": " + s.actors[a][p];
-							})
-						], "bordered padded margined round");
-					})
-				], null, null, true);
-			}, "abs ctr shiftup"),
+			CT.dom.div([
+				CT.dom.button("state", function() {
+					CT.modal.modal([
+						CT.dom.button("reset", function() {
+							if (!(confirm("are you sure you want to start over?") && confirm("really delete all your progress?")))
+								return;
+							zero.core.current.adventure.reset();
+						}, "abs ctl shiftup"),
+						CT.dom.div("known state", "big centered"),
+						Object.keys(s.actors).map(function(a) {
+							return CT.dom.div([
+								CT.dom.div(a, "bold"),
+								Object.keys(s.actors[a]).filter(p => p != "positioners").map(function(p) {
+									return p + ": " + s.actors[a][p];
+								})
+							], "bordered padded margined round");
+						})
+					], null, null, true);
+				}),
+				CT.dom.button("score", this.score)
+			], "abs ctr shiftup"),
 			s.story
 		]);
 		mod.show("ctmain");
@@ -153,7 +199,8 @@ vu.menu.Game = CT.Class({
 		if (snode.classList.contains("collapsed"))
 			snode.classList.remove("collapsed");
 		setTimeout(function() { // TODO: fix this!!
-			sel.firstChild.lastChild.lastChild.scrollIntoView({
+			fll = sel.firstChild.lastChild.lastChild;
+			fll && fll.scrollIntoView({
 				behavior: "smooth"
 			});
 		}, 500);
@@ -195,24 +242,9 @@ vu.menu.Game = CT.Class({
 		], item);
 	},
 	item: function(item) {
-		var zc = zero.core, zcc = zc.current, per = zcc.person,
-			cam = zc.camera, cangle = cam.current,
-			state = this.state, msg = "you get a " + item.name;
 		this.info(item.name, [
 			item.opts.description,
-			CT.dom.button("get", function() {
-				per.get(item, function() {
-					cam.angle(cangle);
-					vu.game.util.text(msg);
-					state.story.push(msg);
-					if (item.opts.kind == "held")
-						state.inventory.gear.held = per.opts.gear.held;
-					else
-						state.inventory.gear.worn = per.opts.gear.worn;
-					delete state.scenes[zcc.scene.name].items[item.name];
-					zcc.adventure.upstate();
-				});
-			}, "w1 mv5")
+			CT.dom.button("get", () => vu.game.dropper.get(item), "w1 mv5")
 		], item);
 	},
 	portal: function(portal) {

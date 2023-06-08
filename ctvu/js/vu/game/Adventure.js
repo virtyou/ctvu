@@ -9,10 +9,47 @@ vu.game.Adventure = CT.Class({
 			},
 			joined: function(person) {
 				this.log("joined", person.name);
-				person.score = person.score || vu.game.hopper.scfg().initial;
+
+				// TODO: load from game state?
+				person.score = {
+					xp: 0,
+					hp: 10,
+					level: 1,
+					breath: 10
+				};
+//				person.score = person.score || vu.game.hopper.scfg().initial;
+
 				this.controls.setCb(vu.clix.action);
 				this.controls.setTarget(person, true);
+				this._.ptick();
 			}
+		},
+		ptick: function() {
+			var p = zero.core.current.person, t = 5000, unChanged,
+				w = p.body.within, s = p.score, cap = s.level * 10;
+			if (w && w.opts.state == "liquid") {
+				if (s.breath && !w.opts.lava)
+					s.breath -= 1;
+				else
+					s.hp -= 1;
+				t = 1000;
+			} else if (s.breath < cap)
+				s.breath += 1;
+			else if (s.hp < cap)
+				s.hp += 1
+			else
+				unChanged = true;
+			if (!unChanged) {
+				vu.live.meta();
+				this.menus.score();
+			}
+			setTimeout(this._.ptick, t);
+		},
+		die: function() {
+			CT.log("YOU DIE!");
+			zero.core.current.person.dance("fall");
+			CT.modal.modal("You died! Better luck next time...",
+				() => location.reload(), { noClose: true }, true);
 		},
 		setState: function() {
 			var s = this.state;
@@ -97,26 +134,37 @@ vu.game.Adventure = CT.Class({
 	},
 	average: function(people) {
 		var zcc = zero.core.current, pz = zcc.people,
-			sum = people.map(p => pz[p].score).reduce((a, b) => a + b, 0),
+			sum = people.map(p => pz[p].score.hp).reduce((a, b) => a + b, 0),
 			average = Math.ceil(sum / people.length), name;
 		for (name of people)
-			pz[name].score = average;
+			pz[name].score.hp = average;
 		this.menus.score();
 		zcc.room.bump(pz[people[0]].body, pz[people[1]].body); // if > 2, whatever....
-		vu.game.hopper.zombify();
+//		vu.game.hopper.zombify();
 	},
-	score: function(amount, person) {
-		var isYou = !person;
+	damage: function(amount, zombifying) {
+		var ps = zero.core.current.person.score;
+		ps.hp -= amount;
+		ps.hp < 0 && this._.die();
+		zombifying && CT.data.random() && vu.game.hopper.zombify(amount * 2);
+		vu.live.meta();
+		this.menus.score();
+	},
+	score: function(score, person) { // xp
+		var isYou = !person, ps, xpcap;
 		if (isYou) { // additive!
 			person = zero.core.current.person;
-			person.score += amount;
+			ps = person.score;
+			ps.xp += score;
+			xpcap = ps.level * 100;
+			if (ps.xp > xpcap) {
+				ps.level += 1;
+				ps.xp -= xpcap;
+			}
 		} else
-			person.score = amount;
+			person.score = score;
 		this.menus.score();
-		if (isYou) {
-			vu.live.meta();
-			vu.game.hopper.zombify();
-		}
+		isYou && vu.live.meta();
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
