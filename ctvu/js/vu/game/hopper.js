@@ -157,14 +157,11 @@ vu.game.hopper = {
 				zcc = zero.core.current, adv = zcc.adventure,
 				per = zcc.person, pbs = per.body.springs;
 			h.log(pn + " pounced on player for " + pv + " points");
-			per.sfx("thud");
 			pbs.weave.shove = pd.x * mag;
 			pbs.slide.shove = pd.z * mag;
 
 			adv.damage(pv, pcfg.zombifying);
-//			(pcfg.zombifying || (per.score - pv >= 0)) && adv.damage(pv);
 
-			vu.color.splash(per.zombified ? "green" : "red");
 			h._.megasource(ppcfg) && h.bosses[ppcfg.source].decLevel();
 			return per.zombified && pcfg.zombifying;
 		},

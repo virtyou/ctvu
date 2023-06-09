@@ -143,11 +143,13 @@ vu.game.Adventure = CT.Class({
 //		vu.game.hopper.zombify();
 	},
 	damage: function(amount, zombifying) {
-		var ps = zero.core.current.person.score;
+		var per = zero.core.current.person, ps = per.score;
 		amount = amount || 1;
 		ps.hp -= amount;
 		ps.hp < 0 && this._.die();
 		zombifying && CT.data.random() && vu.game.hopper.zombify(amount * 2);
+		vu.color.splash(per.zombified ? "green" : "red");
+		per.sfx("thud");
 		vu.live.meta();
 		this.menus.score();
 	},
