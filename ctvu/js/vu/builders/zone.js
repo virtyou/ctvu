@@ -478,9 +478,16 @@ vu.builders.zone = {
 			furn.opts.material && Object.keys(furn.opts.material).length && d.push(_.materials(furn));
 			return d;
 		},
-		elemental: function(el) {
-			// TODO: add specialized controllers for fire/pool
-			return vu.builders.zone._.furnishing(el);
+		elemental: function(el) { // TODO: more specialized controllers for fire/pool
+			var d = vu.builders.zone._.furnishing(el);
+			(el.opts.name == "pool") && d.push(CT.dom.div(CT.dom.checkboxAndLabel("lava",
+				el.opts.lava, null, null, null, function(cbox) {
+					el.opts.lava = cbox.checked;
+					vu.storage.setOpts(el.opts.key, {
+						lava: cbox.checked
+					}, () => location.reload()); // meh hacky
+				}), "topbordered padded margined"));
+			return d;
 		},
 		playlist: function(sp) {
 			var pl = sp.opts.playlist = sp.opts.playlist || [],
