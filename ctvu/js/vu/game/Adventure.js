@@ -144,6 +144,7 @@ vu.game.Adventure = CT.Class({
 	},
 	damage: function(amount, zombifying) {
 		var ps = zero.core.current.person.score;
+		amount = amount || 1;
 		ps.hp -= amount;
 		ps.hp < 0 && this._.die();
 		zombifying && CT.data.random() && vu.game.hopper.zombify(amount * 2);
