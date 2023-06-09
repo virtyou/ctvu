@@ -1,14 +1,14 @@
 vu.storage.remote = {
-	_set: function(key, opts, prop) {
+	_set: function(key, opts, prop, cb) {
 		vu.core.z({
 			action: "opts",
 			key: key,
 			opts: opts,
 			prop: prop || "opts"
-		});
+		}, cb);
 	},
-	setOpts: function(key, opts) {
-		vu.storage._set(key, opts);
+	setOpts: function(key, opts, cb) {
+		vu.storage._set(key, opts, null, cb);
 	},
 	setMaterial: function(key, opts) {
 		vu.storage._set(key, opts, "material");
