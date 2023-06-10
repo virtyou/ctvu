@@ -129,9 +129,11 @@ vu.game.Boss = CT.Class({
 		this.opts = opts = CT.merge(opts, {
 			level: 1,
 			floor: 1,
-			cap: 4,
-			hp: 100
+//			hp: 100,
+			cap: 5
 		});
+		if (!opts.hp)
+			opts.hp = opts.cap * 10;
 		if (!opts.person)
 			opts.person = zero.core.current.people[opts.name];
 		this.hp = opts.hp;
