@@ -169,6 +169,9 @@ vu.game.hopper = {
 			return vu.game.hopper._.smack(prey,
 				zero.core.current.person.held(side) ? 2 : 1);
 		},
+		kick: function(prey, side) {
+			return vu.game.hopper._.smack(prey);
+		},
 		splat: function(prey) {
 			var h = vu.game.hopper, _ = h._, zcc = zero.core.current,
 				pcfg = h.pcfg().player[prey.opts.kind], zccp = zcc.person,
@@ -259,6 +262,7 @@ vu.game.hopper = {
 		if (prey.length) {
 			h.log("activating " + prey.length + " prey varieties");
 			zcc.person.onland(() => zc.knocker.splat(prey, h.on.splat, ppcfg, _.nosplat));
+			zcc.person.body.onkick(side => zc.knocker.kick(prey, h.on.kick, ppcfg, side));
 			zcc.person.body.onthrust(side => zc.knocker.knock(prey, h.on.knock, ppcfg, side));
 			zcc.sploder = new zc.Sploder();
 			prey.forEach(function(p) {
