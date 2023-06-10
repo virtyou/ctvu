@@ -25,20 +25,22 @@ vu.game.Adventure = CT.Class({
 			}
 		},
 		ptick: function() {
-			var p = zero.core.current.person, t = 5000, unChanged,
+			var p = zero.core.current.person, t = 1000, unChanged,
 				w = p.body.within, s = p.score, cap = s.level * 10;
 			if (w && w.opts.state == "liquid") {
 				if (s.breath && !w.opts.lava)
 					s.breath -= 1;
 				else
 					s.hp -= 1;
-				t = 1000;
 			} else if (s.breath < cap)
 				s.breath += 1;
-			else if (s.hp < cap)
-				s.hp += 1
-			else
-				unChanged = true;
+			else {
+				if (s.hp < cap)
+					s.hp += 1
+				else
+					unChanged = true;
+				t = 5000;
+			}
 			if (!unChanged) {
 				vu.live.meta();
 				this.menus.score();
