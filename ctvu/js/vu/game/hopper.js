@@ -157,20 +157,20 @@ vu.game.hopper = {
 				zcc = zero.core.current, adv = zcc.adventure,
 				per = zcc.person, pbs = per.body.springs;
 			h.log(pn + " pounced on player for " + pv + " points");
-			per.sfx("thud");
 			pbs.weave.shove = pd.x * mag;
 			pbs.slide.shove = pd.z * mag;
 
 			adv.damage(pv, pcfg.zombifying);
-//			(pcfg.zombifying || (per.score - pv >= 0)) && adv.damage(pv);
 
-			vu.color.splash(per.zombified ? "green" : "red");
 			h._.megasource(ppcfg) && h.bosses[ppcfg.source].decLevel();
 			return per.zombified && pcfg.zombifying;
 		},
 		knock: function(prey, side) {
 			return vu.game.hopper._.smack(prey,
 				zero.core.current.person.held(side) ? 2 : 1);
+		},
+		kick: function(prey, side) {
+			return vu.game.hopper._.smack(prey);
 		},
 		splat: function(prey) {
 			var h = vu.game.hopper, _ = h._, zcc = zero.core.current,
@@ -262,6 +262,7 @@ vu.game.hopper = {
 		if (prey.length) {
 			h.log("activating " + prey.length + " prey varieties");
 			zcc.person.onland(() => zc.knocker.splat(prey, h.on.splat, ppcfg, _.nosplat));
+			zcc.person.body.onkick(side => zc.knocker.kick(prey, h.on.kick, ppcfg, side));
 			zcc.person.body.onthrust(side => zc.knocker.knock(prey, h.on.knock, ppcfg, side));
 			zcc.sploder = new zc.Sploder();
 			prey.forEach(function(p) {

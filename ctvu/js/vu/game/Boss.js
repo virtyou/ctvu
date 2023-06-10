@@ -11,6 +11,16 @@ vu.game.Boss = CT.Class({
 			this.person.body.unthrust(hand.opts.side);
 			target.knock(this.person.direction());
 		},
+		hit: function(appendage, target) {
+			var zc = zero.core;
+			if (zc.util.touching(appendage, target, 50, null, true)) {
+				zc.current.adventure.damage(this.level);
+				target.shove(this.person.direction(), this.level);
+			}
+		},
+		kick: function(side) {
+			this._.hit(this.person.body.torso.legs[side].foot, zero.core.current.person.body);
+		},
 		windUp: function(hand, target) {
 			target.stick(hand);
 			this.person.body.thrust(hand.opts.side);
@@ -27,7 +37,7 @@ vu.game.Boss = CT.Class({
 			zc.current.sploder.confettize(this.person.body.position());
 		}
 	},
-	moves: { // TODO: jump, charge, punch, kick...
+	moves: { // TODO: jump
 		taunt: function() { // (neg)
 			this.person.say(CT.data.choice(this._.taunts));
 		},
@@ -39,15 +49,29 @@ vu.game.Boss = CT.Class({
 			} else { // orbs [fire/ice/acid]
 
 			}
+		},
+		charge: function() {
+			this.person.approach("player", null, null, null, null, true);
+		}
+	},
+	melee: {
+		punch: function() {
+			this.person.touch(zero.core.current.person.body, null, null, null, this._.hit, true);
+		},
+		kick: function() {
+			this.person.orient(zero.core.current.person.body);
+			this.person.body.kick(CT.data.random() ? "left" : "right", 200);
 		}
 	},
 	tick: function() {
-		var _ = this._;
-		if (this.hp < 1) { // TODO: actual defeat...
+		var _ = this._, zc = zero.core, moves = this.moves;
+		if (this.hp < 1) {
 			this.person.say(CT.data.choice(_.laments), _.die);
 			return this.log("defeated!!!!!");
 		}
-		this.moves[CT.data.choice(Object.keys(this.moves))]();
+		if (zc.util.touching(this.person.body, zc.current.person.body, 100))
+			moves = this.melee;
+		CT.data.choice(Object.values(moves))();
 		setTimeout(this.tick, 3000);
 	},
 	crash: function(critter) {
@@ -64,7 +88,7 @@ vu.game.Boss = CT.Class({
 		this.meter.set(this.hp);
 	},
 	scale: function(s) {
-		this.person.body.scale(s, true);
+		this.person.body.scale(s || ((this.level + 1) / 2), true);
 	},
 	position: function(pos, world) {
 		return this.person.body.position(pos, world);
@@ -73,7 +97,10 @@ vu.game.Boss = CT.Class({
 		vu.game.dropper.drop(this.position());
 	},
 	wileOut: function() {
-		this.person.mood.update({ mad: 1 });
+		this.person.mood.update({ mad: 1, energy: 2 });
+		this.person.energy.damp = 0.6;
+		this.person.automaton.pause();
+		this.person.body.onkick(this._.kick);
 		this.climax = true;
 		this.meter.show();
 		this.drop();
@@ -82,7 +109,7 @@ vu.game.Boss = CT.Class({
 	setLevel: function(level) {
 		this.log("level", level);
 		this.level = level;
-		this.scale(level);
+		this.scale();
 	},
 	incLevel: function() {
 		if (this.climax)
