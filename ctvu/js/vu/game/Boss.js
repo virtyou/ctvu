@@ -11,12 +11,15 @@ vu.game.Boss = CT.Class({
 			this.person.body.unthrust(hand.opts.side);
 			target.knock(this.person.direction());
 		},
-		hit: function(hand, target) {
-			var zc = zero.core, zcc = zc.current;
-			if (zc.util.touching(hand, zcc.person.body, 50, null, true)) {
-				zcc.adventure.damage(this.level);
+		hit: function(appendage, target) {
+			var zc = zero.core;
+			if (zc.util.touching(appendage, target, 50, null, true)) {
+				zc.current.adventure.damage(this.level);
 				target.shove(this.person.direction(), this.level);
 			}
+		},
+		kick: function(side) {
+			this._.hit(this.person.body.torso.legs[side].foot, zero.core.current.person.body);
 		},
 		windUp: function(hand, target) {
 			target.stick(hand);
@@ -51,9 +54,13 @@ vu.game.Boss = CT.Class({
 			this.person.approach("player", null, null, null, null, true);
 		}
 	},
-	melee: { // TODO: kick...
+	melee: {
 		punch: function() {
 			this.person.touch(zero.core.current.person.body, null, null, null, this._.hit, true);
+		},
+		kick: function() {
+			this.person.orient(zero.core.current.person.body);
+			this.person.body.kick(CT.data.random() ? "left" : "right", 200);
 		}
 	},
 	tick: function() {
@@ -93,6 +100,7 @@ vu.game.Boss = CT.Class({
 		this.person.mood.update({ mad: 1, energy: 2 });
 		this.person.energy.damp = 0.6;
 		this.person.automaton.pause();
+		this.person.body.onkick(this._.kick);
 		this.climax = true;
 		this.meter.show();
 		this.drop();
