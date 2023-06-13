@@ -249,9 +249,9 @@ vu.game.hopper = {
 		creature.scale(level, true);
 	},
 	swinger: function(prey, cb, cfg, variety) {
-		var zc = zero.core, per = zc.current.person;
+		var zc = zero.core;
 		return function(side) {
-			per.score.breath -= 1;
+			zc.current.adventure.exert();
 			return zc.knocker[variety](prey, cb, cfg, side);
 		};
 	},

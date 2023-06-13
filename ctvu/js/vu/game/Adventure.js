@@ -144,6 +144,10 @@ vu.game.Adventure = CT.Class({
 		zcc.room.bump(pz[people[0]].body, pz[people[1]].body); // if > 2, whatever....
 //		vu.game.hopper.zombify();
 	},
+	exert: function(amount) {
+		zero.core.current.person.score.breath -= (amount || 1);
+		this.menus.score();
+	},
 	damage: function(amount, zombifying) {
 		var per = zero.core.current.person, ps = per.score;
 		amount = amount || 1;
