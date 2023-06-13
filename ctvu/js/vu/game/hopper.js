@@ -248,6 +248,13 @@ vu.game.hopper = {
 		creature.hp = hp * level;
 		creature.scale(level, true);
 	},
+	swinger: function(prey, cb, cfg, variety) {
+		var zc = zero.core, per = zc.current.person;
+		return function(side) {
+			per.score.breath -= 1;
+			return zc.knocker[variety](prey, cb, cfg, side);
+		};
+	},
 	init: function() {
 		var h = vu.game.hopper, zc = zero.core, zcc = zc.current,
 			men = zcc.room.menagerie, pcfg = h.pcfg(), source,
@@ -262,8 +269,8 @@ vu.game.hopper = {
 		if (prey.length) {
 			h.log("activating " + prey.length + " prey varieties");
 			zcc.person.onland(() => zc.knocker.splat(prey, h.on.splat, ppcfg, _.nosplat));
-			zcc.person.body.onkick(side => zc.knocker.kick(prey, h.on.kick, ppcfg, side));
-			zcc.person.body.onthrust(side => zc.knocker.knock(prey, h.on.knock, ppcfg, side));
+			zcc.person.body.onkick(h.swinger(prey, h.on.kick, ppcfg, "kick"));
+			zcc.person.body.onthrust(h.swinger(prey, h.on.knock, ppcfg, "knock"));
 			zcc.sploder = new zc.Sploder();
 			prey.forEach(function(p) {
 				ccfg = ppcfg[p];
