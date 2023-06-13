@@ -132,13 +132,13 @@ vu.game.hopper = {
 				pn = pouncer.name, pk = pouncer.opts.kind,
 				hcfg = h.pcfg(), pcfg = hcfg.fauna[pk], ppcfg = hcfg.player[pk],
 				pv = pcfg.value * (pouncer.level || 1), mag = pv * 1000,
-				zcc = zero.core.current, adv = zcc.adventure,
-				per = zcc.person, pbs = per.body.springs;
+				zcc = zero.core.current, player = zcc.player,
+				per = player.person, pbs = per.body.springs;
 			h.log(pn + " pounced on player for " + pv + " points");
 			pbs.weave.shove = pd.x * mag;
 			pbs.slide.shove = pd.z * mag;
 
-			adv.damage(pv, pcfg.zombifying);
+			player.damage(pv, pcfg.zombifying);
 
 			h._.megasource(ppcfg) && h.bosses[ppcfg.source].decLevel();
 			return per.zombified && pcfg.zombifying;
