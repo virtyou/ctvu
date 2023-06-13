@@ -39,7 +39,7 @@ vu.game.Adventure = CT.Class({
 					s.hp += 1
 				else
 					unChanged = true;
-				t = 5000;
+				t = 2000;
 			}
 			if (!unChanged) {
 				vu.live.meta();
