@@ -10,48 +10,14 @@ vu.game.Adventure = CT.Class({
 			joined: function(person) {
 				this.log("joined", person.name);
 
-				// TODO: load from game state?
-				person.score = {
-					xp: 0,
-					hp: 10,
-					level: 1,
-					breath: 10
-				};
-//				person.score = person.score || vu.game.hopper.scfg().initial;
+				this.player = new vu.game.Player({
+					person: person,
+					menus: this.menus
+				});
 
 				this.controls.setCb(vu.clix.action);
 				this.controls.setTarget(person, true);
-				this._.ptick();
 			}
-		},
-		ptick: function() {
-			var p = zero.core.current.person, t = 1000, unChanged,
-				w = p.body.within, s = p.score, cap = s.level * 10;
-			if (w && w.opts.state == "liquid") {
-				if (s.breath && !w.opts.lava)
-					s.breath -= 1;
-				else
-					s.hp -= 1;
-			} else if (s.breath < cap)
-				s.breath += 1;
-			else {
-				if (s.hp < cap)
-					s.hp += 1
-				else
-					unChanged = true;
-				t = 2000;
-			}
-			if (!unChanged) {
-				vu.live.meta();
-				this.menus.score();
-			}
-			setTimeout(this._.ptick, t);
-		},
-		die: function() {
-			CT.log("YOU DIE!");
-			zero.core.current.person.dance("fall");
-			CT.modal.modal("You died! Better luck next time...",
-				() => location.reload(), { noClose: true }, true);
 		},
 		setState: function() {
 			var s = this.state;
@@ -144,21 +110,6 @@ vu.game.Adventure = CT.Class({
 		zcc.room.bump(pz[people[0]].body, pz[people[1]].body); // if > 2, whatever....
 //		vu.game.hopper.zombify();
 	},
-	exert: function(amount) {
-		zero.core.current.person.score.breath -= (amount || 1);
-		this.menus.score();
-	},
-	damage: function(amount, zombifying) {
-		var per = zero.core.current.person, ps = per.score;
-		amount = amount || 1;
-		ps.hp -= amount;
-		ps.hp < 0 && this._.die();
-		zombifying && CT.data.random() && vu.game.hopper.zombify(amount * 2);
-		vu.color.splash(per.zombified ? "green" : "red");
-		per.sfx("thud");
-		vu.live.meta();
-		this.menus.score();
-	},
 	score: function(score, person) { // xp
 		var isYou = !person, ps, xpcap;
 		if (isYou) { // additive!
@@ -177,7 +128,6 @@ vu.game.Adventure = CT.Class({
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
-			player: null,
 			state: {},
 			game: {
 				name: "game title",
@@ -193,7 +143,6 @@ vu.game.Adventure = CT.Class({
 		});
 		zero.core.current.adventure = this;
 		this._.initState();
-		this.player = opts.player;
 		this.game = opts.game;
 		this.scenemap = opts.game.scenemap;
 		this.portals = opts.game.portals;

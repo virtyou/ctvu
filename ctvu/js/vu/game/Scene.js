@@ -100,7 +100,6 @@ vu.game.Scene = CT.Class({
 		var oz = this.opts, cfg = core.config.ctzero, start = this.start,
 			zc = zero.core, zcc = zc.current, zcu = zc.util, p;
 		zcc.inventory = this.state.inventory;
-//		this.player.gear = this.state.inventory.gear;
 		for (p of oz.actors) {
 //			p.grippy = false;
 			p.positioners = this.state.actors[p.name].positioners;
@@ -133,7 +132,6 @@ vu.game.Scene = CT.Class({
 			s.scenes[opts.name].items = {};
 		this.name = opts.name;
 		this.menus = a.menus;
-		this.player = a.player;
 		opts.actors.forEach(function(p) {
 			osa[p.name] = osa[p.name] || {};
 		});
