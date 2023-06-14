@@ -14,7 +14,6 @@ vu.builders.adventure = {
 				game: gkey
 			}, _.resume) : vu.core.anonmsg(function() {
 				_.resume({
-					player: vu.core.person(fullp),
 					state: fullg.initial,
 					game: fullg
 				});

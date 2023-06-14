@@ -105,28 +105,6 @@ vu.game.hopper = {
 		megasource: function(pcfg) {
 			return pcfg && pcfg.source && pcfg.mega;
 		},
-		ztick: function() {
-			var zc = zero.core, zcc = zc.current, person = zcc.person, p, target,
-				_ = vu.game.hopper._, ztick = _.ztick, touching = zc.util.touching;
-			person.score.ztick -= 1;
-			person.zombified = person.score.ztick > 0;
-			zcc.adventure.menus.score();
-			setTimeout(vu.live.meta, 600);
-			if (!person.zombified)
-				return zc.camera.angle(_.prevCam);
-			for (p in zcc.people) {
-				target = zcc.people[p];
-				if (target.score && !target.score.ztick) {
-					if (touching(target.body, person.body, 100)) {
-						vu.live.game("average", [target.name, person.name]);
-						setTimeout(ztick, 500);
-					} else
-						person.approach(target.body, ztick, false, false, 1000, true);
-					return;
-				}
-			}
-			person.wander("room", ztick, 1000);
-		},
 		smack: function(prey, amount) {
 			var h = vu.game.hopper, zcc = zero.core.current,
 				_ = h._, pcfg = h.pcfg().player[prey.opts.kind];
@@ -154,13 +132,13 @@ vu.game.hopper = {
 				pn = pouncer.name, pk = pouncer.opts.kind,
 				hcfg = h.pcfg(), pcfg = hcfg.fauna[pk], ppcfg = hcfg.player[pk],
 				pv = pcfg.value * (pouncer.level || 1), mag = pv * 1000,
-				zcc = zero.core.current, adv = zcc.adventure,
-				per = zcc.person, pbs = per.body.springs;
+				zcc = zero.core.current, player = zcc.player,
+				per = player.person, pbs = per.body.springs;
 			h.log(pn + " pounced on player for " + pv + " points");
 			pbs.weave.shove = pd.x * mag;
 			pbs.slide.shove = pd.z * mag;
 
-			adv.damage(pv, pcfg.zombifying);
+			player.damage(pv, pcfg.zombifying);
 
 			h._.megasource(ppcfg) && h.bosses[ppcfg.source].decLevel();
 			return per.zombified && pcfg.zombifying;
@@ -232,14 +210,6 @@ vu.game.hopper = {
 			_.vgroup("player", game), _.vgroup("fauna", game)
 		], "bordered padded margined round");
 	},
-	zombify: function(zval) {
-		var zc = zero.core, _ = vu.game.hopper._,
-			person = zc.current.person;
-		person.zombified = true;
-		person.score.ztick = zval;
-		_.prevCam = zc.camera.current; // TODO: improve?
-		setTimeout(_.ztick, 1000);
-	},
 	setCritter: function(creature, ccfg) {
 		var h = vu.game.hopper, hp = ccfg.hp,
 			level = ccfg.source ? h.bosses[ccfg.source].level : ccfg.level;
@@ -247,6 +217,13 @@ vu.game.hopper = {
 		creature.level = level;
 		creature.hp = hp * level;
 		creature.scale(level, true);
+	},
+	swinger: function(prey, cb, cfg, variety) {
+		var zc = zero.core;
+		return function(side) {
+			zc.current.player.exert();
+			return zc.knocker[variety](prey, cb, cfg, side);
+		};
 	},
 	init: function() {
 		var h = vu.game.hopper, zc = zero.core, zcc = zc.current,
@@ -262,8 +239,8 @@ vu.game.hopper = {
 		if (prey.length) {
 			h.log("activating " + prey.length + " prey varieties");
 			zcc.person.onland(() => zc.knocker.splat(prey, h.on.splat, ppcfg, _.nosplat));
-			zcc.person.body.onkick(side => zc.knocker.kick(prey, h.on.kick, ppcfg, side));
-			zcc.person.body.onthrust(side => zc.knocker.knock(prey, h.on.knock, ppcfg, side));
+			zcc.person.body.onkick(h.swinger(prey, h.on.kick, ppcfg, "kick"));
+			zcc.person.body.onthrust(h.swinger(prey, h.on.knock, ppcfg, "knock"));
 			zcc.sploder = new zc.Sploder();
 			prey.forEach(function(p) {
 				ccfg = ppcfg[p];
