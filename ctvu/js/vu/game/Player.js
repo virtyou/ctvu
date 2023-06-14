@@ -55,8 +55,11 @@ vu.game.Player = CT.Class({
 		this._.prevCam = zero.core.camera.current; // TODO: improve?
 	},
 	exert: function(amount) {
-		this.person.score.breath -= (amount || 1);
+		var p = this.person, s = p.score, e = p.energy;
+		s.breath -= (amount || 1);
 		this.menus.score();
+		e.setMult("k", s.breath > 0 ? 1 : 0.5);
+//		e.setMult("damp", s.breath > 0 ? 1 : 5);
 	},
 	damage: function(amount, zombifying) {
 		var per = this.person, ps = per.score;
