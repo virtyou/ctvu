@@ -29,18 +29,21 @@ vu.game.Player = CT.Class({
 				s.breath -= 1;
 			else
 				s.hp -= 1;
-		} else if (s.breath < cap)
+		} else if (p.running)
+			s.breath -= 1;
+		else if (s.breath < cap)
 			s.breath += 1;
 		else {
 			if (s.hp < cap)
 				s.hp += 1
 			else
 				unChanged = true;
-			if (p.zombified) {
-				this._.ztick();
-				unChanged = false; // meh..
-			} else
-				t = 2000;
+			t = 2000;
+		}
+		if (p.zombified) {
+			this._.ztick();
+			t = 1000; // meh
+			unChanged = false; // meh..
 		}
 		if (!unChanged) {
 			vu.live.meta();
