@@ -40,6 +40,7 @@ vu.game.Player = CT.Class({
 				unChanged = true;
 			t = 2000;
 		}
+		p.body.panting = s.breath < 0;
 		if (p.zombified) {
 			this._.ztick();
 			t = 1000; // meh
