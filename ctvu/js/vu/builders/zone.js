@@ -455,6 +455,9 @@ vu.builders.zone = {
 		obstacle: function(fopts, i) {
 			return vu.builders.zone._.struct("obstacle", fopts, i);
 		},
+		boulder: function(fopts, i) {
+			return vu.builders.zone._.struct("boulder", fopts, i);
+		},
 		furnishing: function(furn) {
 			var _ = vu.builders.zone._, d = [
 				_.unfurn(furn),
@@ -782,6 +785,7 @@ vu.builders.zone = {
 				selz.ramps.update();
 				selz.floors.update();
 				selz.obstacles.update();
+				selz.boulders.update();
 			};
 		},
 		posup: function() {
