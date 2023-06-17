@@ -41,30 +41,24 @@ vu.builders.zone = {
 			}, "up5 right");
 		},
 		fscale: function(furn, cb, min, max, unit) {
-			return CT.dom.div([
-				"Scale",
-				CT.dom.range(function(val) {
-					var fval = parseFloat(val);
-					furn.scale(fval);
-					(furn.opts.kind == "elemental") ||
-						furn.setBounds(true); // TODO: maybe move to zero.core.Thing.scale()?
-					cb ? cb(fval) : vu.storage.setOpts(furn.opts.key, {
-						scale: [fval, fval, fval]
-					});
-				}, min || 0.1, max || 16, furn.scale().x, unit || 0.01, "w1")
-			], "topbordered padded margined");
+			return vu.core.ranger("Scale", function(val) {
+				var fval = parseFloat(val);
+				furn.scale(fval);
+				(furn.opts.kind == "elemental") ||
+					furn.setBounds(true); // TODO: maybe move to zero.core.Thing.scale()?
+				cb ? cb(fval) : vu.storage.setOpts(furn.opts.key, {
+					scale: [fval, fval, fval]
+				});
+			}, min, max, furn.scale().x, unit);
 		},
 		rtilt: function(ramp, cb) {
 			var unit = Math.PI / 16;
-			return CT.dom.div([
-				"Tilt",
-				CT.dom.range(function(val) {
-					var fval = parseFloat(val);
-					ramp.adjust("rotation", "x", fval);
-					ramp.setBounds(true);
-					cb(fval);
-				}, unit * 4, unit * 12, ramp.rotation().x, unit, "w1")
-			], "topbordered padded margined");
+			return vu.core.ranger("Tilt", function(val) {
+				var fval = parseFloat(val);
+				ramp.adjust("rotation", "x", fval);
+				ramp.setBounds(true);
+				cb(fval);
+			}, unit * 4, unit * 12, ramp.rotation().x, unit);
 		},
 		sgrip: function(floor, cb) {
 			return CT.dom.checkboxAndLabel("grippy", floor.opts.grippy,
@@ -74,11 +68,8 @@ vu.builders.zone = {
 				});
 		},
 		fmosh: function(floor, cb) {
-			return CT.dom.div([
-				"moshiness",
-				CT.dom.range(val => cb(parseInt(val)),
-					0, 5, floor.moshy || 0, 1, "w1")
-			], "topbordered padded margined");
+			return vu.core.ranger("moshiness",
+				val => cb(parseInt(val)), 0, 5, floor.moshy || 0, 1);
 		},
 		fscroll: function(floor, cb) {
 			var fos = floor.opts.scroll, curval = fos ? (
@@ -146,21 +137,18 @@ vu.builders.zone = {
 		},
 		plevel: function(furn, cb) {
 			var rbz = zero.core.current.room.bounds;
-			return CT.dom.div([
-				"Level",
-				CT.dom.range(function(val) {
-					var fval = parseInt(val);
-					furn.setLevel(fval);
-					if (cb)
-						cb(fval);
-					else {
-						var fp = furn.position();
-						vu.storage.setOpts(furn.opts.key, {
-							position: [fp.x, fval, fp.z]
-						});
-					}
-				}, rbz.min.y, rbz.max.y, furn.position().y, 1, "w1")
-			], "topbordered padded margined");
+			return vu.core.ranger("Level", function(val) {
+				var fval = parseInt(val);
+				furn.setLevel(fval);
+				if (cb)
+					cb(fval);
+				else {
+					var fp = furn.position();
+					vu.storage.setOpts(furn.opts.key, {
+						position: [fp.x, fval, fp.z]
+					});
+				}
+			}, rbz.min.y, rbz.max.y, furn.position().y, 1);
 		},
 		portin: function(door) {
 			var _ = vu.builders.zone._, source, rsource, snode,
@@ -391,7 +379,7 @@ vu.builders.zone = {
 		struct: function(variety, fopts, i) {
 			var _ = vu.builders.zone._,
 				item = zero.core.current.room[variety + i],
-				s3 = ["wall", "obstacle"].includes(variety);
+				s3 = ["wall", "obstacle", "boulder"].includes(variety);
 			var cont = [
 				vu.media.swapper.texmo(item, function(txups) {
 					Object.assign(fopts, txups);
@@ -415,6 +403,15 @@ vu.builders.zone = {
 					fopts.rotation = [rot.x, ry, rot.z];
 					_.strup(variety);
 				}, "w1"));
+			} else if (variety == "boulder") {
+				cont.push(vu.core.ranger("faces", function(fnum) {
+					fopts.sphereSegs = parseInt(fnum);
+					_.strup(variety);
+				}, 3, 8, fopts.sphereSegs, 1));
+				cont.push(vu.core.ranger("theta", function(fnum) {
+					fopts.geoThetaLength = parseFloat(fnum);
+					_.strup(variety);
+				}, 0.1, Math.PI * 2, fopts.geoThetaLength, 0.1));
 			} else {
 				if (variety == "ramp") {
 					cont.push(_.rtilt(item, function(rot) {
@@ -464,16 +461,13 @@ vu.builders.zone = {
 				_.fname(furn),
 				_.fscale(furn),
 				_.plevel(furn),
-				CT.dom.div([
-					"Rotation",
-					CT.dom.range(function(val) {
-						var rot = [0, parseFloat(val), 0];
-						furn.rotation(rot);
-						vu.storage.setOpts(furn.opts.key, {
-							rotation: rot
-						});
-					}, 0, 6, furn.rotation().y, 0.01, "w1")
-				], "topbordered padded margined")
+				vu.core.ranger("Rotation", function(val) {
+					var rot = [0, parseFloat(val), 0];
+					furn.rotation(rot);
+					vu.storage.setOpts(furn.opts.key, {
+						rotation: rot
+					});
+				}, 0, 6, furn.rotation().y)
 			];
 			furn.opts.material && Object.keys(furn.opts.material).length && d.push(_.materials(furn));
 			return d;
@@ -752,7 +746,11 @@ vu.builders.zone = {
 						flo = {
 							position: [0, 0, 0]
 						};
-						if (variety == "obstacle")
+						if (variety == "boulder") {
+							flo.sphereGeometry = 100;
+							flo.sphereSegs = 5; // 3-8
+							flo.geoThetaLength = Math.PI; // 0.1-2PI
+						} else if (variety == "obstacle")
 							flo.scale = [10, 10, 10];
 						else {
 							flo.planeGeometry = true;
@@ -776,7 +774,8 @@ vu.builders.zone = {
 				_.structs("wall"),
 				_.structs("ramp"),
 				_.structs("floor"),
-				_.structs("obstacle")
+				_.structs("obstacle"),
+				_.structs("boulder")
 			]);
 			sel.update = function() {
 				selz.walls.update();
@@ -843,16 +842,13 @@ vu.builders.zone = {
 			return CT.dom.div([
 					"Scale",
 					(dims || ["x", "y", "z"]).map(function(dim, i) {
-						return [
-							dim,
-							CT.dom.range(function(val) {
-								val = parseFloat(val);
-								scopts[i] = val;
-								obj.adjust("scale", dim, val);
-								obj.setBounds();
-								cb(scopts);
-							}, min || 0.3, max || 256, scale[dim], unit || 0.1, "w1")
-						];
+						return vu.core.ranger(dim, function(val) {
+							val = parseFloat(val);
+							scopts[i] = val;
+							obj.adjust("scale", dim, val);
+							obj.setBounds();
+							cb(scopts);
+						}, min || 0.3, max || 256, scale[dim], unit || 0.1, true);
 					})
 				], cname || "padded bordered round mb5");
 		},
