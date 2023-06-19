@@ -17,6 +17,12 @@ vu.build.core = {
 			vu.build.core.getSel("controls").update(furn);
 		});
 	},
+	check: function(prop, fopts, cb) {
+		return CT.dom.checkboxAndLabel(prop, fopts[prop], null, null, null, function(cbox) {
+			fopts[prop] = cbox.checked;
+			cb && cb();
+		});
+	},
 	name: function(furn) {
 		var n = CT.dom.div(furn.name);
 		n.onclick = function() {
