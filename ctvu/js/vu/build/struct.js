@@ -5,7 +5,8 @@ vu.build.struct = {
 		vu.storage.setOpts(ro.key, d);
 	},
 	check: function(prop, fopts, variety) {
-		return vu.core.check(prop, fopts, () => vu.build.struct.strup(variety));
+		var vb = vu.build;
+		return vb.core.check(prop, fopts, () => vb.struct.strup(variety));
 	},
 	structs: function(variety) {
 		var vb = vu.build, bs = vb.struct, selz = vb.core.getSel(),
