@@ -18,6 +18,7 @@ CT.require("vu.controls");
 CT.require("vu.media");
 CT.require("vu.party");
 CT.require("vu.storage");
+CT.require("vu.build");
 CT.require("vu.menu.Map");
 CT.require("vu.builders.core");
 CT.require("vu.builders.zone");

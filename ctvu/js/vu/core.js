@@ -56,6 +56,21 @@ vu.core = {
 			cz = extras.concat(cz);
 		cz.length && CT.cc.views(cz);
 	},
+	ranger: function(name, cb, min, max, cur, unit, nowrap) {
+		if (isNaN(min))
+			min = 0.1;
+		if (isNaN(max))
+			max = 16;
+		if (isNaN(unit))
+			unit = 0.01;
+		var cont = [
+			name,
+			CT.dom.range(cb, min, max, cur, unit, "w1")
+		];
+		if (nowrap)
+			return cont;
+		return CT.dom.div(cont, "topbordered padded margined");
+	},
 	menu: function(section, origin, selector, header, onclick) {
 		return new CT.modal.Modal({
 			center: false,
