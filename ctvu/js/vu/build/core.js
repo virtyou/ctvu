@@ -11,6 +11,12 @@ vu.build.core = {
 			return selz[sname];
 		return selz;
 	},
+	regObj: function(furn) {
+		CT.data.add(furn.opts);
+		zero.core.click.register(furn, function() {
+			vu.build.core.getSel("controls").update(furn);
+		});
+	},
 	name: function(furn) {
 		var n = CT.dom.div(furn.name);
 		n.onclick = function() {

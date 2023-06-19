@@ -377,7 +377,7 @@ vu.builders.zone = {
 				0, 800, 0 // meh, hacky (should use max height or something)
 			]), function(person) {
 				zero.core.util.setCurPer(person);
-				zcc.room.onReady(() => zcc.room.objects.forEach(_.regObj));
+				zcc.room.onReady(() => zcc.room.objects.forEach(vu.build.core.regObj));
 				var r = vu.storage.get("room");
 				r ? _.set(r, true) : _.build();
 			});
@@ -398,12 +398,6 @@ vu.builders.zone = {
 				]
 			], "left shiftall");
 		},
-		regObj: function(furn) {
-			CT.data.add(furn.opts);
-			zero.core.click.register(furn, function() {
-				vu.builders.zone._.selectors.controls.update(furn);
-			});
-		},
 		head: function(section) {
 			var n = CT.dom.node(CT.parse.key2title(section)),
 				_ = vu.builders.zone._, swappers = _.swappers;
@@ -420,7 +414,7 @@ vu.builders.zone = {
 	update: function(cb) {
 		zero.core.util.room(CT.merge({
 			onbuild: function(room) {
-				room.objects.forEach(vu.builders.zone._.regObj);
+				room.objects.forEach(vu.build.core.regObj);
 				cb && cb();
 				zero.core.camera.cutifroom();
 			}

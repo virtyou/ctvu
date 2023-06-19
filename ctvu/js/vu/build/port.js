@@ -1,5 +1,4 @@
 vu.build.port = {
-	_: {},
 	portin: function(door) {
 		var vbc = vu.build.core, opts = vbc.getOpts(), source, rsource, snode,
 			n = CT.dom.div(), pz = door.opts.portals.incoming;
@@ -80,7 +79,7 @@ vu.build.port = {
 		];
 	},
 	requests: function() { // incoming portal requests
-		var vbc = vu.build.core, selz = vbc.getSel(), opts = vbc.getOpts();
+		var vb = vu.build, vbc = vb.core, selz = vbc.getSel(), opts = vbc.getOpts();
 		selz.portal_requests = CT.dom.div();
 		selz.portal_requests.update = function() {
 			CT.db.multi(opts.portals.map(function(p) {
@@ -111,7 +110,7 @@ vu.build.port = {
 											});
 										};
 										if (port == "new portal")
-											_.selfurn("portal", pup);
+											vb.furn.selfurn("portal", pup);
 										else
 											pup(zero.core.Thing.get(port.key));
 									}

@@ -280,7 +280,7 @@ vu.build.furn = {
 		}
 		vu.storage.edit(eopts, function(furn) {
 			var f = zccr.addObject(furn, function() {
-				_.regObj(f);
+				vbc.regObj(f);
 //					f.setBounds(); // TODO: this should probably be in zero.core.Room
 				cb && cb(f);
 				selz.controls.update(f);
