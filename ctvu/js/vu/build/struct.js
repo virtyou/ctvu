@@ -25,7 +25,9 @@ vu.build.struct = {
 					flo = {
 						position: [0, 0, 0]
 					};
-					if (variety == "boulder") {
+					if (variety == "stala")
+						flo.coneGeometry = 100;
+					else if (variety == "boulder") {
 						flo.sphereGeometry = 100;
 						flo.sphereSegs = 5; // 3-8
 						flo.geoThetaLength = Math.PI; // 0.1-2PI
@@ -54,7 +56,8 @@ vu.build.struct = {
 			bs.structs("ramp"),
 			bs.structs("floor"),
 			bs.structs("obstacle"),
-			bs.structs("boulder")
+			bs.structs("boulder"),
+			bs.structs("stala")
 		]), selz = vb.core.getSel();
 		selz.structural = sel;
 		sel.update = function() {
@@ -63,13 +66,13 @@ vu.build.struct = {
 			selz.floors.update();
 			selz.obstacles.update();
 			selz.boulders.update();
+			selz.stalas.update();
 		};
 	},
 	struct: function(variety, fopts, i) {
-		var vb = vu.build, vbc = vb.core, bs = vb.struct,
-			item = zero.core.current.room[variety + i],
-			s3 = ["wall", "obstacle", "boulder"].includes(variety);
-		var cont = [
+		var vb = vu.build, vbc = vb.core, bs = vb.struct, s3 = [
+			"wall", "obstacle", "boulder", "stala"
+		].includes(variety), item = zero.core.current.room[variety + i], cont = [
 			vu.media.swapper.texmo(item, function(txups) {
 				Object.assign(fopts, txups);
 				bs.strup(variety);
@@ -83,7 +86,7 @@ vu.build.struct = {
 				fopts.position[1] = yval;
 				bs.strup(variety);
 			})
-		], rot, ry;
+		], rot, ry, sta, newrx;
 		if (variety == "wall") {
 			cont.push(CT.dom.button("rotate", function() {
 				rot = item.rotation();
@@ -92,6 +95,19 @@ vu.build.struct = {
 				fopts.rotation = [rot.x, ry, rot.z];
 				bs.strup(variety);
 			}, "w1"));
+		} else if (variety == "stala") {
+			rot = item.rotation();
+			sta = rot.x ? "stalactite" : "stalagmite";
+			cont.push(CT.dom.select({
+				names: ["stalagmite", "stalactite"],
+				curvalue: sta,
+				onchange: function(val) {
+					newrx = val == "stalactite" ? Math.PI : 0;
+					fopts.rotation = [newrx, rot.y, rot.z];
+					item.adjust("rotation", "x", newrx);
+					bs.strup(variety);
+				}
+			}));
 		} else if (variety == "boulder") {
 			cont.push(vu.core.ranger("faces", function(fnum) {
 				fopts.sphereSegs = parseInt(fnum);
@@ -146,5 +162,8 @@ vu.build.struct = {
 	},
 	boulder: function(fopts, i) {
 		return vu.build.struct.struct("boulder", fopts, i);
+	},
+	stala: function(fopts, i) {
+		return vu.build.struct.struct("stala", fopts, i);
 	}
 };
