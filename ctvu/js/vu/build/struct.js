@@ -146,6 +146,12 @@ vu.build.struct = {
 				bs.strup(variety);
 			}));
 		}
+		["boulder", "stala"].includes(variety) && ["brittle", "frozen"].forEach(function(prop) {
+			cont.push(CT.dom.checkboxAndLabel(prop, fopts[prop], null, null, null, function(cbox) {
+				fopts[prop] = cbox.checked;
+				bs.strup(variety);
+			}));
+		});
 		return cont;
 	},
 	wall: function(fopts, i) {
