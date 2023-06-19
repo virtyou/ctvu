@@ -4,6 +4,9 @@ vu.build.struct = {
 		vu.build.core.getOpts()[variety] = d[variety] = ro[variety];
 		vu.storage.setOpts(ro.key, d);
 	},
+	check: function(prop, fopts, variety) {
+		return vu.core.check(prop, fopts, () => vu.build.struct.strup(variety));
+	},
 	structs: function(variety) {
 		var vb = vu.build, bs = vb.struct, selz = vb.core.getSel(),
 			zcc = zero.core.current, zccr, voz, fpz, flo,
@@ -95,6 +98,7 @@ vu.build.struct = {
 				fopts.rotation = [rot.x, ry, rot.z];
 				bs.strup(variety);
 			}, "w1"));
+			cont.push(bs.check("flammable", fopts, "wall"));
 		} else if (variety == "stala") {
 			rot = item.rotation();
 			sta = rot.x ? "stalactite" : "stalagmite";
@@ -146,12 +150,8 @@ vu.build.struct = {
 				bs.strup(variety);
 			}));
 		}
-		["boulder", "stala"].includes(variety) && ["brittle", "frozen"].forEach(function(prop) {
-			cont.push(CT.dom.checkboxAndLabel(prop, fopts[prop], null, null, null, function(cbox) {
-				fopts[prop] = cbox.checked;
-				bs.strup(variety);
-			}));
-		});
+		["boulder", "stala"].includes(variety) && ["brittle",
+			"frozen"].forEach(prop => cont.push(bs.check(prop, fopts, variety)));
 		return cont;
 	},
 	wall: function(fopts, i) {
