@@ -133,7 +133,7 @@ vu.build.port = {
 		 var vb = vu.build, vbc = vb.core;
 		 return [
 		 	vbc.unfurn(portal),
-		 	vbc.fname(portal),
+		 	vbc.name(portal),
 		 	vbc.scale(portal),
 		 	vbc.materials(portal),
 			vbc.txupper(portal),
