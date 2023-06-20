@@ -246,7 +246,9 @@ vu.build.furn = {
 		return vu.build.furn.furnishing(book);
 	},
 	furn: function(furn) {
-		return CT.dom.div(vu.build.furn[furn.opts.kind](furn), "margined padded bordered round");
+		var vb = vu.build, fk = furn.opts.kind,
+			vm = vb[fk == "portal" ? "port" : "furn"];
+		return CT.dom.div(vm[fk](furn), "margined padded bordered round");
 	},
 	part: function(thing, kind, cb, eoptsopts) {
 		var vb = vu.build, vbc = vb.core, selz = vbc.getSel(), eopts = {
