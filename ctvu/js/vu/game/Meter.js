@@ -15,7 +15,7 @@ vu.game.Meter = CT.Class({
 		this.value = Math.max(val, 0);
 		if (cap)
 			this.opts.cap = (cap === true) ? Math.max(val, this.opts.cap) : cap;
-		this.log("value:", this.value, "cap:", this.opts.cap);
+		this.silent || this.log("value:", this.value, "cap:", this.opts.cap);
 		this.counter.style.width = this._.width();
 	},
 	setVisibility: function(isVis) {
@@ -40,9 +40,11 @@ vu.game.Meter = CT.Class({
 		this.opts = opts = CT.merge(opts, {
 			cap: 100,
 			menu: false,
+			silent: true,
 			lineWidth: "100%",
 			counterClass: "h15p redback"
 		});
+		this.silent = opts.silent;
 		this.value = isNaN(opts.value) ? opts.cap : opts.value;
 		this.initMeter();
 	}
