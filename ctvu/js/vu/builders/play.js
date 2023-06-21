@@ -37,11 +37,17 @@ vu.builders.play = {
 				zero.core.click.trigger(person.body);
 				core.config.ctzero.camera.cardboard && vu.voice.listen();
 				vu.core.comp();
+				person.body.onthrust(_.thrust);
+				cur.sploder = new zero.core.Sploder();
 			},
 			enter: function(person) {
 				vu.clix.register(person);
 				vu.core.comp(person);
 			}
+		},
+		thrust: function(side) {
+			var held = zero.core.current.person.held(side);
+			held && held.touch();
 		},
 		streamer: function() {
 			var b = CT.dom.button("start streaming", function() {
