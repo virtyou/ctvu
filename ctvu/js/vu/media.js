@@ -57,7 +57,9 @@ vu.media = {
 				"leaves.jpg", "loop.jpg", "rock.jpg", "rock2.jpg", "rock3.jpg", "rock4.jpg",
 				"rock5.jpg", "rock6.jpg", "room1.jpg", "rug1.jpg", "rug2.jpg", "rug3.jpg",
 				"rug4.jpg", "rug5.jpg", "shirt.jpg", "sky-day.jpg", "sky-night.png",
-				"stonestairs.png", "stonewall.jpg", "teeth256s.jpg", "white.jpg", "window.png"
+				"stonestairs.png", "stonewall.jpg", "teeth256s.jpg", "web1.png", "web2.png",
+				"web3.png", "web4.png", "web5.png", "web6.png", "web7.png", "web8.png",
+				"white.jpg", "window.png"
 			].map(function(o) {
 				return {
 					name: "ctone: " + o.split(".")[0],
