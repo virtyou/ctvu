@@ -14,7 +14,7 @@ vu.game.Boss = CT.Class({
 		hit: function(appendage, target) {
 			var zc = zero.core;
 			if (zc.util.touching(appendage, target, 50, null, true)) {
-				zc.current.adventure.damage(this.level);
+				zc.current.player.damage(this.level);
 				target.shove(this.person.direction(), this.level);
 			}
 		},
