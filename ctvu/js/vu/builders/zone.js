@@ -36,10 +36,10 @@ vu.builders.zone = {
 					position: [pos.x, pos.y, pos.z]
 				};
 				kind = target.opts.kind;
-				if (["floor", "obstacle", "wall", "ramp", "boulder"].includes(kind)) {
+				if (["floor", "obstacle", "wall", "ramp", "boulder", "stala"].includes(kind)) {
 					fi = parseInt(target.name.slice(kind.length));
 					zccr.opts[kind].parts[fi].position = opts.position;
-					_.strup(kind);
+					vu.build.struct.strup(kind);
 				} else {
 					if ("wall" in target.opts)
 						opts.wall = target.opts.wall;
