@@ -227,7 +227,7 @@ vu.build.core = {
 		});
 	},
 	level: function(furn, cb) {
-		var rbz = zero.core.current.room.bounds;
+		var rbz = zero.core.current.room.getBounds();
 		return vu.core.ranger("Level", function(val) {
 			var fval = parseInt(val);
 			furn.setLevel(fval);
