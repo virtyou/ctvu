@@ -122,7 +122,7 @@ vu.controls = {
 			: trigz).map((t, i) => vu.controls.trigNode(t, i, cb, extraClasses));
 	},
 	help: function(flow) {
-		return CT.dom.link("?", function(e) {
+		return vu.help && CT.dom.link("?", function(e) {
 			zero.core.audio.ux("blipon");
 			vu.help.flow(flow);
 			e.stopPropagation();
