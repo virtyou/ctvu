@@ -12,10 +12,13 @@ vu.game.Boss = CT.Class({
 			target.knock(this.person.direction());
 		},
 		hit: function(appendage, target) {
-			var zc = zero.core;
+			var zc = zero.core, zcc = zc.current;
+			appendage = appendage || this.person.body;
+			target = target || zcc.person.body;
 			if (zc.util.touching(appendage, target, 50, null, true)) {
-				zc.current.player.damage(this.level);
+				zcc.player.damage(this.level);
 				target.shove(this.person.direction(), this.level);
+				return "splat";
 			}
 		},
 		kick: function(side) {
@@ -37,7 +40,7 @@ vu.game.Boss = CT.Class({
 			zc.current.sploder.confettize(this.person.body.position());
 		}
 	},
-	moves: { // TODO: jump
+	moves: {
 		taunt: function() { // (neg)
 			this.person.say(CT.data.choice(this._.taunts));
 		},
@@ -52,6 +55,9 @@ vu.game.Boss = CT.Class({
 		},
 		charge: function() {
 			this.person.approach("player", null, null, null, null, true);
+		},
+		jump: function() {
+			this.person.leap(zero.core.current.person.body, this._.hit);
 		}
 	},
 	melee: {
