@@ -97,9 +97,14 @@ vu.menu.Map = CT.Class({
 		};
 		n.style.height = (wp / r) + "px";
 	},
+	buttons: function() {
+		var oz = this.opts, bz = oz.buttons, bkeys = Object.keys(bz);
+		oz.node.insertBefore(CT.dom.div(bkeys.map(b => CT.dom.button(b,
+			bz[b])), "right up15"), this._.frame);
+	},
 	refresh: function() {
-		var _ = this._, zcc = zero.core.current,
-			r = zcc.room, k, o, onready = this.opts.onready;
+		var _ = this._, zcc = zero.core.current, r = zcc.room,
+			k, o, oz = this.opts, onready = oz.onready;
 		if (!r.bounds)
 			return setTimeout(this.refresh, 500);
 		_.people = {};
@@ -115,6 +120,7 @@ vu.menu.Map = CT.Class({
 			this.ticking = true;
 			zero.core.util.ontick(this.tick);
 		}
+		oz.buttons && this.buttons();
 		onready && onready();
 	},
 	init: function(opts) {
