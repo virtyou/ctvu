@@ -22,6 +22,7 @@ CT.require("vu.game.util");
 CT.require("vu.game.step");
 CT.require("vu.game.stepper");
 CT.require("vu.game.hopper");
+CT.require("vu.build.core");
 CT.require("vu.builders.scene");
 
 CT.onload(function() {
