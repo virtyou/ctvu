@@ -89,7 +89,7 @@ vu.game.hopper = {
 			var h = vu.game.hopper, pz = h.pcfg(game)[variety];
 			return CT.dom.div([
 				h.directions[variety],
-				Object.keys(pz).map(p => p + ": " + pz[p])
+				Object.keys(pz).map(p => p + ": " + JSON.stringify(pz[p]))
 			], "bordered padded margined round");
 		},
 		initial: function() { // deprecated!
