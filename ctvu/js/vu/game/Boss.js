@@ -33,6 +33,17 @@ vu.game.Boss = CT.Class({
 		closest: function(critname) {
 			return zero.core.current.room.menagerie.near(critname, this.person.body);
 		},
+		crit: function() {
+			var cname, crit, _ = this._;
+			for (cname of this.opts.critters) {
+				crit = _.closest(cname);
+				if (crit)
+					return crit;
+			}
+		},
+		unimplemented: function(functionality) {
+			this.person.say(functionality + " hasn't been implemented");
+		},
 		die: function() {
 			var zc = zero.core;
 			zc.audio.ux("confetti");
@@ -45,19 +56,30 @@ vu.game.Boss = CT.Class({
 			this.person.say(CT.data.choice(this._.taunts));
 		},
 		throw: function() {
-			var _ = this._;
-			if (this.opts.critter) {
-				var crit = _.closest(this.opts.critter);
-				crit && this.person.touch(crit, null, null, null, _.windUp);
-			} else { // orbs [fire/ice/acid]
-
-			}
+			var toss = CT.data.choice(this.throws);
+			this.log("throw", toss);
+			this.range[toss]();
 		},
 		charge: function() {
 			this.person.approach("player", null, null, null, null, true);
 		},
 		jump: function() {
 			this.person.leap(zero.core.current.person.body, this._.hit, this.cfg.fly);
+		}
+	},
+	range: { // orbs [fire/ice/acid]
+		fauna: function() {
+			var _ = this._, crit = _.crit();
+			crit && this.person.touch(crit, null, null, null, _.windUp);
+		},
+		fire: function() {
+			this._.unimplemented("fire orb");
+		},
+		ice: function() {
+			this._.unimplemented("ice orb");
+		},
+		acid: function() {
+			this._.unimplemented("acid orb");
 		}
 	},
 	melee: {
@@ -134,14 +156,18 @@ vu.game.Boss = CT.Class({
 		else
 			this.log("decLevel skipped - @ floor");
 	},
+	addCritter: function(crit) {
+		this.opts.critters.push(crit);
+	},
 	init: function(opts) {
-		var zcc = zero.core.current, pname,
+		var zcc = zero.core.current, pname, tcfg,
 			acfg = zcc.adventure.game.initial.automatons;
 		this.opts = opts = CT.merge(opts, {
 			level: 1,
 			floor: 1,
 //			hp: 100,
-			cap: 5
+			cap: 5,
+			critters: []
 		});
 		if (!opts.hp)
 			opts.hp = opts.cap * 10;
@@ -151,6 +177,8 @@ vu.game.Boss = CT.Class({
 		this.person = opts.person;
 		pname = this.person.name;
 		this.cfg = acfg[pname] = acfg[pname] || {};
+		tcfg = this.cfg.throw = this.cfg.throw || {};
+		this.throws = Object.keys(tcfg).filter(t => tcfg[t]);
 		this.setLevel(opts.level);
 		this.person.body.oncrash = opts.oncrash;
 		this.meter = new vu.game.Meter({
