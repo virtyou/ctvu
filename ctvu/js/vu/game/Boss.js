@@ -214,14 +214,14 @@ vu.game.Boss.Orb = CT.Class({
 		}
 	},
 	tick: function(dts) {
-		var hit, zc = zero.core;
+		var hit, zc = zero.core, oz = this.opts;
 		if (this.throwing)
 			this.setPos(this.hand.position(null, true));
 		else if (this.flying) {
-			this.setPos(null, true);
+			this.setPos(null, true, oz.speed);
 			hit = this.hitter(this);
 			if (hit) {
-				this.hitters[this.opts.variety]();
+				this.hitters[oz.variety]();
 				zc.current.person.sfx(hit);
 				this.flying = false;
 			}
@@ -245,6 +245,7 @@ vu.game.Boss.Orb = CT.Class({
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, vu.game.Boss.Orb.varieties[opts.variety], {
+			speed: 2,
 			invisible: true,
 			sphereGeometry: 20
 		}, this.opts);
