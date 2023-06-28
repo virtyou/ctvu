@@ -7,6 +7,14 @@ vu.game.Boss = CT.Class({
 			"come back here!", "get over here!", "i'll show you!", "you can't stop me!"],
 		laments: ["uh oh", "oh no", "oh man", "oops!", "i was wrong!",
 			"you got me", "i misjudged you", "how could you beat me?"],
+		orbs: ["fire", "ice", "acid"],
+		orb: function(variety) {
+			return new vu.game.Boss.Orb({
+				caster: this,
+				variety: variety,
+				hitter: this._.hit
+			});
+		},
 		toss: function(hand, target) {
 			this.person.body.unthrust(hand.opts.side);
 			target.knock(this.person.direction());
@@ -73,7 +81,7 @@ vu.game.Boss = CT.Class({
 			crit && this.person.touch(crit, null, null, null, _.windUp);
 		},
 		fire: function() {
-			this._.unimplemented("fire orb");
+			this.orbs.fire.throw();
 		},
 		ice: function() {
 			this._.unimplemented("ice orb");
@@ -159,6 +167,13 @@ vu.game.Boss = CT.Class({
 	addCritter: function(crit) {
 		this.opts.critters.push(crit);
 	},
+	setOrbs: function() {
+		var _ = this._, o;
+		this.orbs = {};
+		for (o of _.orbs)
+			if (this.throws.includes(o))
+				this.orbs[o] = _.orb(o);
+	},
 	init: function(opts) {
 		var zcc = zero.core.current, pname, tcfg,
 			acfg = zcc.adventure.game.initial.automatons;
@@ -179,6 +194,7 @@ vu.game.Boss = CT.Class({
 		this.cfg = acfg[pname] = acfg[pname] || {};
 		tcfg = this.cfg.throw = this.cfg.throw || {};
 		this.throws = Object.keys(tcfg).filter(t => tcfg[t]);
+		this.setOrbs();
 		this.setLevel(opts.level);
 		this.person.body.oncrash = opts.oncrash;
 		this.meter = new vu.game.Meter({
@@ -188,3 +204,59 @@ vu.game.Boss = CT.Class({
 		});
 	}
 });
+
+// TODO: move this stuff somewhere else???
+vu.game.Boss.Orb = CT.Class({
+	CLASSNAME: "vu.game.Boss.Orb",
+	hitters: {
+		fire: function() {
+			zero.core.current.sploder.splode(this.position(), "flameburst");
+		}
+	},
+	tick: function(dts) {
+		var hit, zc = zero.core;
+		if (this.throwing)
+			this.setPos(this.hand.position(null, true));
+		else if (this.flying) {
+			this.setPos(null, true);
+			hit = this.hitter(this);
+			if (hit) {
+				this.hitters[this.opts.variety]();
+				zc.current.person.sfx(hit);
+				this.flying = false;
+			}
+		} else {
+			this.hide();
+			zc.util.untick(this.tick);
+		}
+	},
+	release: function() {
+		this.flying = true;
+		this.throwing = false;
+		this.person.body.unthrust(this.side);
+		zero.core.util.update(this.person.direction(), this.getDirection());
+	},
+	throw: function() {
+		this.show();
+		this.throwing = true;
+		this.person.body.upthrust(this.side);
+		this.person.orient(zero.core.current.person.body, null, this.release);
+		zero.core.util.ontick(this.tick);
+	},
+	init: function(opts) {
+		this.opts = opts = CT.merge(opts, vu.game.Boss.Orb.varieties[opts.variety], {
+			invisible: true,
+			sphereGeometry: 20
+		}, this.opts);
+		this.hitter = opts.hitter;
+		this.person = opts.caster.person;
+		this.side = CT.data.choice(["left", "right"]);
+		this.hand = this.person.body.torso.hands[this.side];
+	}
+}, zero.core.Thing);
+
+vu.game.Boss.Orb.varieties = {
+	fire: {
+		vstrip: "templates.one.vstrip.inferno"
+	}
+};
