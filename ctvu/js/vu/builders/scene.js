@@ -102,12 +102,17 @@ vu.builders.scene = {
 		automaton: function(auto) {
 			var _ = vu.builders.scene._, gup = vu.game.step.upstate,
 				state = _.state(), az = state.automatons = state.automatons || {},
-				n = CT.dom.div();
+				n = CT.dom.div(), check = vu.build.core.check, acfg, tcfg;
 			auto.onperson(function(per) {
-				az[per.name] = az[per.name] || {};
+				acfg = az[per.name] = az[per.name] || {};
+				tcfg = acfg.throw = acfg.throw || {};
 				CT.dom.setContent(n, [
-					per.name,
-					vu.build.core.check("fly", az[per.name], gup)
+					CT.dom.div(per.name, "big"),
+					check("fly", acfg, gup),
+					CT.dom.div([
+						"throw",
+						["fauna", "fire", "ice", "acid"].map(k => check(k, tcfg, gup))
+					])
 				]);
 				n.onclick = () => zero.core.camera.follow(per.body)
 			});
