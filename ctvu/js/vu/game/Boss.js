@@ -57,7 +57,7 @@ vu.game.Boss = CT.Class({
 			this.person.approach("player", null, null, null, null, true);
 		},
 		jump: function() {
-			this.person.leap(zero.core.current.person.body, this._.hit);
+			this.person.leap(zero.core.current.person.body, this._.hit, this.cfg.fly);
 		}
 	},
 	melee: {
@@ -132,6 +132,8 @@ vu.game.Boss = CT.Class({
 			this.log("decLevel skipped - @ floor");
 	},
 	init: function(opts) {
+		var zcc = zero.core.current, pname,
+			acfg = zcc.adventure.game.initial.automatons;
 		this.opts = opts = CT.merge(opts, {
 			level: 1,
 			floor: 1,
@@ -141,9 +143,11 @@ vu.game.Boss = CT.Class({
 		if (!opts.hp)
 			opts.hp = opts.cap * 10;
 		if (!opts.person)
-			opts.person = zero.core.current.people[opts.name];
+			opts.person = zcc.people[opts.name];
 		this.hp = opts.hp;
 		this.person = opts.person;
+		pname = this.person.name;
+		this.cfg = acfg[pname] = acfg[pname] || {};
 		this.setLevel(opts.level);
 		this.person.body.oncrash = opts.oncrash;
 		this.meter = new vu.game.Meter({
