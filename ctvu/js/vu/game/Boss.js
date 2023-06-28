@@ -70,15 +70,18 @@ vu.game.Boss = CT.Class({
 		}
 	},
 	tick: function() {
-		var _ = this._, zc = zero.core, moves = this.moves;
+		var _ = this._, zc = zero.core, moves = this.moves,
+			per = this.person, bod = per.body;
 		if (this.hp < 1) {
-			this.person.say(CT.data.choice(_.laments), _.die);
+			per.say(CT.data.choice(_.laments), _.die);
 			return this.log("defeated!!!!!");
 		}
-		if (zc.util.touching(this.person.body, zc.current.person.body, 100))
-			moves = this.melee;
-		CT.data.choice(Object.values(moves))();
 		setTimeout(this.tick, 3000);
+		if (zc.util.touching(bod, zc.current.person.body, 100))
+			moves = this.melee;
+		else if (bod.flying)
+			return this.log("flying - skipping non-melee tick()");
+		CT.data.choice(Object.values(moves))();
 	},
 	crash: function(critter) {
 		this.shove(critter.getDirection(), critter.level);
