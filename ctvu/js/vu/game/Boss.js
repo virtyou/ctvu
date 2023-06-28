@@ -63,16 +63,16 @@ vu.game.Boss = CT.Class({
 		taunt: function() { // (neg)
 			this.person.say(CT.data.choice(this._.taunts));
 		},
-		throw: function() {
-			var toss = CT.data.choice(this.throws);
-			this.log("throw", toss);
-			this.range[toss]();
-		},
 		charge: function() {
 			this.person.approach("player", null, null, null, null, true);
 		},
 		jump: function() {
 			this.person.leap(zero.core.current.person.body, this._.hit, this.cfg.fly);
+		},
+		throw: function() {
+			var toss = CT.data.choice(this.throws);
+			this.log("throw", toss);
+			this.range[toss]();
 		}
 	},
 	range: { // orbs [fire/ice/acid]
@@ -214,7 +214,7 @@ vu.game.Boss.Orb = CT.Class({
 		}
 	},
 	tick: function(dts) {
-		var hit, zc = zero.core, oz = this.opts;
+		var hit, oz = this.opts;
 		if (this.throwing)
 			this.setPos(this.hand.position(null, true));
 		else if (this.flying) {
@@ -222,35 +222,37 @@ vu.game.Boss.Orb = CT.Class({
 			hit = this.hitter(this);
 			if (hit) {
 				this.hitters[oz.variety]();
-				zc.current.person.sfx(hit);
+				this.target.sfx(hit);
 				this.flying = false;
 			}
 		} else {
 			this.hide();
-			zc.util.untick(this.tick);
+			zero.core.util.untick(this.tick);
 		}
 	},
 	release: function() {
 		this.flying = true;
 		this.throwing = false;
 		this.person.body.unthrust(this.side);
-		zero.core.util.update(this.person.direction(), this.getDirection());
+		this.look(this.target.body.position());
+		this.getDirection();
 	},
 	throw: function() {
 		this.show();
 		this.throwing = true;
-		this.person.body.upthrust(this.side);
-		this.person.orient(zero.core.current.person.body, null, this.release);
 		zero.core.util.ontick(this.tick);
+		this.person.body.upthrust(this.side);
+		this.person.orient(this.target.body, null, this.release);
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, vu.game.Boss.Orb.varieties[opts.variety], {
-			speed: 2,
+			speed: 3,
 			invisible: true,
 			sphereGeometry: 20
 		}, this.opts);
 		this.hitter = opts.hitter;
 		this.person = opts.caster.person;
+		this.target = zero.core.current.person;
 		this.side = CT.data.choice(["left", "right"]);
 		this.hand = this.person.body.torso.hands[this.side];
 	}
