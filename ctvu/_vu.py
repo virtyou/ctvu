@@ -1,13 +1,22 @@
 from cantools.web import respond, succeed, fail, cgi_get, read_file
 from cantools.util import shouldMoveMoov, transcode
 from ctone.spawners import person, thing, asset, room, exists
-from model import db, Member, Person, Room, Resource, Augmentation
+from model import db, Member, Person, Room, Resource, Augmentation, Game
 from cantools import config
 
 CALLMSG = '%s is calling! Click <a href="https://%s/vu/chat.html#%s">here</a> to talk.'
 
 def response():
-	action = cgi_get("action", choices=["person", "import", "thing", "resource", "asset", "augmentation", "room", "ready", "share", "call"])
+	action = cgi_get("action", choices=["person", "import", "thing", "resource", "asset", "augmentation", "room", "ready", "share", "call", "openers"])
+	if action == "openers":
+		rkey = db.KeyWrapper(cgi_get("room"))
+		rgames = []
+		for game in Game.query().all():
+			if game.scenes:
+				scene = game.scenes[0].get()
+				if scene.room == rkey:
+					rgames.append(game.data())
+		succeed(rgames)
 	if action == "resource":
 		key = cgi_get("key", required=False)
 		dkey = cgi_get("data", required=False)

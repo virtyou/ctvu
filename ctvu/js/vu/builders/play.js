@@ -31,7 +31,12 @@ vu.builders.play = {
 					target: person,
 					moveCb: vu.live.meta
 				});
-				vbp.minimap = cur.minimap = new vu.menu.Map({ node: _.selectors.minimap });
+				vbp.minimap = cur.minimap = new vu.menu.Map({
+					node: _.selectors.minimap,
+					buttons: {
+						games: _.games
+					}
+				});
 				vu.core.ownz() && _.selectors.lights.update();
 				vu.clix.room();
 				zero.core.click.trigger(person.body);
@@ -44,6 +49,22 @@ vu.builders.play = {
 				vu.clix.register(person);
 				vu.core.comp(person);
 			}
+		},
+		games: function() {
+			vu.core.v({
+				action: "openers",
+				room: zero.core.current.room.opts.key
+			}, function(games) {
+				if (!games.length)
+					return alert("can't find any games that start in this zone - go make one!");
+				CT.modal.choice({
+					prompt: "shall we play a game?",
+					data: games,
+					cb: function(game) {
+						location = "/vu/adventure.html#" + game.key;
+					}
+				});
+			});
 		},
 		thrust: function(side) {
 			var held = zero.core.current.person.held(side);

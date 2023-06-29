@@ -8,9 +8,10 @@ vu.builders.scene = {
 			props: "topright",
 			portals: "topright",
 			steps: "bottomleft",
-			actors: "bottomright"
+			actors: "bottomright",
+			automatons: "bottomright"
 		},
-		swappers: ["props", "portals", "main", "score"],
+		swappers: ["props", "portals", "main", "score", "actors", "automatons"],
 		state: function(ofScene, sub) {
 			var i = zero.core.current.scene.game.initial;
 			if (!ofScene) return i;
@@ -68,9 +69,7 @@ vu.builders.scene = {
 					gup();
 				}, "w1")
 			], "bordered padded margined round inline-block", null, {
-				onclick: function() {
-					zero.core.camera.follow(bod);
-				}
+				onclick: () => zero.core.camera.follow(bod)
 			});
 		},
 		actors: function() {
@@ -99,6 +98,30 @@ vu.builders.scene = {
 				}, "abs ctr shiftup"),
 				az
 			]);
+		},
+		automaton: function(auto) {
+			var _ = vu.builders.scene._, gup = vu.game.step.upstate,
+				state = _.state(), az = state.automatons = state.automatons || {},
+				n = CT.dom.div(), check = vu.build.core.check, acfg, tcfg;
+			auto.onperson(function(per) {
+				acfg = az[per.name] = az[per.name] || {};
+				tcfg = acfg.throw = acfg.throw || {};
+				CT.dom.setContent(n, [
+					CT.dom.div(per.name, "big"),
+					check("fly", acfg, gup),
+					CT.dom.div([
+						"throw",
+						["fauna", "fire", "ice", "acid"].map(k => check(k, tcfg, gup))
+					])
+				]);
+				n.onclick = () => zero.core.camera.follow(per.body)
+			});
+			return CT.dom.div(n, "bordered padded margined round inline-block");
+		},
+		automatons: function() {
+			var _ = vu.builders.scene._, selz = _.selectors,
+				autos = zero.core.current.room.automatons;
+			CT.dom.setContent(selz.automatons, autos.map(_.automaton));
 		},
 		portswap: function(p, cb) {
 			vu.game.util.sports(p, function(rscenes) {
@@ -323,6 +346,7 @@ vu.builders.scene = {
 			_.lights();
 			_.actors();
 			_.portals();
+			_.automatons();
 			zcc.room.setBounds();
 			zcc.room.setFriction(false); // for positioning......
 			vu.controls.initCamera(selz.cameras);
@@ -478,6 +502,7 @@ vu.builders.scene = {
 		selz.scripts = CT.dom.div();
 		selz.steps = CT.dom.div();
 		selz.actors = CT.dom.div();
+		selz.automatons = CT.dom.div();
 		selz.props = CT.dom.div();
 		selz.items = CT.dom.div();
 		selz.lights = CT.dom.div();
@@ -489,7 +514,7 @@ vu.builders.scene = {
 		for (section in _.menus) {
 			selz[section].modal = vu.core.menu(section,
 				_.menus[section], selz[section], _.head(section));
-			["portals", "score"].includes(section) || selz[section].modal.show("ctmain");
+			["portals", "score", "automatons"].includes(section) || selz[section].modal.show("ctmain");
 		}
 	},
 	init: function() {

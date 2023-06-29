@@ -256,6 +256,5 @@ vu.build.core = {
 					}, min || 0.3, max || 256, scale[dim], unit || 0.1, true);
 				})
 			], cname || "padded bordered round mb5");
-	},
-
+	}
 };

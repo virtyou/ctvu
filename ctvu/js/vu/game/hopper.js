@@ -89,7 +89,7 @@ vu.game.hopper = {
 			var h = vu.game.hopper, pz = h.pcfg(game)[variety];
 			return CT.dom.div([
 				h.directions[variety],
-				Object.keys(pz).map(p => p + ": " + pz[p])
+				Object.keys(pz).map(p => p + ": " + JSON.stringify(pz[p]))
 			], "bordered padded margined round");
 		},
 		initial: function() { // deprecated!
@@ -249,8 +249,10 @@ vu.game.hopper = {
 				men.setProp(p, "hp", ccfg.hp * ccfg.level);
 				if (ccfg.source) {
 					men.setProp(p, "source", ccfg.source);
+					if (h.bosses[ccfg.source])
+						return h.bosses[ccfg.source].addCritter(p);
 					h.bosses[ccfg.source] = new vu.game.Boss({
-						critter: p,
+						critters: [p],
 						name: ccfg.source,
 						level: ccfg.level,
 						oncrash: h.on.crash
