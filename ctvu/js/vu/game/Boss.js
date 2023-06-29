@@ -165,7 +165,8 @@ vu.game.Boss = CT.Class({
 	},
 	init: function(opts) {
 		var zcc = zero.core.current, pname, tcfg,
-			acfg = zcc.adventure.game.initial.automatons;
+			agi = zcc.adventure.game.initial,
+			acfg = agi.automatons = agi.automatons || {};
 		this.opts = opts = CT.merge(opts, {
 			level: 1,
 			floor: 1,
