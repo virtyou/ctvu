@@ -70,6 +70,8 @@ vu.game.Boss = CT.Class({
 			this.person.leap(zero.core.current.person.body, this._.hit, this.cfg.fly);
 		},
 		throw: function() {
+			if (!this.throws.length)
+				return this.moves.taunt();
 			var _ = this._, toss = CT.data.choice(this.throws), crit;
 			this.log("throw", toss);
 			if (toss == "fauna") {
