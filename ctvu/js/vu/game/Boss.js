@@ -84,7 +84,7 @@ vu.game.Boss = CT.Class({
 			this.orbs.fire.throw();
 		},
 		ice: function() {
-			this._.unimplemented("ice orb");
+			this.orbs.ice.throw();
 		},
 		acid: function() {
 			this._.unimplemented("acid orb");
@@ -211,6 +211,11 @@ vu.game.Boss.Orb = CT.Class({
 	hitters: {
 		fire: function() {
 			zero.core.current.sploder.splode(this.position(), "flameburst");
+			this.target.setAura("hot");
+		},
+		ice: function() {
+			zero.core.current.sploder.shart(this, true);
+			this.target.setAura("cold");
 		}
 	},
 	tick: function(dts) {
@@ -246,7 +251,7 @@ vu.game.Boss.Orb = CT.Class({
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, vu.game.Boss.Orb.varieties[opts.variety], {
-			speed: 3,
+			speed: 4,
 			invisible: true,
 			sphereGeometry: 20
 		}, this.opts);
@@ -261,5 +266,8 @@ vu.game.Boss.Orb = CT.Class({
 vu.game.Boss.Orb.varieties = {
 	fire: {
 		vstrip: "templates.one.vstrip.inferno"
+	},
+	ice: {
+		frozen: true
 	}
 };
