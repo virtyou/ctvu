@@ -70,24 +70,13 @@ vu.game.Boss = CT.Class({
 			this.person.leap(zero.core.current.person.body, this._.hit, this.cfg.fly);
 		},
 		throw: function() {
-			var toss = CT.data.choice(this.throws);
+			var _ = this._, toss = CT.data.choice(this.throws), crit;
 			this.log("throw", toss);
-			this.range[toss]();
-		}
-	},
-	range: { // orbs [fire/ice/acid]
-		fauna: function() {
-			var _ = this._, crit = _.crit();
-			crit && this.person.touch(crit, null, null, null, _.windUp);
-		},
-		fire: function() {
-			this.orbs.fire.throw();
-		},
-		ice: function() {
-			this.orbs.ice.throw();
-		},
-		acid: function() {
-			this._.unimplemented("acid orb");
+			if (toss == "fauna") {
+				crit = _.crit();
+				crit && this.person.touch(crit, null, null, null, _.windUp);
+			} else
+				this.orbs[toss].throw();
 		}
 	},
 	melee: {
@@ -216,6 +205,9 @@ vu.game.Boss.Orb = CT.Class({
 		ice: function() {
 			zero.core.current.sploder.shart(this, true);
 			this.target.setAura("cold");
+		},
+		acid: function() {
+			zero.core.current.sploder.shart(this, true);
 		}
 	},
 	tick: function(dts) {
@@ -269,5 +261,11 @@ vu.game.Boss.Orb.varieties = {
 	},
 	ice: {
 		frozen: true
+	},
+	acid: {
+		material: {
+			shininess: 100,
+			color: "#00ff00"
+		}
 	}
 };
