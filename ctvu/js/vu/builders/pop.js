@@ -121,7 +121,8 @@ vu.builders.pop = {
 			return n;
 		},
 		activities: function() {
-			var _ = vu.builders.pop._, selz = _.selectors, zcc = zero.core.current;
+			var _ = vu.builders.pop._, selz = _.selectors,
+				zc = zero.core, zcc = zc.current;
 			selz.activities = CT.dom.div();
 			selz.activities.update = function() {
 				var actz = _.auto.activities, rmAct = function(act) {
@@ -132,6 +133,11 @@ vu.builders.pop = {
 					vu.builders.pop.persist();
 					(actz.length == 1) && _.auto.play();
 					CT.dom.addContent(az, _.activity(act, rmAct));
+				}, addWander = function(area) {
+					addAct({
+						action: "wander",
+						value: area
+					});
 				}, adder = function() {
 					CT.modal.choice({
 						prompt: "please select an action",
@@ -149,14 +155,10 @@ vu.builders.pop = {
 									}
 								});
 							} else if (action == "wander") {
-								if (!zcc.room.floor)
-									return addAct({ action: "wander", value: "room" });
-								zero.core.util.getArea(function(zone) {
-									addAct({
-										action: "wander",
-										value: zone
-									});
-								});
+								if (zcc.room.floor)
+									zc.util.getArea(addWander);
+								else
+									addWander("room");
 							} else if (action == "move") {
 								vu.media.prompt.adjusters(null, _.auto.person.body,
 									"position", zcc.room.bounds, 1, function() {
