@@ -151,15 +151,11 @@ vu.builders.pop = {
 							} else if (action == "wander") {
 								if (!zcc.room.floor)
 									return addAct({ action: "wander", value: "room" });
-								CT.modal.choice({
-									prompt: "please select a zone",
-									data: ["room"].concat(Object.keys(zcc.room.floor)),
-									cb: function(zone) {
-										addAct({
-											action: "wander",
-											value: zone
-										});
-									}
+								zero.core.util.getArea(function(zone) {
+									addAct({
+										action: "wander",
+										value: zone
+									});
 								});
 							} else if (action == "move") {
 								vu.media.prompt.adjusters(null, _.auto.person.body,
