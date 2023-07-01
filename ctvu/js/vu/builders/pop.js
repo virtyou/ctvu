@@ -237,44 +237,12 @@ vu.builders.pop = {
 				]);
 			};
 		},
-		nat: function(natcat) {
-			var _ = vu.builders.pop._, oz = _.opts,
-				upd = {}, r = zero.core.current.room,
-				base = zero.core[CT.parse.capitalize(natcat)],
-				setter = base[CT.parse.capitalize(base.setter)];
-			var upnat = function(natset) {
-				natset && r.attach({
-					name: base.setter,
-					kind: "natural",
-					collection: natset,
-					subclass: setter
-				});
-				oz[base.setter] = upd[base.setter] = natset;
-				vu.storage.setOpts(oz.key, upd);
-				CT.dom.setContent(sel, natset);
-			}, sel = CT.dom.link(oz[base.setter] || "none", function() {
-				CT.modal.choice({
-					prompt: "please select a " + natcat + " set",
-					data: ["none", "custom"].concat(Object.keys(base.sets)),
-					cb: function(natset) {
-						if (r[base.setter])
-							r.detach(base.setter);
-						if (natset == "custom") {
-							CT.modal.choice({
-								style: "multiple-choice",
-								data: base.kinds,
-								cb: upnat
-							});
-						} else
-							upnat((natset != "none") ? natset : null);
-					}
-				});
+		nat: function(variety) {
+			var opts = vu.builders.pop._.opts, upd = {};
+			return zero.core.natural.editors(variety, opts, function(collectionName) {
+				upd[collectionName] = opts[collectionName];
+				vu.storage.setOpts(opts.key, upd);
 			});
-			return CT.dom.div([
-				CT.dom.span(natcat + ":"),
-				CT.dom.pad(),
-				sel
-			], "bordered padded margned round");
 		},
 		flofa: function() {
 			var _ = vu.builders.pop._, selz = _.selectors;
