@@ -39,7 +39,7 @@ vu.game.Boss = CT.Class({
 			setTimeout(() => this._.toss(hand, target), 400);
 		},
 		closest: function(critname) {
-			return zero.core.current.room.menagerie.near(critname, this.person.body);
+			return this.menagerie.near(critname, this.person.body);
 		},
 		crit: function() {
 			var cname, crit, _ = this._;
@@ -183,6 +183,7 @@ vu.game.Boss = CT.Class({
 		this.hp = opts.hp;
 		this.person = opts.person;
 		pname = this.person.name;
+		this.menagerie = opts.menagerie;
 		this.cfg = acfg[pname] = acfg[pname] || {};
 		tcfg = this.cfg.throw = this.cfg.throw || {};
 		this.throws = Object.keys(tcfg).filter(t => tcfg[t]);
