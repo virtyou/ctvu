@@ -255,7 +255,8 @@ vu.game.hopper = {
 						critters: [p],
 						name: ccfg.source,
 						level: ccfg.level,
-						oncrash: h.on.crash
+						oncrash: h.on.crash,
+						menagerie: men
 					});
 				}
 			});
