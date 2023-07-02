@@ -1,91 +1,4 @@
 vu.game.hopper = {
-	_: {
-		upscore: function() {
-			var game = zero.core.current.scene.game;
-			vu.storage.edit({
-				key: game.key,
-				score: game.score
-			});
-		},
-		addhop: function(variety) {
-			var h = vu.game.hopper, _ = h._, pz = h.pcfg()[variety],
-				kinds, men = zero.core.current.room.menagerie;
-			if (!men)
-				return alert("this room has no associated menagerie - please add one on the pop page!");
-			kinds = men.kinds.filter(k => !(k in pz));
-			if (!kinds.length)
-				return alert("all animals are accounted for!");
-			CT.modal.choice({
-				prompt: [
-					CT.dom.div(h.directions[variety], "bold"),
-					"please select an animal"
-				],
-				data: kinds,
-				cb: function(kind) {
-					pz[kind] = {
-						value: 1
-					};
-					_.upscore();
-					_.editor.refresh();
-				}
-			});
-		},
-		hopCheck: function(property, animal, pcfg) {
-			return CT.dom.checkboxAndLabel(property,
-				pcfg[property], null, null, null, function(cbox) {
-					pcfg[property] = cbox.checked;
-					vu.game.hopper._.upscore();
-				}, animal);
-		},
-		hop: function(p, pz, variety) {
-			var _ = vu.game.hopper._, pcfg = pz[p], cont, autosource;
-			if (!isNaN(pcfg)) {
-				pcfg = pz[p] = {
-					value: pz[p]
-				};
-			}
-			cont = [
-				p,
-				CT.dom.range(function(val) {
-					pcfg.value = parseInt(val);
-					_.upscore();
-				}, 1, 10, pcfg.value, 1, "w1 block")
-			];
-			if (variety == "player") {
-				autosource = CT.dom.div();
-				autosource.update = function() {
-					CT.dom.setContent(autosource, [
-						CT.dom.button("change", function() {
-							CT.modal.choice({
-								prompt: "choose an automaton",
-								data: zero.core.current.room.automatons.map(a => a.person.name),
-								cb: function(aname) {
-									pcfg.source = aname;
-									autosource.update();
-									_.upscore();
-								}
-							});
-						}, "right"),
-						"spawns from " + (pcfg.source || "room")
-					]);
-				};
-				autosource.update();
-				cont.push(autosource);
-				cont.push(_.hopCheck("mega", p, pcfg));
-				cont.push(_.hopCheck("powerjump", p, pcfg));
-			} else // fauna
-				cont.push(_.hopCheck("zombifying", p, pcfg));
-			return CT.dom.div(cont, "bordered padded margined round");
-		},
-		egroup: function(variety) { // player or fauna
-			var h = vu.game.hopper, _ = h._, pz = h.pcfg()[variety];
-			return CT.dom.div([
-				CT.dom.button("add", () => _.addhop(variety), "right"),
-				h.directions[variety],
-				Object.keys(pz).map(p => _.hop(p, pz, variety))
-			], "bordered padded margined round");
-		}
-	},
 	directions: {
 		fauna: "fauna pouncing on player",
 		player: "player pouncing on fauna"
@@ -107,19 +20,8 @@ vu.game.hopper = {
 			pcfg[area] = { player: {}, fauna: {} };
 		return pcfg[area];
 	},
-	modder: function() {
-		var _ = vu.game.hopper._, pounces = CT.dom.div();
-		var node = _.editor = CT.dom.div([
-			CT.dom.div("pounce dynamics", "big"),
-			pounces
-		], "bordered padded margined round");
-		node.refresh = function() {
-			CT.dom.setContent(pounces, [
-				_.egroup("player"), _.egroup("fauna")
-			]);
-		};
-		node.refresh();
-		return node;
+	mod: function() {
+		return vu.game.hopper.modder.build();
 	},
 	view: function(game) {
 		var h = vu.game.hopper;
@@ -127,6 +29,108 @@ vu.game.hopper = {
 	},
 	load: function() {
 		vu.game.hopper.loader.init();
+	}
+};
+
+vu.game.hopper.modder = {
+	upscore: function() {
+		var game = zero.core.current.scene.game;
+		vu.storage.edit({
+			key: game.key,
+			score: game.score
+		});
+	},
+	addhop: function(variety) {
+		var h = vu.game.hopper, hm = h.modder, pz = h.pcfg()[variety],
+			kinds, men = zero.core.current.room.menagerie;
+		if (!men)
+			return alert("this room has no associated menagerie - please add one on the pop page!");
+		kinds = men.kinds.filter(k => !(k in pz));
+		if (!kinds.length)
+			return alert("all animals are accounted for!");
+		CT.modal.choice({
+			prompt: [
+				CT.dom.div(h.directions[variety], "bold"),
+				"please select an animal"
+			],
+			data: kinds,
+			cb: function(kind) {
+				pz[kind] = {
+					value: 1
+				};
+				hm.upscore();
+				hm.editor.refresh();
+			}
+		});
+	},
+	hopCheck: function(property, animal, pcfg) {
+		return CT.dom.checkboxAndLabel(property,
+			pcfg[property], null, null, null, function(cbox) {
+				pcfg[property] = cbox.checked;
+				vu.game.hopper.modder.upscore();
+			}, animal);
+	},
+	hop: function(p, pz, variety) {
+		var hm = vu.game.hopper.modder, pcfg = pz[p], cont, autosource;
+		if (!isNaN(pcfg)) {
+			pcfg = pz[p] = {
+				value: pz[p]
+			};
+		}
+		cont = [
+			p,
+			CT.dom.range(function(val) {
+				pcfg.value = parseInt(val);
+				hm.upscore();
+			}, 1, 10, pcfg.value, 1, "w1 block")
+		];
+		if (variety == "player") {
+			autosource = CT.dom.div();
+			autosource.update = function() {
+				CT.dom.setContent(autosource, [
+					CT.dom.button("change", function() {
+						CT.modal.choice({
+							prompt: "choose an automaton",
+							data: zero.core.current.room.automatons.map(a => a.person.name),
+							cb: function(aname) {
+								pcfg.source = aname;
+								autosource.update();
+								hm.upscore();
+							}
+						});
+					}, "right"),
+					"spawns from " + (pcfg.source || "room")
+				]);
+			};
+			autosource.update();
+			cont.push(autosource);
+			cont.push(hm.hopCheck("mega", p, pcfg));
+			cont.push(hm.hopCheck("powerjump", p, pcfg));
+		} else // fauna
+			cont.push(hm.hopCheck("zombifying", p, pcfg));
+		return CT.dom.div(cont, "bordered padded margined round");
+	},
+	group: function(variety) { // player or fauna
+		var h = vu.game.hopper, hm = h.modder, pz = h.pcfg()[variety];
+		return CT.dom.div([
+			CT.dom.button("add", () => hm.addhop(variety), "right"),
+			h.directions[variety],
+			Object.keys(pz).map(p => hm.hop(p, pz, variety))
+		], "bordered padded margined round");
+	},
+	build: function() {
+		var hm = vu.game.hopper.modder, pounces = CT.dom.div();
+		var node = hm.editor = CT.dom.div([
+			CT.dom.div("pounce dynamics", "big"),
+			pounces
+		], "bordered padded margined round");
+		node.refresh = function() {
+			CT.dom.setContent(pounces, [
+				hm.group("player"), hm.group("fauna")
+			]);
+		};
+		node.refresh();
+		return node;
 	}
 };
 
