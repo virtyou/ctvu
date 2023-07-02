@@ -85,11 +85,18 @@ vu.game.hopper = {
 				Object.keys(pz).map(p => _.hop(p, pz, variety))
 			], "bordered padded margined round");
 		},
-		vgroup: function(variety, game) {
-			var h = vu.game.hopper, pz = h.pcfg(game)[variety];
+		vgroup: function(variety, cfg) {
+			var h = vu.game.hopper, pz = cfg[variety];
 			return CT.dom.div([
 				h.directions[variety],
 				Object.keys(pz).map(p => p + ": " + JSON.stringify(pz[p]))
+			], "bordered padded margined round");
+		},
+		varea: function(area, cfg) {
+			var _ = vu.game.hopper._;
+			return CT.dom.div([
+				area,
+				_.vgroup("player", cfg), _.vgroup("fauna", cfg)
 			], "bordered padded margined round");
 		}
 	},
@@ -129,10 +136,11 @@ vu.game.hopper = {
 		return node;
 	},
 	view: function(game) {
-		var h = vu.game.hopper, _ = h._;
+		var h = vu.game.hopper, _ = h._, pcfg = h.pcfg(game),
+			areas = Object.keys(pcfg);
 		return CT.dom.div([
-			"pounce dynamics",
-			_.vgroup("player", game), _.vgroup("fauna", game)
+			CT.dom.div("pounce dynamics", "big"),
+			areas ? areas.map(area => _.varea(area, pcfg[area])) : "nothing yet!"
 		], "bordered padded margined round");
 	},
 	load: function() {
