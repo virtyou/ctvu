@@ -97,8 +97,6 @@ vu.game.hopper = {
 		fauna: "fauna pouncing on player",
 		player: "player pouncing on fauna"
 	},
-	bosses: {},
-	hoppers: {},
 	scfg: function(game) {
 		var zcc = zero.core.current,
 			scfg = (game || zcc.scene.game || zcc.adventure.game).score;
@@ -115,11 +113,6 @@ vu.game.hopper = {
 		if (!pcfg[area])
 			pcfg[area] = { player: {}, fauna: {} };
 		return pcfg[area];
-	},
-	hop: function() {
-		var hz = vu.game.hopper.hoppers,
-			upon = zero.core.current.person.body.upon;
-		return upon && hz[upon.name] || hz.room;
 	},
 	modder: function() {
 		var _ = vu.game.hopper._, pounces = CT.dom.div();
@@ -142,17 +135,30 @@ vu.game.hopper = {
 			_.vgroup("player", game), _.vgroup("fauna", game)
 		], "bordered padded margined round");
 	},
+	init: function() {
+		vu.game.hopper.loader.init();
+	}
+};
+
+vu.game.hopper.loader = {
+	bosses: {},
+	hoppers: {},
+	hop: function() {
+		var hz = vu.game.hopper.loader.hoppers,
+			upon = zero.core.current.person.body.upon;
+		return upon && hz[upon.name] || hz.room;
+	},
 	swinger: function(variety, side) {
-		var hop = vu.game.hopper.hop();
+		var hop = vu.game.hopper.loader.hop();
 		zero.core.current.player.exert();
 		return hop && hop.swing(variety, side);
 	},
 	splatter: function() {
-		var hop = vu.game.hopper.hop();
+		var hop = vu.game.hopper.loader.hop();
 		return hop && hop.splat();
 	},
 	getBoss: function(name) {
-		var h = vu.game.hopper, bz = h.bosses;
+		var bz = vu.game.hopper.loader.bosses;
 		if (!(name in bz)) {
 			bz[name] = new vu.game.Boss({
 				name: name
@@ -161,24 +167,25 @@ vu.game.hopper = {
 		return bz[name];
 	},
 	initBosses: function() {
-		var h = vu.game.hopper, bz = h.bosses, name,
+		var hl = vu.game.hopper.loader, name,
 			agi = zero.core.current.adventure.game.initial,
 			acfg = agi.automatons = agi.automatons || {};
 		for (name in acfg)
-			h.getBoss(name);
+			hl.getBoss(name);
 	},
 	initPlayer: function() {
-		var person = zero.core.current.person;
-		person.onland(h.splatter);
-		person.body.onkick(side => h.swinger("kick", side));
-		person.body.onthrust(side => h.swinger("knock", side));
+		var hl = vu.game.hopper.loader, person = zero.core.current.person;
+		person.onland(hl.splatter);
+		person.body.onkick(side => hl.swinger("kick", side));
+		person.body.onthrust(side => hl.swinger("knock", side));
 	},
 	init: function() {
-		var h = vu.game.hopper, zc = zero.core, zcc = zc.current,
+		var h = vu.game.hopper, hl = h.loader,
+			zc = zero.core, zcc = zc.current,
 			menz = zcc.room.menagerie || {}, area;
 		zcc.sploder = new zc.Sploder();
-		h.initPlayer();
-		h.initBosses();
+		hl.initPlayer();
+		hl.initBosses();
 		for (area in menz) {
 			h.hoppers[area] = new vu.game.hopper.Hopper({
 				area: area,
