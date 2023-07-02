@@ -40,6 +40,13 @@ vu.game.hopper.modder = {
 			score: game.score
 		});
 	},
+	hopCheck: function(property, animal, pcfg) {
+		return CT.dom.checkboxAndLabel(property,
+			pcfg[property], null, null, null, function(cbox) {
+				pcfg[property] = cbox.checked;
+				vu.game.hopper.modder.upscore();
+			}, animal);
+	},
 	addhop: function(variety) {
 		var h = vu.game.hopper, hm = h.modder, pz = h.pcfg()[variety],
 			kinds, men = zero.core.current.room.menagerie;
@@ -62,13 +69,6 @@ vu.game.hopper.modder = {
 				hm.editor.refresh();
 			}
 		});
-	},
-	hopCheck: function(property, animal, pcfg) {
-		return CT.dom.checkboxAndLabel(property,
-			pcfg[property], null, null, null, function(cbox) {
-				pcfg[property] = cbox.checked;
-				vu.game.hopper.modder.upscore();
-			}, animal);
 	},
 	hop: function(p, pz, variety) {
 		var hm = vu.game.hopper.modder, pcfg = pz[p], cont, autosource;
@@ -110,24 +110,30 @@ vu.game.hopper.modder = {
 			cont.push(hm.hopCheck("zombifying", p, pcfg));
 		return CT.dom.div(cont, "bordered padded margined round");
 	},
-	group: function(variety) { // player or fauna
-		var h = vu.game.hopper, hm = h.modder, pz = h.pcfg()[variety];
+	group: function(variety, cfg) { // player or fauna
+		var h = vu.game.hopper, hm = h.modder, pz = cfg[variety];
 		return CT.dom.div([
 			CT.dom.button("add", () => hm.addhop(variety), "right"),
 			h.directions[variety],
 			Object.keys(pz).map(p => hm.hop(p, pz, variety))
 		], "bordered padded margined round");
 	},
+	area: function(area, cfg) {
+		var hm = vu.game.hopper.modder;
+		return CT.dom.div([
+			hm.group("player", cfg), hm.group("fauna", cfg)
+		], "bordered padded margined round");
+	},
 	build: function() {
-		var hm = vu.game.hopper.modder, pounces = CT.dom.div();
+		var h = vu.game.hopper, hm = h.modder,
+			cfg = h.pcfg(), pounces = CT.dom.div();
 		var node = hm.editor = CT.dom.div([
 			CT.dom.div("pounce dynamics", "big"),
 			pounces
 		], "bordered padded margined round");
 		node.refresh = function() {
-			CT.dom.setContent(pounces, [
-				hm.group("player"), hm.group("fauna")
-			]);
+			CT.dom.setContent(pounces,
+				Object.keys(cfg).map(area => hm.area(area, cfg[area])));
 		};
 		node.refresh();
 		return node;
