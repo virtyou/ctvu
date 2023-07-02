@@ -91,13 +91,6 @@ vu.game.hopper = {
 				h.directions[variety],
 				Object.keys(pz).map(p => p + ": " + JSON.stringify(pz[p]))
 			], "bordered padded margined round");
-		},
-		initial: function() { // deprecated!
-			var h = vu.game.hopper, scfg = h.scfg();
-			return CT.dom.range(function(val) {
-				scfg.initial = parseInt(val);
-				h._.upscore();
-			}, 0, 10, scfg.initial, 1, "w1 block");
 		}
 	},
 	directions: {
