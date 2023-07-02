@@ -99,9 +99,6 @@ vu.game.hopper = {
 	},
 	bosses: {},
 	hoppers: {},
-	log: function(msg) {
-		CT.log("hopper: " + msg);
-	},
 	scfg: function(game) {
 		var zcc = zero.core.current,
 			scfg = (game || zcc.scene.game || zcc.adventure.game).score;
