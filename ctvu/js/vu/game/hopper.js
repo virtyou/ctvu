@@ -135,7 +135,7 @@ vu.game.hopper = {
 			_.vgroup("player", game), _.vgroup("fauna", game)
 		], "bordered padded margined round");
 	},
-	init: function() {
+	load: function() {
 		vu.game.hopper.loader.init();
 	}
 };
