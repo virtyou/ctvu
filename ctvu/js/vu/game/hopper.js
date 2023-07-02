@@ -47,12 +47,9 @@ vu.game.hopper.modder = {
 				vu.game.hopper.modder.upscore();
 			}, animal);
 	},
-	addhop: function(variety) {
-		var h = vu.game.hopper, hm = h.modder, pz = h.pcfg()[variety],
-			kinds, men = zero.core.current.room.menagerie;
-		if (!men)
-			return alert("this room has no associated menagerie - please add one on the pop page!");
-		kinds = men.kinds.filter(k => !(k in pz));
+	addhop: function(variety, cfg, men) {
+		var h = vu.game.hopper, hm = h.modder, pz = cfg[variety],
+			kinds = men.kinds.filter(k => !(k in pz));
 		if (!kinds.length)
 			return alert("all animals are accounted for!");
 		CT.modal.choice({
@@ -110,18 +107,20 @@ vu.game.hopper.modder = {
 			cont.push(hm.hopCheck("zombifying", p, pcfg));
 		return CT.dom.div(cont, "bordered padded margined round");
 	},
-	group: function(variety, cfg) { // player or fauna
+	group: function(variety, cfg, men) { // player or fauna
 		var h = vu.game.hopper, hm = h.modder, pz = cfg[variety];
 		return CT.dom.div([
-			CT.dom.button("add", () => hm.addhop(variety), "right"),
+			CT.dom.button("add", () => hm.addhop(variety, cfg, men), "right"),
 			h.directions[variety],
 			Object.keys(pz).map(p => hm.hop(p, pz, variety))
 		], "bordered padded margined round");
 	},
 	area: function(area, cfg) {
-		var hm = vu.game.hopper.modder;
+		var hm = vu.game.hopper.modder,
+			men = zero.core.current.room.menagerie[area + "_menagerie"];
 		return CT.dom.div([
-			hm.group("player", cfg), hm.group("fauna", cfg)
+			area,
+			hm.group("player", cfg, men), hm.group("fauna", cfg, men)
 		], "bordered padded margined round");
 	},
 	build: function() {
@@ -206,14 +205,15 @@ vu.game.hopper.loader = {
 	init: function() {
 		var h = vu.game.hopper, hl = h.loader,
 			zc = zero.core, zcc = zc.current,
-			menz = zcc.room.menagerie || {}, area;
+			menz = zcc.room.menagerie || {}, mename, area;
 		zcc.sploder = new zc.Sploder();
 		hl.initPlayer();
 		hl.initBosses();
-		for (area in menz) {
+		for (mename in menz) {
+			area = mename.split("_").shift();
 			h.hoppers[area] = new vu.game.hopper.Hopper({
 				area: area,
-				menagerie: menz[area]
+				menagerie: menz[mename]
 			});
 		}
 	}
