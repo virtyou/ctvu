@@ -103,11 +103,9 @@ vu.game.hopper = {
 		var zcc = zero.core.current,
 			scfg = (game || zcc.scene.game || zcc.adventure.game).score;
 		if (!scfg.pounce)
-			scfg.pounce = {};// { fauna: {}, player: {} };
+			scfg.pounce = {};
 		else if (scfg.pounce.fauna || scfg.pounce.player)
 			scfg.pounce = { room: scfg.pounce };
-//		if (!scfg.initial)
-//			scfg.initial = 0;
 		return scfg;
 	},
 	pcfg: function(game, area) {
@@ -123,11 +121,9 @@ vu.game.hopper = {
 			upon = zero.core.current.person.body.upon;
 		return upon && hz[upon.name] || hz.room;
 	},
-	modder: function() { // { fauna: { dog: 2, cat: 10 }, player: { cat: 1 } }
+	modder: function() {
 		var _ = vu.game.hopper._, pounces = CT.dom.div();
 		var node = _.editor = CT.dom.div([
-//			CT.dom.div("initial score", "big"),
-//			_.initial(),
 			CT.dom.div("pounce dynamics", "big"),
 			pounces
 		], "bordered padded margined round");
@@ -142,7 +138,6 @@ vu.game.hopper = {
 	view: function(game) {
 		var h = vu.game.hopper, _ = h._;
 		return CT.dom.div([
-//			"initial score: " + h.scfg(game).initial,
 			"pounce dynamics",
 			_.vgroup("player", game), _.vgroup("fauna", game)
 		], "bordered padded margined round");
@@ -161,7 +156,6 @@ vu.game.hopper = {
 		if (!(name in bz)) {
 			bz[name] = new vu.game.Boss({
 				name: name
-//				level: ccfg.level,   // set in Boss constructor from acfg?
 			});
 		}
 		return bz[name];
