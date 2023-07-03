@@ -158,9 +158,9 @@ vu.game.hopper.viewer = {
 		var v = vu.game.hopper.viewer, areas = Object.keys(pcfg);
 		return CT.dom.div([
 			CT.dom.div("pounce dynamics", "big"),
-			areas ? areas.map(area => v.area(area, pcfg[area])) : "nothing yet!"
+			areas.length ? areas.map(area => v.area(area, pcfg[area])) : "nothing yet!"
 		], "bordered padded margined round");
-	},
+	}
 }
 
 vu.game.hopper.loader = {
