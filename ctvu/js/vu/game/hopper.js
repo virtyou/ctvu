@@ -134,7 +134,7 @@ vu.game.hopper.modder = {
 			CT.dom.setContent(pounces,
 				Object.keys(cfg).map(area => hm.area(area, cfg[area])));
 		};
-		node.refresh();
+		zero.core.util.onRoomReady(node.refresh);
 		return node;
 	}
 };
