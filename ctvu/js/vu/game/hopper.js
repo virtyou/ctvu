@@ -15,11 +15,11 @@ vu.game.hopper = {
 				delete scfg.pounce;
 			}
 			scfg = scfg[sname];
+			if (!scfg.pounce)
+				scfg.pounce = {};
+			else if (scfg.pounce.fauna || scfg.pounce.player)
+				scfg.pounce = { room: scfg.pounce };
 		}
-		if (!scfg.pounce)
-			scfg.pounce = {};
-		else if (scfg.pounce.fauna || scfg.pounce.player)
-			scfg.pounce = { room: scfg.pounce };
 		return scfg;
 	},
 	pcfg: function(game, area) {
@@ -38,7 +38,7 @@ vu.game.hopper = {
 	},
 	view: function(game) {
 		var h = vu.game.hopper;
-		return h.viewer.build(h.pcfg(game));
+		return h.viewer.build(h.scfg(game));
 	},
 	load: function() {
 		vu.game.hopper.loader.init();
@@ -174,21 +174,26 @@ vu.game.hopper.viewer = {
 		return CT.dom.div([
 			h.directions[variety],
 			Object.keys(pz).map(p => p + ": " + JSON.stringify(pz[p]))
-		], "bordered padded margined round");
+		], "bordered padded margined round inline-block");
 	},
 	area: function(area, cfg) {
 		var v = vu.game.hopper.viewer;
 		return CT.dom.div([
 			area,
 			v.group("player", cfg), v.group("fauna", cfg)
+		], "bordered padded margined round inline-block");
+	},
+	scene: function(sname, cfg) {
+		var v = vu.game.hopper.viewer, areas = Object.keys(cfg);
+		return CT.dom.div([
+			CT.dom.div(sname, "big"),
+			areas.length ? areas.map(area => v.area(area, cfg[area])) : "nothing yet!"
 		], "bordered padded margined round");
 	},
 	build: function(pcfg) {
-		var v = vu.game.hopper.viewer, areas = Object.keys(pcfg);
-		return CT.dom.div([
-			CT.dom.div("pounce dynamics", "big"),
-			areas.length ? areas.map(area => v.area(area, pcfg[area])) : "nothing yet!"
-		], "bordered padded margined round");
+		var v = vu.game.hopper.viewer, scenes = Object.keys(pcfg);
+		return scenes.length ? scenes.map(scene => v.scene(scene,
+			pcfg[scene].pounce)) : "nothing yet!";
 	}
 }
 
