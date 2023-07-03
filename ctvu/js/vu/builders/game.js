@@ -194,7 +194,7 @@ vu.builders.game = {
 				_.conditions(game)
 			], "bordered padded margined round"),
 			CT.dom.div([
-				"score",
+				"score (pounce dynamics)",
 				vu.game.hopper.view(game)
 			], "bordered padded margined round"),
 			CT.dom.div([
