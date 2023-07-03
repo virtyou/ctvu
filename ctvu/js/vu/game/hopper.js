@@ -230,7 +230,7 @@ vu.game.hopper.loader = {
 		hl.initBosses();
 		for (mename in menz) {
 			area = mename.split("_").shift();
-			h.hoppers[area] = new vu.game.hopper.Hopper({
+			hl.hoppers[area] = h.Hopper({
 				area: area,
 				menagerie: menz[mename]
 			});
@@ -259,7 +259,7 @@ vu.game.hopper.Hopper = CT.Class({
 			return pcfg && pcfg.source && pcfg.mega;
 		},
 		boss: function(name) {
-			return vu.game.hopper.getBoss(name);
+			return vu.game.hopper.loader.getBoss(name);
 		},
 		cfg: function(variety, critter, property) {
 			var ccfg = this.cfg[variety][critter];
