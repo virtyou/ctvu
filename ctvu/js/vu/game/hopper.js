@@ -272,7 +272,9 @@ vu.game.hopper.Hopper = CT.Class({
 			return vu.game.hopper.loader.getBoss(name);
 		},
 		cfg: function(variety, critter, property) {
-			var ccfg = this.cfg[variety][critter];
+			var ccfg = this.cfg[variety];
+			if (critter)
+				ccfg = ccfg[critter];
 			return (ccfg && property) ? ccfg[property] : ccfg;
 		},
 		pcfg: function(prey, property) {
