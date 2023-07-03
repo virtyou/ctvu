@@ -4,8 +4,18 @@ vu.game.hopper = {
 		player: "player pouncing on fauna"
 	},
 	scfg: function(game) {
-		var zcc = zero.core.current,
-			scfg = (game || zcc.scene.game || zcc.adventure.game).score;
+		var zcc = zero.core.current, cs = zcc.scene, sname = cs && cs.name,
+			gcfg = game || cs.game || zcc.adventure.game, scfg = gcfg.score;
+		if (sname) {
+			if (!(sname in scfg))
+				scfg[sname] = {};
+			if (scfg.pounce) {
+				CT.log("moving pounce to " + sname);
+				scfg[sname].pounce = scfg.pounce;
+				delete scfg.pounce;
+			}
+			scfg = scfg[sname];
+		}
 		if (!scfg.pounce)
 			scfg.pounce = {};
 		else if (scfg.pounce.fauna || scfg.pounce.player)
