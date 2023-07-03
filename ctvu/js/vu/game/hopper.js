@@ -20,6 +20,9 @@ vu.game.hopper = {
 			pcfg[area] = { player: {}, fauna: {} };
 		return pcfg[area];
 	},
+	acfg: function(area, game) {
+		return vu.game.hopper.pcfg(game, area);
+	},
 	mod: function() {
 		return vu.game.hopper.modder.build();
 	},
@@ -47,7 +50,7 @@ vu.game.hopper.modder = {
 				vu.game.hopper.modder.upscore();
 			}, animal);
 	},
-	addhop: function(variety, cfg, men) {
+	addHop: function(variety, cfg, men) {
 		var h = vu.game.hopper, hm = h.modder, pz = cfg[variety],
 			kinds = men.kinds.filter(k => !(k in pz));
 		if (!kinds.length)
@@ -110,10 +113,25 @@ vu.game.hopper.modder = {
 	group: function(variety, cfg, men) { // player or fauna
 		var h = vu.game.hopper, hm = h.modder, pz = cfg[variety];
 		return CT.dom.div([
-			CT.dom.button("add", () => hm.addhop(variety, cfg, men), "right"),
+			CT.dom.button("add critter", () => hm.addHop(variety, cfg, men), "right"),
 			h.directions[variety],
 			Object.keys(pz).map(p => hm.hop(p, pz, variety))
 		], "bordered padded margined round");
+	},
+	addArea: function(cfg) {
+		var h = vu.game.hopper, hm = h.modder, mens = zero.core.current.room.menagerie || {},
+			areas = Object.keys(mens).map(men => men.split("_").shift()).filter(area => !(area in cfg));
+		if (!areas)
+			return alert("no unconfigured menageries - add one on the pop page!");
+		CT.modal.choice({
+			prompt: "please select a menagerie area",
+			data: areas,
+			cb: function(area) {
+				h.acfg(area);
+				hm.upscore();
+				hm.editor.refresh();
+			}
+		});
 	},
 	area: function(area, cfg) {
 		var hm = vu.game.hopper.modder,
@@ -127,6 +145,7 @@ vu.game.hopper.modder = {
 		var h = vu.game.hopper, hm = h.modder,
 			cfg = h.pcfg(), pounces = CT.dom.div();
 		var node = hm.editor = CT.dom.div([
+			CT.dom.button("add area", () => hm.addArea(cfg), "right"),
 			CT.dom.div("pounce dynamics", "big"),
 			pounces
 		], "bordered padded margined round");
