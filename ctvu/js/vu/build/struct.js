@@ -11,7 +11,7 @@ vu.build.struct = {
 	structs: function(variety) {
 		var vb = vu.build, bs = vb.struct, selz = vb.core.getSel(),
 			zcc = zero.core.current, zccr, voz, fpz, flo,
-			plur = variety + "s",
+			plur = variety + "s", cont, collapser,
 			sel = selz[plur] = CT.dom.div();
 		sel.update = function() {
 			zccr = zcc.room;
@@ -24,29 +24,38 @@ vu.build.struct = {
 			if (variety == "obstacle")
 				voz.dimensions = [10, 10, 10, 1, 1];
 			fpz = voz.parts;
+			cont = CT.dom.div(fpz.map(bs[variety]));
+			collapser = CT.dom.link("collapse", function() {
+				collapser._collapsed = !collapser._collapsed;
+				collapser.innerHTML = collapser._collapsed ? "expand" : "collapse";
+				CT.dom.showHide(cont);
+			});
 			CT.dom.setContent(sel, [
-				CT.dom.button("add", function() {
-					flo = {
-						position: [0, 0, 0]
-					};
-					if (variety == "stala")
-						flo.coneGeometry = 100;
-					else if (variety == "boulder") {
-						flo.sphereGeometry = 100;
-						flo.sphereSegs = 5; // 3-8
-						flo.geoThetaLength = Math.PI; // 0.1-2PI
-					} else if (variety == "obstacle")
-						flo.scale = [10, 10, 10];
-					else {
-						flo.planeGeometry = true;
-						flo.scale = [80, 80, 1];
-					}
-					fpz.push(flo);
-					bs.strup(variety);
-					vu.builders.zone.update(); // overkill?
-					setTimeout(sel.update, 500);
-				}, "up20 right"),
-				fpz.map(bs[variety])
+				CT.dom.div([
+					collapser,
+					CT.dom.button("add", function() {
+						flo = {
+							position: [0, 0, 0]
+						};
+						if (variety == "stala")
+							flo.coneGeometry = 100;
+						else if (variety == "boulder") {
+							flo.sphereGeometry = 100;
+							flo.sphereSegs = 5; // 3-8
+							flo.geoThetaLength = Math.PI; // 0.1-2PI
+						} else if (variety == "obstacle")
+							flo.scale = [10, 10, 10];
+						else {
+							flo.planeGeometry = true;
+							flo.scale = [80, 80, 1];
+						}
+						fpz.push(flo);
+						bs.strup(variety);
+						vu.builders.zone.update(); // overkill?
+						setTimeout(sel.update, 500);
+					})
+				], "up20 right"),
+				cont
 			]);
 		};
 		return CT.dom.div([
