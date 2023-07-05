@@ -155,6 +155,10 @@ iframe {
 	transition: all 500ms !important;
 }
 
+.gmenu.natural {
+	min-width: 140px;
+}
+
 .gmenu.auto {
 	width: 400px;
 	height: 320px;
