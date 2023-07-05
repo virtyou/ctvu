@@ -39,6 +39,12 @@ vu.game.Consumable.consumables = {
 			breath: 10
 		}
 	},
+	coffee: {
+		boost: {
+			hp: 5,
+			breath: 5
+		}
+	},
 	spring: {
 		bounce: true
 	}
