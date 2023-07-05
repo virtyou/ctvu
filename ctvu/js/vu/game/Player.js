@@ -82,6 +82,14 @@ vu.game.Player = CT.Class({
 		CT.modal.modal("You died! Better luck next time...",
 			() => location.reload(), { noClose: true }, true);
 	},
+	score: function(prop, val, absolute, upmen) {
+		var ps = this.person.score;
+		if (absolute)
+			ps[prop] = val;
+		else
+			ps[prop] += val;
+		upmen && this.menus.score();
+	},
 	init: function(opts) { // required: person, menus
 		this.opts = opts = CT.merge(opts, {
 
