@@ -145,6 +145,17 @@ vu.builders.game = {
 					_.sharer
 				]
 			], "left shiftall");
+		},
+		curgame: function() {
+			var g, gz = vu.builders.game._.games,
+				cg = CT.storage.get("game");
+			if (cg) {
+				for (g of gz)
+					if (g.key == cg)
+						return g;
+			}
+			if (gz.length)
+				return gz[0];
 		}
 	},
 	create: function(ctype, cb, extras) {
@@ -154,6 +165,7 @@ vu.builders.game = {
 		var _ = vu.builders.game._;
 		_.cur = game;
 		_.sharer.update(game);
+		CT.storage.set("game", game.key);
 		CT.dom.setContent(_.curname, game.name);
 		CT.dom.setContent("ctmain", [
 			CT.dom.div([
@@ -194,7 +206,7 @@ vu.builders.game = {
 				_.conditions(game)
 			], "bordered padded margined round"),
 			CT.dom.div([
-				"score",
+				"score (pounce dynamics)",
 				vu.game.hopper.view(game)
 			], "bordered padded margined round"),
 			CT.dom.div([
@@ -211,12 +223,13 @@ vu.builders.game = {
 		]);
 	},
 	init: function() {
-		var g = vu.builders.game, _ = g._;
+		var g = vu.builders.game, _ = g._, curgame;
 		CT.dom.addContent("ctheader", _.linx());
 		vu.core.my("game", function(games) {
 			_.games = games;
-			if (games.length)
-				g.load(games[0]);
+			curgame = _.curgame();
+			if (curgame)
+				g.load(curgame);
 			else
 				g.create();
 		});

@@ -39,7 +39,7 @@ vu.game.Boss = CT.Class({
 			setTimeout(() => this._.toss(hand, target), 400);
 		},
 		closest: function(critname) {
-			return zero.core.current.room.menagerie.near(critname, this.person.body);
+			return this.menagerie.near(critname, this.person.body);
 		},
 		crit: function() {
 			var cname, crit, _ = this._;
@@ -158,6 +158,9 @@ vu.game.Boss = CT.Class({
 	addCritter: function(crit) {
 		this.opts.critters.push(crit);
 	},
+	setMenagerie: function(men) {
+		this.menagerie = men;
+	},
 	setOrbs: function() {
 		var _ = this._, o;
 		this.orbs = {};
@@ -165,10 +168,12 @@ vu.game.Boss = CT.Class({
 			if (this.throws.includes(o))
 				this.orbs[o] = _.orb(o);
 	},
+	setOnCrash: function(oncrash) {
+		this.person.body.oncrash = oncrash;
+	},
 	init: function(opts) {
 		var zcc = zero.core.current, pname, tcfg,
-			agi = zcc.adventure.game.initial,
-			acfg = agi.automatons = agi.automatons || {};
+			acfg = zcc.adventure.game.initial.automatons;
 		this.opts = opts = CT.merge(opts, {
 			level: 1,
 			floor: 1,
@@ -188,7 +193,8 @@ vu.game.Boss = CT.Class({
 		this.throws = Object.keys(tcfg).filter(t => tcfg[t]);
 		this.setOrbs();
 		this.setLevel(opts.level);
-		this.person.body.oncrash = opts.oncrash;
+		this.setOnCrash(opts.oncrash);
+		this.setMenagerie(opts.menagerie);
 		this.meter = new vu.game.Meter({
 			menu: true,
 			cap: opts.hp,

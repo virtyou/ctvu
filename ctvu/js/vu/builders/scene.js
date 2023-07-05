@@ -417,7 +417,7 @@ vu.builders.scene = {
 			selz.scripts
 		]);
 		CT.dom.setContent(selz.score, [
-			vu.game.hopper.modder()
+			vu.game.hopper.mod()
 		]);
 		vu.game.step.setSels(selz);
 		vu.game.step.setAudio(_.audio);
