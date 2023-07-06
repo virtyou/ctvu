@@ -23,20 +23,33 @@ vu.game.Consumable = CT.Class({
 	}
 }, zero.core.Thing);
 
+var P = Math.PI, P8 = P / 8;
 vu.game.Consumable.consumables = {
 	heart: {
 		boost: {
 			hp: 5
-		}
-	},
-	bigheart: {
-		boost: {
-			hp: 10
-		}
+		},
+		parts: [{
+			coneGeometry: 10,
+			position: [-4, 0, 0],
+			rotation: [0, 0, P + P8],
+			parts: [{
+				sphereGeometry: 10,
+				position: [0, -10, 0]
+			}]
+		}, {
+			coneGeometry: 10,
+			position: [4, 0, 0],
+			rotation: [0, 0, P - P8],
+			parts: [{
+				sphereGeometry: 10,
+				position: [0, -10, 0]
+			}]
+		}]
 	},
 	juice: {
 		boost: {
-			breath: 10
+			breath: 5
 		}
 	},
 	coffee: {
