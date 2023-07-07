@@ -87,6 +87,7 @@ vu.game.Consumable.consumables = {
 		}]
 	},
 	spring: {
-		bounce: true
+		bounce: true,
+		tubeGeometry: ["spring"]
 	}
 };
