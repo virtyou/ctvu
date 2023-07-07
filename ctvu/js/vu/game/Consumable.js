@@ -47,16 +47,40 @@ vu.game.Consumable.consumables = {
 			}]
 		}]
 	},
-	juice: {
+	"ice cream": {
 		boost: {
 			breath: 5
-		}
+		},
+		coneGeometry: 10,
+		rotation: [0, 0, P],
+		material: {
+			color: "#cda26f"
+		},
+		parts: [{
+			sphereGeometry: 9,
+			position: [0, -10, 0],
+			material: {
+				color: "#e77da3"
+			}
+		}]
 	},
-	coffee: {
+	burger: {
 		boost: {
 			hp: 5,
 			breath: 5
-		}
+		},
+		sphereGeometry: 10,
+		scale: [1.1, 0.7, 1.1],
+		material: {
+			color: "#fcb54d"
+		},
+		parts: [{
+			sphereGeometry: 10,
+			scale: [1.1, 0.7, 1.1],
+			material: {
+				color: "#450101"
+			}
+		}]
 	},
 	spring: {
 		bounce: true
