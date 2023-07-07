@@ -29,6 +29,10 @@ vu.game.Consumable.consumables = {
 		boost: {
 			hp: 5
 		},
+		sharedmat: true,
+		material: {
+			color: "#ff0000"
+		},
 		parts: [{
 			coneGeometry: 10,
 			position: [-4, 0, 0],
