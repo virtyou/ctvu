@@ -66,7 +66,8 @@ vu.storage.remote = {
 		};
 	},
 	init: function(cb, allrooms) {
-		var k, j, item, items, rcount = 2; // more requests..
+		var k, j, item, items, rcount = 2, // more requests..
+			vg = vu.game, vgc = vg && vg.Consumable;
 		vu.core.z({ action: "things" }, function(extras) {
 			items = {};
 			for (k in extras) {
@@ -78,6 +79,8 @@ vu.storage.remote = {
 				}
 			}
 			extras.items = items;
+			if (vgc)
+				extras.consumable = vgc.options();
 			vu.storage._extras = extras;
 			vu.storage._ready(cb, rcount)();
 		});
