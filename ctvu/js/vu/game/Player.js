@@ -38,7 +38,7 @@ vu.game.Player = CT.Class({
 				s.hp += 1
 			else
 				unChanged = true;
-			t = 2000;
+			t = 4000;
 		}
 		p.body.panting = s.breath < 0;
 		if (p.zombified) {
