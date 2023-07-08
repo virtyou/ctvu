@@ -38,7 +38,7 @@ vu.game.Player = CT.Class({
 				s.hp += 1
 			else
 				unChanged = true;
-			t = 2000;
+			t = 4000;
 		}
 		p.body.panting = s.breath < 0;
 		if (p.zombified) {
@@ -81,6 +81,14 @@ vu.game.Player = CT.Class({
 		this.person.dance("fall");
 		CT.modal.modal("You died! Better luck next time...",
 			() => location.reload(), { noClose: true }, true);
+	},
+	score: function(prop, val, absolute, upmen) {
+		var ps = this.person.score;
+		if (absolute)
+			ps[prop] = val;
+		else
+			ps[prop] += val;
+		upmen && this.menus.score();
 	},
 	init: function(opts) { // required: person, menus
 		this.opts = opts = CT.merge(opts, {

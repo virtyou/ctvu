@@ -289,8 +289,9 @@ vu.game.hopper.Hopper = CT.Class({
 			return this._.cfg("fauna", hunter, property);
 		},
 		splode: function(prey) {
-			var zcc = zero.core.current;
-			zcc.sploder.splode(prey.position());
+			var zcc = zero.core.current, pp = prey.position();
+			zcc.sploder.splode(pp);
+			vu.game.dropper.drop(pp, "consumable");
 			zcc.adventure.score(this._.pcfg(prey.opts.kind, "value") * prey.level);
 		},
 		nosplat: function() {
