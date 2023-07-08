@@ -15,13 +15,24 @@ vu.game.Consumable = CT.Class({
 			this.opts[c] && this.consumers[c]();
 	},
 	init: function(opts) {
-		this.opts = opts = CT.merge(opts, vu.game.Consumable.consumables[opts.kind], {
+		this.opts = opts = CT.merge(opts, vu.game.Consumable.consumables[opts.name], {
 			boost: null, // { hp: 2, breath: 5 }
 			bounce: null
 		}, this.opts);
 		this.player = zero.core.current.player;
 	}
 }, zero.core.Thing);
+
+vu.game.Consumable.options = function(arrStyle) {
+	var cname, c, cz = vu.game.Consumable.consumables;
+	for (cname in cz) {
+		c = cz[cname];
+		c.name = c;
+		c.kind = "consumable";
+		c.subclass = vu.game.Consumable;
+	}
+	return arrStyle ? Object.values(cz) : cz;
+};
 
 var P = Math.PI, P8 = P / 8;
 vu.game.Consumable.consumables = {
