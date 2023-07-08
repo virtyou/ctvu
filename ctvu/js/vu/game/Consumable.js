@@ -5,13 +5,14 @@ vu.game.Consumable = CT.Class({
 			var prop, ob = this.opts.boost;
 			for (prop in ob)
 				this.player.score(prop, ob[prop]);
+			this.player.menus.score();
 		},
 		bounce: function() {
 			this.player.person.doLeap(true);
 		}
 	},
 	consume: function() {
-		for (var c in this.consumables)
+		for (var c in this.consumers)
 			this.opts[c] && this.consumers[c]();
 	},
 	init: function(opts) {
@@ -20,6 +21,7 @@ vu.game.Consumable = CT.Class({
 			bounce: null
 		}, this.opts);
 		this.player = zero.core.current.player;
+		this.isConsumable = true;
 	}
 }, zero.core.Thing);
 
