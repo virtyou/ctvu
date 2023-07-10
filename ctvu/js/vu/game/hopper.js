@@ -233,8 +233,8 @@ vu.game.hopper.loader = {
 	initPlayer: function() {
 		var hl = vu.game.hopper.loader, person = zero.core.current.person;
 		person.onland(hl.splatter);
-		person.body.onkick(side => hl.swinger("kick", side));
-		person.body.onthrust(side => hl.swinger("knock", side));
+		person.thruster.onkick(side => hl.swinger("kick", side));
+		person.thruster.onthrust(side => hl.swinger("knock", side));
 	},
 	init: function() {
 		var h = vu.game.hopper, hl = h.loader,
