@@ -25,6 +25,8 @@ vu.game.Adventure = CT.Class({
 			s.story = s.story || [];
 			s.actors = s.actors || {};
 			s.inventory = s.inventory || {
+				back: {}, // left/right
+				hip: {}, // left/right
 				bag: [],
 				gear: {}
 			};
