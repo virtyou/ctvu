@@ -2,6 +2,11 @@ vu.game.dropper = {
 	_: {
 		ops: {},
 		drops: {},
+		defaults: {
+			held: {
+				variety: "knocker"
+			}
+		},
 		droptex: ["what have we here?", "what's this?", "any takers?", "give it a try!"],
 		click: function(target, cb) {
 			zero.core.click.register(target, () => cb(target));
@@ -22,6 +27,13 @@ vu.game.dropper = {
 			}
 			return !(iname in vu.game.dropper._.drops);
 		},
+		pfilt: function(item, prop, val) {
+			return val == (item.variety || vu.game.dropper._.defaults[item.kind][prop]);
+		},
+		vfilt: function(name, kind, variety) {
+			var _ = vu.game.dropper._;
+			return _.pfilt(_.ops[kind][name], "variety", variety);
+		},
 		options: function(kind) {
 			kind = kind || "held";
 			var d = vu.game.dropper, _ = d._;
@@ -34,9 +46,11 @@ vu.game.dropper = {
 		item: function(name, kind) { // ad-hoc keys?
 			return vu.game.dropper._.options(kind)[name];
 		},
-		names: function(kind) {
-			var _ = vu.game.dropper._;
-			return Object.keys(_.options(kind)).filter(_.filt);
+		names: function(kind, variety) {
+			var _ = vu.game.dropper._, onames = Object.keys(_.options(kind));
+			if (variety)
+				onames = onames.filter(name => _.vfilt(name, kind, variety));
+			return onames.filter(_.filt);
 		}
 	},
 	log: function(msg) {
@@ -84,9 +98,9 @@ vu.game.dropper = {
 			}
 		}, vu.game.dropper._.item(iopts.name, iopts.kind)));
 	},
-	drop: function(position, kind) {
+	drop: function(position, kind, variety) {
 		kind = kind || "held";
-		var d = vu.game.dropper, _ = d._, name = CT.data.choice(_.names(kind));
+		var d = vu.game.dropper, _ = d._, name = CT.data.choice(_.names(kind, variety));
 		if (!name)
 			return d.log("aborting drop - no undropped items");
 		d.log("dropping " + name);
