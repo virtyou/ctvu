@@ -130,7 +130,7 @@ vu.game.Boss = CT.Class({
 		this.person.mood.update({ mad: 1, energy: 2 });
 		this.person.energy.damp = 0.6;
 		this.person.automaton.pause();
-		this.person.thruster.onkick(this._.kick);
+		this.person.thruster.on("unkick", this._.kick);
 		this.climax = true;
 		this.meter.show();
 		this.drop();
