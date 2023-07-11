@@ -214,6 +214,16 @@ vu.game.hopper.loader = {
 		var hop = vu.game.hopper.loader.hop();
 		return hop && hop.splat();
 	},
+	backswap: function(side) {
+
+		CT.log("backswap " + side);
+
+	},
+	hipswap: function(side) {
+
+		CT.log("hipswap " + side);
+
+	},
 	getBoss: function(name) {
 		var bz = vu.game.hopper.loader.bosses;
 		if (!(name in bz)) {
@@ -231,10 +241,13 @@ vu.game.hopper.loader = {
 			hl.getBoss(name);
 	},
 	initPlayer: function() {
-		var hl = vu.game.hopper.loader, person = zero.core.current.person;
-		person.onland(hl.splatter);
-		person.thruster.onkick(side => hl.swinger("kick", side));
-		person.thruster.onthrust(side => hl.swinger("knock", side));
+		var hl = vu.game.hopper.loader,
+			per = zero.core.current.person, thruster = per.thruster;
+		per.onland(hl.splatter);
+		thruster.on("unkick", side => hl.swinger("kick", side));
+		thruster.on("unthrust", side => hl.swinger("knock", side));
+		thruster.on("unback", hl.backswap);
+		thruster.on("unhip", hl.hipswap);
 	},
 	init: function() {
 		var h = vu.game.hopper, hl = h.loader,
