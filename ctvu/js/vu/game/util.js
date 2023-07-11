@@ -37,9 +37,10 @@ vu.game.util = {
 		var k, v, p, zcc = zero.core.current;
 		for (k in ups) {
 			v = ups[k];
-			if (k == "inventory") // hmmm.....
-				state.inventory.bag.push(v);
-			else if (k in zcc.people)
+			if (k == "inventory") { // hmmm.....
+				state.inventory.bag[v.area][v.side] = v.value;
+//				state.inventory.bag.push(v);
+			} else if (k in zcc.people)
 				for (p in v)
 					state.actors[k][p] = v[p];
 			else
