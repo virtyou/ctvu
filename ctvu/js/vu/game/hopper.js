@@ -200,6 +200,11 @@ vu.game.hopper.viewer = {
 vu.game.hopper.loader = {
 	bosses: {},
 	hoppers: {},
+	t2k: function(thing) {
+		if (!thing) return;
+		var o = thing.opts;
+		return o.key || o.fakeKey;
+	},
 	hop: function() {
 		var hz = vu.game.hopper.loader.hoppers,
 			upon = zero.core.current.person.body.upon;
@@ -213,6 +218,18 @@ vu.game.hopper.loader = {
 	splatter: function() {
 		var hop = vu.game.hopper.loader.hop();
 		return hop && hop.splat();
+	},
+	swapper: function(area, side) {
+		CT.log("swap " + area + " " + side);
+		var p = zero.core.current.person, t2k = vu.game.hopper.loader.t2k,
+			held = p.held(side), bagged = p.bagged(area, side),
+			hk = t2k(held), bk = t2k(bagged);
+		// first remove...
+		held && p.unhold(side);
+		bagged && p.unholster(area, side);
+		// then add...
+		held && p.holster(hk, area, side);
+		bagged && p.hold(bk, side);
 	},
 	getBoss: function(name) {
 		var bz = vu.game.hopper.loader.bosses;
@@ -231,10 +248,13 @@ vu.game.hopper.loader = {
 			hl.getBoss(name);
 	},
 	initPlayer: function() {
-		var hl = vu.game.hopper.loader, person = zero.core.current.person;
-		person.onland(hl.splatter);
-		person.body.onkick(side => hl.swinger("kick", side));
-		person.body.onthrust(side => hl.swinger("knock", side));
+		var hl = vu.game.hopper.loader,
+			per = zero.core.current.person, thruster = per.thruster;
+		per.onland(hl.splatter);
+		thruster.on("unkick", side => hl.swinger("kick", side));
+		thruster.on("unthrust", side => hl.swinger("knock", side));
+		thruster.on("unback", side => hl.swapper("back", side));
+		thruster.on("unhip", side => hl.swapper("hip", side));
 	},
 	init: function() {
 		var h = vu.game.hopper, hl = h.loader,

@@ -16,7 +16,7 @@ vu.game.Boss = CT.Class({
 			});
 		},
 		toss: function(hand, target) {
-			this.person.body.unthrust(hand.opts.side);
+			this.person.thruster.unthrust(hand.opts.side);
 			target.knock(this.person.direction());
 		},
 		hit: function(appendage, target) {
@@ -34,7 +34,7 @@ vu.game.Boss = CT.Class({
 		},
 		windUp: function(hand, target) {
 			target.stick(hand);
-			this.person.body.thrust(hand.opts.side);
+			this.person.thruster.thrust(hand.opts.side);
 			this.person.orient(zero.core.current.person.body);
 			setTimeout(() => this._.toss(hand, target), 400);
 		},
@@ -87,7 +87,7 @@ vu.game.Boss = CT.Class({
 		},
 		kick: function() {
 			this.person.orient(zero.core.current.person.body);
-			this.person.body.kick(CT.data.random() ? "left" : "right", 200);
+			this.person.thruster.kick(CT.data.random() ? "left" : "right", 200);
 		}
 	},
 	tick: function() {
@@ -130,7 +130,7 @@ vu.game.Boss = CT.Class({
 		this.person.mood.update({ mad: 1, energy: 2 });
 		this.person.energy.damp = 0.6;
 		this.person.automaton.pause();
-		this.person.body.onkick(this._.kick);
+		this.person.thruster.on("unkick", this._.kick);
 		this.climax = true;
 		this.meter.show();
 		this.drop();
@@ -239,7 +239,7 @@ vu.game.Boss.Orb = CT.Class({
 	release: function() {
 		this.flying = true;
 		this.throwing = false;
-		this.person.body.unthrust(this.side);
+		this.person.thruster.unthrust(this.side);
 		this.look(this.target.body.position());
 		this.getDirection();
 	},
@@ -247,7 +247,7 @@ vu.game.Boss.Orb = CT.Class({
 		this.show();
 		this.throwing = true;
 		zero.core.util.ontick(this.tick);
-		this.person.body.upthrust(this.side);
+		this.person.thruster.upthrust(this.side);
 		this.person.orient(this.target.body, null, this.release);
 	},
 	init: function(opts) {
