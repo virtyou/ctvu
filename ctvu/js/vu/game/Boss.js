@@ -53,10 +53,8 @@ vu.game.Boss = CT.Class({
 			this.person.say(functionality + " hasn't been implemented");
 		},
 		die: function() {
-			var zc = zero.core;
-			zc.audio.ux("confetti");
-			zc.current.room.eject(this.person);
-			zc.current.sploder.confettize(this.person.body.position());
+			this.drop(this.cfg.drop.stop);
+			zero.core.current.room.eject(this.person);
 		}
 	},
 	moves: {
@@ -123,8 +121,9 @@ vu.game.Boss = CT.Class({
 	position: function(pos, world) {
 		return this.person.body.position(pos, world);
 	},
-	drop: function() {
-		vu.game.dropper.drop(this.position());
+	drop: function(variety) {
+		vu.game.dropper.drop(this.position(),
+			variety ? "held" : "consumable", variety);
 	},
 	wileOut: function() {
 		this.person.mood.update({ mad: 1, energy: 2 });
@@ -133,7 +132,7 @@ vu.game.Boss = CT.Class({
 		this.person.thruster.on("unkick", this._.kick);
 		this.climax = true;
 		this.meter.show();
-		this.drop();
+		this.drop(this.cfg.drop.start);
 		this.tick();
 	},
 	setLevel: function(level) {
@@ -189,6 +188,7 @@ vu.game.Boss = CT.Class({
 		this.person = opts.person;
 		pname = this.person.name;
 		this.cfg = acfg[pname] = acfg[pname] || {};
+		this.cfg.drop = this.cfg.drop || {};
 		tcfg = this.cfg.throw = this.cfg.throw || {};
 		this.throws = Object.keys(tcfg).filter(t => tcfg[t]);
 		this.setOrbs();
