@@ -99,20 +99,41 @@ vu.builders.scene = {
 				az
 			]);
 		},
+		adrop: function(name, dcfg) {
+			return CT.dom.div([
+				"drop on " + name,
+				CT.dom.select({
+					names: ["none", "knocker", "grabber", "smasher", "flamer"],
+					curvalue: dcfg[name] || "none",
+					onchange: function(val) {
+						dcfg[name] = val;
+						vu.game.step.upstate();
+					}
+				})
+			]);
+		},
 		automaton: function(auto) {
 			var _ = vu.builders.scene._, gup = vu.game.step.upstate,
 				state = _.state(), az = state.automatons = state.automatons || {},
-				n = CT.dom.div(), check = vu.build.core.check, acfg, tcfg;
+				n = CT.dom.div(), check = vu.build.core.check, acfg, tcfg, dcfg;
 			auto.onperson(function(per) {
 				acfg = az[per.name] = az[per.name] || {};
 				tcfg = acfg.throw = acfg.throw || {};
+				dcfg = acfg.drop = acfg.drop || {};
 				CT.dom.setContent(n, [
 					CT.dom.div(per.name, "big"),
-					check("fly", acfg, gup),
 					CT.dom.div([
-						"throw",
+						CT.dom.div("general", "right bold small up10 right5"),
+						check("fly", acfg, gup),
+					], "bordered padded margined round"),
+					CT.dom.div([
+						CT.dom.div("items", "right bold small up10 right5"),
+						["start", "stop"].map(k => _.adrop(k, dcfg))
+					], "bordered padded margined round"),
+					CT.dom.div([
+						CT.dom.div("throws", "right bold small up10 right5"),
 						["fauna", "fire", "ice", "acid"].map(k => check(k, tcfg, gup))
-					])
+					], "bordered padded margined round")
 				]);
 				n.onclick = () => zero.core.camera.follow(per.body)
 			});
