@@ -8,7 +8,11 @@ vu.game.Consumable = CT.Class({
 			this.player.menus.score();
 		},
 		bounce: function() {
-			this.player.person.doLeap(true);
+			var per = this.player.person;
+			per.shouldFly();
+			per.powerjumping = true;
+			zero.core.current.adventure.controls.jump(2);
+//			this.player.person.doLeap(true);
 		}
 	},
 	consume: function() {
