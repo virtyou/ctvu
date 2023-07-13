@@ -415,6 +415,17 @@ vu.builders.scene = {
 					_.sharer
 				]
 			], "left shiftall");
+		},
+		curscene: function() {
+			var s, sz = vu.builders.scene._.scenes,
+				cs = CT.storage.get("scene");
+			if (cs) {
+				for (s of sz)
+					if (s.key == cs)
+						return s;
+			}
+			if (sz.length)
+				return sz[0];
 		}
 	},
 	load: function(scene) {
@@ -422,6 +433,7 @@ vu.builders.scene = {
 			snode = CT.dom.div(null, "right"),
 			upscripts = vu.game.step.upscripts;
 		zero.core.current.scene = scene;
+		CT.storage.set("scene", scene.key);
 		CT.dom.setContent(_.curname, scene.name);
 		_.audio = new vu.audio.Controller({
 			fx: scene.fx,
@@ -557,7 +569,7 @@ vu.builders.scene = {
 					} else
 						sb.load(smatchz[0]);
 				} else
-					sb.load(scenes[0]);
+					sb.load(_.curscene());
 			} else
 				sb.create();
 		}, "json_plus");
