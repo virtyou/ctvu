@@ -33,6 +33,18 @@ vu.game.util = {
 			});
 		}, "json");
 	},
+	state: function(ofScene, sub, subsub) {
+		var zcc = zero.core.current,
+			i = (zcc.adventure || zcc.scene).game.initial;
+		if (!ofScene) return i;
+		if (!i.scenes) i.scenes = {};
+		if (!i.scenes[ofScene]) i.scenes[ofScene] = {};
+		if (!sub) return i.scenes[ofScene];
+		if (!i.scenes[ofScene][sub]) i.scenes[ofScene][sub] = {};
+		if (!subsub) return i.scenes[ofScene][sub];
+		if (!i.scenes[ofScene][sub][subsub]) i.scenes[ofScene][sub][subsub] = {};
+		return i.scenes[ofScene][sub][subsub];
+	},
 	upstate: function(state, ups) {
 		var k, v, p, zcc = zero.core.current;
 		for (k in ups) {
