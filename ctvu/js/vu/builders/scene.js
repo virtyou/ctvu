@@ -12,19 +12,10 @@ vu.builders.scene = {
 			automatons: "bottomright"
 		},
 		swappers: ["props", "portals", "main", "score", "actors", "automatons"],
-		state: function(ofScene, sub) {
-			var i = zero.core.current.scene.game.initial;
-			if (!ofScene) return i;
-			if (!i.scenes) i.scenes = {};
-			if (!i.scenes[ofScene]) i.scenes[ofScene] = {};
-			if (!sub) return i.scenes[ofScene];
-			if (!i.scenes[ofScene][sub]) i.scenes[ofScene][sub] = {};
-			return i.scenes[ofScene][sub];
-		},
 		actor: function(a) {
 			var _ = vu.builders.scene._, zcc = zero.core.current,
-				gup = vu.game.step.upstate, state = _.state(), r = zcc.room,
-				az = state.actors = state.actors || {},
+				vg = vu.game, gup = vg.step.upstate, state = vg.util.state(),
+				r = zcc.room, az = state.actors = state.actors || {},
 				bod = zcc.people[a.name].body, sz = bod.springs;
 			az[a.name] = az[a.name] || {};
 			az[a.name].positioners = az[a.name].positioners || {};
@@ -113,8 +104,8 @@ vu.builders.scene = {
 			]);
 		},
 		automaton: function(auto) {
-			var _ = vu.builders.scene._, gup = vu.game.step.upstate,
-				state = _.state(), az = state.automatons = state.automatons || {},
+			var _ = vu.builders.scene._, vg = vu.game, gup = vg.step.upstate,
+				zc = zero.core, az = vg.util.state(zc.current.scene.name, "automatons"),
 				n = CT.dom.div(), check = vu.build.core.check, acfg, tcfg, dcfg;
 			auto.onperson(function(per) {
 				acfg = az[per.name] = az[per.name] || {};
@@ -135,7 +126,7 @@ vu.builders.scene = {
 						["fauna", "fire", "ice", "acid"].map(k => check(k, tcfg, gup))
 					], "bordered padded margined round")
 				]);
-				n.onclick = () => zero.core.camera.follow(per.body)
+				n.onclick = () => zc.camera.follow(per.body)
 			});
 			return CT.dom.div(n, "bordered padded margined round inline-block");
 		},
@@ -176,7 +167,7 @@ vu.builders.scene = {
 		},
 		portal: function(p) {
 			var _ = vu.builders.scene._, zcc = zero.core.current,
-				scene = zcc.scene, ports = _.state(scene.name, "portals"),
+				scene = zcc.scene, ports = vu.game.util.state(scene.name, "portals"),
 				pobj = ports[p.name] = ports[p.name] || { name: p.name };
 			return CT.dom.div([
 				p.name,
@@ -200,7 +191,7 @@ vu.builders.scene = {
 		portals: function() {
 			var _ = vu.builders.scene._, selz = _.selectors,
 				zcc = zero.core.current,
-				ports = _.state(zcc.scene.name, "portals"),
+				ports = vu.game.util.state(zcc.scene.name, "portals"),
 				pvalz = Object.values(ports),
 				pz = CT.dom.div(pvalz.map(_.portal));
 			CT.dom.setContent(selz.portals, [
@@ -310,7 +301,7 @@ vu.builders.scene = {
 		items: function() {
 			var _ = vu.builders.scene._, selz = _.selectors,
 				zc = zero.core, zcu = zc.util, zcc = zc.current,
-				si = _.state(zcc.scene.name, "items"),
+				si = vu.game.util.state(zcc.scene.name, "items"),
 				iz = CT.dom.div(Object.values(si).map(_.item));
 			CT.dom.setContent(selz.items, [
 				CT.dom.button("add", function() {
@@ -340,7 +331,7 @@ vu.builders.scene = {
 		lights: function() {
 			var _ = vu.builders.scene._, selz = _.selectors,
 				zcc = zero.core.current, scene = zcc.scene,
-				lz = zcc.room.lights, state = _.state(scene.name);
+				lz = zcc.room.lights, state = vu.game.util.state(scene.name);
 			if (state.lights) {
 				lz.forEach(function(l, i) {
 					l.setIntensity(state.lights[i]);
