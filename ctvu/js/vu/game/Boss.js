@@ -171,8 +171,7 @@ vu.game.Boss = CT.Class({
 		this.person.body.oncrash = oncrash;
 	},
 	init: function(opts) {
-		var zcc = zero.core.current, pname, tcfg,
-			acfg = zcc.adventure.game.initial.automatons;
+		var zcc = zero.core.current, pname, tcfg;
 		this.opts = opts = CT.merge(opts, {
 			level: 1,
 			floor: 1,
@@ -187,7 +186,7 @@ vu.game.Boss = CT.Class({
 		this.hp = opts.hp;
 		this.person = opts.person;
 		pname = this.person.name;
-		this.cfg = acfg[pname] = acfg[pname] || {};
+		this.cfg = vu.game.util.state(zcc.scene.name, "automatons", pname);
 		this.cfg.drop = this.cfg.drop || {};
 		tcfg = this.cfg.throw = this.cfg.throw || {};
 		this.throws = Object.keys(tcfg).filter(t => tcfg[t]);

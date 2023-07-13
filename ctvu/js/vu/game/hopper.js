@@ -241,9 +241,8 @@ vu.game.hopper.loader = {
 		return bz[name];
 	},
 	initBosses: function() {
-		var hl = vu.game.hopper.loader, name,
-			agi = zero.core.current.adventure.game.initial,
-			acfg = agi.automatons = agi.automatons || {};
+		var zcc = zero.core.current, vg = vu.game, hl = vg.hopper.loader,
+			acfg = vg.util.state(zcc.scene.name, "automatons"), name;
 		for (name in acfg)
 			hl.getBoss(name);
 	},
