@@ -11,7 +11,7 @@ vu.game.Consumable = CT.Class({
 			var per = this.player.person;
 			per.shouldFly();
 			per.powerjumping = true;
-			zero.core.current.adventure.controls.jump(2);
+			zero.core.current.adventure.controls.jump(3);
 //			this.player.person.doLeap(true);
 		}
 	},
