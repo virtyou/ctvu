@@ -155,7 +155,7 @@ vu.builders.pop = {
 									}
 								});
 							} else if (action == "wander") {
-								if (zcc.room.floor)
+								if (zcc.room.floor || zcc.room.obstacle)
 									zc.util.getArea(addWander);
 								else
 									addWander("room");
