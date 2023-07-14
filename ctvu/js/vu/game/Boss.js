@@ -177,10 +177,11 @@ vu.game.Boss = CT.Class({
 			floor: 1,
 //			hp: 100,
 			cap: 5,
+			hpmult: 5,
 			critters: []
 		});
 		if (!opts.hp)
-			opts.hp = opts.cap * 10;
+			opts.hp = opts.cap * opts.hpmult;
 		if (!opts.person)
 			opts.person = zcc.people[opts.name];
 		this.hp = opts.hp;
