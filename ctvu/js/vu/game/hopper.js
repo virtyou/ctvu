@@ -255,12 +255,25 @@ vu.game.hopper.loader = {
 		thruster.on("unback", side => hl.swapper("back", side));
 		thruster.on("unhip", side => hl.swapper("hip", side));
 	},
+	unload: function() {
+		var hl = vu.game.hopper.loader, boss, hopper;
+		for (hopper in hl.hoppers)
+			hl.hoppers[hopper].deallocate();
+		for (boss in hl.bosses)
+			hl.bosses[boss].deallocate();
+		hl.hoppers = {};
+		hl.bosses = {};
+	},
 	init: function() {
 		var h = vu.game.hopper, hl = h.loader,
 			zc = zero.core, zcc = zc.current,
 			menz = zcc.room.menagerie || {}, mename, area;
-		zcc.sploder = new zc.Sploder();
-		hl.initPlayer();
+		if (zcc.sploder) // fine a marker as any...
+			hl.unload();
+		else {
+			zcc.sploder = new zc.Sploder();
+			hl.initPlayer();
+		}
 		hl.initBosses();
 		for (mename in menz) {
 			area = mename.split("_").shift();
@@ -396,6 +409,9 @@ vu.game.hopper.Hopper = CT.Class({
 				boss.setOnCrash(crasher);
 			}
 		});
+	},
+	deallocate: function() {
+		delete this.menagerie; // anything else?
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
