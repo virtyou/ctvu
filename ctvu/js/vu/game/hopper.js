@@ -264,7 +264,7 @@ vu.game.hopper.loader = {
 		hl.initBosses();
 		for (mename in menz) {
 			area = mename.split("_").shift();
-			hl.hoppers[area] = h.Hopper({
+			hl.hoppers[area] = new h.Hopper({
 				area: area,
 				menagerie: menz[mename]
 			});
