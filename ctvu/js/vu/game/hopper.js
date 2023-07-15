@@ -211,9 +211,12 @@ vu.game.hopper.loader = {
 		return upon && hz[upon.name] || hz.room;
 	},
 	swinger: function(variety, side) {
-		var hop = vu.game.hopper.loader.hop();
-		zero.core.current.player.exert();
-		return hop && hop.swing(variety, side);
+		var zcc = zero.core.current, hop = vu.game.hopper.loader.hop(), item;
+		zcc.player.exert();
+		if (hop) return hop.swing(variety, side); // handles touch
+		if (variety != "knock") return;
+		item = zcc.person.held(side);
+		item && item.touch && item.touch();
 	},
 	splatter: function() {
 		var hop = vu.game.hopper.loader.hop();
