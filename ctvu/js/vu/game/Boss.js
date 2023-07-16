@@ -109,7 +109,7 @@ vu.game.Boss = CT.Class({
 	},
 	shove: function(direction, amount) {
 		this.person.body.shove(direction, amount);
-		this.hit();
+		this.hit(amount);
 	},
 	hit: function(amount) {
 		this.hp -= (amount || 1);
@@ -168,10 +168,32 @@ vu.game.Boss = CT.Class({
 				this.orbs[o] = _.orb(o);
 	},
 	setOnCrash: function(oncrash) {
-		this.person.body.oncrash = oncrash;
+		(this.person ? this.person.body : this.opts).oncrash = oncrash;
+	},
+	setPerson: function() {
+		var opts = this.opts;
+		if (this.person)
+			return this.log("setPerson(): person already set!");
+		this.person = opts.person || zero.core.current.people[opts.name];
+		if (!this.person) {
+			this.log("setPerson(): person not ready - deferring");
+			return setTimeout(this.setPerson, 200);
+		}
+		this.setOrbs();
+		this.setLevel(opts.level);
+		this.setOnCrash(opts.oncrash);
+	},
+	deallocate: function() {
+		var orb, boss;
+		for (orb in this.orbs)
+			this.orbs[orb].deallocate();
+		delete this.orbs;
+		delete this.meter;
+		delete this.person;
+		delete this.menagerie;
 	},
 	init: function(opts) {
-		var zcc = zero.core.current, pname, tcfg;
+		var zcc = zero.core.current, tcfg;
 		this.opts = opts = CT.merge(opts, {
 			level: 1,
 			floor: 1,
@@ -182,19 +204,13 @@ vu.game.Boss = CT.Class({
 		});
 		if (!opts.hp)
 			opts.hp = opts.cap * opts.hpmult;
-		if (!opts.person)
-			opts.person = zcc.people[opts.name];
 		this.hp = opts.hp;
-		this.person = opts.person;
-		pname = this.person.name;
-		this.cfg = vu.game.util.state(zcc.scene.name, "automatons", pname);
+		this.cfg = vu.game.util.state(zcc.scene.name, "automatons", opts.name);
 		this.cfg.drop = this.cfg.drop || {};
 		tcfg = this.cfg.throw = this.cfg.throw || {};
 		this.throws = Object.keys(tcfg).filter(t => tcfg[t]);
-		this.setOrbs();
-		this.setLevel(opts.level);
-		this.setOnCrash(opts.oncrash);
 		this.setMenagerie(opts.menagerie);
+		this.setPerson();
 		this.meter = new vu.game.Meter({
 			menu: true,
 			cap: opts.hp,
@@ -249,6 +265,13 @@ vu.game.Boss.Orb = CT.Class({
 		zero.core.util.ontick(this.tick);
 		this.person.thruster.upthrust(this.side);
 		this.person.orient(this.target.body, null, this.release);
+	},
+	deallocate: function() {
+		delete this.hitter;
+		delete this.person;
+		delete this.target;
+		delete this.hand;
+		this.remove();
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, vu.game.Boss.Orb.varieties[opts.variety], {

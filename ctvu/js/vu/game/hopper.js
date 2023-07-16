@@ -210,10 +210,32 @@ vu.game.hopper.loader = {
 			upon = zero.core.current.person.body.upon;
 		return upon && hz[upon.name] || hz.room;
 	},
+	bossSwing: function(variety, side) {
+		var boss, bname, bosses = vu.game.hopper.loader.bosses,
+			zc = zero.core, touching = zc.util.touching,
+			zcc = zc.current, p = zcc.person, damage = 1, thing;
+		if (variety == "knock") {
+			thing = p.held(side, true);
+			if (p.held(side))
+				damage = 2;
+		} else
+			thing = p.body.torso.legs[side].foot;
+		for (bname in bosses) {
+			boss = bosses[bname];
+			if (boss.climax) // climax = fight in progress
+				if (touching(thing, boss.person.body, 50, false, true))
+					boss.shove(p.body.front.getDirection(), damage);
+		}
+	},
 	swinger: function(variety, side) {
-		var hop = vu.game.hopper.loader.hop();
-		zero.core.current.player.exert();
-		return hop && hop.swing(variety, side);
+		var zcc = zero.core.current, item,
+			hl = vu.game.hopper.loader, hop = hl.hop();
+		zcc.player.exert();
+		hl.bossSwing(variety, side);
+		if (hop) return hop.swing(variety, side); // handles touch
+		if (variety != "knock") return;
+		item = zcc.person.held(side);
+		item && item.touch && item.touch();
 	},
 	splatter: function() {
 		var hop = vu.game.hopper.loader.hop();
@@ -255,16 +277,29 @@ vu.game.hopper.loader = {
 		thruster.on("unback", side => hl.swapper("back", side));
 		thruster.on("unhip", side => hl.swapper("hip", side));
 	},
+	unload: function() {
+		var hl = vu.game.hopper.loader, boss, hopper;
+		for (hopper in hl.hoppers)
+			hl.hoppers[hopper].deallocate();
+		for (boss in hl.bosses)
+			hl.bosses[boss].deallocate();
+		hl.hoppers = {};
+		hl.bosses = {};
+	},
 	init: function() {
 		var h = vu.game.hopper, hl = h.loader,
 			zc = zero.core, zcc = zc.current,
 			menz = zcc.room.menagerie || {}, mename, area;
-		zcc.sploder = new zc.Sploder();
-		hl.initPlayer();
+		if (zcc.sploder) // fine a marker as any...
+			hl.unload();
+		else {
+			zcc.sploder = new zc.Sploder();
+			hl.initPlayer();
+		}
 		hl.initBosses();
 		for (mename in menz) {
 			area = mename.split("_").shift();
-			hl.hoppers[area] = h.Hopper({
+			hl.hoppers[area] = new h.Hopper({
 				area: area,
 				menagerie: menz[mename]
 			});
@@ -396,6 +431,9 @@ vu.game.hopper.Hopper = CT.Class({
 				boss.setOnCrash(crasher);
 			}
 		});
+	},
+	deallocate: function() {
+		delete this.menagerie; // anything else?
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
