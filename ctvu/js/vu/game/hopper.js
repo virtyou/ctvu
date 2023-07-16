@@ -210,9 +210,28 @@ vu.game.hopper.loader = {
 			upon = zero.core.current.person.body.upon;
 		return upon && hz[upon.name] || hz.room;
 	},
+	bossSwing: function(variety, side) {
+		var boss, bname, bosses = vu.game.hopper.loader.bosses,
+			zc = zero.core, touching = zc.util.touching,
+			zcc = zc.current, p = zcc.person, damage = 1, thing;
+		if (variety == "knock") {
+			thing = p.held(side, true);
+			if (p.held(side))
+				damage = 2;
+		} else
+			thing = p.body.torso.legs[side].foot;
+		for (bname in bosses) {
+			boss = bosses[bname];
+			if (boss.climax) // climax = fight in progress
+				if (touching(thing, boss.person.body, 50, false, true))
+					boss.shove(p.body.front.getDirection(), damage);
+		}
+	},
 	swinger: function(variety, side) {
-		var zcc = zero.core.current, hop = vu.game.hopper.loader.hop(), item;
+		var zcc = zero.core.current, item,
+			hl = vu.game.hopper.loader, hop = hl.hop();
 		zcc.player.exert();
+		hl.bossSwing(variety, side);
 		if (hop) return hop.swing(variety, side); // handles touch
 		if (variety != "knock") return;
 		item = zcc.person.held(side);

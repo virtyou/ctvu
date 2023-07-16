@@ -109,7 +109,7 @@ vu.game.Boss = CT.Class({
 	},
 	shove: function(direction, amount) {
 		this.person.body.shove(direction, amount);
-		this.hit();
+		this.hit(amount);
 	},
 	hit: function(amount) {
 		this.hp -= (amount || 1);
