@@ -12,10 +12,11 @@ vu.game.dropper = {
 			zero.core.click.register(target, () => cb(target));
 		},
 		drop: function(item) {
-			var zc = zero.core;
+			var zc = zero.core, sp = zc.current.sploder;
 			item.drop();
+			sp.glow(item);
 			zc.audio.ux("confetti");
-			zc.current.sploder.confettize(item.position());
+			sp.confettize(item.position());
 		},
 		filt: function(iname) {
 			var zc = zero.core, ph = zc.current.person.opts.gear.held;
