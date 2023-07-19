@@ -82,6 +82,9 @@ vu.game.dropper = {
 			zcc.adventure.upstate();
 		});
 	},
+	clear: function() { // anything else?
+		vu.game.dropper._.drops = {};
+	},
 	itemize: function(item, dropper, postbuild) {
 		var d = vu.game.dropper, _ = d._, scene = zero.core.current.scene;
 		d.item(item, i => _.click(i, scene.menus.item), postbuild);

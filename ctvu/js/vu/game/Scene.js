@@ -51,8 +51,10 @@ vu.game.Scene = CT.Class({
 			men = this.menus, tsa = this.state.actors,
 			state = this.state.scenes[this.name],
 			slz = state.lights, items = state.items,
-			portals = state.portals, adv = this.adventure;
+			portals = state.portals, adv = this.adventure,
+			dropper = vu.game.dropper;
 		vu.clix.room();
+		dropper.clear();
 		zcc.room.setBounds();
 		CT.pubsub.subscribe(zcc.room.opts.key);
 		if (zcc.person) {
@@ -70,7 +72,7 @@ vu.game.Scene = CT.Class({
 		for (portal in portals)
 			rc(zcc.room[portal], men.portal);
 		for (item in items)
-			vu.game.dropper.itemize(items[item]);
+			dropper.itemize(items[item]);
 		for (item in zcc.room.book) {
 			book = zcc.room[item];
 			rc(book, men.book);
