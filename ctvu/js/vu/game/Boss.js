@@ -53,6 +53,7 @@ vu.game.Boss = CT.Class({
 			this.person.say(functionality + " hasn't been implemented");
 		},
 		die: function() {
+			this.meter.hide();
 			this.drop(this.cfg.drop.stop);
 			zero.core.current.room.eject(this.person);
 		}
