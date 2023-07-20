@@ -23,6 +23,7 @@ vu.game.Boss = CT.Class({
 			var zc = zero.core, zcc = zc.current;
 			appendage = appendage || this.person.body;
 			target = target || zcc.person.body;
+			this.person.body.basicBound(); // hm ... maybe change?
 			if (zc.util.touching(appendage, target, 50, null, true)) {
 				zcc.player.damage(this.level);
 				target.shove(this.person.direction(), this.level);
@@ -117,7 +118,7 @@ vu.game.Boss = CT.Class({
 		this.meter.set(this.hp);
 	},
 	scale: function(s) {
-		this.person.body.scale(s || ((this.level + 1) / 2), true);
+		this.person.body.grow(s || ((this.level + 1) / 2), false, true);
 	},
 	position: function(pos, world) {
 		return this.person.body.position(pos, world);
