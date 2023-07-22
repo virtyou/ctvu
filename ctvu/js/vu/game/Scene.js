@@ -22,6 +22,10 @@ vu.game.Scene = CT.Class({
 		vu.clix.register(person);
 		vu.core.comp(person);
 	},
+	envMod: function(emod, oname) {
+		var tz = this.opts.triggers, t = tz[emod] && tz[emod][oname];
+		t && this.script(t);
+	},
 	refresh: function(altered) {
 		this.log("refresh", altered.story, altered.state);
 		if (altered.story || altered.state) {
@@ -120,6 +124,7 @@ vu.game.Scene = CT.Class({
 			props: {}, // TODO
 			actors: [],
 			scripts: {},
+			triggers: {},
 			fx: [],
 			music: [],
 			ambient: []
