@@ -365,6 +365,64 @@ vu.builders.scene = {
 			CT.dom.addContent(selz.props, selz.items);
 			CT.dom.addContent(selz.main, selz.lights);
 		},
+		t2f: {
+			melt: "frozen",
+			shart: "brittle",
+			burn: "flammable"
+		},
+		uptrigs: function() {
+			var scene = zero.core.current.scene;
+			vu.storage.edit({
+				key: scene.key,
+				triggers: scene.triggers
+			});
+		},
+		atrig: function(trig) {
+			var _ = vu.builders.scene._, zcc = zero.core.current, tnode = function(name) {
+				var tn = CT.dom.div([
+					CT.dom.button("unregister", function() {
+						delete trigs[name];
+						tn.remove();
+						_.uptrigs();
+					}, "right red"),
+					name + ": " + trigs[name]
+				], "borderd padded margined");
+				return tn;
+			}, scene = zcc.scene, alltrigs = scene.triggers, feature = _.t2f[trig],
+				trigs = alltrigs[trig] = alltrigs[trig] || {}, feats,
+				tnodes = CT.dom.div(Object.keys(trigs).map(tnode));
+			return CT.dom.div([
+				CT.dom.button("add", function() {
+					feats = zcc.room.getFeaturing(feature).filter(f => !(f.name in trigs));
+					if (!feats.length)
+						return alert("no unconfigured " + feature + " objects - add one on the zone page!");
+					CT.modal.choice({
+						prompt: "please select object",
+						data: feats,
+						cb: function(item) {
+							CT.modal.choice({
+								prompt: "please select a script to trigger",
+								data: Object.keys(scene.scripts),
+								cb: function(sname) {
+									trigs[item.name] = sname;
+									CT.dom.addContent(tnodes, tnode(item.name));
+									_.uptrigs();
+								}
+							});
+						}
+					});
+				}, "right"),
+				CT.dom.div(trig + " (" + feature + ")", "bold"),
+				tnodes
+			], "bordered padded margined round");
+		},
+		atrigs: function() {
+			var _ = vu.builders.scene._;
+			return CT.dom.div([
+				CT.dom.div("script triggers", "big"),
+				Object.keys(_.t2f).map(_.atrig)
+			], "bordered padded margined round");
+		},
 		head: function(section) {
 			var n = CT.dom.node(CT.parse.key2title(section)),
 				_ = vu.builders.scene._;
@@ -441,6 +499,7 @@ vu.builders.scene = {
 			selz.scripts
 		]);
 		CT.dom.setContent(selz.score, [
+			_.atrigs(),
 			vu.game.hopper.mod()
 		]);
 		vu.game.step.setSels(selz);
