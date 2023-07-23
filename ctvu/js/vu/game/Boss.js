@@ -56,6 +56,7 @@ vu.game.Boss = CT.Class({
 		die: function() {
 			this.meter.hide();
 			this.drop(this.cfg.drop.stop);
+			CT.event.emit("die", this.person.name);
 			zero.core.current.room.eject(this.person);
 		}
 	},
@@ -135,6 +136,7 @@ vu.game.Boss = CT.Class({
 		this.climax = true;
 		this.meter.show();
 		this.drop(this.cfg.drop.start);
+		CT.event.emit("wile", this.person.name);
 		this.tick();
 	},
 	setLevel: function(level) {
