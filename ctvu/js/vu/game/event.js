@@ -3,7 +3,9 @@ vu.game.event = {
 		t2f: {
 			melt: "frozen",
 			shart: "brittle",
-			burn: "flammable"
+			burn: "flammable",
+			die: "automaton",
+			wile: "automaton"
 		},
 		up: function() {
 			var scene = zero.core.current.scene;
@@ -16,6 +18,18 @@ vu.game.event = {
 			var _ = vu.game.event._, alltrigs = zero.core.current.scene.triggers,
 				trigs = alltrigs[trig] = alltrigs[trig] || {};
 			return trigs;
+		},
+		options: function(feature, trigs) {
+			var zccr = zero.core.current.room, ops, isauto = feature == "automaton";
+			ops = isauto ? zccr.automatons.map(a => a.person) : zccr.getFeaturing(feature);
+			ops = ops.filter(f => !(f.name in trigs));
+			if (!ops.length) {
+				if (isauto)
+					alert("no unconfigured automatons - add one on the pop page!");
+				else
+					alert("no unconfigured " + feature + " objects - add one on the zone page!");
+			}
+			return ops;
 		},
 		slotter: function(trigs) {
 			return function(name) {
@@ -37,10 +51,8 @@ vu.game.event = {
 			tnodes = CT.dom.div(Object.keys(trigs).map(tnode));
 		return CT.dom.div([
 			CT.dom.button("add", function() {
-				feats = zcc.room.getFeaturing(feature).filter(f => !(f.name in trigs));
-				if (!feats.length)
-					return alert("no unconfigured " + feature + " objects - add one on the zone page!");
-				CT.modal.choice({
+				feats = _.options(feature, trigs);
+				feats.length && CT.modal.choice({
 					prompt: "please select object",
 					data: feats,
 					cb: function(item) {
