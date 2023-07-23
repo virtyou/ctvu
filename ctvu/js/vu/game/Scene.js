@@ -23,6 +23,7 @@ vu.game.Scene = CT.Class({
 		vu.core.comp(person);
 	},
 	envMod: function(emod, oname) {
+		this.log("envMod", emod, oname);
 		var tz = this.opts.triggers, t = tz[emod] && tz[emod][oname];
 		t && this.script(t);
 	},
