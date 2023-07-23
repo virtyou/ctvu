@@ -36,8 +36,10 @@ vu.menu.Game = CT.Class({
 			};
 		},
 		sayer: function(statement, person) {
-			this._.interactional("say", "top", person.name,
-				CT.dom.div(statement, "biggest nonowrap"), true).show("ctmain");
+			var m = CT.modal.latest = this._.interactional("say", "top",
+				person.name, CT.dom.div(statement, "biggest nonowrap"), true);
+			m.on.hide = () => zero.core.camera.angle("preferred");
+			m.show("ctmain");
 		},
 		convo: function(person) {
 			setTimeout(function() { // ... meh
