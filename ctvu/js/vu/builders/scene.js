@@ -441,6 +441,7 @@ vu.builders.scene = {
 			selz.scripts
 		]);
 		CT.dom.setContent(selz.score, [
+			vu.game.event.editor(),
 			vu.game.hopper.mod()
 		]);
 		vu.game.step.setSels(selz);

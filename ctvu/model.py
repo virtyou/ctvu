@@ -24,6 +24,7 @@ class Scene(db.TimeStampedBase):
 	actors = db.ForeignKey(kind="person", repeated=True)
 	props = db.JSON(default={}) # state/interactivity map - room items
 	scripts = db.JSON(default={}) # trigger "start" on load
+	triggers = db.JSON(default={}) # script triggers
 	fx = db.ForeignKey(kind=Resource, repeated=True)
 	music = db.ForeignKey(kind=Resource, repeated=True)
 	ambient = db.ForeignKey(kind=Resource, repeated=True)
@@ -40,6 +41,7 @@ class Scene(db.TimeStampedBase):
 			"actors": [a.json() for a in db.get_multi(self.actors)],
 			"props": self.props,
 			"scripts": self.scripts,
+			"triggers": self.triggers,
 			"fx": [f.json() for f in db.get_multi(self.fx)],
 			"music": [m.json() for m in db.get_multi(self.music)],
 			"ambient": [a.json() for a in db.get_multi(self.ambient)],

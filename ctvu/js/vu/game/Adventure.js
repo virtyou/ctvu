@@ -55,7 +55,7 @@ vu.game.Adventure = CT.Class({
 				_.setState();
 		},
 		start: function() {
-			var zcc = zero.core.current, vp = vu.portal, scene = this.scene;
+			var zcc = zero.core.current, vp = vu.portal, scene = this.scene, emod;
 			vu.live.init(this._.cbs);
 			vp.on("filter", function(obj) {
 				return obj.name in vp.options();
@@ -69,6 +69,8 @@ vu.game.Adventure = CT.Class({
 				zcc.injector = pkey;
 				scene(vp.options()[vp.ejector.name].target);
 			});
+			for (emod of ["burn", "melt", "shart"])
+				CT.event.subscribe(emod, oname => zcc.scene.envMod(emod, oname));
 		}
 	},
 	reset: function() {
