@@ -353,13 +353,13 @@ vu.builders.scene = {
 		backstage: function() {
 			var _ = vu.builders.scene._, selz = _.selectors,
 				zcc = zero.core.current, scene = zcc.scene;
+			zcc.room.setBounds();
 			_.props();
 			_.items();
 			_.lights();
 			_.actors();
 			_.portals();
 			_.automatons();
-			zcc.room.setBounds();
 			zcc.room.setFriction(false); // for positioning......
 			vu.controls.initCamera(selz.cameras);
 			CT.dom.addContent(selz.props, selz.items);
