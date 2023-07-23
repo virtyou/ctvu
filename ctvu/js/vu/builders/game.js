@@ -16,21 +16,17 @@ vu.builders.game = {
 				}).join(", ")
 			], "bordered padded margined round inline-block");
 		},
-		scenes: function(game) {
-			var n = CT.dom.div(), vbg = vu.builders.game,
-				scene = vbg._.scene, create = vbg.create;
-			CT.db.multi(game.scenes, function(scenes) {
-				var snode = CT.dom.div(scenes.map(scene));
-				CT.dom.setContent(n, [
-					snode,
-					CT.dom.button("add scene", function() {
-						vu.game.util.scene(game, function(s) {
-							CT.dom.addContent(snode, scene(s));
-						});
-					})
-				]);
-			}, "json");
-			return n;
+		scenes: function(scenes) {
+			var vbg = vu.builders.game, scene = vbg._.scene,
+				snode = CT.dom.div(scenes.map(scene));
+			return CT.dom.div([
+				snode,
+				CT.dom.button("add scene", function() {
+					vu.game.util.scene(game, function(s) {
+						CT.dom.addContent(snode, scene(s));
+					});
+				})
+			]);
 		},
 		mod: function(actor, aname, prop, sec) {
 			var _ = vu.builders.game._, cur = _.cur, eobj = { key: cur.key };
@@ -111,6 +107,24 @@ vu.builders.game = {
 				return vu.builders.game._.cond(game, sec);
 			}));
 		},
+		strigs: function(scene) {
+			var trig, trigs = [];
+			for (trig in scene.triggers)
+				Object.keys(scene.triggers[trig]).length && trigs.push(trig + ": " + JSON.stringify(scene.triggers[trig]));
+			return trigs.length && CT.dom.div([
+				scene.name, trigs
+			], "bordered padded margined round inline-block");
+		},
+		allstrigs: function(scenes) {
+			var _ = vu.builders.game._, tnode, scene, snodes = [];
+			for (scene of scenes) {
+				if (Object.keys(scene.triggers).length) {
+					tnode = _.strigs(scene);
+					tnode && snodes.push(tnode);
+				}
+			}
+			return snodes.length ? snodes : "nothing yet!";
+		},
 		swap: function() {
 			var g = vu.builders.game;
 			CT.modal.choice({
@@ -120,7 +134,7 @@ vu.builders.game = {
 					if (game == "new game")
 						g.create();
 					else
-						g.load(game);
+						g.initScenes(game);
 				}
 			});
 		},
@@ -159,9 +173,9 @@ vu.builders.game = {
 		}
 	},
 	create: function(ctype, cb, extras) {
-		vu.core.create(ctype, cb || vu.builders.game.load, extras);
+		vu.core.create(ctype, cb || vu.builders.game.initScenes, extras);
 	},
-	load: function(game) {
+	load: function(game, scenes) {
 		var _ = vu.builders.game._;
 		_.cur = game;
 		_.sharer.update(game);
@@ -199,15 +213,22 @@ vu.builders.game = {
 			], "bordered padded margined round"),
 			CT.dom.div([
 				"scenes",
-				_.scenes(game)
+				_.scenes(scenes)
 			], "bordered padded margined round"),
 			CT.dom.div([
 				"conditions",
 				_.conditions(game)
 			], "bordered padded margined round"),
 			CT.dom.div([
-				"score (pounce dynamics)",
-				vu.game.hopper.view(game)
+				"score",
+				CT.dom.div([
+					CT.dom.div("script triggers", "centered"),
+					_.allstrigs(scenes)
+				], "bordered padded margined round"),
+				CT.dom.div([
+					CT.dom.div("pounce dynamics", "centered"),
+					vu.game.hopper.view(game)
+				], "bordered padded margined round")
 			], "bordered padded margined round"),
 			CT.dom.div([
 				"live",
@@ -222,6 +243,13 @@ vu.builders.game = {
 			], "bordered padded margined round")
 		]);
 	},
+	initScenes: function(game) {
+		var g = vu.builders.game, _ = g._;
+		CT.db.multi(game.scenes, function(scenes) {
+			_.curscenes = scenes;
+			g.load(game, scenes);
+		}, "json");
+	},
 	init: function() {
 		var g = vu.builders.game, _ = g._, curgame;
 		CT.dom.addContent("ctheader", _.linx());
@@ -229,7 +257,7 @@ vu.builders.game = {
 			_.games = games;
 			curgame = _.curgame();
 			if (curgame)
-				g.load(curgame);
+				g.initScenes(curgame);
 			else
 				g.create();
 		});
