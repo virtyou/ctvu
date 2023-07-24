@@ -89,7 +89,7 @@ vu.game.dropper = {
 		var d = vu.game.dropper, _ = d._, scene = zero.core.current.scene;
 		d.item(item, i => _.click(i, scene.menus.item), postbuild);
 		if (dropper) {
-			scene.state.scenes[scene.name].items[item.name] = item;
+//			scene.state.scenes[scene.name].items[item.name] = item;
 			_.drops[item.name] = item;
 		}
 	},
