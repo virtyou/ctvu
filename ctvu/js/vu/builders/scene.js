@@ -493,9 +493,7 @@ vu.builders.scene = {
 		cfg.people = scene.actors;
 		for (pobj of cfg.people) {
 			acto = sgia[pobj.name] = sgia[pobj.name] || {};
-			pobj.positioners = acto.positioners = acto.positioners || {
-				slide: 0, bob: 0, weave: 0
-			};
+			pobj.positioners = vu.game.util.positioners(pobj.name, scene.name, true);
 		}
 		zero.core.util.init(null, vu.builders.scene._.backstage);
 	},

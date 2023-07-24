@@ -27,8 +27,11 @@ vu.game.util = {
 				default: possers
 			};
 		} // slide/fallback/default stuff for backwards compatibility
-		if (!possers[sname])
-			possers[sname] = fallback ? CT.merge(possers.default) : {};
+		if (!possers[sname]) {
+			possers[sname] = (fallback && possers.default) ? CT.merge(possers.default) : {
+				slide: 0, bob: 0, weave: 0
+			};
+		}
 		return possers[sname];
 	},
 	sports: function(p, cb) {
