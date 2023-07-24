@@ -26,9 +26,9 @@ vu.game.util = {
 			possers = acfg.positioners = {
 				default: possers
 			};
-		}
+		} // slide/fallback/default stuff for backwards compatibility
 		if (!possers[sname])
-			possers[sname] = fallback && possers.default || {};
+			possers[sname] = fallback ? CT.merge(possers.default) : {};
 		return possers[sname];
 	},
 	sports: function(p, cb) {
