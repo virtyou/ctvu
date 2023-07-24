@@ -11,7 +11,7 @@ vu.clix = {
 			return [
 				CT.dom.div("(you)", "up20 right"),
 				"move around with WASDZC",
-				"move cam w/ ARROWS or QERF",
+				"move cam w/ ARROWS or QERFPB",
 				"zoom w/ PERIOD/T & COMMA/G",
 				"SPACE = jump, SHIFT = run",
 				"ENTER or X to enter portal",
