@@ -13,12 +13,10 @@ vu.builders.scene = {
 		},
 		swappers: ["props", "portals", "main", "score", "actors", "automatons"],
 		actor: function(a) {
-			var _ = vu.builders.scene._, zcc = zero.core.current,
-				vg = vu.game, gup = vg.step.upstate, state = vg.util.state(),
-				r = zcc.room, az = state.actors = state.actors || {},
-				bod = zcc.people[a.name].body, sz = bod.springs;
-			az[a.name] = az[a.name] || {};
-			az[a.name].positioners = az[a.name].positioners || {};
+			var _ = vu.builders.scene._, zcc = zero.core.current, vg = vu.game,
+				possers = vg.util.positioners(a.name, zcc.scene.name, true),
+				gup = vg.step.upstate, state = vg.util.state(), az = state.actors,
+				r = zcc.room, bod = zcc.people[a.name].body, sz = bod.springs;
 			return CT.dom.div([
 				a.name,
 				CT.dom.smartField({
@@ -54,9 +52,8 @@ vu.builders.scene = {
 						sz.orientation.target, 1, "w1 block")
 				], "bordered padded margined round"),
 				CT.dom.button("set initial position", function() {
-					var posz = az[a.name].positioners
 					for (axis of ["weave", "slide", "orientation"])
-						az[a.name].positioners[axis] = sz[axis].target;
+						possers[axis] = sz[axis].target;
 					gup();
 				}, "w1")
 			], "bordered padded margined round inline-block", null, {

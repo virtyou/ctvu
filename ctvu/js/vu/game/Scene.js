@@ -109,7 +109,8 @@ vu.game.Scene = CT.Class({
 		zcc.inventory = this.state.inventory;
 		for (p of oz.actors) {
 //			p.grippy = false;
-			p.positioners = this.state.actors[p.name].positioners;
+			p.positioners = vu.game.util.positioners(p.name, this.name, true);
+//			p.positioners = this.state.actors[p.name].positioners;
 		}
 		cfg.room = oz.room;
 		cfg.people = oz.actors.slice();

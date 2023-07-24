@@ -17,6 +17,20 @@ vu.game.util = {
 			}
 		});
 	},
+	positioners: function(aname, sname, fallback) {
+		var state = vu.game.util.state(),
+			az = state.actors = state.actors || {},
+			acfg = az[aname] = az[aname] || {},
+			possers = acfg.positioners = acfg.positioners || {};
+		if ("slide" in possers) {
+			possers = acfg.positioners = {
+				default: possers
+			};
+		}
+		if (!possers[sname])
+			possers[sname] = fallback && possers.default || {};
+		return possers[sname];
+	},
 	sports: function(p, cb) {
 		var zcc = zero.core.current, rscenes,
 			og = zcc.room[p.name].opts.portals.outgoing;
