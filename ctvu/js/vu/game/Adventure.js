@@ -12,7 +12,8 @@ vu.game.Adventure = CT.Class({
 
 				this.player = new vu.game.Player({
 					person: person,
-					menus: this.menus
+					menus: this.menus,
+					level: this.state.level
 				});
 
 				this.controls.setCb(vu.clix.action);
@@ -28,6 +29,16 @@ vu.game.Adventure = CT.Class({
 				gear: {},
 				bag: { back: {}, hip: {} } // left/right
 			};
+			s.level || CT.modal.prompt({
+				prompt: "what level are you starting at?",
+				style: "number",
+				min: 1,
+				step: 1,
+				classname: "w300p",
+				cb: function(num) {
+					s.level = num;
+				}
+			});
 		},
 		reset: function() {
 			// TODO: ungear!
