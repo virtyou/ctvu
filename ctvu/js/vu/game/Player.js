@@ -92,18 +92,19 @@ vu.game.Player = CT.Class({
 	},
 	init: function(opts) { // required: person, menus
 		this.opts = opts = CT.merge(opts, {
-
+			level: 1
 		});
 		this.person = opts.person;
 		this.menus = opts.menus;
 		zero.core.current.player = this;
 
 		// TODO: load from game state?
+		var juice = opts.level * 10;
 		this.person.score = {
 			xp: 0,
-			hp: 10,
-			level: 1,
-			breath: 10
+			hp: juice,
+			breath: juice,
+			level: opts.level
 		};
 //		person.score = person.score || vu.game.hopper.scfg().initial;
 
