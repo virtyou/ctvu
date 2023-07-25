@@ -108,6 +108,11 @@ vu.build.struct = {
 				fopts.rotation = [rot.x, ry, rot.z];
 				bs.strup(variety);
 			}, "w1"));
+			cont.push(CT.dom.br());
+			cont.push(vbc.side(item, function(sopts) {
+				fopts.material = sopts;
+				bs.strup(variety);
+			}));
 			cont.push(bs.check("flammable", fopts, "wall"));
 		} else if (variety == "stala") {
 			rot = item.rotation();
