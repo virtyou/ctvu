@@ -28,6 +28,7 @@ class Scene(db.TimeStampedBase):
 	fx = db.ForeignKey(kind=Resource, repeated=True)
 	music = db.ForeignKey(kind=Resource, repeated=True)
 	ambient = db.ForeignKey(kind=Resource, repeated=True)
+	cutscene = db.Boolean(default=False)
 
 	def game(self):
 		return Game.query(Game.scenes.contains(self.key.urlsafe())).get()
@@ -42,6 +43,7 @@ class Scene(db.TimeStampedBase):
 			"props": self.props,
 			"scripts": self.scripts,
 			"triggers": self.triggers,
+			"cutscene": self.cutscene,
 			"fx": [f.json() for f in db.get_multi(self.fx)],
 			"music": [m.json() for m in db.get_multi(self.music)],
 			"ambient": [a.json() for a in db.get_multi(self.ambient)],

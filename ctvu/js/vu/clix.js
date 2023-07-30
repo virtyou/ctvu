@@ -5,25 +5,25 @@ vu.clix = {
 			var _ = vu.clix._;
 			_.roomclix.forEach(zero.core.click.unregister);
 			_.roomclix.length = 0;
-		},
-		yinfo: function() {
-			var oz = vu.clix.opts;
-			return [
-				CT.dom.div("(you)", "up20 right"),
-				"move around with WASDZC",
-				"move cam w/ ARROWS or QERFPB",
-				"zoom w/ PERIOD/T & COMMA/G",
-				"SPACE = jump, SHIFT = run",
-				"ENTER or X to enter portal",
-				"SEMICOLON/QUOTE move legs",
-				"[] move arms, -=_+ swap items",
-				"1-9 for gestures",
-				"1-9 + SHIFT for dances",
-				"0 to ungesture",
-				"0 + SHIFT to undance",
-				oz.streamer && oz.streamer()
-			];
 		}
+	},
+	yinfo: function() {
+		var oz = vu.clix.opts;
+		return [
+			CT.dom.div("(you)", "up20 right"),
+			"move around with WASDZC",
+			"move cam w/ ARROWS or QERFPB",
+			"zoom w/ PERIOD/T & COMMA/G",
+			"SPACE = jump, SHIFT = run",
+			"ENTER or X to enter portal",
+			"SEMICOLON/QUOTE move legs",
+			"[] move arms, -=_+ swap items",
+			"1-9 for gestures",
+			"1-9 + SHIFT for dances",
+			"0 to ungesture",
+			"0 + SHIFT to undance",
+			oz.streamer && oz.streamer()
+		];
 	},
 	action: function() {
 		// TODO: other actions.....
@@ -81,7 +81,7 @@ vu.clix = {
 		} else if (thing.opts.kind == "portal")
 			other.push(CT.dom.button("enter", () => zcc.person.approach(thing, vc.action)));
 		zc.click.register(target, function() {
-			vc.info(thing.name, isYou ? _.yinfo() : other);
+			vc.info(thing.name, isYou ? vc.yinfo() : other);
 			cam.follow(target.looker || target);
 			if (!isYou) {
 				target.playPause(oz.audup);

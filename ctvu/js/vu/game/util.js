@@ -155,7 +155,8 @@ vu.game.util = {
 		if (step.script)
 			vgu.doscript(step.script, state, audio, altered);
 		if (step.actor) {
-			zcc.people[step.actor][step.action || "say"](step.line, nextStep, true);
+			zcc.people[step.actor][step.action || "say"](step.line,
+				nextStep, (zcc.scene.opts || zcc.scene).cutscene);
 			if (step.action == "respond")
 				zcc.people[step.actor].click();
 		} else

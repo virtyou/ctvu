@@ -432,6 +432,7 @@ vu.builders.scene = {
 			CT.dom.div(scene.name, "bigger"),
 			scene.description,
 			"room: " + scene.room.name,
+			vu.build.core.check("cutscene", scene, true),
 			CT.dom.br(),
 			snode,
 			"Scripts",

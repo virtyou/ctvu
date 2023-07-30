@@ -261,10 +261,14 @@ vu.menu.Game = CT.Class({
 	person: function(person) {
 		var zcc = zero.core.current,
 			aopts = this.state.actors[person.name];
-		this.info(person.name, person == zcc.person
-			? "it's you!" : [
-				aopts.description, this._.convo(person)
-			], person.body);
+		this.info(person.name, person == zcc.person ? vu.clix.yinfo() : [
+			CT.dom.button("look", function(e) {
+				zero.core.camera.angle("front", person.name);
+				e.stopPropagation();
+			}, "right up15"),
+			aopts.description,
+			this._.convo(person)
+		], person.body);
 	},
 	init: function(opts) {
 		var _ = this._, s, selz = _.selectors;
