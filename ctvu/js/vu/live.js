@@ -152,11 +152,10 @@ vu.live = {
 				person.unmod();
 		},
 		spawn: function(livekey, meta, unfric, invis) {
-			var _ = vu.live._, pkey, handle, isYou,
+			var _ = vu.live._, isYou = livekey == _.me, pkey, handle,
 				zc = zero.core, zcu = zc.util, zcc = zc.current;
-			[pkey, handle] = livekey.split("|");
-			isYou = livekey == _.me;
 			if (isYou && livekey in _.people) return; // you switching rooms
+			[pkey, handle] = livekey.split("|");
 			CT.db.one(pkey, function(pdata) {
 				pdata.livekey = livekey;
 				pdata.name = handle + " (" + pdata.name + ")";
