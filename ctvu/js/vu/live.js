@@ -151,8 +151,27 @@ vu.live = {
 			else if (person.activeMod)
 				person.unmod();
 		},
+		myKey: function() {
+			var _ = vu.live._, u, handle;
+			if (!_.me) {
+				u = user.core.get();
+				handle = u && u.handles[0];
+				if (!handle) {
+					u && CT.modal.modal([
+						CT.dom.span("set your handle on the"),
+						CT.dom.pad(),
+						CT.dom.link("profile page", null, "/user/profile.html"),
+						CT.dom.pad(),
+						CT.dom.span("- using your name for now")
+					], null, null, true);
+					handle = (u ? u.firstName : "anon") + CT.data.random(100);
+				}
+				_.me = CT.storage.get("person") + "|" + handle;
+			}
+			return _.me;
+		},
 		spawn: function(livekey, meta, unfric, invis) {
-			var _ = vu.live._, isYou = livekey == _.me, pkey, handle,
+			var _ = vu.live._, isYou = livekey == _.myKey(), pkey, handle,
 				zc = zero.core, zcu = zc.util, zcc = zc.current;
 			if (isYou && livekey in _.people) return; // you switching rooms
 			[pkey, handle] = livekey.split("|");
@@ -296,28 +315,13 @@ vu.live = {
 		vu.live._.channel = channel;
 		CT.pubsub.subscribe(channel);
 	},
-	myKey: function() {
-		var u = user.core.get(), _ = vu.live._, handle = u && u.handles[0];
-		if (!handle) {
-			u && CT.modal.modal([
-				CT.dom.span("set your handle on the"),
-				CT.dom.pad(),
-				CT.dom.link("profile page", null, "/user/profile.html"),
-				CT.dom.pad(),
-				CT.dom.span("- using your name for now")
-			], null, null, true);
-			handle = (u ? u.firstName : "anon") + CT.data.random(100);
-		}
-		_.me = CT.storage.get("person") + "|" + handle;
-		return _.me;
-	},
 	init: function(cbs) {
 		var _ = vu.live._, zcc = zero.core.current;
 		cbs = _.cbs = cbs || {};
 		["subscribe", "join", "leave", "meta", "chmeta", "message"].forEach(function(ename) {
 			CT.pubsub.set_cb(ename, _.events[ename]);
 		});
-		CT.pubsub.connect(location.hostname, 8888, vu.live.myKey());
+		CT.pubsub.connect(location.hostname, 8888, _.myKey());
 		if (cbs.find)
 			cbs.find(vu.live.channel);
 		else if (zcc.room)
