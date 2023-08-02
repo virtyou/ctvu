@@ -124,10 +124,9 @@ vu.live = {
 					data = msg.message, action = _.actions[data.action];
 				if (person && person.body)
 					action(person, data.data);
-				else {
+				else
 					action({ name: msg.user.split("|").pop() }, data.data);
 //					CT.db.one(msg.user, user => action({ name: user.name }, data.data), "json");
-				}
 //				else // probs still building
 //					_.pending[msg.user] = msg;     <-- necessary in some cases???
 			}
