@@ -149,8 +149,9 @@ vu.core = {
 	isroom: function(rkey) {
 		return rkey == CT.storage.get("room");
 	},
-	ischar: function(pkey) {
-		return pkey == CT.storage.get("person");
+	ischar: function(livekey) {
+		return livekey == zero.core.current.person.opts.livekey;
+//		return pkey == CT.storage.get("person");
 	},
 	baby: function(name) {
 		var d = {
