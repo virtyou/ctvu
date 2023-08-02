@@ -70,7 +70,7 @@ vu.multi = {
 		roomvite && subs.push(_.roomvite(roomvite));
 		gamevite && subs.push(_.gamevite(gamevite));
 		if (person.opts) { // otherwise, person is just {name}
-			if (!vu.core.ischar(person.opts.key)) {
+			if (!vu.core.ischar(person.opts.livekey)) {
 				person.setVolume(zero.core.util.close2u(person.body));
 				if (person.language && person.language.code != zccp.language.code)
 					subs.push(vu.lang.transer(msg, person.language, zccp.language));
