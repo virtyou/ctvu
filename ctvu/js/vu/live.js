@@ -48,8 +48,8 @@ vu.live = {
 				flo.bounds.min[fos.axis] = data.min;
 				flo.bounds.max[fos.axis] = data.max;
 			},
-			dunk: function(person, pkey) {
-				vu.core.ischar(pkey) && vu.portal.port();
+			dunk: function(person, livekey) {
+				vu.core.ischar(livekey) && vu.portal.port();
 			}
 		},
 		events: {
@@ -158,7 +158,7 @@ vu.live = {
 			var _ = vu.live._, pkey, handle, isYou,
 				zc = zero.core, zcu = zc.util, zcc = zc.current;
 			[pkey, handle] = livekey.split("|");
-			isYou = vu.core.ischar(pkey);
+			isYou = livekey == _.me;
 			if (isYou && livekey in _.people) return; // you switching rooms
 			CT.db.one(pkey, function(pdata) {
 				pdata.livekey = livekey;
@@ -301,7 +301,7 @@ vu.live = {
 		CT.pubsub.subscribe(channel);
 	},
 	myKey: function() {
-		var u = user.core.get(), handle = u && u.handles[0];
+		var u = user.core.get(), _ = vu.live._, handle = u && u.handles[0];
 		if (!handle) {
 			u && CT.modal.modal([
 				CT.dom.span("set your handle on the"),
@@ -312,7 +312,8 @@ vu.live = {
 			], null, null, true);
 			handle = (u ? u.firstName : "anon") + CT.data.random(100);
 		}
-		return CT.storage.get("person") + "|" + handle;
+		_.me = CT.storage.get("person") + "|" + handle;
+		return _.me;
 	},
 	init: function(cbs) {
 		var _ = vu.live._, zcc = zero.core.current;
