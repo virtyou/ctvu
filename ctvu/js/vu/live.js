@@ -170,8 +170,11 @@ vu.live = {
 			}
 			return _.me;
 		},
+		isMe: function(livekey) {
+			return livekey == vu.live._.me;
+		},
 		spawn: function(livekey, meta, unfric, invis) {
-			var _ = vu.live._, isYou = livekey == _.myKey(), pkey, handle,
+			var _ = vu.live._, isYou = _.isMe(livekey), pkey, handle,
 				zc = zero.core, zcu = zc.util, zcc = zc.current;
 			if (isYou && livekey in _.people) return; // you switching rooms
 			[pkey, handle] = livekey.split("|");
