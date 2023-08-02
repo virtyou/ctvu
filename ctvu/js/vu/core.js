@@ -150,7 +150,8 @@ vu.core = {
 		return rkey == CT.storage.get("room");
 	},
 	ischar: function(livekey) {
-		return livekey == zero.core.current.person.opts.livekey;
+		var p = zero.core.current.person, lk = p && p.opts.livekey;
+		return livekey == lk;
 //		return pkey == CT.storage.get("person");
 	},
 	baby: function(name) {
