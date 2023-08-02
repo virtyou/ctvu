@@ -100,10 +100,8 @@ vu.live = {
 			meta: function(data) {
 				var _ = vu.live._, person = _.people[data.user],
 					meta = data.meta, zc = zero.core, zcc = zc.current;
-				if (zcc.person && data.user == zcc.person.opts.livekey)
-					return;
-				if (!(person && person.body))
-					return; // will handle meta when spawn is complete
+				if (vu.core.ischar(data.user) || !(person && person.body))
+					return; // if !you, will handle meta when spawn is complete
 				person.language = meta.language;
 				if (_.cbs.frozen) return;
 				var bod = person.body, sz = bod.springs, s, prop;
