@@ -48,8 +48,8 @@ vu.live = {
 				flo.bounds.min[fos.axis] = data.min;
 				flo.bounds.max[fos.axis] = data.max;
 			},
-			dunk: function(person, pkey) {
-				vu.core.ischar(pkey) && vu.portal.port();
+			dunk: function(person, livekey) {
+				vu.core.ischar(livekey) && vu.portal.port();
 			}
 		},
 		events: {
@@ -100,10 +100,8 @@ vu.live = {
 			meta: function(data) {
 				var _ = vu.live._, person = _.people[data.user],
 					meta = data.meta, zc = zero.core, zcc = zc.current;
-				if (zcc.person && data.user == zcc.person.opts.key)
-					return;
-				if (!(person && person.body))
-					return; // will handle meta when spawn is complete
+				if (vu.core.ischar(data.user) || !(person && person.body))
+					return; // if !you, will handle meta when spawn is complete
 				person.language = meta.language;
 				if (_.cbs.frozen) return;
 				var bod = person.body, sz = bod.springs, s, prop;
@@ -127,7 +125,8 @@ vu.live = {
 				if (person && person.body)
 					action(person, data.data);
 				else
-					CT.db.one(msg.user, user => action({ name: user.name }, data.data), "json");
+					action({ name: msg.user.split("|").pop() }, data.data);
+//					CT.db.one(msg.user, user => action({ name: user.name }, data.data), "json");
 //				else // probs still building
 //					_.pending[msg.user] = msg;     <-- necessary in some cases???
 			}
@@ -152,15 +151,40 @@ vu.live = {
 			else if (person.activeMod)
 				person.unmod();
 		},
-		spawn: function(pkey, meta, unfric, invis) {
-			var _ = vu.live._, isYou = vu.core.ischar(pkey),
+		myKey: function() {
+			var _ = vu.live._, u, handle;
+			if (!_.me) {
+				u = user.core.get();
+				handle = u && u.handles[0];
+				if (!handle) {
+					u && CT.modal.modal([
+						CT.dom.span("set your handle on the"),
+						CT.dom.pad(),
+						CT.dom.link("profile page", null, "/user/profile.html"),
+						CT.dom.pad(),
+						CT.dom.span("- using your name for now")
+					], null, null, true);
+					handle = (u ? u.firstName : "anon") + CT.data.random(100);
+				}
+				_.me = CT.storage.get("person") + "|" + handle;
+			}
+			return _.me;
+		},
+		isMe: function(livekey) {
+			return livekey == vu.live._.me;
+		},
+		spawn: function(livekey, meta, unfric, invis) {
+			var _ = vu.live._, isYou = _.isMe(livekey), pkey, handle,
 				zc = zero.core, zcu = zc.util, zcc = zc.current;
-			if (isYou && pkey in _.people) return; // you switching rooms
+			if (isYou && livekey in _.people) return; // you switching rooms
+			[pkey, handle] = livekey.split("|");
 			CT.db.one(pkey, function(pdata) {
+				pdata.livekey = livekey;
+				pdata.name = handle + " (" + pdata.name + ")";
 				if (meta && !invis && !_.cbs.frozen)
 					pdata.body.position = [meta.weave.target, meta.bob.target, meta.slide.target];
 				var loadPer = function(person) {
-					_.people[pdata.key] = person;
+					_.people[livekey] = person;
 					_.cbs.enter(person);
 					if (isYou)
 						_.cbs.joined(person);
@@ -300,7 +324,7 @@ vu.live = {
 		["subscribe", "join", "leave", "meta", "chmeta", "message"].forEach(function(ename) {
 			CT.pubsub.set_cb(ename, _.events[ename]);
 		});
-		CT.pubsub.connect(location.hostname, 8888, CT.storage.get("person"));
+		CT.pubsub.connect(location.hostname, 8888, _.myKey());
 		if (cbs.find)
 			cbs.find(vu.live.channel);
 		else if (zcc.room)

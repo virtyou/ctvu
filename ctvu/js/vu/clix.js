@@ -64,13 +64,13 @@ vu.clix = {
 			"SHIFT + click to approach"
 		], zcc = zc.current, cam = zc.camera,
 			target = thing.body || thing, oz = vc.opts,
-			isYou = vu.core.ischar(thing.opts.key);
+			isYou = vu.core.ischar(thing.opts.livekey);
 		if (thing.body) {
 			if (thing.automaton)
 				other.push(vu.live.autochatter(thing));
 			else if (vu.core.ownz()) {
 				other.push(CT.dom.button("dunk", function() {
-					confirm("dunk this person?") && vu.live.emit("dunk", thing.opts.key);
+					confirm("dunk this person?") && vu.live.emit("dunk", thing.opts.livekey);
 				}));
 			}
 		} else if (thing.opts.kind == "book")
