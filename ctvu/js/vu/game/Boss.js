@@ -105,7 +105,7 @@ vu.game.Boss = CT.Class({
 		setTimeout(this.tick, 3000);
 		if (zc.util.touching(bod, pb, 100))
 			moves = mz.melee;
-		else if (this.stayOn && this.stayOn == pb.upon)
+		else if (!this.stayOn || this.stayOn == pb.upon)
 			moves = CT.merge(moves, mz.approach);
 //		else if (bod.flying)
 //			return this.log("flying - skipping non-melee tick()");
