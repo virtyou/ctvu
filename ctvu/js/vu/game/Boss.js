@@ -144,9 +144,18 @@ vu.game.Boss = CT.Class({
 		this.meter.show();
 		CT.event.emit("wile", p.name);
 		this.drop(this.cfg.drop.start);
-		if (p.lastWhere && p.lastWhere != "room")
-			this.stayOn = zero.core.current.room[p.lastWhere];
+		p.lastWhere && (p.lastWhere != "room") && this.setStay(p.lastWhere);
 		this.tick();
+	},
+	setStay: function(where) {
+		var place = this.stayOn = zero.core.current.room[where],
+			bz = place.bounds, bmi = bz.min, bma = bz.max,
+			sz = this.person.body.springs,
+			wb = sz.weave.bounds, sb = sz.slide.bounds;
+		wb.min = bmi.x;
+		wb.max = bma.x;
+		sb.min = bmi.z;
+		sb.max = bma.z;
 	},
 	setLevel: function(level) {
 		this.log("level", level);
