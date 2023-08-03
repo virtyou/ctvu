@@ -61,48 +61,54 @@ vu.game.Boss = CT.Class({
 		}
 	},
 	moves: {
-		taunt: function() { // (neg)
-			this.person.say(CT.data.choice(this._.taunts));
+		approach: {
+			charge: function() {
+				this.person.approach("player", null, null, null, null, true);
+			},
+			jump: function() {
+				this.person.leap(zero.core.current.person.body, this._.hit, this.cfg.fly);
+			}
 		},
-		charge: function() {
-			this.person.approach("player", null, null, null, null, true);
+		range: {
+			taunt: function() { // (neg)
+				this.person.say(CT.data.choice(this._.taunts));
+			},
+			throw: function() {
+				if (!this.throws.length)
+					return this.moves.taunt();
+				var _ = this._, toss = CT.data.choice(this.throws), crit;
+				this.log("throw", toss);
+				if (toss == "fauna") {
+					crit = _.crit();
+					crit && this.person.touch(crit, null, null, null, _.windUp);
+				} else
+					this.orbs[toss].throw();
+			}
 		},
-		jump: function() {
-			this.person.leap(zero.core.current.person.body, this._.hit, this.cfg.fly);
-		},
-		throw: function() {
-			if (!this.throws.length)
-				return this.moves.taunt();
-			var _ = this._, toss = CT.data.choice(this.throws), crit;
-			this.log("throw", toss);
-			if (toss == "fauna") {
-				crit = _.crit();
-				crit && this.person.touch(crit, null, null, null, _.windUp);
-			} else
-				this.orbs[toss].throw();
-		}
-	},
-	melee: {
-		punch: function() {
-			this.person.touch(zero.core.current.person.body, null, null, null, this._.hit, true);
-		},
-		kick: function() {
-			this.person.orient(zero.core.current.person.body);
-			this.person.thruster.kick(CT.data.random() ? "left" : "right", 200);
+		melee: {
+			punch: function() {
+				this.person.touch(zero.core.current.person.body, null, null, null, this._.hit, true);
+			},
+			kick: function() {
+				this.person.orient(zero.core.current.person.body);
+				this.person.thruster.kick(CT.data.random() ? "left" : "right", 200);
+			}
 		}
 	},
 	tick: function() {
-		var _ = this._, zc = zero.core, moves = this.moves,
-			per = this.person, bod = per.body;
+		var _ = this._, zc = zero.core, pb = zc.current.person.body,
+			mz = this.moves, moves = mz.range, per = this.person, bod = per.body;
 		if (this.hp < 1) {
 			per.say(CT.data.choice(_.laments), _.die);
 			return this.log("defeated!!!!!");
 		}
 		setTimeout(this.tick, 3000);
-		if (zc.util.touching(bod, zc.current.person.body, 100))
-			moves = this.melee;
-		else if (bod.flying)
-			return this.log("flying - skipping non-melee tick()");
+		if (zc.util.touching(bod, pb, 100))
+			moves = mz.melee;
+		else if (this.stayOn && this.stayOn == pb.upon)
+			moves = CT.merge(moves, mz.approach);
+//		else if (bod.flying)
+//			return this.log("flying - skipping non-melee tick()");
 		CT.data.choice(Object.values(moves))();
 	},
 	crash: function(critter) {
@@ -129,14 +135,17 @@ vu.game.Boss = CT.Class({
 			variety ? "held" : "consumable", variety);
 	},
 	wileOut: function() {
-		this.person.mood.update({ mad: 1, energy: 2 });
-		this.person.energy.damp = 0.6;
-		this.person.automaton.pause();
-		this.person.thruster.on("unkick", this._.kick);
+		var p = this.person;
+		p.mood.update({ mad: 1, energy: 2 });
+		p.energy.damp = 0.6;
+		p.automaton.pause();
+		p.thruster.on("unkick", this._.kick);
 		this.climax = true;
 		this.meter.show();
+		CT.event.emit("wile", p.name);
 		this.drop(this.cfg.drop.start);
-		CT.event.emit("wile", this.person.name);
+		if (p.lastWhere && p.lastWhere != "room")
+			this.stayOn = zero.core.current.room[p.lastWhere];
 		this.tick();
 	},
 	setLevel: function(level) {
