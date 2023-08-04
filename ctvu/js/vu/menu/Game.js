@@ -101,7 +101,7 @@ vu.menu.Game = CT.Class({
 		},
 		scoreMeters: function(p) {
 			var _ = this._, mz = _.scores[p.name], ps = p.score,
-				locap = ps.level * 10, hicap = locap * 10;
+				locap = ps.level * 20, hicap = ps.level * 100;
 			if (!mz) {
 				mz = _.scores[p.name] = {};
 				mz.hp = new vu.game.Meter({
@@ -134,7 +134,7 @@ vu.menu.Game = CT.Class({
 			mz.zombie.setVisibility(p.zombified);
 			return mz;
 		},
-		score: function(p) { // {hp,xp,level,ztick} ; xpcap = level * 100 ; hpcap = level * 10
+		score: function(p) { // {hp,xp,level,ztick} ; xpcap = level * 100 ; hpcap = level * 20
 			var mz = this._.scoreMeters(p);
 			return CT.dom.div([
 				CT.dom.div([

@@ -23,7 +23,7 @@ vu.game.Player = CT.Class({
 	},
 	tick: function() {
 		var p = this.person, t = 1000, unChanged,
-			w = p.body.within, s = p.score, cap = s.level * 10;
+			w = p.body.within, s = p.score, cap = s.level * this.opts.mult;
 		if (w && w.opts.state == "liquid") {
 			if (s.breath && !w.opts.lava)
 				s.breath -= 1;
@@ -92,14 +92,15 @@ vu.game.Player = CT.Class({
 	},
 	init: function(opts) { // required: person, menus
 		this.opts = opts = CT.merge(opts, {
-			level: 1
+			level: 1,
+			mult: 20
 		});
 		this.person = opts.person;
 		this.menus = opts.menus;
 		zero.core.current.player = this;
 
 		// TODO: load from game state?
-		var juice = opts.level * 10;
+		var juice = opts.level * opts.mult;
 		this.person.score = {
 			xp: 0,
 			hp: juice,
