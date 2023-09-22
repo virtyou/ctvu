@@ -90,6 +90,15 @@ vu.game.Player = CT.Class({
 			ps[prop] += val;
 		upmen && this.menus.score();
 	},
+	position: function(pos, glopo) {
+		return this.person.body.position(pos, glopo);
+	},
+	levelup: function() {
+		var ps = this.person.score;
+		ps.hp = ps.breath = ps.level * this.opts.mult;
+		vu.game.util.text("you got to level " + ps.level + "!");
+		zero.core.current.sploder.confettize(this.position(), true);
+	},
 	init: function(opts) { // required: person, menus
 		this.opts = opts = CT.merge(opts, {
 			level: 1,
