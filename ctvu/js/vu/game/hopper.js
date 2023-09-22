@@ -271,6 +271,7 @@ vu.game.hopper.loader = {
 	initPlayer: function() {
 		var hl = vu.game.hopper.loader,
 			per = zero.core.current.person, thruster = per.thruster;
+		per.select();
 		per.onland(hl.splatter);
 		thruster.on("unkick", side => hl.swinger("kick", side));
 		thruster.on("unthrust", side => hl.swinger("knock", side));
