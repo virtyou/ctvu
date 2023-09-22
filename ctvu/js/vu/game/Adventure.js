@@ -127,15 +127,16 @@ vu.game.Adventure = CT.Class({
 //		vu.game.hopper.zombify();
 	},
 	score: function(score, person) { // xp
-		var isYou = !person, ps, xpcap;
+		var isYou = !person, ps, xpcap, zcc = zero.core.current;
 		if (isYou) { // additive!
-			person = zero.core.current.person;
+			person = zcc.person;
 			ps = person.score;
 			ps.xp += score;
 			xpcap = ps.level * 100;
 			if (ps.xp > xpcap) {
 				ps.level += 1;
 				ps.xp -= xpcap;
+				zcc.player.levelup();
 			}
 		} else
 			person.score = score;
