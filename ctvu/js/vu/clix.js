@@ -64,7 +64,7 @@ vu.clix = {
 			"SHIFT + click to approach"
 		], zcc = zc.current, cam = zc.camera,
 			target = thing.body || thing, oz = vc.opts,
-			isYou = vu.core.ischar(thing.opts.livekey);
+			isYou = vu.core.ischar(thing.opts.livekey || thing.opts.key);
 		if (thing.body) {
 			if (thing.automaton)
 				other.push(vu.live.autochatter(thing));
@@ -83,6 +83,7 @@ vu.clix = {
 		zc.click.register(target, function() {
 			vc.info(thing.name, isYou ? vc.yinfo() : other);
 			cam.follow(target.looker || target);
+			cam.toggleCaret(!isYou);
 			if (!isYou) {
 				target.playPause(oz.audup);
 				CT.key.down("SHIFT") && zcc.person.approach(target);
