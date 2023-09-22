@@ -33,5 +33,6 @@ CT.require("vu.builders.adventure");
 CT.onload(function() {
 	CT.initCore();
 	vu.core.init();
+	core.config.ctzero.camera.caret = true;
 	vu.storage.init(vu.builders.adventure.menus, true);
 });
