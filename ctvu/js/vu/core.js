@@ -151,8 +151,8 @@ vu.core = {
 	},
 	ischar: function(livekey) {
 		var p = zero.core.current.person, lk = p && p.opts.livekey;
-		return livekey == lk;
-//		return pkey == CT.storage.get("person");
+		if (lk) return livekey == lk;
+		return livekey == CT.storage.get("person");
 	},
 	baby: function(name) {
 		var d = {
