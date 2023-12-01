@@ -247,11 +247,11 @@ vu.game.Boss.Orb = CT.Class({
 	hitters: {
 		fire: function() {
 			zero.core.current.sploder.splode(this.position(), "flameburst");
-			this.target.setAura("hot");
+			this.target.setAura("hot", 10000);
 		},
 		ice: function() {
 			zero.core.current.sploder.shart(this, true);
-			this.target.setAura("cold");
+			this.target.setAura("cold", 10000);
 		},
 		acid: function() {
 			zero.core.current.sploder.shart(this, true);
