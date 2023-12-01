@@ -61,6 +61,13 @@ iframe {
 	overflow-y: hidden;
 }
 
+.ctswrap {
+	top: 0;
+	left: 0;
+	scale: 0.25;
+	margin: -25px;
+}
+
 .embedded #ctmain {
 	top: 0;
 }
