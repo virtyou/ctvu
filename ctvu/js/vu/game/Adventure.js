@@ -157,8 +157,8 @@ vu.game.Adventure = CT.Class({
 				defeat: {},
 				score: {}
 			}
-		});
-		zero.core.current.adventure = this;
+		}), zcc = zero.core.current;
+		zcc.adventure = this;
 		this._.initState();
 		this.game = opts.game;
 		this.scenemap = opts.game.scenemap;
@@ -166,7 +166,7 @@ vu.game.Adventure = CT.Class({
 		this.menus = new vu.menu.Game({
 			state: this.state
 		});
-		this.controls = new zero.core.Controls({
+		this.controls = zcc.controls = new zero.core.Controls({
 			moveCb: vu.live.meta
 		});
 		CT.modal.modal(CT.dom.div([
