@@ -262,10 +262,12 @@ vu.builders.zone = {
 				zcc = zero.core.current, ro, po;
 			sel.update = function() {
 				ro = zcc.room.opts;
-				CT.dom.setContent(sel, ["fog", "rain"].map(function(ename) {
+				CT.dom.setContent(sel, ["fog", "rain", "shadows"].map(function(ename) {
 					return CT.dom.checkboxAndLabel(ename, ro[ename],
 						null, null, null, function(cbox) {
-							if (cbox.checked)
+							if (ename == "shadows")
+								zcc.room.setShadows(cbox.checked);
+							else if (cbox.checked)
 								zcc.room.addEnv(ename);
 							else
 								zcc.room.detach(ename);
