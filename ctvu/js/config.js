@@ -26,7 +26,7 @@
     },
     "loaders": {
         "customs": ["one.earring", "one.pony"],
-        "templates": ["one.body", "one.vstrip", "one.vswarm", "one.audio"],
+        "templates": ["one.body", "one.vstrip", "one.vswarm", "one.audio", "one.fbx"],
         "environments": [
             "one.box",
             "one.day",
