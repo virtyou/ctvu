@@ -45,7 +45,7 @@
     },
     "volumes": {
         "fx": 0.8,
-        "music": 0.5,
+        "music": 0.2,
         "ambient": 0.5
     },
     "builders": {
