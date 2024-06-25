@@ -16,7 +16,7 @@ vu.builders.game = {
 				}).join(", ")
 			], "bordered padded margined round inline-block");
 		},
-		scenes: function(scenes) {
+		scenes: function(scenes, game) {
 			var vbg = vu.builders.game, scene = vbg._.scene,
 				snode = CT.dom.div(scenes.map(scene));
 			return CT.dom.div([
@@ -213,7 +213,7 @@ vu.builders.game = {
 			], "bordered padded margined round"),
 			CT.dom.div([
 				"scenes",
-				_.scenes(scenes)
+				_.scenes(scenes, game)
 			], "bordered padded margined round"),
 			CT.dom.div([
 				"conditions",
