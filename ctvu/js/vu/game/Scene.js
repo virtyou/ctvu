@@ -87,8 +87,11 @@ vu.game.Scene = CT.Class({
 			carp.opts.items.length && rc(carp, men.shelf);
 		}
 		this.comp();
+		zc.util.onCurPer(this.run);
+	},
+	run: function() {
 		this.script(this.state.script);
-		zc.util.onCurPer(this.menus.minimap);
+		this.menus.minimap();
 	},
 	comp: function() {
 		var zcc = zero.core.current, oz = this.opts,
