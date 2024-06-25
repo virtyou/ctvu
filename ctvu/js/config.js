@@ -35,6 +35,7 @@
             "one.forest",
             "one.techno",
             "one.walls",
+            "one.gates",
             "one.patmos",
             "one.library",
             "one.scrolly",
