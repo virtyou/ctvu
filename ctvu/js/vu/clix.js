@@ -37,8 +37,8 @@ vu.clix = {
 	room: function() {
 		var vc = vu.clix, room = zero.core.current.room;
 		vc._.unclixroom();
-		room.objects.forEach(vc.register);
 		room.automatons.forEach(a => a.onperson(vc.auto));
+		room.objects.forEach(o => o.onReady(() => vc.register(o)));
 	},
 	auto: function(p) {
 		vu.help.triggerize(p.brain, vu.clix.opts.auto, vu.squad.emit);
