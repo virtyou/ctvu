@@ -248,7 +248,8 @@ vu.core = {
 		});
 	},
 	ownz: function() {
-		return zero.core.current.room.opts.owners.includes(user.core.get("key"));
+		var oz = zero.core.current.room.opts.owners, k = user.core.get("key");
+		return oz && k && oz.includes(k);
 	},
 	my: function(mtype, cb, exporter) {
 		CT.db.get(mtype, cb, null, null, null, {
