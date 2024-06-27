@@ -194,8 +194,10 @@ img.right.h30p.up5 {
 }
 
 .gmenu.cameras {
-    left: 350px !important;
+    left: 350px;
     right: 276px;
+    min-width: 64px;
+    margin-left: 26px;
     white-space: initial;
 }
 
