@@ -168,18 +168,21 @@ vu.game.util = {
 			return zcc.scene.script(name); // for state, audio, main "thread"
 		vu.game.util.script(zcc.scene.scripts[name], null, state, audio, altered);
 	},
-	script: function(script, cb, state, audio, altered) {
+	script: function(script, cb, state, audio, altered, curroom) {
 		altered = altered || {};
 		script = script.slice();
-		var step = script.shift();
+		var step = script.shift(), zcc = zero.core.current;
 		if (!step)
 			return cb && cb(altered);
-		var curroom = zero.core.current.room;
+		if (!curroom)
+			curroom = zcc.room;
+		else if (curroom != zcc.room)
+			return CT.log("room/scene changed! ABORTING SCRIPT!!!");
 		vu.game.util.step(step, function() {
-			if (curroom != zero.core.current.room)
+			if (curroom != zcc.room)
 				return CT.log("room/scene changed! ABORTING SCRIPT!!!");
 			setTimeout(vu.game.util.script, step.pause || 0,
-				script, cb, state, audio, altered);
+				script, cb, state, audio, altered, curroom);
 		}, state, audio, altered);
 	}
 };
