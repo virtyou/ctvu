@@ -7,7 +7,7 @@ vu.game.Player = CT.Class({
 			person.score.ztick -= 1;
 			person.zombified = person.score.ztick > 0;
 			if (!person.zombified)
-				return zc.camera.angle(this._.prevCam);
+				return zc.camera.angle("preferred");
 			for (p in zcc.people) {
 				target = zcc.people[p];
 				if (target.score && !target.score.ztick) {
