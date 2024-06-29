@@ -55,18 +55,18 @@ vu.menu.Game = CT.Class({
 			return vu.core.menu(name, side, info,
 				header, cb || this._.collapse(name));
 		},
-		interactional: function(itype, side, name, info, recenter) {
+		interactional: function(itype, side, name, info, recenter, nocam) {
 			var _ = this._, iz = _.interactionals;
 			if (iz[itype]) {
 				iz[itype].set([name, info]);
 				recenter && iz[itype].node.recenter();
 			} else
 				iz[itype] = _.basic(itype, side,
-					info, _.hider(itype, true), name);
+					info, _.hider(itype, !nocam), name);
 			return iz[itype];
 		},
-		info: function(name, info) {
-			return this._.interactional("info", "topleft", name, info);
+		info: function(name, info, nocam) {
+			return this._.interactional("info", "topleft", name, info, false, nocam);
 		},
 		seeing: function(name, info) {
 			return this._.interactional("seeing", "right", name, info);
@@ -207,14 +207,14 @@ vu.menu.Game = CT.Class({
 			});
 		}, 500);
 	},
-	basic: function(name, info, glowy) {
-		var m = this._.info(name, info);
+	basic: function(name, info, glowy, nocam) {
+		var m = this._.info(name, info, nocam);
 		m.show("ctmain");
 		glowy && setTimeout(() => CT.trans.glow(m.node));
 		return m;
 	},
-	info: function(name, info, thing) {
-		this.basic(name, info);
+	info: function(name, info, thing, nocam) {
+		this.basic(name, info, false, nocam);
 		zero.core.camera.follow(thing);
 	},
 	attribution: function(atype, name, info, source) {
@@ -246,7 +246,7 @@ vu.menu.Game = CT.Class({
 	item: function(item) {
 		this.info(item.name, [
 			item.opts.description,
-			CT.dom.button("get", () => vu.game.dropper.get(item), "w1 mv5")
+			CT.dom.button("get", () => setTimeout(vu.game.dropper.get, 0, item), "w1 mv5")
 		], item);
 	},
 	portal: function(portal) {
