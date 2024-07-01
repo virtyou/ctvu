@@ -436,6 +436,10 @@ vu.game.hopper.Hopper = CT.Class({
 	deallocate: function() {
 		delete this.menagerie; // anything else?
 	},
+	start: function() {
+		this.initHunters();
+		this.initPrey();
+	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
 			// what here?
@@ -443,7 +447,6 @@ vu.game.hopper.Hopper = CT.Class({
 		this.area = opts.area;
 		this.menagerie = opts.menagerie;
 		this.cfg = vu.game.hopper.pcfg(null, this.area);
-		this.initHunters();
-		this.initPrey();
+		this.menagerie.onReady(this.start);
 	}
 });
