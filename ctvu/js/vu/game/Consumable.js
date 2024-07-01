@@ -18,6 +18,7 @@ vu.game.Consumable = CT.Class({
 	consume: function() {
 		for (var c in this.consumers)
 			this.opts[c] && this.consumers[c]();
+		vu.game.dropper.recycle(this.opts.name);
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, vu.game.Consumable.consumables[opts.name], {
