@@ -96,8 +96,8 @@ vu.game.Player = CT.Class({
 			ps[prop] += val;
 			if (prop == "hp" || prop == "breath") {
 				cap = this._.cap();
-				if (s[prop] > cap)
-					this.score("xp", s[prop] - cap);
+				if (ps[prop] > cap)
+					this.score("xp", ps[prop] - cap);
 			}
 		}
 		upmen && this.menus.score();
