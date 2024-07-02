@@ -103,9 +103,16 @@ vu.game.util = {
 			go(state.actors[actor][prop] == g[actor][prop]);
 		}
 	},
+	resetcam: function() {
+		var zc = zero.core, cam = zc.camera,
+			ucam = cam.get("perspective") == zc.current.person;
+		CT.log("resetting cam: " + ucam);
+		ucam || cam.angle("preferred");
+	},
 	step: function(step, nextStep, state, audio, altered) {
 		var zcc = zero.core.current, k, r = zcc.room, actor,
 			cam = zero.core.camera, vgu = vu.game.util;
+		nextStep = nextStep || vgu.resetcam;
 		if (step.lights) {
 			step.lights.forEach(function(val, i) {
 				r.lights[i][step.directive || "setIntensity"](val);
@@ -163,7 +170,7 @@ vu.game.util = {
 			if (step.action == "respond")
 				actor.click();
 		} else
-			nextStep && nextStep();
+			nextStep();
 	},
 	doscript: function(name, state, audio, altered) {
 		var zcc = zero.core.current;
@@ -174,17 +181,19 @@ vu.game.util = {
 	script: function(script, cb, state, audio, altered, curroom) {
 		altered = altered || {};
 		script = script.slice();
-		var step = script.shift(), zcc = zero.core.current;
-		if (!step)
+		var step = script.shift(), zcc = zero.core.current, vgu = vu.game.util;
+		if (!step) {
+			vgu.resetcam();
 			return cb && cb(altered);
+		}
 		if (!curroom)
 			curroom = zcc.room;
 		else if (curroom != zcc.room)
 			return CT.log("room/scene changed! ABORTING SCRIPT!!!");
-		vu.game.util.step(step, function() {
+		vgu.step(step, function() {
 			if (curroom != zcc.room)
 				return CT.log("room/scene changed! ABORTING SCRIPT!!!");
-			setTimeout(vu.game.util.script, step.pause || 0,
+			setTimeout(vgu.script, step.pause || 0,
 				script, cb, state, audio, altered, curroom);
 		}, state, audio, altered);
 	}
