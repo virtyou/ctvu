@@ -19,11 +19,14 @@ vu.game.Player = CT.Class({
 				}
 			}
 			person.wander("room", null, 1000);
+		},
+		cap: function() {
+			return this.person.score.level * this.opts.mult;
 		}
 	},
 	tick: function() {
-		var p = this.person, t = 1000, unChanged, floor = -5,
-			w = p.body.within, s = p.score, cap = s.level * this.opts.mult;
+		var _ = this._, p = this.person, t = 1000, unChanged,
+			w = p.body.within, s = p.score, cap = _.cap(), floor = -5;
 		if (w && w.opts.state == "liquid") {
 			if (s.breath && !w.opts.lava)
 				s.breath -= 1;
@@ -45,7 +48,7 @@ vu.game.Player = CT.Class({
 		}
 		p.body.panting = s.breath < 0;
 		if (p.zombified) {
-			this._.ztick();
+			_.ztick();
 			t = 1000; // meh
 			unChanged = false; // meh..
 		}
@@ -86,11 +89,17 @@ vu.game.Player = CT.Class({
 			() => location.reload(), { noClose: true }, true);
 	},
 	score: function(prop, val, absolute, upmen) {
-		var ps = this.person.score;
+		var ps = this.person.score, cap;
 		if (absolute)
 			ps[prop] = val;
-		else
+		else {
 			ps[prop] += val;
+			if (prop == "hp" || prop == "breath") {
+				cap = this._.cap();
+				if (s[prop] > cap)
+					this.score("xp", s[prop] - cap);
+			}
+		}
 		upmen && this.menus.score();
 	},
 	position: function(pos, glopo) {
