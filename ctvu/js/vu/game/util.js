@@ -104,7 +104,7 @@ vu.game.util = {
 		}
 	},
 	step: function(step, nextStep, state, audio, altered) {
-		var zcc = zero.core.current, k, r = zcc.room,
+		var zcc = zero.core.current, k, r = zcc.room, actor,
 			cam = zero.core.camera, vgu = vu.game.util;
 		if (step.lights) {
 			step.lights.forEach(function(val, i) {
@@ -155,10 +155,13 @@ vu.game.util = {
 		if (step.script)
 			vgu.doscript(step.script, state, audio, altered);
 		if (step.actor) {
-			zcc.people[step.actor][step.action || "say"](step.line,
+			actor = zcc.people[step.actor];
+			if (!actor)
+				return CT.log("actor has left scene! ABORTING SCRIPT!!!");
+			actor[step.action || "say"](step.line,
 				nextStep, (zcc.scene.opts || zcc.scene).cutscene);
 			if (step.action == "respond")
-				zcc.people[step.actor].click();
+				actor.click();
 		} else
 			nextStep && nextStep();
 	},
