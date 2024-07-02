@@ -22,7 +22,7 @@ vu.game.Player = CT.Class({
 		}
 	},
 	tick: function() {
-		var p = this.person, t = 1000, unChanged,
+		var p = this.person, t = 1000, unChanged, floor = -5,
 			w = p.body.within, s = p.score, cap = s.level * this.opts.mult;
 		if (w && w.opts.state == "liquid") {
 			if (s.breath && !w.opts.lava)
@@ -31,9 +31,12 @@ vu.game.Player = CT.Class({
 				s.hp -= 1;
 		} else if (p.running)
 			s.breath -= 1;
-		else if (s.breath < cap)
-			s.breath += 1;
-		else {
+		else if (s.breath < cap) {
+			if (s.breath < floor)
+				s.breath = floor;
+			else
+				s.breath += 1;
+		} else {
 			if (s.hp < cap)
 				s.hp += 1
 			else
