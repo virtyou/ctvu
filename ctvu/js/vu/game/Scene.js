@@ -90,6 +90,7 @@ vu.game.Scene = CT.Class({
 		zc.util.onCurPer(this.run);
 	},
 	run: function() {
+		zero.core.camera.angle("preferred");
 		this.script(this.state.script);
 		this.menus.minimap();
 	},
