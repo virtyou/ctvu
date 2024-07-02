@@ -400,13 +400,18 @@ vu.game.hopper.Hopper = CT.Class({
 		return zc.knocker[variety](this.menagerie, this.prey,
 			this.on[variety], this._.pcfg(), side);
 	},
+	scale: function(creature) {
+		creature._origScale = creature._origScale || creature.opts.scale || [1, 1, 1];
+		var lev = creature.level, s = creature._origScale;
+		creature.scale([lev * s[0], lev * s[1], lev * s[2]], true);
+	},
 	setCritter: function(creature) {
 		var _ = this._, ccfg = _.pcfg(creature.opts.kind), hp = ccfg.hp,
 			level = ccfg.source ? _.boss(ccfg.source).level : ccfg.level;
 		this.log(creature.name, ":: level", level);
 		creature.level = level;
 		creature.hp = hp * level;
-		creature.scale(level, true);
+		this.scale(creature);
 	},
 	initHunters: function() {
 		var hunters = this.hunters = Object.keys(this.cfg.fauna);
