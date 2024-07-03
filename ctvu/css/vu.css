@@ -147,6 +147,7 @@ iframe {
 
 .basicpopup {
 	color: black;
+	font-size: 160%;
 	overflow-y: auto;
 }
 
