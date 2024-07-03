@@ -54,20 +54,18 @@ vu.portal = {
 		return scene.state.scenes[scene.name].portals || {};
 	},
 	check: function() {
-		var cur = zero.core.current, person = cur.person,
+		var cur = zero.core.current, person = cur.person, vp = vu.portal,
 			pos = person.body.placer.position, _ = this._, hit = false;
-		cur.room.objects.filter(_.filter).forEach(function(portal) {
+		cur.room.objects.forEach(function(portal) {
 			if (hit) return;
 			var dist = portal.position().distanceTo(pos);
 			CT.log(portal.name + " " + dist);
 			if (dist < 100) {
 				hit = true;
-				CT.db.one(portal.opts.portals.outgoing.target, function(target) {
-					if (target.kind != "portal")
-						person.say("this door is locked");
-					else
-						vu.portal.port(target.parent, portal.opts.key, target.key);
-				}, "json");
+				if (!(portal.name in vp.options()))
+					return person.say("this door is locked");
+				CT.db.one(portal.opts.portals.outgoing.target,
+					target => vp.port(target.parent, portal.opts.key, target.key), "json");
 			}
 		});
 	}

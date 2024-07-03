@@ -71,7 +71,7 @@ vu.game.Adventure = CT.Class({
 		start: function() {
 			var _ = this._, zcc = zero.core.current, vp = vu.portal, scene = this.scene, emod;
 			vu.live.init(_.cbs);
-			vp.on("filter", function(obj) {
+			vp.on("filter", function(obj) { // NB: _not_ currently used - see vp.check()
 				return obj.name in vp.options();
 			});
 			vp.on("eject", function(portout) {
