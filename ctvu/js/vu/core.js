@@ -71,21 +71,28 @@ vu.core = {
 			return cont;
 		return CT.dom.div(cont, "topbordered padded margined");
 	},
-	menu: function(section, origin, selector, header, onclick) {
-		return new CT.modal.Modal({
+	_modopts: function(origin, onclick, content, className) {
+		var opts = {
 			center: false,
 			noClose: true,
 			notlatest: true,
-			onclick: onclick,
 			transition: "slide",
 			resizeRecenter: ["top", "bottom"].includes(origin),
-			slide: { origin: origin },
-			content: [
-				header || CT.parse.key2title(section),
-				selector
-			],
-			className: "abs above padded bordered round pointer gmenu " + section
-		});
+			slide: { origin: origin }
+		};
+		if (onclick)
+			opts.onclick = onclick;
+		if (content)
+			opts.content = content;
+		if (className)
+			opts.className = className;
+		return opts;
+	},
+	menu: function(section, origin, selector, header, onclick) {
+		return new CT.modal.Modal(vu.core._modopts(origin, onclick, [
+			header || CT.parse.key2title(section),
+			selector
+		], "abs above padded bordered round pointer gmenu " + section));
 	},
 	impex: function(data, onchange) {
 		(new CT.modal.Modal({
@@ -348,13 +355,28 @@ vu.core = {
 			});
 		});
 	},
+	toggleFS: function() {
+		var fsb = vu.core._fsbutt;
+		fsb._fullscreen = !fsb._fullscreen;
+		fsb.firstChild.firstChild.src = "/img/vu/" +
+			(fsb._fullscreen ? "un" : "") + "fullscreen.png";
+		if (fsb._fullscreen)
+			document.body.requestFullscreen();
+		else
+			document.exitFullscreen();
+
+	},
 	init: function() {
-		var cfg = core.config.ctvu.loaders;
+		var cfg = core.config.ctvu.loaders, vc = vu.core;
 		cfg.customs.forEach(function(cus) {
 			CT.require("custom." + cus, true);
 		});
 		cfg.templates.forEach(function(tmp) {
 			CT.require("templates." + tmp, true);
 		});
+		vc._fsbutt = CT.dom.img("/img/vu/fullscreen.png",
+			"abs ctl mosthigh hoverglow pointer", vc.toggleFS,
+			null, null, "fullscreen", null, "w40p h40p");
+		document.body.appendChild(vc._fsbutt);
 	}
 };
