@@ -20,8 +20,19 @@ vu.game.Adventure = CT.Class({
 				this.controls.setTarget(person, true);
 			}
 		},
+		begin: function() {
+			var gopts = this.opts.game;
+			CT.modal.modal(CT.dom.div([
+				CT.dom.div(gopts.name, "bigger"),
+				gopts.description,
+				"(click this window to start!)"
+			], "centered kidvp"), this.setScene, {
+				noClose: true,
+				transition: "fade"
+			}, true);
+		},
 		setState: function() {
-			var s = this.state;
+			var s = this.state, begin = this._.begin;
 			s.script = s.script || "start";
 			s.story = s.story || [];
 			s.actors = s.actors || {};
@@ -29,16 +40,20 @@ vu.game.Adventure = CT.Class({
 				gear: {},
 				bag: { back: {}, hip: {} } // left/right
 			};
-			s.level || CT.modal.prompt({
+			if (s.level)
+				return begin();
+			CT.modal.prompt({
 				prompt: "what level are you starting at?",
 				style: "number",
 				min: 1,
 				step: 1,
 				noClose: true,
 				noCancel: true,
+				notlatest: true,
 				classname: "w400p",
 				cb: function(num) {
 					s.level = num;
+					begin();
 				}
 			});
 		},
@@ -57,9 +72,10 @@ vu.game.Adventure = CT.Class({
 				CT.modal.choice({
 					prompt: "resume adventure or start over?",
 					data: ["resume", "restart"],
+					notlatest: true,
 					noCancel: true,
 					cb: function(decision) {
-						if (decision == "restart" && confirm("are you sure you want to lose your progress?"))
+						if (decision == "restart")// && confirm("are you sure you want to lose your progress?"))
 							_.reset();
 						else
 							_.setState();
@@ -172,13 +188,5 @@ vu.game.Adventure = CT.Class({
 		this.controls = zcc.controls = new zero.core.Controls({
 			moveCb: vu.live.meta
 		});
-		CT.modal.modal(CT.dom.div([
-			CT.dom.div(opts.game.name, "bigger"),
-			opts.game.description,
-			"(click this window to start!)"
-		], "centered kidvp"), this.setScene, {
-			noClose: true,
-			transition: "fade"
-		}, true);
 	}
 });
