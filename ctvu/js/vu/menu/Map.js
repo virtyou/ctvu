@@ -57,7 +57,9 @@ vu.menu.Map = CT.Class({
 		var _ = this._, n = CT.dom.div(null, 
 			kind, null, null, _.b2p(obj.bounds, pos));
 		CT.dom.addContent(_.frame, n);
-		if (kind == "floor" && obj.opts.shift)
+		if (obj.name in vu.portal.options())
+			n.classList.add("portal");
+		else if (kind == "floor" && obj.opts.shift)
 			_.movers[obj.name] = n;
 		return n;
 	},

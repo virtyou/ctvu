@@ -390,6 +390,10 @@ img.right.h30p.up5 {
 	border: 1px solid black;
 	background: yellow;
 }
+.gmenu.minimap .frame .portal {
+	border: 1px solid black;
+	background: blue;
+}
 
 .gmenu.minimap .frame .people,
 .gmenu.minimap .frame .person,
