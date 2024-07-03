@@ -36,7 +36,7 @@ vu.game.Adventure = CT.Class({
 				step: 1,
 				noClose: true,
 				noCancel: true,
-				classname: "w300p",
+				classname: "w400p",
 				cb: function(num) {
 					s.level = num;
 				}
