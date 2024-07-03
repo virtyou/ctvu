@@ -147,8 +147,11 @@ iframe {
 
 .basicpopup {
 	color: black;
-	font-size: 160%;
 	overflow-y: auto;
+}
+
+.basicpopup, .basicpopup button {
+	font-size: 160%;
 }
 
 .gmenu {
