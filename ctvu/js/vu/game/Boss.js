@@ -297,7 +297,7 @@ vu.game.Boss.Orb = CT.Class({
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, vu.game.Boss.Orb.varieties[opts.variety], {
-			speed: 4,
+			speed: 10,
 			invisible: true,
 			sphereGeometry: 20
 		}, this.opts);
