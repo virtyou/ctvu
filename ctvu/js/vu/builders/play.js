@@ -137,6 +137,7 @@ vu.builders.play = {
 				CT.pubsub.unsubscribe(cur.room.opts.key);
 			});
 			vu.portal.on("inject", function(target, portin) {
+				cur.injector = portin;
 				zero.core.util.room(CT.merge({
 					onbuild: function(room) {
 						vu.live.emit("inject", portin);

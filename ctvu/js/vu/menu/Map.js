@@ -57,9 +57,12 @@ vu.menu.Map = CT.Class({
 		var _ = this._, n = CT.dom.div(null, 
 			kind, null, null, _.b2p(obj.bounds, pos));
 		CT.dom.addContent(_.frame, n);
-		if (obj.name in vu.portal.options())
-			n.classList.add("portal");
-		else if (kind == "floor" && obj.opts.shift)
+		if (kind == "object") {
+			if (obj.opts.key == zero.core.current.injector)
+				n.classList.add("entrance");
+			else if (vu.portal && obj.name in vu.portal.options())
+				n.classList.add("portal");
+		} else if (kind == "floor" && obj.opts.shift)
 			_.movers[obj.name] = n;
 		return n;
 	},
@@ -97,7 +100,7 @@ vu.menu.Map = CT.Class({
 			x: -min.x,
 			z: -min.z
 		};
-		n.style.height = (wp / r) + "px";
+		n.style.height = 4 + (wp / r) + "px";
 	},
 	buttons: function() {
 		var oz = this.opts, bz = oz.buttons, bkeys = Object.keys(bz);

@@ -394,6 +394,10 @@ img.right.h30p.up5 {
 	border: 1px solid black;
 	background: blue;
 }
+.gmenu.minimap .frame .entrance {
+	border: 1px solid black;
+	background: green;
+}
 
 .gmenu.minimap .frame .people,
 .gmenu.minimap .frame .person,
