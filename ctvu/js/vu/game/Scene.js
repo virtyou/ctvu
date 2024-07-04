@@ -87,12 +87,28 @@ vu.game.Scene = CT.Class({
 			carp.opts.items.length && rc(carp, men.shelf);
 		}
 		this.comp();
+		zcc.receiver = this.receive;
 		zc.util.onCurPer(this.run);
 	},
 	run: function() {
 		zero.core.camera.angle("preferred");
 		this.script(this.state.script);
 		this.menus.minimap();
+	},
+	receive: function(item) {
+		var person = zero.core.current.room.getPerson(item, this.state.actors);
+		if (!person) return;
+		if (CT.data.random()) { // TODO : configurize yes/no/trigz
+			person.say(CT.random.choice([
+				"thanks!", "why thank you", "oh, you shouldn't have!",
+				"oh, for me?", "you're too kind!", "you shouldn't have"
+			]));
+			return person;
+		}
+		person.say(CT.random.choice([
+			"no thank you", "i don't want that", "nah", "i'm good",
+			"i don't need that", "what's that?", "no thanks"
+		]));
 	},
 	comp: function() {
 		var zcc = zero.core.current, oz = this.opts,
