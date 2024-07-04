@@ -409,8 +409,10 @@ vu.game.hopper.Hopper = CT.Class({
 		var _ = this._, ccfg = _.pcfg(creature.opts.kind), hp = ccfg.hp,
 			level = ccfg.source ? _.boss(ccfg.source).level : ccfg.level;
 		this.log(creature.name, ":: level", level);
-		creature.level = level;
+		creature.adjust("rotation", "x", 0);
+		creature.adjust("rotation", "z", 0);
 		creature.hp = hp * level;
+		creature.level = level;
 		this.scale(creature);
 	},
 	initHunters: function() {
