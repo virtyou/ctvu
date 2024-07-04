@@ -105,9 +105,10 @@ vu.game.dropper = {
 			}
 		}, vu.game.dropper._.item(iopts.name, iopts.kind)));
 	},
-	drop: function(position, kind, variety) {
+	drop: function(position, kind, variety, name) {
+		var d = vu.game.dropper, _ = d._;
 		kind = kind || "held";
-		var d = vu.game.dropper, _ = d._, name = CT.data.choice(_.names(kind, variety));
+		name = name || CT.data.choice(_.names(kind, variety));
 		if (!name)
 			return d.log("aborting drop - no undropped items");
 		d.log("dropping " + name);
@@ -119,3 +120,5 @@ vu.game.dropper = {
 		}, true, _.drop);
 	}
 };
+
+zero.core.current.dropper = vu.game.dropper.drop;
