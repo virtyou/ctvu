@@ -324,8 +324,8 @@ vu.game.hopper.Hopper = CT.Class({
 	CLASSNAME: "vu.game.hopper.Hopper",
 	_: {
 		smack: function(prey, amount) {
-			var _ = this._, pcfg = _.pcfg(prey.opts.kind);
-			amount = (amount || 1) * zero.core.current.person.score.level;
+			var _ = this._, zcc = zero.core.current, pcfg = _.pcfg(prey.opts.kind);
+			amount = (amount || 1) * zcc.person.score.level;
 			this.log("you smacked", prey.name, "@", prey.hp, "for", amount);
 			vu.color.splash("blue");
 			prey.hp -= amount;
@@ -333,6 +333,7 @@ vu.game.hopper.Hopper = CT.Class({
 				this.setCritter(prey);
 				_.splode(prey);
 				_.megasource(prey) && _.boss(pcfg.source).incLevel();
+				pcfg.qdrop && zcc.dropper(prey.position(), "held", "quest", pcfg.qdrop);
 				return true;
 			}
 		},
