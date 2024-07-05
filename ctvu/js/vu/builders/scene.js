@@ -260,7 +260,7 @@ vu.builders.scene = {
 			var r = zero.core.current.room,
 				gup = vu.game.step.upstate,
 				item = new zero.core.Thing(CT.merge(iopts,
-					vu.storage.get(iopts.kind)[iopts.name]));
+					vu.core.options.get(iopts.kind, iopts.name)));
 			return CT.dom.div([
 				CT.dom.div(" (" + iopts.kind + ")", "right small"),
 				item.name,
@@ -308,7 +308,7 @@ vu.builders.scene = {
 						cb: function(kind) {
 							CT.modal.choice({
 								prompt: "please select an item",
-								data: Object.keys(vu.storage.get(kind)),
+								data: vu.core.options.names(kind),
 								cb: function(iname) {
 									si[iname] = {
 										name: iname,
