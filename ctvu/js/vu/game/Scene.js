@@ -23,8 +23,15 @@ vu.game.Scene = CT.Class({
 		vu.core.comp(person);
 	},
 	envMod: function(emod, oname) {
-		this.log("envMod", emod, oname);
+		var iname;
+		if (emod == "receive") {
+			iname = oname.item;
+			oname = oname.actor;
+		}
+		this.log("envMod", emod, oname, iname);
 		var tz = this.opts.triggers, t = tz[emod] && tz[emod][oname];
+		if (iname)
+			t = t[iname];
 		t && this.script(t);
 	},
 	refresh: function(altered) {
@@ -87,12 +94,29 @@ vu.game.Scene = CT.Class({
 			carp.opts.items.length && rc(carp, men.shelf);
 		}
 		this.comp();
+		zcc.receiver = this.receive;
 		zc.util.onCurPer(this.run);
 	},
 	run: function() {
 		zero.core.camera.angle("preferred");
 		this.script(this.state.script);
 		this.menus.minimap();
+	},
+	receive: function(item) {
+		var person = zero.core.current.room.getPerson(item, this.state.actors);
+		if (!person) return;
+		var rtz = this.opts.triggers.receive, recip = rtz && rtz[person.name];
+		if (recip && recip[item.name]) {
+			person.say(CT.data.choice([
+				"thanks!", "why thank you", "oh, you shouldn't have!",
+				"oh, for me?", "you're too kind!", "you shouldn't have"
+			]));
+			return person;
+		}
+		person.say(CT.data.choice([
+			"no thank you", "i don't want that", "nah", "i'm good",
+			"i don't need that", "what's that?", "no thanks"
+		]));
 	},
 	comp: function() {
 		var zcc = zero.core.current, oz = this.opts,
