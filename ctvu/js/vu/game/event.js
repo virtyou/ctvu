@@ -1,5 +1,6 @@
 vu.game.event = {
 	_: {
+		nodes: {},
 		t2f: {
 			melt: "frozen",
 			shart: "brittle",
@@ -39,40 +40,88 @@ vu.game.event = {
 		},
 		slotter: function(trigs) {
 			return function(name) {
-				var tn = CT.dom.div([
+				var tlabel, tn, val = trigs[name];
+				if (typeof val == "string")
+					tlabel = "<b>" + name + "</b>: " + val;
+				else {
+					tlabel = [
+						CT.dom.div(name, "bold"),
+						Object.keys(val).map(k => k + " -> " + val[k])
+					];
+				}
+				tn = CT.dom.div([
 					CT.dom.button("unregister", function() {
 						delete trigs[name];
 						tn.remove();
 						vu.game.event._.up();
 					}, "right red"),
-					name + ": " + trigs[name]
+					tlabel
 				], "borderd padded margined");
 				return tn;
 			};
+		},
+		slot: function(val, item, trig) {
+			var _ = vu.game.event._, trigs = _.trigs(trig);
+			trigs[item.name] = val;
+			CT.dom.addContent(_.nodes[trig], _.slotter(trigs)(item.name));
+			_.up();
 		}
 	},
+	selectors: {
+		object: function(cb, feats) {
+			CT.modal.choice({
+				prompt: "please select object",
+				data: feats,
+				cb: cb
+			});
+		},
+		script: function(cb, pfor) {
+			var prompt = "please select a script to trigger";
+			if (pfor)
+				prompt += " for " + pfor;
+			CT.modal.choice({
+				prompt: prompt,
+				data: Object.keys(zero.core.current.scene.scripts),
+				cb: cb
+			});
+		},
+		scripts: function(cb, items) {
+			var vals = {}, index = 0, setScript = function(iname, sname) {
+				index += 1;
+				vals[iname] = sname;
+				items[index] ? reqScript() : cb(vals);
+			}, reqScript = function() {
+				vu.game.event.selectors.script(sname => setScript(items[index],
+					sname), items[index]);
+			};
+			reqScript();
+		},
+		qitems: function(cb) {
+			CT.modal.choice({
+				prompt: "please select quest items",
+				style: "multiple-choice",
+				data: vu.core.options.names("held", "quest"),
+				cb: cb
+			});
+		}
+	},
+	register: function(item, trig) {
+		var vge = vu.game.event, _ = vge._, selz = vge.selectors, feature = _.t2f[trig];
+		if (feature == "actor") {
+			return selz.qitems(function(items) {
+				selz.scripts(mapping => _.slot(mapping, item, trig), items);
+			});
+		}
+		selz.script(sname => _.slot(sname, item, trig));
+	},
 	node: function(trig) {
-		var _ = vu.game.event._, zcc = zero.core.current, trigs = _.trigs(trig),
-			tnode = _.slotter(trigs), feature = _.t2f[trig], feats,
-			tnodes = CT.dom.div(Object.keys(trigs).map(tnode));
+		var vge = vu.game.event, _ = vge._, selz = vge.selectors, feats,
+			trigs = _.trigs(trig), tnode = _.slotter(trigs), feature = _.t2f[trig],
+			tnodes = _.nodes[trig] = CT.dom.div(Object.keys(trigs).map(tnode));
 		return CT.dom.div([
 			CT.dom.button("add", function() {
 				feats = _.options(feature, trigs);
-				feats.length && CT.modal.choice({
-					prompt: "please select object",
-					data: feats,
-					cb: function(item) {
-						CT.modal.choice({
-							prompt: "please select a script to trigger",
-							data: Object.keys(zcc.scene.scripts),
-							cb: function(sname) {
-								trigs[item.name] = sname;
-								CT.dom.addContent(tnodes, tnode(item.name));
-								_.up();
-							}
-						});
-					}
-				});
+				feats.length && selz.object(item => vge.register(item, trig), feats);
 			}, "right"),
 			CT.dom.div(trig + " (" + feature + ")", "bold"),
 			tnodes
