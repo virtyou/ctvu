@@ -395,8 +395,11 @@ vu.core.options = {
 		var vco = vu.core.options;
 		return vco.pfilt(vco.ops[kind][name], "variety", variety);
 	},
-	names: function(kind) {
-		return Object.keys(vu.core.options.get(kind));
+	names: function(kind, variety) {
+		var vco = vu.core.options, names = Object.keys(vco.get(kind));
+		if (variety)
+			names = names.filter(name => vco.vfilt(name, kind, variety));
+		return names;
 	},
 	get: function(kind, name) {
 		kind = kind || "held";

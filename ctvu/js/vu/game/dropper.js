@@ -26,10 +26,7 @@ vu.game.dropper = {
 			return vu.core.options.get(kind)[name];
 		},
 		names: function(kind, variety) {
-			var vco = vu.core.options, onames = vco.names(kind);
-			if (variety)
-				onames = onames.filter(name => vco.vfilt(name, kind, variety));
-			return onames.filter(vu.game.dropper._.filt);
+			return vu.core.options.names(kind, variety).filter(vu.game.dropper._.filt);
 		}
 	},
 	log: function(msg) {
