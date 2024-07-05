@@ -23,8 +23,15 @@ vu.game.Scene = CT.Class({
 		vu.core.comp(person);
 	},
 	envMod: function(emod, oname) {
-		this.log("envMod", emod, oname);
+		var iname;
+		if (emod == "receive") {
+			iname = oname.item;
+			oname = oname.actor;
+		}
+		this.log("envMod", emod, oname, iname);
 		var tz = this.opts.triggers, t = tz[emod] && tz[emod][oname];
+		if (iname)
+			t = t[iname];
 		t && this.script(t);
 	},
 	refresh: function(altered) {
