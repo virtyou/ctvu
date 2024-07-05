@@ -111,6 +111,7 @@ vu.game.Scene = CT.Class({
 				"thanks!", "why thank you", "oh, you shouldn't have!",
 				"oh, for me?", "you're too kind!", "you shouldn't have"
 			]));
+			setTimeout(vu.game.dropper.upstate, 100, "held");
 			return person;
 		}
 		person.say(CT.data.choice([
