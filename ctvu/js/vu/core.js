@@ -380,3 +380,31 @@ vu.core = {
 		document.body.appendChild(vc._fsbutt);
 	}
 };
+
+vu.core.options = {
+	defaults: {
+		held: {
+			variety: "knocker"
+		}
+	},
+	ops: {},
+	pfilt: function(item, prop, val) {
+		return val == (item.variety || vu.core.options.defaults[item.kind][prop]);
+	},
+	vfilt: function(name, kind, variety) {
+		var vco = vu.core.options;
+		return vco.pfilt(vco.ops[kind][name], "variety", variety);
+	},
+	names: function(kind) {
+		return Object.keys(vu.core.options.get(kind));
+	},
+	get: function(kind, name) {
+		kind = kind || "held";
+		var ops = vu.core.options.ops;
+		if (!ops[kind]) {
+			ops[kind] = CT.merge(vu.storage.get(kind),
+				zero.base.clothes.procedurals(kind, true, true));
+		}
+		return name ? ops[kind][name] : ops[kind];
+	}
+};

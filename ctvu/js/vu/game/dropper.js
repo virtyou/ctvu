@@ -1,12 +1,6 @@
 vu.game.dropper = {
 	_: {
-		ops: {},
 		drops: {},
-		defaults: {
-			held: {
-				variety: "knocker"
-			}
-		},
 		droptex: ["what have we here?", "what's this?", "any takers?", "give it a try!"],
 		click: function(target, cb) {
 			zero.core.click.register(target, () => cb(target));
@@ -28,30 +22,14 @@ vu.game.dropper = {
 			}
 			return !(iname in vu.game.dropper._.drops);
 		},
-		pfilt: function(item, prop, val) {
-			return val == (item.variety || vu.game.dropper._.defaults[item.kind][prop]);
-		},
-		vfilt: function(name, kind, variety) {
-			var _ = vu.game.dropper._;
-			return _.pfilt(_.ops[kind][name], "variety", variety);
-		},
-		options: function(kind) {
-			kind = kind || "held";
-			var d = vu.game.dropper, _ = d._;
-			if (!_.ops[kind]) {
-				_.ops[kind] = CT.merge(vu.storage.get(kind),
-					zero.base.clothes.procedurals(kind, true, true));
-			}
-			return _.ops[kind];
-		},
 		item: function(name, kind) { // ad-hoc keys?
-			return vu.game.dropper._.options(kind)[name];
+			return vu.core.options.get(kind)[name];
 		},
 		names: function(kind, variety) {
-			var _ = vu.game.dropper._, onames = Object.keys(_.options(kind));
+			var vco = vu.core.options, onames = vco.names(kind);
 			if (variety)
-				onames = onames.filter(name => _.vfilt(name, kind, variety));
-			return onames.filter(_.filt);
+				onames = onames.filter(name => vco.vfilt(name, kind, variety));
+			return onames.filter(vu.game.dropper._.filt);
 		}
 	},
 	log: function(msg) {
