@@ -80,8 +80,37 @@ vu.game.hopper.modder = {
 			}
 		});
 	},
+	hopSetter: function(pcfg, prop, name, desc, data, fallback) {
+		var n = CT.dom.div(null, "clearnode");
+		n.update = function() {
+			CT.dom.setContent(n, [
+				CT.dom.button("change", function() {
+					CT.modal.choice({
+						prompt: "choose " + name,
+						data: data(),
+						cb: function(val) {
+							pcfg[prop] = val;
+							n.update();
+							vu.game.hopper.modder.upscore();
+						}
+					});
+				}, "right"),
+				desc + " " + (pcfg[prop] || fallback || "nothing")
+			]);
+		};
+		n.update();
+		return n;
+	},
+	autosource: function(pcfg) {
+		return vu.game.hopper.modder.hopSetter(pcfg, "source", "automaton", "spawns from",
+			() => zero.core.current.room.automatons.map(a => a.person.name), "room");
+	},
+	qdrop: function(pcfg) {
+		return vu.game.hopper.modder.hopSetter(pcfg, "qdrop", "quest item", "drops",
+			() => vu.core.options.names("held", "quest"));
+	},
 	hop: function(p, pz, variety) {
-		var hm = vu.game.hopper.modder, pcfg = pz[p], cont, autosource;
+		var hm = vu.game.hopper.modder, pcfg = pz[p], cont;
 		if (!isNaN(pcfg)) {
 			pcfg = pz[p] = {
 				value: pz[p]
@@ -95,25 +124,8 @@ vu.game.hopper.modder = {
 			}, 1, 10, pcfg.value, 1, "w1 block")
 		];
 		if (variety == "player") {
-			autosource = CT.dom.div();
-			autosource.update = function() {
-				CT.dom.setContent(autosource, [
-					CT.dom.button("change", function() {
-						CT.modal.choice({
-							prompt: "choose an automaton",
-							data: zero.core.current.room.automatons.map(a => a.person.name),
-							cb: function(aname) {
-								pcfg.source = aname;
-								autosource.update();
-								hm.upscore();
-							}
-						});
-					}, "right"),
-					"spawns from " + (pcfg.source || "room")
-				]);
-			};
-			autosource.update();
-			cont.push(autosource);
+			cont.push(hm.autosource(pcfg));
+			cont.push(hm.qdrop(pcfg));
 			cont.push(hm.hopCheck("mega", p, pcfg));
 			cont.push(hm.hopCheck("powerjump", p, pcfg));
 		} else // fauna
