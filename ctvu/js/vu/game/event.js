@@ -5,7 +5,13 @@ vu.game.event = {
 			shart: "brittle",
 			burn: "flammable",
 			die: "automaton",
-			wile: "automaton"
+			wile: "automaton",
+			receive: "actor"
+		},
+		nolerts: {
+			actor: "no unconfigured actors - add one using the Actors menu!",
+			automaton: "no unconfigured automatons - add one on the pop page!",
+			default: feature => "no unconfigured " + feature + " objects - add one on the zone page!"
 		},
 		up: function() {
 			var scene = zero.core.current.scene;
@@ -20,15 +26,15 @@ vu.game.event = {
 			return trigs;
 		},
 		options: function(feature, trigs) {
-			var zccr = zero.core.current.room, ops, isauto = feature == "automaton";
-			ops = isauto ? zccr.automatons.map(a => a.person) : zccr.getFeaturing(feature);
+			var _ = vu.game.event._, zcc = zero.core.current, zccr = zcc.room, ops;
+			if (feature == "automaton")
+				ops = zccr.automatons.map(a => a.person);
+			else if (feature == "actor")
+				ops = zcc.scene.actors;
+			else
+				ops = zccr.getFeaturing(feature);
 			ops = ops.filter(f => !(f.name in trigs));
-			if (!ops.length) {
-				if (isauto)
-					alert("no unconfigured automatons - add one on the pop page!");
-				else
-					alert("no unconfigured " + feature + " objects - add one on the zone page!");
-			}
+			ops.length || alert(_.nolerts[feature] || _.nolerts.default(feature));
 			return ops;
 		},
 		slotter: function(trigs) {
@@ -37,7 +43,7 @@ vu.game.event = {
 					CT.dom.button("unregister", function() {
 						delete trigs[name];
 						tn.remove();
-						_.up();
+						vu.game.event._.up();
 					}, "right red"),
 					name + ": " + trigs[name]
 				], "borderd padded margined");
