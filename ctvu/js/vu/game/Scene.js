@@ -105,7 +105,8 @@ vu.game.Scene = CT.Class({
 	receive: function(item) {
 		var person = zero.core.current.room.getPerson(item, this.state.actors);
 		if (!person) return;
-		if (CT.data.random()) { // TODO : configurize yes/no/trigz
+		var rtz = this.opts.triggers.receive, recip = rtz && rtz[person.name];
+		if (recip && recip[item.name]) {
 			person.say(CT.data.choice([
 				"thanks!", "why thank you", "oh, you shouldn't have!",
 				"oh, for me?", "you're too kind!", "you shouldn't have"
