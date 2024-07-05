@@ -41,6 +41,15 @@ vu.game.dropper = {
 				return item;
 		}
 	},
+	upstate: function(kind) {
+		var zcc = zero.core.current, per = zcc.person,
+			state = zcc.adventure.state;
+		if (kind == "held")
+			state.inventory.gear.held = per.opts.gear.held;
+		else
+			state.inventory.gear.worn = per.opts.gear.worn;
+		zcc.adventure.upstate();
+	},
 	get: function(item) {
 		var zc = zero.core, zcc = zc.current, per = zcc.person,
 			cam = zc.camera, cangle = cam.current,
@@ -49,12 +58,8 @@ vu.game.dropper = {
 			cam.angle(cangle);
 			vu.game.util.text(msg);
 			state.story.push(msg);
-			if (item.opts.kind == "held")
-				state.inventory.gear.held = per.opts.gear.held;
-			else
-				state.inventory.gear.worn = per.opts.gear.worn;
 			delete state.scenes[zcc.scene.name].items[item.name];
-			zcc.adventure.upstate();
+			vu.game.dropper.upstate(item.opts.kind);
 		});
 	},
 	clear: function() { // anything else?
