@@ -102,7 +102,7 @@ vu.game.Adventure = CT.Class({
 				zcc.injector = pkey;
 				scene(vp.options()[vp.ejector.name].target);
 			});
-			for (emod of ["burn", "melt", "shart", "wile", "die"])
+			for (emod of ["burn", "melt", "shart", "wile", "die", "receive"])
 				_.ereg(emod);
 		}
 	},
