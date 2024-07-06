@@ -49,7 +49,6 @@ vu.game.Adventure = CT.Class({
 				step: 1,
 				noClose: true,
 				noCancel: true,
-				notlatest: true,
 				classname: "w400p",
 				cb: function(num) {
 					s.level = num;
@@ -72,7 +71,6 @@ vu.game.Adventure = CT.Class({
 				CT.modal.choice({
 					prompt: "resume adventure or start over?",
 					data: ["resume", "restart"],
-					notlatest: true,
 					noCancel: true,
 					cb: function(decision) {
 						if (decision == "restart")// && confirm("are you sure you want to lose your progress?"))
