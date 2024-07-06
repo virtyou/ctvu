@@ -261,6 +261,8 @@ vu.game.Boss.Orb = CT.Class({
 	},
 	tick: function(dts) {
 		var hit, oz = this.opts;
+		if (this.removed)
+			return this.log("aborting tick - removed!");
 		if (this.throwing)
 			this.setPos(this.hand.position(null, true));
 		else if (this.flying) {
