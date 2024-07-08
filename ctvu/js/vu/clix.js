@@ -78,8 +78,13 @@ vu.clix = {
 		else if (thing.opts.kind == "carpentry") {
 			thing.opts.items.length && other.push(thing.perusebutt());
 			thing.openable() && other.push(thing.openbutt());
+			other.push(CT.dom.button("sit", () => zcc.person.sit(thing)));
 		} else if (thing.opts.kind == "portal")
 			other.push(CT.dom.button("enter", () => zcc.person.approach(thing, vc.action)));
+		else if (thing.opts.name == "bed") { // meh
+			other.push(CT.dom.button("sit", () => zcc.person.sit(thing)));
+			other.push(CT.dom.button("lie", () => zcc.person.lie(thing)));
+		}
 		zc.click.register(target, function() {
 			vc.info(thing.name, isYou ? vc.yinfo() : other);
 			cam.follow(target.looker || target);
