@@ -166,6 +166,10 @@ iframe {
 	transition: all 500ms !important;
 }
 
+.gmenu.active {
+	border: 2px solid yellow;
+}
+
 .gmenu.natural {
 	min-width: 140px;
 }
