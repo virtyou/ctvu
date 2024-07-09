@@ -7,11 +7,14 @@ vu.game.event = {
 			burn: "flammable",
 			die: "automaton",
 			wile: "automaton",
-			receive: "actor"
+			receive: "actor",
+			prestart: "scene"
 		},
 		nolerts: {
+			prop: "no props - register one with the Props menu",
 			actor: "no unconfigured actors - add one using the Actors menu!",
 			automaton: "no unconfigured automatons - add one on the pop page!",
+			scene: "no unconfigured player or actors - add an actor using the Actors menu!",
 			default: feature => "no unconfigured " + feature + " objects - add one on the zone page!"
 		},
 		up: function() {
@@ -32,6 +35,8 @@ vu.game.event = {
 				ops = zccr.automatons.map(a => a.person);
 			else if (feature == "actor")
 				ops = zcc.scene.actors;
+			else if (feature == "scene")
+				ops = ["player"].concat(zcc.scene.actors);
 			else
 				ops = zccr.getFeaturing(feature);
 			ops = ops.filter(f => !(f.name in trigs));
@@ -61,9 +66,9 @@ vu.game.event = {
 			};
 		},
 		slot: function(val, item, trig) {
-			var _ = vu.game.event._, trigs = _.trigs(trig);
-			trigs[item.name] = val;
-			CT.dom.addContent(_.nodes[trig], _.slotter(trigs)(item.name));
+			var _ = vu.game.event._, trigs = _.trigs(trig), name = item.name || item;
+			trigs[name] = val;
+			CT.dom.addContent(_.nodes[trig], _.slotter(trigs)(name));
 			_.up();
 		}
 	},
@@ -103,6 +108,25 @@ vu.game.event = {
 				data: vu.core.options.names("held", "quest"),
 				cb: cb
 			});
+		},
+		sitlie: function(cb) {
+			var rdata = {}, props = Object.keys(zero.core.current.scene.props);
+			if (!props.length)
+				return alert(vu.game.event._.nolerts.prop);
+			CT.modal.choice({
+				prompt: "please select action",
+				data: ["sit", "lie"],
+				cb: function(action) {
+					CT.modal.choice({
+						prompt: "please select target",
+						data: props,
+						cb: function(prop) {
+							rdata[action] = prop;
+							cb(rdata);
+						}
+					});
+				}
+			});
 		}
 	},
 	register: function(item, trig) {
@@ -112,6 +136,8 @@ vu.game.event = {
 				selz.scripts(mapping => _.slot(mapping, item, trig), items);
 			});
 		}
+		if (feature == "scene")
+			return selz.sitlie(mapping => _.slot(mapping, item, trig));
 		selz.script(sname => _.slot(sname, item, trig));
 	},
 	node: function(trig) {
