@@ -129,13 +129,19 @@ vu.game.stepper = {
 		vu.game.stepper._.actor(function(actor) {
 			CT.modal.choice({
 				prompt: "please select an action",
-				data: ["say", "respond", "move", "approach", "chase", "leave"],
+				data: ["say", "respond", "move", "approach", "chase", "sit", "lie", "leave"],
 				cb: function(action) {
 					var act = function(line) {
 						cb({
 							actor: actor.name,
 							action: action,
 							line: line
+						});
+					}, tar = function(data) {
+						CT.modal.choice({
+							prompt: "please select a target",
+							data: data,
+							cb: target => act(target.name)
 						});
 					};
 					if (action == "move") {
@@ -167,16 +173,12 @@ vu.game.stepper = {
 									});
 								} else // furnishing
 									data = Object.values(zcc.room.objects);
-								CT.modal.choice({
-									prompt: "please select a target",
-									data: data,
-									cb: function(target) {
-										act(target.name);
-									}
-								});
+								tar(data);
 							}
 						});
-					} else if (action == "leave")
+					} else if (action == "sit" || action == "lie")
+						tar(Object.values(zcc.room.objects));
+					else if (action == "leave")
 						vu.game.stepper._.port(port => act(port.name));
 					else {
 						CT.modal.prompt({
