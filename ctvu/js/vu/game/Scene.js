@@ -111,6 +111,7 @@ vu.game.Scene = CT.Class({
 		zero.core.camera.angle("preferred");
 		this.script(this.state.script);
 		this.menus.minimap();
+		this.showCredits();
 	},
 	receive: function(item) {
 		var person = zero.core.current.room.getPerson(item, this.state.actors);
@@ -142,6 +143,30 @@ vu.game.Scene = CT.Class({
 		rt.startsWith("http") && this.menus.attribution("seeing", "wallpaper",
 			null, rt.split("/")[2].split(".").slice(-2).join("."));
 	},
+	showCredits: function() {
+		var creds = this.credits, names = Object.keys(creds), c;
+		names.length && this.menus.attribution("seeing", "models", names.map(function(name) {
+			c = creds[name];
+			return CT.dom.div([
+				CT.dom.span(name, "big bold"),
+				CT.dom.pad(),
+				CT.dom.span("(x" + c.count + ") -"),
+				CT.dom.pad(),
+				CT.dom.link(c.url.split("//")[1].split("/")[0],
+					null, c.url, null, null, null, true)
+			]);
+		}));
+	},
+	credit: function(name, url) {
+		name = CT.parse.stripNums(name);
+		if (!this.credits[name]) {
+			this.credits[name] = {
+				count: 0,
+				url: url
+			}
+		}
+		this.credits[name].count += 1;
+	},
 	load: function() {
 		var oz = this.opts, cfg = core.config.ctzero, start = this.start,
 			zc = zero.core, zcc = zc.current, zcu = zc.util, p;
@@ -154,6 +179,7 @@ vu.game.Scene = CT.Class({
 		cfg.room = oz.room;
 		cfg.people = oz.actors.slice();
 
+		zcc.creditor = this.credit;
 		zcc.scene ? zcu.refresh(start) : zcu.init(null, start);
 		zcc.scene = this;
 	},
@@ -180,13 +206,14 @@ vu.game.Scene = CT.Class({
 			s.scenes[opts.name].items = {};
 		this.name = opts.name;
 		this.menus = a.menus;
+		this.credits = {};
 		opts.actors.forEach(function(p) {
 			osa[p.name] = osa[p.name] || {};
 		});
 		CT.modal.modal(CT.dom.div([
 			CT.dom.div(opts.name, "bigger"),
 			opts.description,
-			"(click this window to start!)"
+			"(click this window or press TAB or ESCAPE to start!)"
 		], "centered kidvp"), this.load, {
 			noClose: true,
 			transition: "fade"

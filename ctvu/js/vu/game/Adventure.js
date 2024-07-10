@@ -25,7 +25,7 @@ vu.game.Adventure = CT.Class({
 			CT.modal.modal(CT.dom.div([
 				CT.dom.div(gopts.name, "bigger"),
 				gopts.description,
-				"(click this window to start!)"
+				"(click this window or press TAB or ESCAPE to start!)"
 			], "centered kidvp"), this.setScene, {
 				noClose: true,
 				transition: "fade"
