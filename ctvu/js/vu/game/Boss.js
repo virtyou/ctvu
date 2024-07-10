@@ -99,7 +99,9 @@ vu.game.Boss = CT.Class({
 	},
 	tick: function() {
 		var _ = this._, zc = zero.core, pb = zc.current.person.body,
-			mz = this.moves, moves = mz.range, per = this.person, bod = per.body;
+			mz = this.moves, moves = mz.range, per = this.person, bod = per && per.body;
+		if (!bod)
+			return this.log("tick() aborted - no body!");
 		if (this.hp < 1) {
 			per.say(CT.data.choice(_.laments), _.die);
 			return this.log("defeated!!!!!");
