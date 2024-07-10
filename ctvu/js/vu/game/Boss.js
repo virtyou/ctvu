@@ -21,10 +21,10 @@ vu.game.Boss = CT.Class({
 		},
 		hit: function(appendage, target) {
 			var zc = zero.core, zcc = zc.current;
-			appendage = appendage || this.person.body;
-			target = target || zcc.person.body;
 			if (!this.person.body)
 				return this.log("hit check aborted - no body!");
+			appendage = appendage || this.person.body;
+			target = target || zcc.person.body;
 			this.person.body.basicBound(); // hm ... maybe change?
 			if (zc.util.touching(appendage, target, 50, null, true)) {
 				zcc.player.damage(this.level);
