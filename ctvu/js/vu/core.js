@@ -355,16 +355,13 @@ vu.core = {
 			});
 		});
 	},
+	toggledFS: function() {
+		vu.core._fsbutt.firstChild.firstChild.src = "/img/vu/" +
+			(document.fullscreenElement ? "un" : "") + "fullscreen.png";
+	},
 	toggleFS: function() {
-		var fsb = vu.core._fsbutt;
-		fsb._fullscreen = !fsb._fullscreen;
-		fsb.firstChild.firstChild.src = "/img/vu/" +
-			(fsb._fullscreen ? "un" : "") + "fullscreen.png";
-		if (fsb._fullscreen)
-			document.body.requestFullscreen();
-		else
-			document.exitFullscreen();
-
+		document.fullscreenElement ? document.exitFullscreen()
+			: document.body.requestFullscreen();
 	},
 	init: function() {
 		var cfg = core.config.ctvu.loaders, vc = vu.core;
@@ -378,6 +375,7 @@ vu.core = {
 			"abs ctl mosthigh hoverglow pointer", vc.toggleFS,
 			null, null, "fullscreen", null, "w40p h40p");
 		document.body.appendChild(vc._fsbutt);
+		document.body.addEventListener("fullscreenchange", vc.toggledFS);
 	}
 };
 
