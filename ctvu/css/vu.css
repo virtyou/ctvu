@@ -62,8 +62,8 @@ iframe {
 }
 
 .ctswrap {
-	top: 0;
-	left: 0;
+	top: 5px;
+	left: 5px;
 	scale: 0.25;
 	margin: -25px;
 }
