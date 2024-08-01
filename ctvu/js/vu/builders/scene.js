@@ -12,6 +12,39 @@ vu.builders.scene = {
 			automatons: "bottomright"
 		},
 		swappers: ["props", "portals", "main", "score", "actors", "automatons"],
+		upons: function(a) {
+			var surfaces = ["bottom"].concat(zero.core.current.room.surfaces(true)),
+				vg = vu.game, aobj = vg.util.state().actors[a.name], flists = {},
+				aupons = aobj.upons = aobj.upons || {}, surfs, changed;
+			var slup = function(uname) {
+				aupons[uname] = flists[uname].fields.value();
+				changed = true;
+			}, slot = function(uname) {
+				flists[uname] = CT.dom.div();
+				vu.core.fieldList(flists[uname], aupons[uname], () => slup(uname));
+				return CT.dom.div([
+					CT.dom.div(uname, "big"),
+					flists[uname]
+				], "bordered padded margined round");
+			}, slotter = function() {
+				surfs = surfaces.filter(s => !(s in aupons));
+				if (!surfs.length)
+					return alert("no unconfigured surfaces!");
+				CT.modal.choice({
+					prompt: "please select a surface",
+					data: surfs,
+					cb: function(surf) {
+						aupons[surf] = [];
+						CT.dom.addContent(slots, slot(surf));
+					}
+				});
+			}, slots = CT.dom.div(Object.keys(aupons).map(slot));
+			CT.modal.modal([
+				CT.dom.button("add location", slotter, "right"),
+				CT.dom.div("upon triggers for " + a.name, "bigger bold"),
+				slots
+			], () => changed && vg.step.upstate(), { className: "basicpopup notBig"});
+		},
 		actor: function(a) {
 			var _ = vu.builders.scene._, zcc = zero.core.current, vg = vu.game,
 				possers = vg.util.positioners(a.name, zcc.scene.name, true),
@@ -55,7 +88,8 @@ vu.builders.scene = {
 					for (axis of ["weave", "slide", "orientation"])
 						possers[axis] = sz[axis].target;
 					gup();
-				}, "w1")
+				}, "w1"),
+				CT.dom.button("set upon triggers", () => _.upons(a), "w1 block")
 			], "bordered padded margined round inline-block", null, {
 				onclick: () => zero.core.camera.follow(bod)
 			});
