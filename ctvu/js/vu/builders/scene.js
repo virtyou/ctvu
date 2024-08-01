@@ -42,6 +42,7 @@ vu.builders.scene = {
 			CT.modal.modal([
 				CT.dom.button("add location", slotter, "right"),
 				CT.dom.div("upon triggers for " + a.name, "bigger bold"),
+				'respond "upon" for location-based responses',
 				slots
 			], () => changed && vg.step.upstate(), { className: "basicpopup notBig"});
 		},
