@@ -150,7 +150,7 @@ iframe {
 	overflow-y: auto;
 }
 
-.basicpopup, .basicpopup button {
+.basicpopup:not(.notBig), .basicpopup:not(.notBig) button {
 	font-size: 160%;
 }
 

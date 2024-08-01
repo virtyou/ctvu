@@ -119,7 +119,7 @@ vu.menu.Map = CT.Class({
 		for (k of _.structurals)
 			for (o in r[k])
 				this.place(r[k][o], k);
-		r.objects.forEach(o => this.place(o, "object"));
+		r.objects.forEach(o => o.onReady(() => this.place(o, "object")));
 		Object.values(zcc.people).forEach(this.person);
 		if (!this.ticking) {
 			this.ticking = true;
