@@ -61,7 +61,7 @@ vu.game.event = {
 						vu.game.event._.up();
 					}, "right red"),
 					tlabel
-				], "borderd padded margined");
+				], "bordered padded margined");
 				return tn;
 			};
 		},
