@@ -56,6 +56,7 @@ vu.builders.Gesture = CT.Class({
 vu.builders.gesture = {
 	menus: function() {
 		vu.builders.gesture = new vu.builders.Gesture({
+			allowReset: true,
 			main: "gestures",
 			secondary: "dances",
 			subs: {
