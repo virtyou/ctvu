@@ -167,6 +167,13 @@ vu.build.core = {
 				cb(floor.grippy);
 			});
 	},
+	climb: function(wall, cb) {
+		return CT.dom.checkboxAndLabel("climby", wall.opts.climby,
+			null, null, null, function(cbox) {
+				wall.climby = cbox.checked;
+				cb(wall.climby);
+			});
+	},
 	mosh: function(floor, cb) {
 		return vu.core.ranger("moshiness",
 			val => cb(parseInt(val)), 0, 5, floor.moshy || 0, 1);
