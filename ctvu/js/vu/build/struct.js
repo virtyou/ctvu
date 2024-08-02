@@ -164,6 +164,12 @@ vu.build.struct = {
 				fopts.grippy = isgrippy;
 				bs.strup(variety);
 			}));
+			if (variety == "wall" || variety == "obstacle") {
+				cont.push(vbc.climb(item, function(isclimby) {
+					fopts.climby = isclimby;
+					bs.strup(variety);
+				}));
+			}
 		}
 		["boulder", "stala"].includes(variety) && ["brittle",
 			"frozen"].forEach(prop => cont.push(bs.check(prop, fopts, variety)));
