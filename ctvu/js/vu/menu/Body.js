@@ -74,7 +74,17 @@ vu.menu.Body = CT.Class({
 					vu.core.impex(zero.core.current.person.opts[section], function(val) {
 						per(section, val);
 					});
-				}));
+				}, null, "smallish hoverglow"));
+				if (this.opts.allowReset) {
+					content.push(CT.dom.pad());
+					content.push(CT.dom.link("reset", function() {
+						if (!confirm("are you sure you want to reset your " + section + " configuration?"))
+							return;
+						per(section, {});
+						alert("ok, you did it!");
+						location.reload();
+					}, null, "smallish hoverglow"));
+				}
 			}
 			return content;
 		},
