@@ -24,6 +24,9 @@ vu.controls = {
 				vu.builders.zone.persist({
 					cameras: room.cameras
 				});
+			},
+			manual: function() {
+				CT.modal.modal(vu.core.roomRangers(zero.core.camera.springs.position));
 			}
 		},
 		camButt: function(name) {
@@ -76,6 +79,7 @@ vu.controls = {
 				} else
 					bcams = [polar, pov, behind, front];
 				(mode == "zone") && tbutts.push(_.camButt("refresh"));
+				(mode == "scene") && tbutts.push(_.camButt("manual"));
 				CT.dom.setContent(node, [
 					vu.controls.help("cameras"),
 					CT.dom.div(tbutts, "right up25"),
