@@ -71,6 +71,16 @@ vu.core = {
 			return cont;
 		return CT.dom.div(cont, "topbordered padded margined");
 	},
+	roomRangers: function(springs, cb) {
+		var zc = zero.core, r = zc.current.room;
+		return zc.util.xyz.map(function(dim) {
+			return vu.core.ranger(dim, function(val) {
+				val = parseInt(val);
+				springs[dim].target = val;
+				cb && cb(dim, val);
+			}, r.bounds.min[dim], r.bounds.max[dim], springs[dim].target, 1);
+		});
+	},
 	_modopts: function(origin, onclick, content, className) {
 		var opts = {
 			center: false,
