@@ -87,7 +87,7 @@ vu.builders.scene = {
 						sz.orientation.target, 1, "w1 block")
 				], "bordered padded margined round"),
 				CT.dom.button("set initial position", function() {
-					for (axis of ["weave", "slide", "orientation"])
+					for (axis of ["weave", "bob", "slide", "orientation"])
 						possers[axis] = sz[axis].target;
 					gup();
 				}, "w1"),
