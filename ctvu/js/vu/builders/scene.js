@@ -11,6 +11,7 @@ vu.builders.scene = {
 			actors: "bottomright",
 			automatons: "bottomright"
 		},
+		proppers: ["furnishing", "carpentry"],
 		swappers: ["props", "portals", "main", "score", "actors", "automatons"],
 		upons: function(a) {
 			var surfaces = ["bottom"].concat(zero.core.current.room.surfaces(true)),
@@ -277,7 +278,7 @@ vu.builders.scene = {
 				CT.dom.button("add", function() {
 					var pnames = pvalz.map(p => p.name),
 						data = zcc.room.objects.filter(function(p) {
-							return p.opts.kind == "furnishing" && !pnames.includes(p.name);
+							return _.proppers.includes(p.opts.kind) && !pnames.includes(p.name);
 						});
 					data.length ? CT.modal.choice({
 						prompt: "please select a prop",
