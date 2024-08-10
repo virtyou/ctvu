@@ -33,6 +33,7 @@
             "one.night",
             "one.peak",
             "one.cave",
+            "one.tombs",
             "one.forest",
             "one.beneath",
             "one.techno",
