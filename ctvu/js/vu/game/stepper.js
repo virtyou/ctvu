@@ -129,7 +129,7 @@ vu.game.stepper = {
 		vu.game.stepper._.actor(function(actor) {
 			CT.modal.choice({
 				prompt: "please select an action",
-				data: ["say", "respond", "move", "approach", "chase", "sit", "lie", "leave"],
+				data: ["say", "respond", "move", "approach", "chase", "sit", "lie", "light", "leave"],
 				cb: function(action) {
 					var act = function(line) {
 						cb({
@@ -178,6 +178,8 @@ vu.game.stepper = {
 						});
 					} else if (action == "sit" || action == "lie")
 						tar(Object.values(zcc.room.objects));
+					else if (action == "light")
+						tar(zcc.room.getFires(true));
 					else if (action == "leave")
 						vu.game.stepper._.port(port => act(port.name));
 					else {
