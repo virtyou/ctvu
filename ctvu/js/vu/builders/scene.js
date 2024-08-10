@@ -295,7 +295,7 @@ vu.builders.scene = {
 		item: function(iopts) { // also creates/places thing!!
 			var r = zero.core.current.room,
 				gup = vu.game.step.upstate,
-				item = new zero.core.Thing(CT.merge(iopts,
+				item = r.addObject(CT.merge(iopts,
 					vu.core.options.get(iopts.kind, iopts.name)));
 			return CT.dom.div([
 				CT.dom.div(" (" + iopts.kind + ")", "right small"),
