@@ -95,13 +95,14 @@ vu.build.furn = {
 		return d;
 	},
 	elemental: function(el) { // TODO: more specialized controllers for fire/pool
-		var d = vu.build.furn.furnishing(el);
-		(el.opts.name == "pool") && d.push(CT.dom.div(CT.dom.checkboxAndLabel("lava",
-			el.opts.lava, null, null, null, function(cbox) {
-				el.opts.lava = cbox.checked;
-				vu.storage.setOpts(el.opts.key, {
-					lava: cbox.checked
-				}, () => location.reload()); // meh hacky
+		var d = vu.build.furn.furnishing(el), prop = {
+			liquid: "lava",
+			plasma: "quenched"
+		}[el.opts.state], eopts = {};
+		d.push(CT.dom.div(CT.dom.checkboxAndLabel(prop,
+			el.opts[prop], null, null, null, function(cbox) {
+				eopts[prop] = el.opts[prop] = cbox.checked;
+				vu.storage.setOpts(el.opts.key, eopts, () => location.reload()); // meh hacky
 			}), "topbordered padded margined"));
 		return d;
 	},
