@@ -77,7 +77,7 @@ vu.game.dropper = {
 		}
 	},
 	item: function(iopts, onbuild, postbuild) {
-		return zero.core.current.room.addObject(CT.merge(iopts, {
+		return zero.core.current.room.attach(CT.merge(iopts, {
 			onbuild: function(item) {
 				item.setBounds();
 				onbuild(item);
