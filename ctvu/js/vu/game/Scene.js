@@ -95,17 +95,7 @@ vu.game.Scene = CT.Class({
 		}
 		this.comp();
 		zcc.receiver = this.receive;
-		zc.util.onCurPer(this.prestart);
-	},
-	prestart: function() {
-		var p, a, psz = this.opts.triggers.prestart,
-			zcc = zero.core.current, pz = zcc.people;
-		if (!(psz && Object.keys(psz).length))
-			return this.run();
-		for (p in psz)
-			for (a in psz[p]) // should only be one each...
-				(pz[p] || zcc.person).recliners.recline(psz[p][a], a, null, a == "lie");
-		setTimeout(this.run, 1000);
+		zc.util.onCurPer(() => vu.game.util.prestart(this.run));
 	},
 	run: function() {
 		zero.core.camera.angle("preferred");

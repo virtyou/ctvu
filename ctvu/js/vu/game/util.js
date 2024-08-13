@@ -17,6 +17,16 @@ vu.game.util = {
 			}
 		});
 	},
+	prestart: function(cb) {
+		var p, a, zcc = zero.core.current, pz = zcc.people,
+			s = zcc.scene, psz = (s.opts || s).triggers.prestart;
+		if (!(psz && Object.keys(psz).length))
+			return cb && cb();
+		for (p in psz)
+			for (a in psz[p]) // should only be one each...
+				(pz[p] || zcc.person).recliners.recline(psz[p][a], a, null, p == "player");
+		cb && setTimeout(cb, 1000);
+	},
 	positioners: function(aname, sname, fallback) {
 		var state = vu.game.util.state(),
 			az = state.actors = state.actors || {},

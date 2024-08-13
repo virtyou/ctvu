@@ -383,6 +383,10 @@ vu.builders.scene = {
 				}, "w1")
 			], "pt10"));
 		},
+		roomReady: function() {
+			vu.game.util.prestart();
+			vu.builders.scene._.automatons();
+		},
 		backstage: function() {
 			var _ = vu.builders.scene._, selz = _.selectors,
 				zc = zero.core, zcc = zc.current, scene = zcc.scene;
@@ -392,7 +396,7 @@ vu.builders.scene = {
 			_.lights();
 			_.actors();
 			_.portals();
-			zc.util.onRoomReady(_.automatons);
+			zc.util.onRoomReady(_.roomReady);
 			zcc.room.setFriction(false); // for positioning......
 			vu.controls.initCamera(selz.cameras);
 			CT.dom.addContent(selz.props, selz.items);
