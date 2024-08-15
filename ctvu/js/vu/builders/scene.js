@@ -315,8 +315,8 @@ vu.builders.scene = {
 					return CT.dom.div([
 						dim,
 						CT.dom.range(function(val) {
-							item.springs[dim].target = parseInt(val);
-//							item.adjust("position", dim, parseInt(val));
+//							item.springs[dim].target = parseInt(val);
+							item.adjust("position", dim, parseInt(val));
 						}, r.bounds.min[dim], r.bounds.max[dim],
 							iopts.position[i], 1, "w1 block")
 					], "bordered padded margined round");
