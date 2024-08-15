@@ -42,7 +42,6 @@ vu.builders.play = {
 				zero.core.click.trigger(person.body);
 				core.config.ctzero.camera.cardboard && vu.voice.listen();
 				vu.core.comp();
-				person.thruster.defaultUnthrust();
 				cur.sploder = new zero.core.Sploder();
 			},
 			enter: function(person) {
