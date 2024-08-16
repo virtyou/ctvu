@@ -18,13 +18,16 @@ vu.game.util = {
 		});
 	},
 	prestart: function(cb) {
-		var p, a, zcc = zero.core.current, pz = zcc.people,
+		var p, a, zcc = zero.core.current, pz = zcc.people, per,
 			s = zcc.scene, psz = (s.opts || s).triggers.prestart;
 		if (!(psz && Object.keys(psz).length))
 			return cb && cb();
-		for (p in psz)
+		for (p in psz) {
+			per = pz[p] || zcc.person;
+			if (!per) continue; // player in scene builder
 			for (a in psz[p]) // should only be one each...
-				(pz[p] || zcc.person).recliners.recline(psz[p][a], a, null, p == "player");
+				per.recliners.recline(psz[p][a], a, null, p == "player");
+		}
 		cb && setTimeout(cb, 1000);
 	},
 	positioners: function(aname, sname, fallback) {
