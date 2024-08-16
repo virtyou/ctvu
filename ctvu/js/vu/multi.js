@@ -56,7 +56,7 @@ vu.multi = {
 	setLang: function() {
 		CT.dom.setContent(vu.multi._.langButt, vu.lang.button());
 	},
-	chat: function(person, msg, squad, squinvite, roomvite, gamevite) {
+	chat: function(person, msg, squad, squinvite, roomvite, gamevite, cb, watch) {
 		var zcc = zero.core.current, zccp = zcc.person, subs = [
 			CT.dom.span(person.name, "bold italic green")
 		], _ = vu.multi._, mnode;
@@ -75,7 +75,7 @@ vu.multi = {
 				if (person.language && person.language.code != zccp.language.code)
 					subs.push(vu.lang.transer(msg, person.language, zccp.language));
 			}
-			person.say(msg, null, zcc.controls.activeChat());
+			person.say(msg, cb, watch || zcc.controls.activeChat());
 		}
 		mnode = CT.dom.div(subs);
 		CT.trans.glow(_.cbox.previousSibling);
