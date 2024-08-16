@@ -246,27 +246,46 @@ vu.builders.scene = {
 			]);
 		},
 		prop: function(p) {
-			var zcc = zero.core.current, scene = zcc.scene,
-				pobj = scene.props[p.name] = scene.props[p.name] || { name: p.name };
-			return CT.dom.div([
+			var zcc = zero.core.current, scene = zcc.scene, pushit = function() {
+				vu.storage.edit({
+					key: scene.key,
+					props: scene.props
+				});
+			}, pobj = scene.props[p.name] = scene.props[p.name] || {
+				name: p.name
+			}, upit = function(key, val) {
+				pobj[key] = val;
+				pushit();
+			}, treasure, prop = zcc.room[p.name], conts = [
 				p.name,
 				CT.dom.smartField({
 					isTA: true,
 					classname: "w1",
 					value: pobj.description,
 					blurs: ["enter a short description", "describe this prop"],
-					cb: function(desc) {
-						pobj.description = desc.trim();
-						vu.storage.edit({
-							key: scene.key,
-							props: scene.props
-						});
-					}
+					cb: desc => upit("description", desc.trim())
 				})
-			], "bordered padded margined round", null, {
-				onclick: function() {
-					zero.core.camera.follow(zcc.room[p.name]);
-				}
+			];
+			if (prop.opts.variety == "chest") {
+				pobj.treasure = pobj.treasure || "consumable";
+				treasure = CT.dom.link(pobj.treasure, function() {
+					CT.modal.choice({
+						prompt: "please select the treasure for this chest",
+						data: ["consumable"].concat(vu.core.options.names("held")),
+						cb: function(item) {
+							upit("treasure", item);
+							CT.dom.setContent(treasure, item);
+						}
+					});
+				});
+				conts.push([
+					CT.dom.span("treasure:"),
+					CT.dom.pad(),
+					treasure
+				]);
+			}
+			return CT.dom.div(conts, "bordered padded margined round", null, {
+				onclick: () => zero.core.camera.follow(prop)
 			});
 		},
 		props: function() {
