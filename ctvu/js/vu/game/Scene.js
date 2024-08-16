@@ -91,7 +91,10 @@ vu.game.Scene = CT.Class({
 		}
 		for (item in zcc.room.carpentry) {
 			carp = zcc.room[item];
-			carp.opts.items.length && rc(carp, men.shelf);
+			if (carp.opts.variety == "chest")
+				rc(carp, men.chest);
+			else if (carp.opts.items.length)
+				rc(carp, men.shelf);
 		}
 		this.comp();
 		zcc.receiver = this.receive;
