@@ -120,8 +120,8 @@ vu.game.util = {
 		ucam || cam.angle("preferred");
 	},
 	step: function(step, nextStep, state, audio, altered) {
-		var zcc = zero.core.current, k, r = zcc.room, actor, isresp,
-			cam = zero.core.camera, vgu = vu.game.util, action, line, lups;
+		var zcc = zero.core.current, k, r = zcc.room, actor, isresp, issay,
+			cam = zero.core.camera, vgu = vu.game.util, action, line, lups, watch;
 		nextStep = nextStep || vgu.resetcam;
 		if (step.lights) {
 			step.lights.forEach(function(val, i) {
@@ -176,7 +176,7 @@ vu.game.util = {
 			if (!actor)
 				return CT.log("actor has left scene! ABORTING SCRIPT!!!");
 			line = step.line;
-			action = step.action;
+			action = step.action || "say";
 			isresp = action == "respond";
 			if (state && isresp && line == "upon") {
 				lups = state.actors[step.actor].upons;
@@ -184,8 +184,12 @@ vu.game.util = {
 				line = lups ? CT.data.choice(lups) : "i don't know what to say here";
 				action = "say";
 			}
-			actor[action || "say"](line, nextStep,
-				(zcc.scene.opts || zcc.scene).cutscene);
+			issay = action == "say";
+			watch = (zcc.scene.opts || zcc.scene).cutscene;
+			if (issay && vu.multi)
+				vu.multi.chat(actor, line, null, null, null, null, nextStep, watch);
+			else
+				actor[action](line, nextStep, watch);
 			isresp && actor.click();
 		} else
 			nextStep();
