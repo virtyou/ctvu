@@ -26,7 +26,7 @@ vu.game.util = {
 			per = pz[p] || zcc.person;
 			if (!per) continue; // player in scene builder
 			for (a in psz[p]) // should only be one each...
-				per.recliners.recline(psz[p][a], a, null, p == "player");
+				per[a](psz[p][a], null, p == "player");
 		}
 		cb && setTimeout(cb, 1000);
 	},
