@@ -38,6 +38,7 @@ vu.clix = {
 		var vc = vu.clix, room = zero.core.current.room;
 		vc._.unclixroom();
 		room.automatons.forEach(a => a.onperson(vc.auto));
+		room.perMenagerie(men => men.perMount(vc.register));
 		room.objects.forEach(o => o.onReady(() => vc.register(o)));
 	},
 	auto: function(p) {
@@ -58,6 +59,19 @@ vu.clix = {
 			CT.trans.glow(inode);
 		}
 		zero.core.audio.ux("blipon");
+	},
+	ridebutt: function(thing) {
+		var p = zero.core.current.person, b = p.body;
+		var update = function() {
+			CT.dom.setContent(butt, b.riding ? "unride" : "ride");
+		}, toggle = function() {
+			if (b.riding) {
+				p.unride();
+				update();
+			} else
+				p.ride(thing, update);
+		}, butt = CT.dom.button("ride", toggle);
+		return butt;
 	},
 	register: function(thing) {
 		var zc = zero.core, vc = vu.clix, _ = vc._, other = [
@@ -84,7 +98,8 @@ vu.clix = {
 		else if (thing.opts.name == "bed") { // meh
 			other.push(CT.dom.button("sit", () => zcc.person.sit(thing)));
 			other.push(CT.dom.button("lie", () => zcc.person.lie(thing)));
-		}
+		} else if (thing.opts.kind == "horse")
+			other.push(vc.ridebutt(thing));
 		zc.click.register(target, function() {
 			vc.info(thing.name, isYou ? vc.yinfo() : other);
 			cam.follow(target.looker || target);
