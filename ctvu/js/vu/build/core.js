@@ -228,6 +228,19 @@ vu.build.core = {
 			modesel
 		];
 	},
+	rampside: function(ramp, cb) {
+		var ropts = ramp.opts;
+		return CT.dom.select({
+			names: ["neither wall", "left wall", "right wall", "both walls"],
+			values: ["neither", "left", "right", "both"],
+			curvalue: ropts.side || "neither",
+			onchange: function(val) {
+				ropts.side = val;
+				ramp.setSides(true);
+				cb(val);
+			}
+		})
+	},
 	side: function(floor, cb) {
 		var fopts = floor.opts;
 		return CT.dom.select({
