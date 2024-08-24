@@ -47,7 +47,9 @@ vu.builders.pop = {
 			var _ = vu.builders.pop._;
 			_.sharer = vu.core.sharer();
 			_.curname = CT.dom.span(null, "bold");
-			zero.core.util.join(vu.core.person(vu.storage.get("person")), _.joined);
+			zero.core.util.join(vu.core.person(vu.storage.get("person"), false, [
+				0, 800, 0 // meh, hacky (should use max height or something)
+			]), _.joined);
 			return CT.dom.div([
 				[
 					CT.dom.span("viewing:"),
