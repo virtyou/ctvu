@@ -20,12 +20,12 @@ vu.builders.play = {
 		cbs: {
 			joined: function(person) { // (you)
 				var vbp = vu.builders.play, _ = vbp._,
-					cur = zero.core.current;
+					zc = zero.core, cur = zc.current;
 				vu.multi.setLang();
 				vu.controls.initCamera(_.selectors.cameras);
 				vu.controls.setTriggers(_.selectors.triggers, vu.live.meta);
 				vu.controls.setGestures(_.selectors.gestures, vu.live.meta);
-				cur.controls = _.controls = new zero.core.Controls({
+				cur.controls = _.controls = new zc.Controls({
 					cams: true,
 					cb: vu.clix.action,
 					target: person,
@@ -39,10 +39,11 @@ vu.builders.play = {
 				});
 				vu.core.ownz() && _.selectors.lights.update();
 				vu.clix.room();
-				zero.core.click.trigger(person.body);
+				zc.click.trigger(person.body);
 				core.config.ctzero.camera.cardboard && vu.voice.listen();
 				vu.core.comp();
-				cur.sploder = new zero.core.Sploder();
+				cur.sploder = new zc.Sploder();
+				setTimeout(zc.util.freeBod, 1000, person.body); // wait a tick
 			},
 			enter: function(person) {
 				vu.clix.register(person);
