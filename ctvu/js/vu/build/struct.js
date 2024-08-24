@@ -142,6 +142,10 @@ vu.build.struct = {
 					fopts.rotation = [rot, 0, 0];
 					bs.strup(variety);
 				}));
+				cont.push(vbc.rampside(item, function(rside) {
+					fopts.side = rside;
+					bs.strup(variety);
+				}));
 			} else if (variety == "floor") {
 				cont.push(vbc.side(item, function(sopts) {
 					fopts.material = sopts;
