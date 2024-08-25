@@ -183,6 +183,20 @@ vu.build.furn = {
 		var bf = vu.build.furn;
 		bf.booksel(opts => bf.part(null, "book", cb, opts));
 	},
+	buildings: function(cb) {
+		CT.modal.choice({ // TODO: configurize!
+			prompt: "which building?",
+			data: ["castle", "watchtower"],
+			cb: function(building) {
+				vu.build.furn.part(null, "building", cb, {
+					kind: "building",
+					variety: building,
+					template: "templates.one.fbx." + building,
+					name: building + Math.floor(Math.random() * 1000)
+				});
+			}
+		})
+	},
 	carp: function(cb) {
 		CT.modal.choice({
 			prompt: "what kind of furniture?",
@@ -237,6 +251,10 @@ vu.build.furn = {
 		return bf.furnishing(sp).concat([
 			bf.playlist(sp)
 		]);
+	},
+	building: function(building) {
+		// TODO: add specialized controllers for building
+		return vu.build.furn.furnishing(building);
 	},
 	swarm: function(sw) {
 		// TODO: add specialized controllers for swarm
@@ -293,6 +311,8 @@ vu.build.furn = {
 	},
 	selfurn: function(kind, cb) {
 		var bf = vu.build.furn;
+		if (kind == "building")
+			return bf.buildings(cb);
 		if (kind == "swarm")
 			return bf.swaptions(cb);
 		if (kind == "book")
@@ -325,7 +345,7 @@ vu.build.furn = {
 			CT.dom.setContent(selz.furnishings, [
 				CT.dom.button("add", function() {
 					CT.modal.choice({
-						data: ["furnishing", "carpentry", "poster", "portal", "screen", "stream", "elemental", "speaker", "swarm", "book"],
+						data: ["furnishing", "carpentry", "poster", "portal", "screen", "stream", "elemental", "speaker", "swarm", "book", "building"],
 						cb: bf.selfurn
 					});
 				}, "up20 right"),
