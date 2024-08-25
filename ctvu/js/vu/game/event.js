@@ -11,6 +11,7 @@ vu.game.event = {
 			prestart: "scene"
 		},
 		nolerts: {
+			ride: "no mounts - add a horse on the pop page",
 			prop: "no props - register one with the Props menu",
 			actor: "no unconfigured actors - add one using the Actors menu!",
 			automaton: "no unconfigured automatons - add one on the pop page!",
@@ -109,19 +110,21 @@ vu.game.event = {
 				cb: cb
 			});
 		},
-		sitlie: function(cb) {
-			var rdata = {}, props = Object.keys(zero.core.current.scene.props);
-			if (!props.length)
-				return alert(vu.game.event._.nolerts.prop);
+		prestart: function(cb) {
+			var rdata = {}, zcc = zero.core.current,
+				lerts = vu.game.event._.nolerts, props;
 			CT.modal.choice({
 				prompt: "please select action",
-				data: ["sit", "lie"],
+				data: ["sit", "lie", "ride"],
 				cb: function(action) {
+					props = (action == "ride") ? zcc.room.getMounts() : Object.keys(zcc.scene.props);
+					if (!props.length)
+						return alert(lerts[action] || lerts.prop);
 					CT.modal.choice({
 						prompt: "please select target",
 						data: props,
 						cb: function(prop) {
-							rdata[action] = prop;
+							rdata[action] = prop.name || prop;
 							cb(rdata);
 						}
 					});
@@ -137,7 +140,7 @@ vu.game.event = {
 			});
 		}
 		if (feature == "scene")
-			return selz.sitlie(mapping => _.slot(mapping, item, trig));
+			return selz.prestart(mapping => _.slot(mapping, item, trig));
 		selz.script(sname => _.slot(sname, item, trig));
 	},
 	node: function(trig) {
