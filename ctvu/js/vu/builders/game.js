@@ -82,7 +82,7 @@ vu.builders.game = {
 		actor: function(actors, aname, sec) {
 			var actor = actors[aname], propz = CT.dom.div(), p;
 			for (p in actor)
-				if (p != "positioners")
+				if (p != "positioners" && p != "upons")
 					propz.appendChild(CT.dom.div(p + ": " + actor[p]));
 			return CT.dom.div([
 				CT.dom.link(aname, function() {
