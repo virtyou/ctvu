@@ -8,6 +8,7 @@ vu.game.event = {
 			die: "automaton",
 			wile: "automaton",
 			receive: "actor",
+			mount: "ride",
 			prestart: "scene"
 		},
 		nolerts: {
@@ -38,6 +39,8 @@ vu.game.event = {
 				ops = zcc.scene.actors;
 			else if (feature == "scene")
 				ops = ["player"].concat(zcc.scene.actors);
+			else if (feature == "ride")
+				ops = zccr.getMounts();
 			else
 				ops = zccr.getFeaturing(feature);
 			ops = ops.filter(f => !(f.name in trigs));
