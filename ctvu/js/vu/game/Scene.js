@@ -65,7 +65,6 @@ vu.game.Scene = CT.Class({
 			slz = state.lights, items = state.items,
 			portals = state.portals, adv = this.adventure,
 			dropper = vu.game.dropper;
-		vu.clix.room();
 		dropper.clear();
 		zcc.room.setBounds();
 		CT.pubsub.subscribe(zcc.room.opts.key);
@@ -98,7 +97,11 @@ vu.game.Scene = CT.Class({
 		}
 		this.comp();
 		zcc.receiver = this.receive;
-		zc.util.onCurPer(() => vu.game.util.prestart(this.run));
+		zc.util.onCurPer(this.playerReady);
+	},
+	playerReady: function() {
+		vu.clix.room();
+		vu.game.util.prestart(this.run);
 	},
 	run: function() {
 		zero.core.camera.angle("preferred");
