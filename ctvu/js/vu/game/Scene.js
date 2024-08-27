@@ -58,14 +58,10 @@ vu.game.Scene = CT.Class({
 		}
 	},
 	start: function() {
-		var _ = this._, zc = zero.core, zcc = zc.current, book, carp,
-			rc = _.regClick, pers, prop, item, portal,
-			men = this.menus, tsa = this.state.actors,
-			state = this.state.scenes[this.name],
-			slz = state.lights, items = state.items,
-			portals = state.portals, adv = this.adventure,
-			dropper = vu.game.dropper;
-		dropper.clear();
+		var _ = this._, zc = zero.core, zcc = zc.current, pers,
+			rc = _.regClick, men = this.menus, tsa = this.state.actors,
+			state = this.state.scenes[this.name], slz = state.lights;
+		vu.game.dropper.clear();
 		zcc.room.setBounds();
 		CT.pubsub.subscribe(zcc.room.opts.key);
 		if (zcc.person) {
@@ -78,6 +74,16 @@ vu.game.Scene = CT.Class({
 			if (tsa[pers] && tsa[pers].vibe)
 				zcc.people[pers].vibe.update(tsa[pers].vibe);
 		}
+		this.comp();
+		zcc.receiver = this.receive;
+		zc.util.onCurPer(this.playerReady);
+	},
+	clix: function() {
+		var _ = this._, zc = zero.core, zcc = zc.current,
+			rc = _.regClick, book, carp, prop, item, portal,
+			state = this.state.scenes[this.name], items = state.items,
+			portals = state.portals, dropper = vu.game.dropper;
+		vu.clix.room();
 		for (prop in this.opts.props)
 			rc(zcc.room[prop], men.prop);
 		for (portal in portals)
@@ -95,12 +101,9 @@ vu.game.Scene = CT.Class({
 			else if (carp.opts.items.length)
 				rc(carp, men.shelf);
 		}
-		this.comp();
-		zcc.receiver = this.receive;
-		zc.util.onCurPer(this.playerReady);
 	},
 	playerReady: function() {
-		vu.clix.room();
+		this.clix();
 		vu.game.util.prestart(this.run);
 	},
 	run: function() {
