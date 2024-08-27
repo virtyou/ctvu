@@ -18,7 +18,7 @@ vu.game.Player = CT.Class({
 					return;
 				}
 			}
-			person.wander("room", null, 1000);
+			person.wander("room", null, false, 1000);
 		},
 		cap: function() {
 			return this.person.score.level * this.opts.mult;
