@@ -255,7 +255,7 @@ vu.game.stepper = {
 		};
 		CT.modal.choice({
 			prompt: "what kind of logic gate?",
-			data: ["actor", "gear", "story", "coin flip"],
+			data: ["actor", "gear", "story", "upon", "coin flip"],
 			cb: function(kind) {
 				if (kind == "actor") {
 					_.state(sobj => result(sobj.state),
@@ -272,7 +272,9 @@ vu.game.stepper = {
 						prompt: "what's the story line?",
 						cb: line => result({ story: line })
 					});
-				} else // coin flip
+				} else if (kind == "upon")
+					zero.core.util.getArea(a => result({ upon: a }));
+				else // coin flip
 					result({ coinflip: true });
 			}
 		});
