@@ -58,8 +58,7 @@ vu.game.Scene = CT.Class({
 		}
 	},
 	start: function() {
-		var _ = this._, zc = zero.core, zcc = zc.current, pers,
-			rc = _.regClick, men = this.menus, tsa = this.state.actors,
+		var zc = zero.core, zcc = zc.current,
 			state = this.state.scenes[this.name], slz = state.lights;
 		vu.game.dropper.clear();
 		zcc.room.setBounds();
@@ -69,21 +68,22 @@ vu.game.Scene = CT.Class({
 			vu.live.emit("inject", zcc.injector);
 		}
 		slz && zcc.room.lights.forEach((l, i) => l.setIntensity(slz[i]));
-		for (pers in zcc.people) {
-			rc(zcc.people[pers], men.person);
-			if (tsa[pers] && tsa[pers].vibe)
-				zcc.people[pers].vibe.update(tsa[pers].vibe);
-		}
 		this.comp();
 		zcc.receiver = this.receive;
 		zc.util.onCurPer(this.playerReady);
 	},
 	clix: function() {
-		var _ = this._, zc = zero.core, zcc = zc.current,
-			rc = _.regClick, book, carp, prop, item, portal,
+		var zc = zero.core, zcc = zc.current, rc = this._.regClick,
+			men = this.menus, tsa = this.state.actors,
+			pers, book, carp, prop, item, portal,
 			state = this.state.scenes[this.name], items = state.items,
 			portals = state.portals, dropper = vu.game.dropper;
 		vu.clix.room();
+		for (pers in zcc.people) {
+			rc(zcc.people[pers], men.person);
+			if (tsa[pers] && tsa[pers].vibe)
+				zcc.people[pers].vibe.update(tsa[pers].vibe);
+		}
 		for (prop in this.opts.props)
 			rc(zcc.room[prop], men.prop);
 		for (portal in portals)
