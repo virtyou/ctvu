@@ -125,11 +125,11 @@ vu.game.stepper = {
 		});
 	},
 	action: function(cb) {
-		var zcc = zero.core.current;
+		var zc = zero.core, zcc = zc.current;
 		vu.game.stepper._.actor(function(actor) {
 			CT.modal.choice({
 				prompt: "please select an action",
-				data: ["say", "respond", "move", "approach", "chase", "sit", "lie", "light", "leave", "blow"],
+				data: ["say", "respond", "move", "approach", "chase", "wander", "sit", "lie", "light", "leave", "blow"],
 				cb: function(action) {
 					var act = function(line) {
 						cb({
@@ -187,7 +187,9 @@ vu.game.stepper = {
 							act("horn");
 						else
 							alert("where's the horn?");
-					} else {
+					} else if (action == "wander")
+						zc.util.getArea(act);
+					else {
 						CT.modal.prompt({
 							prompt: "what's the line?",
 							cb: act
