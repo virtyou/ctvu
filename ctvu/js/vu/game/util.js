@@ -103,13 +103,15 @@ vu.game.util = {
 				logic.yes && vgu.doscript(logic.yes, state, audio, altered);
 			else
 				logic.no && vgu.doscript(logic.no, state, audio, altered);
-		}, g = logic.gate, b = zcc.person.body;
+		}, g = logic.gate, p = zcc.person, b = p.body;
 		if (g.coinflip)
 			go(CT.data.random());
 		else if (g.gear)
 			go(vu.storage.get("items")[g.gear].key in b.gearmap);
 		else if (g.story)
 			go(state.story.includes(g.story));
+		else if (g.upon)
+			go(p.upon() == g.upon);
 		else {
 			var actor = Object.keys(g)[0],
 				prop = Object.keys(g[actor])[0];
