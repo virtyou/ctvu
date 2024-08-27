@@ -160,7 +160,7 @@ vu.builders.pop = {
 								if (zcc.room.floor || zcc.room.obstacle)
 									zc.util.getArea(addWander);
 								else
-									addWander("room");
+									addWander("bottom");
 							} else if (action == "move") {
 								vu.media.prompt.adjusters(null, _.auto.person.body,
 									"position", zcc.room.bounds, 1, function() {
