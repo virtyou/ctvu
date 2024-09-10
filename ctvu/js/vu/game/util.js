@@ -183,6 +183,8 @@ vu.game.util = {
 			line = step.line;
 			action = step.action || "say";
 			isresp = action == "respond";
+			if (action == "give")
+				return actor.give(line.item, line.recipient, nextStep);
 			if (state && isresp && line == "upon") {
 				lups = state.actors[step.actor].upons;
 				lups = lups && lups[actor.upon()];
