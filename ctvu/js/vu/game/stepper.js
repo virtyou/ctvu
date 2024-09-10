@@ -125,11 +125,11 @@ vu.game.stepper = {
 		});
 	},
 	action: function(cb) {
-		var zc = zero.core, zcc = zc.current;
+		var zc = zero.core, zcc = zc.current, data;
 		vu.game.stepper._.actor(function(actor) {
 			CT.modal.choice({
 				prompt: "please select an action",
-				data: ["say", "respond", "move", "approach", "chase", "wander", "sit", "lie", "light", "leave", "blow"],
+				data: ["say", "respond", "move", "approach", "chase", "wander", "give", "get", "sit", "lie", "light", "leave", "blow"],
 				cb: function(action) {
 					var act = function(line) {
 						cb({
@@ -137,11 +137,30 @@ vu.game.stepper = {
 							action: action,
 							line: line
 						});
-					}, tar = function(data) {
+					}, tar = function(data, tcb) {
+						if (!tcb)
+							tcb = target => act(target.name);
 						CT.modal.choice({
 							prompt: "please select a target",
 							data: data,
-							cb: target => act(target.name)
+							cb: tcb
+						});
+					}, kindsel = function(hasfurn, kcb) {
+						var aopts = ["player", "actor"];
+						hasfurn && aopts.push("furnishing");
+						CT.modal.choice({
+							data: aopts,
+							cb: function(cat) {
+								if (cat == "player")
+									return (kcb || act)("player");
+								if (cat == "actor") {
+									data = zcc.scene.actors.filter(function(a) {
+										return a.name != actor.name;
+									});
+								} else // furnishing
+									data = Object.values(zcc.room.objects);
+								(kcb || tar)(data);
+							}
 						});
 					};
 					if (action == "move") {
@@ -157,26 +176,20 @@ vu.game.stepper = {
 								});
 							}
 						});
-					} else if (action == "approach" || action == "chase") {
-						var aopts = ["player", "actor"];
-						if (action == "approach")
-							aopts.push("furnishing");
-						CT.modal.choice({
-							data: aopts,
-							cb: function(cat) {
-								if (cat == "player")
-									return act("player");
-								var data;
-								if (cat == "actor") {
-									data = zcc.scene.actors.filter(function(a) {
-										return a.name != actor.name;
-									});
-								} else // furnishing
-									data = Object.values(zcc.room.objects);
-								tar(data);
-							}
+					} else if (action == "give" || action == "get") {
+						tar(vu.core.options.names("held", "quest"), function(itar) {
+							if (action == "get")
+								return act(itar);
+							kindsel(false, function(ksel) {
+								data = { item: itar };
+								if (ksel == "player")
+									return act(CT.merge(data, { recipient: ksel }));
+								tar(ksel, rtar => act(CT.merge(data, { recipient: rtar.name })));
+							});
 						});
-					} else if (action == "sit" || action == "lie")
+					} else if (action == "approach" || action == "chase")
+						kindsel(action == "approach");
+					else if (action == "sit" || action == "lie")
 						tar(Object.values(zcc.room.objects));
 					else if (action == "light")
 						tar(zcc.room.getFires(true));
@@ -193,7 +206,7 @@ vu.game.stepper = {
 						CT.modal.prompt({
 							prompt: "what's the line?",
 							cb: act
-						})
+						});
 					}
 				}
 			});
