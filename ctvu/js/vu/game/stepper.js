@@ -167,6 +167,7 @@ vu.game.stepper = {
 						CT.modal.choice({
 							prompt: "please adjust " + actor.name + "'s position and orientation, and click 'ready' to save. click 'cancel' to abort.",
 							data: ["ready", "cancel"],
+							className: "translucent basicpopup mosthigh flex col",
 							cb: function(resp) {
 								var pbs = zcc.people[actor.name].body.springs;
 								(resp == "ready") && act({
