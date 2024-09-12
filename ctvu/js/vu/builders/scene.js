@@ -360,7 +360,7 @@ vu.builders.scene = {
 				CT.dom.button("add", function() {
 					CT.modal.choice({
 						prompt: "what kind of item?",
-						data: ["held"].concat(zcu.worns).filter(k => vu.storage.get(k)),
+						data: ["held"].concat(zcu.worns).filter(k => vu.core.options.get(k)),
 						cb: function(kind) {
 							CT.modal.choice({
 								prompt: "please select an item",
