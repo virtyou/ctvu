@@ -112,11 +112,11 @@ vu.game.Scene = CT.Class({
 		this.menus.minimap();
 		this.showCredits();
 	},
-	receive: function(item) {
-		var person = zero.core.current.room.getPerson(item, this.state.actors);
+	receive: function(item, targets) {
+		var person = zero.core.current.room.getPerson(item, targets || this.state.actors);
 		if (!person) return;
 		var rtz = this.opts.triggers.receive, recip = rtz && rtz[person.name];
-		if (recip && recip[item.name]) {
+		if (person.isYou() || (recip && recip[item.name])) {
 			person.say(CT.data.choice([
 				"thanks!", "why thank you", "oh, you shouldn't have!",
 				"oh, for me?", "you're too kind!", "you shouldn't have"
