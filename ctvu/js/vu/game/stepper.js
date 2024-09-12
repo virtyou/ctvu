@@ -177,7 +177,7 @@ vu.game.stepper = {
 							}
 						});
 					} else if (action == "give" || action == "get") {
-						tar(vu.core.options.names("held", "quest"), function(itar) {
+						tar(Object.keys(zcc.scene.game.initial.scenes[zcc.scene.name].items), function(itar) {
 							if (action == "get")
 								return act(itar);
 							kindsel(false, function(ksel) {
