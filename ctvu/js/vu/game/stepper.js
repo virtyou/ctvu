@@ -124,12 +124,29 @@ vu.game.stepper = {
 			}
 		});
 	},
+	target: function(data, cb) {
+		CT.modal.choice({
+			prompt: "please select a target",
+			data: data,
+			cb: cb
+		});
+	},
+	person: function(cb) {
+		CT.modal.choice({
+			data: ["player", "actor"],
+			cb: function(cat) {
+				if (cat == "player")
+					return cb("player");
+				vu.game.stepper.target(zero.core.current.scene.actors, cb);
+			}
+		});
+	},
 	action: function(cb) {
-		var zc = zero.core, zcc = zc.current;
-		vu.game.stepper._.actor(function(actor) {
+		var zc = zero.core, zcc = zc.current, vgs = vu.game.stepper, data;
+		vgs._.actor(function(actor) {
 			CT.modal.choice({
 				prompt: "please select an action",
-				data: ["say", "respond", "move", "approach", "chase", "wander", "sit", "lie", "light", "leave", "blow"],
+				data: ["say", "respond", "move", "approach", "chase", "wander", "give", "get", "sit", "lie", "light", "leave", "blow"],
 				cb: function(action) {
 					var act = function(line) {
 						cb({
@@ -137,17 +154,33 @@ vu.game.stepper = {
 							action: action,
 							line: line
 						});
-					}, tar = function(data) {
+					}, tar = function(data, tcb) {
+						if (!tcb)
+							tcb = target => act(target.name);
+						vgs.target(data, tcb);
+					}, kindsel = function(hasfurn, kcb) {
+						var aopts = ["player", "actor"];
+						hasfurn && aopts.push("furnishing");
 						CT.modal.choice({
-							prompt: "please select a target",
-							data: data,
-							cb: target => act(target.name)
+							data: aopts,
+							cb: function(cat) {
+								if (cat == "player")
+									return (kcb || act)("player");
+								if (cat == "actor") {
+									data = zcc.scene.actors.filter(function(a) {
+										return a.name != actor.name;
+									});
+								} else // furnishing
+									data = Object.values(zcc.room.objects);
+								(kcb || tar)(data);
+							}
 						});
 					};
 					if (action == "move") {
 						CT.modal.choice({
 							prompt: "please adjust " + actor.name + "'s position and orientation, and click 'ready' to save. click 'cancel' to abort.",
 							data: ["ready", "cancel"],
+							className: "translucent basicpopup mosthigh flex col",
 							cb: function(resp) {
 								var pbs = zcc.people[actor.name].body.springs;
 								(resp == "ready") && act({
@@ -157,31 +190,25 @@ vu.game.stepper = {
 								});
 							}
 						});
-					} else if (action == "approach" || action == "chase") {
-						var aopts = ["player", "actor"];
-						if (action == "approach")
-							aopts.push("furnishing");
-						CT.modal.choice({
-							data: aopts,
-							cb: function(cat) {
-								if (cat == "player")
-									return act("player");
-								var data;
-								if (cat == "actor") {
-									data = zcc.scene.actors.filter(function(a) {
-										return a.name != actor.name;
-									});
-								} else // furnishing
-									data = Object.values(zcc.room.objects);
-								tar(data);
-							}
+					} else if (action == "give" || action == "get") {
+						tar(Object.keys(zcc.scene.game.initial.scenes[zcc.scene.name].items), function(itar) {
+							if (action == "get")
+								return act(itar);
+							kindsel(false, function(ksel) {
+								data = { item: itar };
+								if (ksel == "player")
+									return act(CT.merge(data, { recipient: ksel }));
+								tar(ksel, rtar => act(CT.merge(data, { recipient: rtar.name })));
+							});
 						});
-					} else if (action == "sit" || action == "lie")
+					} else if (action == "approach" || action == "chase")
+						kindsel(action == "approach");
+					else if (action == "sit" || action == "lie")
 						tar(Object.values(zcc.room.objects));
 					else if (action == "light")
 						tar(zcc.room.getFires(true));
 					else if (action == "leave")
-						vu.game.stepper._.port(port => act(port.name));
+						vgs._.port(port => act(port.name));
 					else if (action == "blow") {
 						if (zcc.room.horn || actor.holding("horn"))
 							act("horn");
@@ -193,7 +220,7 @@ vu.game.stepper = {
 						CT.modal.prompt({
 							prompt: "what's the line?",
 							cb: act
-						})
+						});
 					}
 				}
 			});
@@ -272,9 +299,16 @@ vu.game.stepper = {
 						prompt: "what's the story line?",
 						cb: line => result({ story: line })
 					});
-				} else if (kind == "upon")
-					zero.core.util.getArea(a => result({ upon: a }));
-				else // coin flip
+				} else if (kind == "upon") {
+					vu.game.stepper.person(function(per) {
+						zero.core.util.getArea(function(a) {
+							result({
+								upon: a,
+								person: per.name
+							});
+						});
+					});
+				} else // coin flip
 					result({ coinflip: true });
 			}
 		});
