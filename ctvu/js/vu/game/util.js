@@ -97,13 +97,19 @@ vu.game.util = {
 		});
 		setTimeout(mod.hide, pause || 3000);
 	},
+	person: function(per) {
+		var zcc = zero.core.current;
+		if (!per || per == "player")
+			return zcc.person;
+		return zcc.people[per];
+	},
 	logic: function(logic, state, audio, altered) { // TODO: multi-cond gates?
 		var zcc = zero.core.current, vgu = vu.game.util, go = function(doit) {
 			if (doit)
 				logic.yes && vgu.doscript(logic.yes, state, audio, altered);
 			else
 				logic.no && vgu.doscript(logic.no, state, audio, altered);
-		}, g = logic.gate, p = zcc.person, b = p.body;
+		}, g = logic.gate, b = zcc.person.body;
 		if (g.coinflip)
 			go(CT.data.random());
 		else if (g.gear)
@@ -111,7 +117,7 @@ vu.game.util = {
 		else if (g.story)
 			go(state.story.includes(g.story));
 		else if (g.upon)
-			go(p.upon() == g.upon);
+			go(vgu.person(g.person).upon() == g.upon);
 		else {
 			var actor = Object.keys(g)[0],
 				prop = Object.keys(g[actor])[0];
