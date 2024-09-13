@@ -124,9 +124,26 @@ vu.game.stepper = {
 			}
 		});
 	},
+	target: function(data, cb) {
+		CT.modal.choice({
+			prompt: "please select a target",
+			data: data,
+			cb: cb
+		});
+	},
+	person: function(cb) {
+		CT.modal.choice({
+			data: ["player", "actor"],
+			cb: function(cat) {
+				if (cat == "player")
+					return cb("player");
+				vu.game.stepper.target(zero.core.current.scene.actors, cb);
+			}
+		});
+	},
 	action: function(cb) {
-		var zc = zero.core, zcc = zc.current, data;
-		vu.game.stepper._.actor(function(actor) {
+		var zc = zero.core, zcc = zc.current, vgs = vu.game.stepper, data;
+		vgs._.actor(function(actor) {
 			CT.modal.choice({
 				prompt: "please select an action",
 				data: ["say", "respond", "move", "approach", "chase", "wander", "give", "get", "sit", "lie", "light", "leave", "blow"],
@@ -140,11 +157,7 @@ vu.game.stepper = {
 					}, tar = function(data, tcb) {
 						if (!tcb)
 							tcb = target => act(target.name);
-						CT.modal.choice({
-							prompt: "please select a target",
-							data: data,
-							cb: tcb
-						});
+						vgs.target(data, tcb);
 					}, kindsel = function(hasfurn, kcb) {
 						var aopts = ["player", "actor"];
 						hasfurn && aopts.push("furnishing");
@@ -195,7 +208,7 @@ vu.game.stepper = {
 					else if (action == "light")
 						tar(zcc.room.getFires(true));
 					else if (action == "leave")
-						vu.game.stepper._.port(port => act(port.name));
+						vgs._.port(port => act(port.name));
 					else if (action == "blow") {
 						if (zcc.room.horn || actor.holding("horn"))
 							act("horn");
@@ -286,9 +299,16 @@ vu.game.stepper = {
 						prompt: "what's the story line?",
 						cb: line => result({ story: line })
 					});
-				} else if (kind == "upon")
-					zero.core.util.getArea(a => result({ upon: a }));
-				else // coin flip
+				} else if (kind == "upon") {
+					vu.game.stepper.person(function(per) {
+						zero.core.util.getArea(function(a) {
+							result({
+								upon: a,
+								person: per.name
+							});
+						});
+					});
+				} else // coin flip
 					result({ coinflip: true });
 			}
 		});
