@@ -146,7 +146,7 @@ vu.game.stepper = {
 		vgs._.actor(function(actor) {
 			CT.modal.choice({
 				prompt: "please select an action",
-				data: ["say", "respond", "move", "approach", "chase", "wander", "give", "get", "sit", "lie", "light", "leave", "blow"],
+				data: ["say", "respond", "move", "approach", "chase", "wander", "give", "get", "drop", "sit", "lie", "light", "leave", "blow"],
 				cb: function(action) {
 					var act = function(line) {
 						cb({
@@ -190,9 +190,9 @@ vu.game.stepper = {
 								});
 							}
 						});
-					} else if (action == "give" || action == "get") {
+					} else if (["give", "get", "drop"].includes(action)) {
 						tar(Object.keys(zcc.scene.game.initial.scenes[zcc.scene.name].items), function(itar) {
-							if (action == "get")
+							if (action != "give")
 								return act(itar);
 							kindsel(false, function(ksel) {
 								data = { item: itar };
