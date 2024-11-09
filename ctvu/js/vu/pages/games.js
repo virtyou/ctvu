@@ -13,16 +13,21 @@ CT.require("user.core");
 CT.onload(function() {
 	CT.initCore();
 	CT.db.get("game", function(games) {
-		CT.dom.setContent("ctmain", [
+		var nclass = "bordered padded margined round inline-block hoverglow", cont = [
 			CT.dom.div("games", "biggest centered"),
 			games.map(function(g) {
 				return CT.dom.link([
 					CT.dom.div(g.name, "big"),
 					g.description
-				], null, "/vu/adventure.html#" + g.key,
-					"bordered padded margined round inline-block hoverglow");
+				], null, "/vu/adventure.html#" + g.key, nclass);
 			})
-		]);
+		], bclass = nclass + " big", cfg = core.config.ctvu.builders.games;
+		if (cfg.demos.length) {
+			cont.push(CT.dom.div("demos", "biggest centered"));
+			cont.push(CT.dom.div(cfg.demos.map(d => CT.dom.link(d.name,
+				null, d.link, bclass)), "centered"));
+		}
+		CT.dom.setMain(cont);
 	}, null, null, null, {
 		live: true
 	});

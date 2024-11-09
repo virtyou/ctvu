@@ -53,6 +53,9 @@
         "ambient": 0.5
     },
     "builders": {
+        "games": {
+            "demos": []
+        },
         "talk": {
             "identities": [],
             "help": {
