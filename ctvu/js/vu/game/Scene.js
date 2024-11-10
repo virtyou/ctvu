@@ -145,14 +145,14 @@ vu.game.Scene = CT.Class({
 			return tar;
 		}, state = this.mystate(), ports = state.portals, tar, port, chest;
 		key.radii = key.radii || { x: 20, y: 20, z: 20 }; // hm...
-		tar = zcc.room.getSolid(key.position(null, true), key.radii, true, true);
+		tar = zcc.room.within(key.position(null, true), key.radii, true, true, "lockable");
 		if (!tar)
 			return per.sayone(["there's nothing here", "nothing to unlock", "unlock what?"]);
-		if (tar.opts.kind == "portal") {
+		if (tar.isport) {
 			port = ports[tar.name];
 			if (port && port.locked)
 				return doit(port);
-		} else if (tar.opts.variety == "chest") {
+		} else if (tar.ischest) {
 			chest = this.opts.props[tar.name];
 			if (chest && chest.locked)
 				return doit(chest);
