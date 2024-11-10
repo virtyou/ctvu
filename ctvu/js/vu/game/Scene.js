@@ -57,9 +57,13 @@ vu.game.Scene = CT.Class({
 			this.adventure.upstate();
 		}
 	},
+	mystate: function(sub) {
+		var ss = this.state.scenes[this.name];
+		return sub ? ss[sub] : ss;
+	},
 	start: function() {
 		var zc = zero.core, zcc = zc.current,
-			state = this.state.scenes[this.name], slz = state.lights;
+			state = this.mystate(), slz = state.lights;
 		vu.game.dropper.clear();
 		zcc.room.setBounds();
 		CT.pubsub.subscribe(zcc.room.opts.key);
@@ -77,7 +81,7 @@ vu.game.Scene = CT.Class({
 		var zc = zero.core, zcc = zc.current, rc = this._.regClick,
 			men = this.menus, tsa = this.state.actors,
 			pers, book, carp, prop, item, portal,
-			state = this.state.scenes[this.name], items = state.items,
+			state = this.mystate(), items = state.items,
 			portals = state.portals, dropper = vu.game.dropper;
 		vu.clix.room();
 		for (pers in zcc.people) {
@@ -139,7 +143,7 @@ vu.game.Scene = CT.Class({
 			setTimeout(vu.game.dropper.upstate, 100, "held");
 			delete locker.locked;
 			return tar;
-		}, state = this.state.scenes[this.name], ports = state.portals, tar, port, chest;
+		}, state = this.mystate(), ports = state.portals, tar, port, chest;
 		key.radii = key.radii || { x: 20, y: 20, z: 20 }; // hm...
 		tar = zcc.room.getSolid(key.position(null, true), key.radii, true, true);
 		if (!tar)
