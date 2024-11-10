@@ -86,10 +86,11 @@ vu.game.Adventure = CT.Class({
 			CT.event.subscribe(emod, oname => zero.core.current.scene.envMod(emod, oname));
 		},
 		start: function() {
-			var _ = this._, zcc = zero.core.current, vp = vu.portal, scene = this.scene, emod;
+			var _ = this._, zcc = zero.core.current, vp = vu.portal, scene = this.scene, emod, popts;
 			vu.live.init(_.cbs);
-			vp.on("filter", function(obj) { // NB: _not_ currently used - see vp.check()
-				return obj.name in vp.options();
+			vp.on("filter", function(obj) {
+				popts = vp.options()[obj.name];
+				return popts && !popts.locked;
 			});
 			vp.on("eject", function(portout) {
 				vu.live.emit("eject", portout);

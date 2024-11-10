@@ -200,7 +200,8 @@ vu.builders.scene = {
 		},
 		portal: function(p) {
 			var _ = vu.builders.scene._, zcc = zero.core.current,
-				scene = zcc.scene, ports = vu.game.util.state(scene.name, "portals"),
+				vg = vu.game, upstate = vg.step.upstate,
+				scene = zcc.scene, ports = vg.util.state(scene.name, "portals"),
 				pobj = ports[p.name] = ports[p.name] || { name: p.name };
 			return CT.dom.div([
 				p.name,
@@ -211,10 +212,11 @@ vu.builders.scene = {
 					blurs: ["enter a short description", "describe this portal"],
 					cb: function(desc) {
 						pobj.description = desc.trim();
-						vu.game.step.upstate();
+						upstate();
 					}
 				}),
-				_.linkage(pobj)
+				_.linkage(pobj),
+				vu.build.core.check("locked", pobj, upstate)
 			], "bordered padded margined round", null, {
 				onclick: function() {
 					zero.core.camera.follow(zcc.room[p.name]);
@@ -281,7 +283,8 @@ vu.builders.scene = {
 				conts.push([
 					CT.dom.span("treasure:"),
 					CT.dom.pad(),
-					treasure
+					treasure,
+					vu.build.core.check("locked", pobj, () => upit("locked", pobj.locked))
 				]);
 			}
 			return CT.dom.div(conts, "bordered padded margined round", null, {

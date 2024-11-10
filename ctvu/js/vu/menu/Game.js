@@ -244,13 +244,13 @@ vu.menu.Game = CT.Class({
 		], item);
 	},
 	chest: function(item) {
-		var zcc = zero.core.current, props = zcc.scene.opts.props, popts = CT.merge(props[item.name], {
+		var zcc = zero.core.current, props = zcc.scene.opts.props, iopts = props[item.name], popts = CT.merge(iopts, {
 			description: CT.data.choice(["nice chest", "what's in there?", "a chest"]),
 			treasure: "consumable"
 		}), pos = item.position();
 		this.info(item.name, [
 			popts.description,
-			item.openbutt(() => vu.game.dropper.drop(pos, popts.treasure), true)
+			item.openbutt(() => vu.game.dropper.drop(pos, popts.treasure), true, iopts)
 		], item);
 	},
 	item: function(item) {

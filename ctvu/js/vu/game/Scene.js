@@ -57,9 +57,13 @@ vu.game.Scene = CT.Class({
 			this.adventure.upstate();
 		}
 	},
+	mystate: function(sub) {
+		var ss = this.state.scenes[this.name];
+		return sub ? ss[sub] : ss;
+	},
 	start: function() {
 		var zc = zero.core, zcc = zc.current,
-			state = this.state.scenes[this.name], slz = state.lights;
+			state = this.mystate(), slz = state.lights;
 		vu.game.dropper.clear();
 		zcc.room.setBounds();
 		CT.pubsub.subscribe(zcc.room.opts.key);
@@ -69,6 +73,7 @@ vu.game.Scene = CT.Class({
 		}
 		slz && zcc.room.lights.forEach((l, i) => l.setIntensity(slz[i]));
 		this.comp();
+		zcc.unlocker = this.unlock;
 		zcc.receiver = this.receive;
 		zc.util.onCurPer(this.playerReady);
 	},
@@ -76,7 +81,7 @@ vu.game.Scene = CT.Class({
 		var zc = zero.core, zcc = zc.current, rc = this._.regClick,
 			men = this.menus, tsa = this.state.actors,
 			pers, book, carp, prop, item, portal,
-			state = this.state.scenes[this.name], items = state.items,
+			state = this.mystate(), items = state.items,
 			portals = state.portals, dropper = vu.game.dropper;
 		vu.clix.room();
 		for (pers in zcc.people) {
@@ -118,21 +123,45 @@ vu.game.Scene = CT.Class({
 		var rtz = this.opts.triggers.receive, recip = rtz && rtz[person.name];
 		if (person.isYou() || (recip && recip[item.name])) {
 			if (person.freeHand()) {
-				person.say(CT.data.choice([
+				person.sayone([
 					"thanks!", "why thank you", "oh, you shouldn't have!",
 					"oh, for me?", "you're too kind!", "you shouldn't have"
-				]));
+				]);
 				setTimeout(vu.game.dropper.upstate, 100, "held");
 				return person;
 			}
-			return person.say(CT.data.choice([
-				"i can't hold that", "i don't have any free hands"
-			]));
+			return person.sayone(["i can't hold that", "i don't have any free hands"]);
 		}
-		person.say(CT.data.choice([
+		person.sayone([
 			"no thank you", "i don't want that", "nah", "i'm good",
 			"i don't need that", "what's that?", "no thanks"
-		]));
+		]);
+	},
+	unlock: function(key) {
+		var zcc = zero.core.current, per = zcc.person, doit = function(locker) {
+			per.sayone(["all right, we're in!", "lock unlocked!", "the key fits!"]);
+			setTimeout(vu.game.dropper.upstate, 100, "held");
+			delete locker.locked;
+			return tar;
+		}, state = this.mystate(), ports = state.portals, tar, port, chest;
+		key.radii = key.radii || { x: 20, y: 20, z: 20 }; // hm...
+		tar = zcc.room.within(key.position(null, true), key.radii, true, true, "lockable");
+		if (!tar)
+			return per.sayone(["there's nothing here", "nothing to unlock", "unlock what?"]);
+		if (tar.isport) {
+			port = ports[tar.name];
+			if (port && port.locked)
+				return doit(port);
+		} else if (tar.ischest) {
+			chest = this.opts.props[tar.name];
+			if (chest && chest.locked)
+				return doit(chest);
+		}
+		per.sayone([
+			"unlock what?", "what's locked?", "nothing to unlock",
+			"that's not a lock", "i don't see a lock",
+			"that's not locked", "that isn't locked"
+		]);
 	},
 	comp: function() {
 		var zcc = zero.core.current, oz = this.opts,
