@@ -139,8 +139,9 @@ vu.game.Scene = CT.Class({
 			setTimeout(vu.game.dropper.upstate, 100, "held");
 			delete locker.locked;
 			return tar;
-		}, state = this.state.scenes[this.name], ports = state.portals, port, chest,
-			tar = zcc.room.getSolid(key.position(null, true), key.radii, true, true);
+		}, state = this.state.scenes[this.name], ports = state.portals, tar, port, chest;
+		key.radii = key.radii || { x: 20, y: 20, z: 20 }; // hm...
+		tar = zcc.room.getSolid(key.position(null, true), key.radii, true, true);
 		if (!tar)
 			return per.sayone(["there's nothing here", "nothing to unlock", "unlock what?"]);
 		if (tar.opts.kind == "portal") {
