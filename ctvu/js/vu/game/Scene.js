@@ -69,6 +69,7 @@ vu.game.Scene = CT.Class({
 		}
 		slz && zcc.room.lights.forEach((l, i) => l.setIntensity(slz[i]));
 		this.comp();
+		zcc.unlocker = this.unlock;
 		zcc.receiver = this.receive;
 		zc.util.onCurPer(this.playerReady);
 	},
@@ -118,21 +119,44 @@ vu.game.Scene = CT.Class({
 		var rtz = this.opts.triggers.receive, recip = rtz && rtz[person.name];
 		if (person.isYou() || (recip && recip[item.name])) {
 			if (person.freeHand()) {
-				person.say(CT.data.choice([
+				person.sayone([
 					"thanks!", "why thank you", "oh, you shouldn't have!",
 					"oh, for me?", "you're too kind!", "you shouldn't have"
-				]));
+				]);
 				setTimeout(vu.game.dropper.upstate, 100, "held");
 				return person;
 			}
-			return person.say(CT.data.choice([
-				"i can't hold that", "i don't have any free hands"
-			]));
+			return person.sayone(["i can't hold that", "i don't have any free hands"]);
 		}
-		person.say(CT.data.choice([
+		person.sayone([
 			"no thank you", "i don't want that", "nah", "i'm good",
 			"i don't need that", "what's that?", "no thanks"
-		]));
+		]);
+	},
+	unlock: function(key) {
+		var zcc = zero.core.current, per = zcc.person, doit = function(locker) {
+			per.sayone(["all right, we're in!", "lock unlocked!", "the key fits!"]);
+			setTimeout(vu.game.dropper.upstate, 100, "held");
+			delete locker.locked;
+			return tar;
+		}, state = this.state.scenes[this.name], ports = state.portals, port, chest,
+			tar = zcc.room.getSolid(key.position(null, true), key.radii, true, true);
+		if (!tar)
+			return per.sayone(["there's nothing here", "nothing to unlock", "unlock what?"]);
+		if (tar.opts.kind == "portal") {
+			port = ports[tar.name];
+			if (port && port.locked)
+				return doit(port);
+		} else if (tar.opts.variety == "chest") {
+			chest = this.props[tar.name];
+			if (chest && chest.locked)
+				return doit(chest);
+		}
+		per.sayone([
+			"unlock what?", "what's locked?", "nothing to unlock",
+			"that's not a lock", "i don't see a lock",
+			"that's not locked", "that isn't locked"
+		]);
 	},
 	comp: function() {
 		var zcc = zero.core.current, oz = this.opts,
