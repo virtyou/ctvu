@@ -16,7 +16,7 @@ vu.portal = {
 		},
 		filter: function(obj) {
 			var o = obj.opts, og = o.portals && o.portals.outgoing;
-			return og && !og.locked && og.target;
+			return og && og.target;
 		}
 	},
 	on: function(emission, cb) {
@@ -52,7 +52,7 @@ vu.portal = {
 	},
 	options: function() {
 		var zcc = zero.core.current, scene = zcc.scene;
-		return scene && scene.state.scenes[scene.name].portals || {};
+		return scene && scene.mystate("portals") || {};
 	},
 	check: function() {
 		var cur = zero.core.current, person = cur.person, vp = vu.portal,
@@ -64,7 +64,7 @@ vu.portal = {
 			if (dist < 100) {
 				hit = true;
 				if (!_.filter(portal))
-					return person.say("this door is locked");
+					return person.sayone(["this door is locked", "it's locked", "i'm locked out"]);
 				CT.db.one(portal.opts.portals.outgoing.target,
 					target => vp.port(target.parent, portal.opts.key, target.key), "json");
 			}
