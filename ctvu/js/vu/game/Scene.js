@@ -148,7 +148,7 @@ vu.game.Scene = CT.Class({
 			if (port && port.locked)
 				return doit(port);
 		} else if (tar.opts.variety == "chest") {
-			chest = this.props[tar.name];
+			chest = this.opts.props[tar.name];
 			if (chest && chest.locked)
 				return doit(chest);
 		}
