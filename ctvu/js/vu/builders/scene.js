@@ -216,7 +216,7 @@ vu.builders.scene = {
 					}
 				}),
 				_.linkage(pobj),
-				vu.build.core.check("locked", popts, upstate)
+				vu.build.core.check("locked", pobj, upstate)
 			], "bordered padded margined round", null, {
 				onclick: function() {
 					zero.core.camera.follow(zcc.room[p.name]);
