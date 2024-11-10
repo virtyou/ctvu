@@ -16,7 +16,7 @@ vu.portal = {
 		},
 		filter: function(obj) {
 			var o = obj.opts, og = o.portals && o.portals.outgoing;
-			return og && og.target;
+			return og && !og.locked && og.target;
 		}
 	},
 	on: function(emission, cb) {
