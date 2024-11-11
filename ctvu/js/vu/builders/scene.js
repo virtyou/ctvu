@@ -316,10 +316,10 @@ vu.builders.scene = {
 		},
 		item: function(iopts) { // also creates/places thing!!
 			var r = zero.core.current.room,
-				gup = vu.game.step.upstate,
+				gup = vu.game.step.upstate, n,
 				item = r.attach(CT.merge(iopts,
 					vu.core.options.get(iopts.kind, iopts.name)));
-			return CT.dom.div([
+			n = CT.dom.div([
 				CT.dom.div(" (" + iopts.kind + ")", "right small"),
 				item.name,
 				CT.dom.smartField({
@@ -347,12 +347,20 @@ vu.builders.scene = {
 					var pos = item.position();
 					iopts.position = [pos.x, pos.y, pos.z];
 					gup();
-				}, "w1")
+				}, "w1"),
+				CT.dom.button("remove item", function() {
+					if (!confirm("really remove this item?")) return;
+					delete vu.game.util.state(zcc.scene.name, "items")[iopts.name];
+					r.detach(iopts.name);
+					n.remove();
+					gup();
+				}, "w1 red bold block")
 			], "bordered padded margined round", null, {
 				onclick: function() {
 					zero.core.camera.follow(item);
 				}
 			});
+			return n;
 		},
 		items: function() {
 			var _ = vu.builders.scene._, selz = _.selectors,
