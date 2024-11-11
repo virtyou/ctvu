@@ -98,6 +98,13 @@ vu.game.dropper = {
 			description: CT.data.choice(_.droptex),
 			position: [position.x, position.y, position.z]
 		}, true, _.drop);
+	},
+	treasure: function(position, treasure) {
+		var d = vu.game.dropper;
+		if (treasure == "consumable")
+			d.drop(position, treasure);
+		else
+			d.drop(position, "held", treasure);
 	}
 };
 

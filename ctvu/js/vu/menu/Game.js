@@ -250,7 +250,7 @@ vu.menu.Game = CT.Class({
 		}), pos = item.position();
 		this.info(item.name, [
 			popts.description,
-			item.openbutt(() => vu.game.dropper.drop(pos, popts.treasure), true, iopts)
+			item.openbutt(() => vu.game.dropper.treasure(pos, popts.treasure), true, iopts)
 		], item);
 	},
 	item: function(item) {
