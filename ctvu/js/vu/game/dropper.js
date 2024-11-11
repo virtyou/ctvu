@@ -104,7 +104,7 @@ vu.game.dropper = {
 		if (treasure == "consumable")
 			d.drop(position, treasure);
 		else
-			d.drop(position, "held", treasure);
+			d.drop(position, "held", null, treasure);
 	}
 };
 
