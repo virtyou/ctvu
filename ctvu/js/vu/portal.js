@@ -55,7 +55,7 @@ vu.portal = {
 		return scene && scene.mystate("portals") || {};
 	},
 	check: function() {
-		var cur = zero.core.current, person = cur.person, vp = vu.portal,
+		var zc = zero.core, cur = zc.current, person = cur.person, vp = vu.portal,
 			pos = person.body.placer.position, _ = this._, hit = false;
 		cur.room.objects.forEach(function(portal) {
 			if (hit) return;
@@ -63,6 +63,8 @@ vu.portal = {
 			CT.log(portal.name + " " + dist);
 			if (dist < 100) {
 				hit = true;
+				if (!portal.isport)
+					return zc.click.trigger(portal);
 				if (!_.filter(portal))
 					return person.sayone(["this door is locked", "it's locked", "i'm locked out"]);
 				CT.db.one(portal.opts.portals.outgoing.target,
