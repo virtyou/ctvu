@@ -105,6 +105,7 @@ vu.builders.zone = {
 			_.controls();
 			_.mima();
 
+			vu.build.elect.electrical();
 			vu.build.struct.structural();
 			vu.build.furn.furnishings();
 			vu.build.port.requests();

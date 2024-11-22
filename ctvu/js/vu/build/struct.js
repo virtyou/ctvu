@@ -70,7 +70,8 @@ vu.build.struct = {
 			bs.structs("floor"),
 			bs.structs("obstacle"),
 			bs.structs("boulder"),
-			bs.structs("stala")
+			bs.structs("stala"),
+			vb.core.getSel("electrical")
 		]), selz = vb.core.getSel();
 		selz.structural = sel;
 		sel.update = function() {
@@ -80,6 +81,7 @@ vu.build.struct = {
 			selz.obstacles.update();
 			selz.boulders.update();
 			selz.stalas.update();
+			selz.electrical.update();
 		};
 	},
 	struct: function(variety, fopts, i) {
