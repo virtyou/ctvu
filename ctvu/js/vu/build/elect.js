@@ -44,10 +44,11 @@ vu.build.elect = {
 			}), "bordered");
 		},
 		app: function(app) {
-			var vb = vu.build, _ = vb.elect._, vbc = vb.core, saveUp = function(prop) {
+			var vb = vu.build, lec = vb.elect, _ = lec._, vbc = vb.core, saveUp = function(prop) {
 				_.aopts(aoz.kind).parts[aoz.index][prop] = aoz[prop];
 				_.up();
 			}, aoz = app.opts, isbulb = aoz.kind == "bulb", rdim = isbulb ? "x" : "y", cont = [
+				CT.dom.br(),
 				vbc.name(app),
 				vbc.level(app, function(yval) {
 					aoz.position[1] = yval;
@@ -69,7 +70,7 @@ vu.build.elect = {
 			else if (aoz.kind == "elevator") {
 				// TODO: targets[]
 			} else if (aoz.kind == "panel")
-				vbc.controls(app, saveUp);
+				cont.push(lec.controls.panel(app, saveUp));
 			return cont;
 		},
 		apps: function(cat) {
@@ -84,6 +85,74 @@ vu.build.elect = {
 				cat,
 				cont
 			], "topbordered pv10");
+		}
+	},
+	controls: {
+		button: function(butt, cb) { // [{appliance,order}]
+			var r = zero.core.current.room, swapper, odata,
+				appkinds = ["bulb", "gate", "elevator"].filter(k=>r[k]);
+			swapper = CT.dom.link(null, function() {
+				CT.modal.choice({
+					prompt: "what kind of appliance?",
+					data: appkinds,
+					cb: function(akind) {
+						CT.modal.choice({
+							prompt: "which one?",
+							data: Object.keys(r[akind]),
+							cb: function(aname) {
+								if (akind == "gate")
+									odata = ["swing", "slide", "squish"];
+								else if (akind == "elevator")
+									odata = r[aname].opts.targets;
+								else // TODO : bulb color!
+									return alert("sorry, unimplemented!");
+								CT.modal.choice({
+									prompt: "what's the order?",
+									data: odata,
+									cb: function(order) {
+										butt.appliance = aname;
+										butt.order = order;
+										swapper.refresh();
+										cb();
+									}
+								});
+							}
+						});
+					}
+				});
+			}, "centered block");
+			swapper.refresh = function() {
+				CT.dom.setContent(swapper, butt.appliance + " : " + butt.order);
+			};
+			swapper.refresh();
+			return swapper;
+		},
+		flipper: function(item, cb) { // [{circuit}]
+			return vu.build.core.circuit(item, cb, true);
+		},
+		strip: function(pan, kind, cb) {
+			var cons = vu.build.elect.controls, cber = () => cb(kind),
+				kinder = cons[kind] || cons.flipper,
+				toggler = item => kinder(item, cber);
+			return CT.dom.div([
+				CT.dom.button("add", function() {
+					// TODO!
+				}, "right"),
+				kind,
+				pan.opts[kind].map(toggler)
+			], "clearnode");
+		},
+		panel: function(pan, cb) {
+			var n = CT.dom.div(), fullCb = function(kind) {
+				// TODO: refresh pan itself!
+				n.refresh();
+				cb(kind);
+			}, strip = vu.build.elect.controls.strip;
+			n.refresh = function() {
+				CT.dom.setContent(n, pan.kinds.map(k => strip(pan, k, fullCb)));
+			};
+			n.refresh();
+			return n;
 		}
 	},
 	circuits: function() {
