@@ -63,6 +63,19 @@ vu.build.elect = {
 					saveUp("rotation");
 				})
 			];
+			if (isbulb) {
+				// TODO: color
+			} else if (aoz.kind == "gate") {
+				// TODO: width/height ; door{}
+				cont.push(vbc.opener(app, function(opener) {
+					aoz.opener = opener;
+					saveUp("opener");
+				}));
+			} else if (aoz.kind == "elevator") {
+				// TODO: targets[]
+			} else if (aoz.kind == "panel") {
+				// TODO: button[]/switch[]/lever[]
+			}
 			return cont;
 		},
 		apps: function(cat) {
