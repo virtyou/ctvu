@@ -44,10 +44,10 @@ vu.build.elect = {
 			}), "bordered");
 		},
 		app: function(app) {
-			var vb = vu.build, _ = vb.elect._, saveUp = function(prop) {
+			var vb = vu.build, _ = vb.elect._, vbc = vb.core, saveUp = function(prop) {
 				_.aopts(aoz.kind).parts[aoz.index][prop] = aoz[prop];
 				_.up();
-			}, vbc = vb.core, aoz = app.opts, cont = [
+			}, aoz = app.opts, isbulb = aoz.kind == "bulb", rdim = isbulb ? "x" : "y", cont = [
 				vbc.name(app),
 				vbc.circuit(app, function(circ) {
 					aoz.circuit = circ;
@@ -57,6 +57,10 @@ vu.build.elect = {
 				vbc.level(app, function(yval) {
 					aoz.position[1] = yval;
 					saveUp("position");
+				}),
+				vbc.rot(app, rdim, function(rval) {
+					aoz.rotation[isbulb ? 0 : 1] = rval;
+					saveUp("rotation");
 				})
 			];
 			return cont;
