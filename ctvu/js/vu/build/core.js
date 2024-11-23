@@ -264,14 +264,14 @@ vu.build.core = {
 			}
 		});
 	},
-	seller: function(thing, prop, opper, cb) {
-		var swapper = CT.dom.link(thing.opts[prop], function() {
+	seller: function(opts, prop, opper, cb) {
+		var swapper = CT.dom.link(opts[prop], function() {
 			CT.modal.choice({
 				prompt: "what " + prop + " should we use?",
 				data: opper(),
 				cb: function(sel) {
 					CT.dom.setContent(swapper, sel);
-					thing.opts[prop] = sel;
+					opts[prop] = sel;
 					cb(sel);
 				}
 			});
@@ -282,16 +282,13 @@ vu.build.core = {
 			swapper
 		];
 	},
-	circuit: function(app, cb) {
-		return vu.build.core.seller(app, "circuit",
+	circuit: function(app, cb, asopts) {
+		return vu.build.core.seller(asopts ? app : app.opts, "circuit",
 			() => Object.keys(zero.core.Appliance.circuitry), cb);
 	},
 	opener: function(app, cb) {
-		return vu.build.core.seller(app, "opener",
+		return vu.build.core.seller(app.opts, "opener",
 			() => ["swing", "slide", "squish"], cb);
-	},
-	controls: function(pan, cb) { // button[]/switch[]/lever[]
-		
 	},
 	level: function(furn, cb) {
 		var rbz = zero.core.current.room.getBounds();
