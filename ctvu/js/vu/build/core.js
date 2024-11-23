@@ -259,14 +259,11 @@ vu.build.core = {
 		return [
 			CT.dom.span("circuit:"),
 			CT.dom.pad(),
-			CT.dom.link(app.circuit || "default", function() {
+			CT.dom.link(app.opts.circuit, function() {
 				CT.modal.choice({
 					prompt: "what circuit should we use?",
 					data: Object.keys(zero.core.Appliance.circuitry),
-					cb: function(circ) {
-						app.circuit = circ;
-						cb();
-					}
+					cb: cb
 				});
 			})
 		];

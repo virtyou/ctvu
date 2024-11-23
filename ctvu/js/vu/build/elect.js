@@ -1,14 +1,26 @@
 vu.build.elect = {
 	_: {
 		up: function() {
-			var ro = zero.core.current.room.opts;
+			var ro = vu.build.elect._.opts();
 			vu.storage.setOpts(ro.key, { electrical: ro.electrical });
+		},
+		opts: function(sub) {
+			var opts = zero.core.current.room.opts;
+			return sub ? opts[sub] : opts;
+		},
+		eopts: function(sub) {
+			var opts = vu.build.elect._.opts("electrical");
+			return sub ? opts[sub] : opts;
+		},
+		aopts: function(sub) {
+			var opts = vu.build.elect._.eopts("appliances");
+			return sub ? opts[sub] : opts;
 		},
 		circ: function(circs, canRemove) {
 			var zc = zero.core, vb = vu.build, _ = vb.elect._, saveUp = function() {
 				_.up();
 				vb.core.getSel().circuits.update();
-				zc.Appliance.initCircuits(zc.current.room.opts.electrical.circuits);
+				zc.Appliance.initCircuits(_.eopts("circuits"));
 			};
 			return CT.dom.div(Object.keys(circs).map(function(c) {
 				return CT.dom.div([
@@ -32,43 +44,59 @@ vu.build.elect = {
 			}), "bordered");
 		},
 		app: function(app) {
-			var vb = vu.build, vbc = vb.core, _ = vb.elect._, cont = [
+			var vb = vu.build, _ = vb.elect._, saveUp = function(prop) {
+				_.aopts(aoz.kind).parts[aoz.index][prop] = aoz[prop];
+				_.up();
+			}, vbc = vb.core, aoz = app.opts, cont = [
 				vbc.name(app),
-				vbc.circuit(app, _.up),
+				vbc.circuit(app, function(circ) {
+					aoz.circuit = circ;
+					saveUp("circuit");
+					app.plug(circ);
+				}),
 				vbc.level(app, function(yval) {
-					app.position[1] = yval;
-					_.up();
+					aoz.position[1] = yval;
+					saveUp("position");
 				})
 			];
-			if (app.thing == "Panel") {
-
-			} else { // Gate, Elevator, Bulb...
-
-			}
 			return cont;
+		},
+		apps: function(cat) {
+			var r = zero.core.current.room, anames = Object.keys(r[cat] || {}),
+				cont = CT.dom.div(anames.map(a => vu.build.elect._.app(r[a])));
+			return CT.dom.div([
+				CT.dom.button("add", function() {
+
+					// TODO!!!!
+
+				}, "right"),
+				cat,
+				cont
+			], "topbordered pv10");
 		}
 	},
 	circuits: function() {
-		var vb = vu.build, sel = vb.core.getSel().circuits = CT.dom.div();
+		var vb = vu.build, _ = vb.elect._,
+			sel = vb.core.getSel().circuits = CT.dom.div();
 		sel.update = function() {
-			CT.dom.setContent(sel,
-				vb.elect._.circ(zero.core.current.room.opts.electrical.circuits));
+			CT.dom.setContent(sel, _.circ(_.eopts("circuits")));
 		};
 		return CT.dom.div([
 			"circuits",
 			sel
-		], "topbordered padded margined");
+		], "topbordered pv10");
 	},
 	appliances: function() {
-		var vb = vu.build, sel = vb.core.getSel().appliances = CT.dom.div();
+		var vb = vu.build, _ = vb.elect._,
+			sel = vb.core.getSel().appliances = CT.dom.div();
 		sel.update = function() {
 			CT.dom.setContent(sel,
-				zero.core.current.room.opts.electrical.appliances.map(vb.elect._.app));
+				["panel", "bulb", "gate", "elevator"].map(vb.elect._.apps));
 		};
 		return CT.dom.div([
 			"appliances",
 			sel
-		], "topbordered padded margined");
+		], "topbordered pv10");
 	},
 	electrical: function() {
 		var vb = vu.build, lec = vb.elect, sel = CT.dom.div([
