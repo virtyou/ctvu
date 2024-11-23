@@ -30,6 +30,22 @@ vu.build.elect = {
 					CT.dom.div(_.circ(circs[c], true), "tabbed")
 				]);
 			}), "bordered");
+		},
+		app: function(app) {
+			var vb = vu.build, vbc = vb.core, _ = vb.elect._, cont = [
+				vbc.name(app),
+				vbc.circuit(app, _.up),
+				vbc.level(app, function(yval) {
+					app.position[1] = yval;
+					_.up();
+				})
+			];
+			if (app.thing == "Panel") {
+
+			} else { // Gate, Elevator, Bulb...
+
+			}
+			return cont;
 		}
 	},
 	circuits: function() {
@@ -44,11 +60,10 @@ vu.build.elect = {
 		], "topbordered padded margined");
 	},
 	appliances: function() {
-		var sel = vu.build.core.getSel().appliances = CT.dom.div();
+		var vb = vu.build, sel = vb.core.getSel().appliances = CT.dom.div();
 		sel.update = function() {
-			// TODO : something real...
 			CT.dom.setContent(sel,
-				zero.core.current.room.opts.electrical.appliances.map(a => a.name));
+				zero.core.current.room.opts.electrical.appliances.map(vb.elect._.app));
 		};
 		return CT.dom.div([
 			"appliances",
