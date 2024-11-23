@@ -255,6 +255,22 @@ vu.build.core = {
 			}
 		});
 	},
+	circuit: function(app, cb) {
+		return [
+			CT.dom.span("circuit:"),
+			CT.dom.pad(),
+			CT.dom.link(app.circuit || "default", function() {
+				CT.modal.choice({
+					prompt: "what circuit should we use?",
+					data: Object.keys(zero.core.Appliance.circuitry),
+					cb: function(circ) {
+						app.circuit = circ;
+						cb();
+					}
+				});
+			})
+		];
+	},
 	level: function(furn, cb) {
 		var rbz = zero.core.current.room.getBounds();
 		return vu.core.ranger("Level", function(val) {
