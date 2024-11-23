@@ -88,6 +88,7 @@ vu.build.struct = {
 		var vb = vu.build, vbc = vb.core, bs = vb.struct, s3 = [
 			"wall", "obstacle", "boulder", "stala"
 		].includes(variety), item = zero.core.current.room[variety + i], cont = [
+			CT.dom.br(),
 			vu.media.swapper.texmo(item, function(txups) {
 				Object.assign(fopts, txups);
 				bs.strup(variety);
