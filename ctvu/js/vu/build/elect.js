@@ -1,8 +1,12 @@
 vu.build.elect = {
 	_: {
+		up: function() {
+			var ro = zero.core.current.room.opts;
+			vu.storage.setOpts(ro.key, { electrical: ro.electrical });
+		},
 		circ: function(circs, canRemove) {
-			var zc = zero.core, vb = vu.build, saveUp = function() {
-				// TODO : save!
+			var zc = zero.core, vb = vu.build, _ = vb.elect._, saveUp = function() {
+				_.up();
 				vb.core.getSel().circuits.update();
 				zc.Appliance.initCircuits(zc.current.room.opts.electrical.circuits);
 			};
@@ -23,7 +27,7 @@ vu.build.elect = {
 						});
 					}, null, "right green"),
 					c,
-					CT.dom.div(vb.elect._.circ(circs[c], true), "tabbed")
+					CT.dom.div(_.circ(circs[c], true), "tabbed")
 				]);
 			}), "bordered");
 		}
