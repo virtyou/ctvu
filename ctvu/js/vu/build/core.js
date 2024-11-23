@@ -151,6 +151,15 @@ vu.build.core = {
 			});
 		}, min, max, furn.scale().x, unit);
 	},
+	rot: function(thing, dim, cb) {
+		var unit = Math.PI;
+		return vu.core.ranger("rotation (" + dim + ")", function(val) {
+			val = parseFloat(val);
+			thing.adjust("rotation", dim, val);
+			thing.basicBound();
+			cb(val);
+		}, 0, unit * 3, thing.rotation()[dim], unit);
+	},
 	tilt: function(ramp, cb) {
 		var unit = Math.PI / 16;
 		return vu.core.ranger("Tilt", function(val) {
