@@ -264,18 +264,26 @@ vu.build.core = {
 			}
 		});
 	},
-	circuit: function(app, cb) {
+	seller: function(thing, prop, opper, cb) {
 		return [
-			CT.dom.span("circuit:"),
+			CT.dom.span(prop + ":"),
 			CT.dom.pad(),
-			CT.dom.link(app.opts.circuit, function() {
+			CT.dom.link(thing.opts[prop], function() {
 				CT.modal.choice({
-					prompt: "what circuit should we use?",
-					data: Object.keys(zero.core.Appliance.circuitry),
+					prompt: "what " + prop + " should we use?",
+					data: opper(),
 					cb: cb
 				});
 			})
 		];
+	},
+	circuit: function(app, cb) {
+		return vu.build.core.seller(app, "circuit",
+			() => Object.keys(zero.core.Appliance.circuitry), cb);
+	},
+	opener: function(app, cb) {
+		return vu.build.core.seller(app, "opener",
+			() => ["swing", "slide", "squish"], cb);
 	},
 	level: function(furn, cb) {
 		var rbz = zero.core.current.room.getBounds();
