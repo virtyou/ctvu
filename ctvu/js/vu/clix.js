@@ -32,6 +32,18 @@ vu.clix = {
 			if (item)
 				return vu.game.dropper.get(item);
 		}
+		var bod = zero.core.current.person.body,
+			cons = bod.upon && bod.upon.controls;
+		if (cons) {
+			var ops = cons.options();
+			if (ops.length == 1)
+				return cons[ops[0]].toggle();
+			return CT.modal.choice({
+				prompt: "what do you toggle?",
+				data: ops,
+				cb: op => cons[op].toggle()
+			});
+		}
 		vu.portal.check();
 	},
 	room: function() {
