@@ -63,13 +63,10 @@ vu.build.elect = {
 					app.plug(circ);
 				})
 			];
-			if (isbulb) {
-				// TODO: color
-			} else if (aoz.kind == "gate") // TODO: width/height ; door{}
+			// TODO : bulb color ; elevator targets[]
+			if (aoz.kind == "gate") // TODO: width/height ; door{}
 				cont.push(vbc.opener(app, () => saveUp("opener")));
-			else if (aoz.kind == "elevator") {
-				// TODO: targets[]
-			} else if (aoz.kind == "panel")
+			else if (aoz.kind == "panel")
 				cont.push(lec.controls.panel(app, saveUp));
 			return cont;
 		},
