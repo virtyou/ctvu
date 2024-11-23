@@ -169,6 +169,7 @@ vu.build.elect = {
 			return n;
 		}
 	},
+	varieties: ["panel", "bulb", "gate", "elevator"],
 	circuits: function() {
 		var vb = vu.build, _ = vb.elect._,
 			sel = vb.core.getSel().circuits = CT.dom.div();
@@ -181,11 +182,10 @@ vu.build.elect = {
 		], "topbordered pv10");
 	},
 	appliances: function() {
-		var vb = vu.build, _ = vb.elect._,
+		var vb = vu.build, lec = vb.elect,
 			sel = vb.core.getSel().appliances = CT.dom.div();
 		sel.update = function() {
-			CT.dom.setContent(sel,
-				["panel", "bulb", "gate", "elevator"].map(vb.elect._.apps));
+			CT.dom.setContent(sel, lec.varieties.map(lec._.apps));
 		};
 		return CT.dom.div([
 			"appliances",
