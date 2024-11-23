@@ -152,7 +152,7 @@ vu.build.core = {
 		}, min, max, furn.scale().x, unit);
 	},
 	rot: function(thing, dim, cb) {
-		var unit = Math.PI;
+		var unit = Math.PI / 2;
 		return vu.core.ranger("rotation (" + dim + ")", function(val) {
 			val = parseFloat(val);
 			thing.adjust("rotation", dim, val);
