@@ -49,11 +49,6 @@ vu.build.elect = {
 				_.up();
 			}, aoz = app.opts, isbulb = aoz.kind == "bulb", rdim = isbulb ? "x" : "y", cont = [
 				vbc.name(app),
-				vbc.circuit(app, function(circ) {
-					aoz.circuit = circ;
-					saveUp("circuit");
-					app.plug(circ);
-				}),
 				vbc.level(app, function(yval) {
 					aoz.position[1] = yval;
 					saveUp("position");
@@ -61,21 +56,20 @@ vu.build.elect = {
 				vbc.rot(app, rdim, function(rval) {
 					aoz.rotation[isbulb ? 0 : 1] = rval;
 					saveUp("rotation");
+				}),
+				vbc.circuit(app, function(circ) {
+					saveUp("circuit");
+					app.plug(circ);
 				})
 			];
 			if (isbulb) {
 				// TODO: color
-			} else if (aoz.kind == "gate") {
-				// TODO: width/height ; door{}
-				cont.push(vbc.opener(app, function(opener) {
-					aoz.opener = opener;
-					saveUp("opener");
-				}));
-			} else if (aoz.kind == "elevator") {
+			} else if (aoz.kind == "gate") // TODO: width/height ; door{}
+				cont.push(vbc.opener(app, () => saveUp("opener")));
+			else if (aoz.kind == "elevator") {
 				// TODO: targets[]
-			} else if (aoz.kind == "panel") {
-				// TODO: button[]/switch[]/lever[]
-			}
+			} else if (aoz.kind == "panel")
+				vbc.controls(app, saveUp);
 			return cont;
 		},
 		apps: function(cat) {
