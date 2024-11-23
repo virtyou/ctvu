@@ -265,16 +265,21 @@ vu.build.core = {
 		});
 	},
 	seller: function(thing, prop, opper, cb) {
+		var swapper = CT.dom.link(thing.opts[prop], function() {
+			CT.modal.choice({
+				prompt: "what " + prop + " should we use?",
+				data: opper(),
+				cb: function(sel) {
+					CT.dom.setContent(swapper, sel);
+					thing.opts[prop] = sel;
+					cb(sel);
+				}
+			});
+		});
 		return [
 			CT.dom.span(prop + ":"),
 			CT.dom.pad(),
-			CT.dom.link(thing.opts[prop], function() {
-				CT.modal.choice({
-					prompt: "what " + prop + " should we use?",
-					data: opper(),
-					cb: cb
-				});
-			})
+			swapper
 		];
 	},
 	circuit: function(app, cb) {
@@ -284,6 +289,9 @@ vu.build.core = {
 	opener: function(app, cb) {
 		return vu.build.core.seller(app, "opener",
 			() => ["swing", "slide", "squish"], cb);
+	},
+	controls: function(pan, cb) { // button[]/switch[]/lever[]
+		
 	},
 	level: function(furn, cb) {
 		var rbz = zero.core.current.room.getBounds();
