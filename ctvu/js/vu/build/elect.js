@@ -88,37 +88,40 @@ vu.build.elect = {
 		}
 	},
 	controls: {
-		button: function(butt, cb) { // [{appliance,order}]
-			var r = zero.core.current.room, swapper, odata,
+		butter: function(cb) {
+			var r = zero.core.current.room, odata,
 				appkinds = ["bulb", "gate", "elevator"].filter(k=>r[k]);
-			swapper = CT.dom.link(null, function() {
-				CT.modal.choice({
-					prompt: "what kind of appliance?",
-					data: appkinds,
-					cb: function(akind) {
-						CT.modal.choice({
-							prompt: "which one?",
-							data: Object.keys(r[akind]),
-							cb: function(aname) {
-								if (akind == "gate")
-									odata = ["swing", "slide", "squish"];
-								else if (akind == "elevator")
-									odata = r[aname].opts.targets;
-								else // TODO : bulb color!
-									return alert("sorry, unimplemented!");
-								CT.modal.choice({
-									prompt: "what's the order?",
-									data: odata,
-									cb: function(order) {
-										butt.appliance = aname;
-										butt.order = order;
-										swapper.refresh();
-										cb();
-									}
-								});
-							}
-						});
-					}
+			CT.modal.choice({
+				prompt: "what kind of appliance?",
+				data: appkinds,
+				cb: function(akind) {
+					CT.modal.choice({
+						prompt: "which one?",
+						data: Object.keys(r[akind]),
+						cb: function(aname) {
+							if (akind == "gate")
+								odata = ["swing", "slide", "squish"];
+							else if (akind == "elevator")
+								odata = r[aname].opts.targets;
+							else // TODO : bulb color!
+								return alert("sorry, unimplemented!");
+							CT.modal.choice({
+								prompt: "what's the order?",
+								data: odata,
+								cb: order => cb(aname, order)
+							});
+						}
+					});
+				}
+			});
+		},
+		button: function(butt, cb) { // [{appliance,order}]
+			var swapper = CT.dom.link(null, function() {
+				vu.build.elect.controls.butter(function(appliance, order) {
+					butt.appliance = appliance;
+					butt.order = order;
+					swapper.refresh();
+					cb();
 				});
 			}, "centered block");
 			swapper.refresh = function() {
@@ -131,12 +134,26 @@ vu.build.elect = {
 			return vu.build.core.circuit(item, cb, true);
 		},
 		strip: function(pan, kind, cb) {
-			var cons = vu.build.elect.controls, cber = () => cb(kind),
-				kinder = cons[kind] || cons.flipper,
+			var cons = vu.build.elect.controls, cber = () => cb(kind), adder = function(item) {
+				pan.opts[kind].push(item);
+				cber();
+			}, kinder = cons[kind] || cons.flipper,
 				toggler = item => kinder(item, cber);
 			return CT.dom.div([
 				CT.dom.button("add", function() {
-					// TODO!
+					if (kind == "button") {
+						cons.butter(function(appliance, order) {
+							adder({ appliance: appliance, order: order });
+						});
+					} else { // switch/lever
+						CT.modal.prompt({
+							prompt: "what circuit?",
+							data: Object.keys(zero.core.Appliance.circuitry),
+							cb: function(circ) {
+								adder({ circuit: circ });
+							}
+						});
+					}
 				}, "right"),
 				kind,
 				pan.opts[kind].map(toggler)
