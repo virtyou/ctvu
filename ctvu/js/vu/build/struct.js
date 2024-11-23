@@ -61,7 +61,7 @@ vu.build.struct = {
 		return CT.dom.div([
 			plur,
 			sel
-		], "topbordered padded margined");
+		], "topbordered pv10");
 	},
 	structural: function() {
 		var vb = vu.build, bs = vb.struct, sel = CT.dom.div([
@@ -96,7 +96,7 @@ vu.build.struct = {
 			vbc[s3 ? "scalers" : "scale"](item, function(scale) {
 				fopts.scale = s3 ? scale : [scale, scale, scale];
 				bs.strup(variety);
-			}, 1, 500, 1, variety == "wall" && ["x", "y"], "topbordered padded margined"),
+			}, 1, 500, 1, variety == "wall" && ["x", "y"], "topbordered pv10"),
 			vbc.level(item, function(yval) {
 				fopts.position[1] = yval;
 				bs.strup(variety);

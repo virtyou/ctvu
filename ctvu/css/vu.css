@@ -201,6 +201,10 @@ img.right.h30p.up5 {
 	max-height: calc(100% - 60px);
 }
 
+.gmenu.structural > div {
+	overflow-x: hidden;
+}
+
 .gmenu.cameras {
     left: 350px;
     right: 276px;
