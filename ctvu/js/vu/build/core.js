@@ -151,6 +151,15 @@ vu.build.core = {
 			});
 		}, min, max, furn.scale().x, unit);
 	},
+	rot: function(thing, dim, cb, boundit) {
+		var unit = Math.PI / 2;
+		return vu.core.ranger("rotation (" + dim + ")", function(val) {
+			val = parseFloat(val);
+			thing.adjust("rotation", dim, val);
+			boundit && thing.basicBound();
+			cb(val);
+		}, 0, unit * 3, thing.rotation()[dim], unit);
+	},
 	tilt: function(ramp, cb) {
 		var unit = Math.PI / 16;
 		return vu.core.ranger("Tilt", function(val) {
@@ -254,6 +263,32 @@ vu.build.core = {
 				cb(fopts.material);
 			}
 		});
+	},
+	seller: function(opts, prop, opper, cb) {
+		var swapper = CT.dom.link(opts[prop], function() {
+			CT.modal.choice({
+				prompt: "what " + prop + " should we use?",
+				data: opper(),
+				cb: function(sel) {
+					CT.dom.setContent(swapper, sel);
+					opts[prop] = sel;
+					cb(sel);
+				}
+			});
+		});
+		return [
+			CT.dom.span(prop + ":"),
+			CT.dom.pad(),
+			swapper
+		];
+	},
+	circuit: function(app, cb, asopts) {
+		return vu.build.core.seller(asopts ? app : app.opts, "circuit",
+			() => Object.keys(zero.core.Appliance.circuitry), cb);
+	},
+	opener: function(app, cb) {
+		return vu.build.core.seller(app.opts, "opener",
+			() => ["swing", "slide", "squish"], cb);
 	},
 	level: function(furn, cb) {
 		var rbz = zero.core.current.room.getBounds();

@@ -42,7 +42,7 @@ iframe {
 }
 
 .cp-app {
-	z-index: 9999;
+	z-index: 99999;
 }
 
 #ctheader {
@@ -199,6 +199,10 @@ img.right.h30p.up5 {
 .gmenu.basic, .gmenu.structural {
 	width: 247px;
 	max-height: calc(100% - 60px);
+}
+
+.gmenu.structural > div {
+	overflow-x: hidden;
 }
 
 .gmenu.cameras {

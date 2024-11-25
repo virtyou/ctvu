@@ -36,11 +36,12 @@ vu.builders.zone = {
 					position: [pos.x, pos.y, pos.z]
 				};
 				kind = target.opts.kind;
-				if (["floor", "obstacle", "wall", "ramp", "boulder", "stala"].includes(kind)) {
-					fi = parseInt(target.name.slice(kind.length));
-					zccr.opts[kind].parts[fi].position = opts.position;
-					vu.build.struct.strup(kind);
-				} else {
+				target.opts.position = opts.position;
+				if (["floor", "obstacle", "wall", "ramp", "boulder", "stala"].includes(kind))
+					vu.build.struct.posup(target);
+				else if (vu.build.elect.varieties.includes(kind))
+					vu.build.elect.posup(target);
+				else {
 					if ("wall" in target.opts)
 						opts.wall = target.opts.wall;
 					vu.storage.setOpts(target.opts.key, opts);
@@ -105,6 +106,7 @@ vu.builders.zone = {
 			_.controls();
 			_.mima();
 
+			vu.build.elect.electrical();
 			vu.build.struct.structural();
 			vu.build.furn.furnishings();
 			vu.build.port.requests();

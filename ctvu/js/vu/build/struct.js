@@ -4,6 +4,12 @@ vu.build.struct = {
 		vu.build.core.getOpts()[variety] = d[variety] = ro[variety];
 		vu.storage.setOpts(ro.key, d);
 	},
+	posup: function(target) {
+		var opts = target.opts, kind = opts.kind,
+			fi = parseInt(target.name.slice(kind.length));
+		zero.core.current.room.opts[kind].parts[fi].position = opts.position;
+		vu.build.struct.strup(kind);
+	},
 	check: function(prop, fopts, variety) {
 		var vb = vu.build;
 		return vb.core.check(prop, fopts, () => vb.struct.strup(variety));
@@ -61,7 +67,7 @@ vu.build.struct = {
 		return CT.dom.div([
 			plur,
 			sel
-		], "topbordered padded margined");
+		], "topbordered pv10");
 	},
 	structural: function() {
 		var vb = vu.build, bs = vb.struct, sel = CT.dom.div([
@@ -70,7 +76,8 @@ vu.build.struct = {
 			bs.structs("floor"),
 			bs.structs("obstacle"),
 			bs.structs("boulder"),
-			bs.structs("stala")
+			bs.structs("stala"),
+			vb.core.getSel("electrical")
 		]), selz = vb.core.getSel();
 		selz.structural = sel;
 		sel.update = function() {
@@ -80,12 +87,14 @@ vu.build.struct = {
 			selz.obstacles.update();
 			selz.boulders.update();
 			selz.stalas.update();
+			selz.electrical.update();
 		};
 	},
 	struct: function(variety, fopts, i) {
 		var vb = vu.build, vbc = vb.core, bs = vb.struct, s3 = [
 			"wall", "obstacle", "boulder", "stala"
 		].includes(variety), item = zero.core.current.room[variety + i], cont = [
+			CT.dom.br(),
 			vu.media.swapper.texmo(item, function(txups) {
 				Object.assign(fopts, txups);
 				bs.strup(variety);
@@ -94,7 +103,7 @@ vu.build.struct = {
 			vbc[s3 ? "scalers" : "scale"](item, function(scale) {
 				fopts.scale = s3 ? scale : [scale, scale, scale];
 				bs.strup(variety);
-			}, 1, 500, 1, variety == "wall" && ["x", "y"], "topbordered padded margined"),
+			}, 1, 500, 1, variety == "wall" && ["x", "y"], "topbordered pv10"),
 			vbc.level(item, function(yval) {
 				fopts.position[1] = yval;
 				bs.strup(variety);

@@ -32,6 +32,13 @@ vu.clix = {
 			if (item)
 				return vu.game.dropper.get(item);
 		}
+		var zcc = zero.core.current, per = zcc.person, bod = per.body,
+			pan = bod.upon && bod.upon.controls || zcc.room.getPanel();
+		if (pan)
+			return per.touch(pan, pan.toggle, null, null, null, null, true);
+		var gate = zcc.room.getGate();
+		if (gate)
+			return per.touch(gate, gate.open);
 		vu.portal.check();
 	},
 	room: function() {
