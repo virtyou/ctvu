@@ -151,12 +151,12 @@ vu.build.core = {
 			});
 		}, min, max, furn.scale().x, unit);
 	},
-	rot: function(thing, dim, cb) {
+	rot: function(thing, dim, cb, boundit) {
 		var unit = Math.PI / 2;
 		return vu.core.ranger("rotation (" + dim + ")", function(val) {
 			val = parseFloat(val);
 			thing.adjust("rotation", dim, val);
-			thing.basicBound();
+			boundit && thing.basicBound();
 			cb(val);
 		}, 0, unit * 3, thing.rotation()[dim], unit);
 	},
