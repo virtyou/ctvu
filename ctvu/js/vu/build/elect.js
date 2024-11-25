@@ -4,6 +4,11 @@ vu.build.elect = {
 			var ro = vu.build.elect._.opts();
 			vu.storage.setOpts(ro.key, { electrical: ro.electrical });
 		},
+		prup: function(tar, prop) {
+			var _ = vu.build.elect._, toz = tar.opts;
+			_.aopts(toz.kind).parts[toz.index][prop] = toz[prop];
+			_.up();
+		},
 		opts: function(sub) {
 			var opts = zero.core.current.room.opts;
 			return sub ? opts[sub] : opts;
@@ -45,8 +50,7 @@ vu.build.elect = {
 		},
 		app: function(app) {
 			var vb = vu.build, lec = vb.elect, _ = lec._, saveUp = function(prop) {
-				_.aopts(aoz.kind).parts[aoz.index][prop] = aoz[prop];
-				_.up();
+				_.prup(app, prop);
 			}, vbc = vb.core, aoz = app.opts, k = aoz.kind, isbulb = k == "bulb",
 				isgate = k == "gate", rdim = isbulb ? "x" : "y", cont;
 			cont = [
@@ -146,7 +150,7 @@ vu.build.elect = {
 							adder({ appliance: appliance, order: order });
 						});
 					} else { // switch/lever
-						CT.modal.prompt({
+						CT.modal.choice({
 							prompt: "what circuit?",
 							data: Object.keys(zero.core.Appliance.circuitry),
 							cb: function(circ) {
@@ -173,6 +177,9 @@ vu.build.elect = {
 		}
 	},
 	varieties: ["panel", "bulb", "gate", "elevator"],
+	posup: function(target) {
+		vu.build.elect._.prup(target, "position");
+	},
 	circuits: function() {
 		var vb = vu.build, _ = vb.elect._,
 			sel = vb.core.getSel().circuits = CT.dom.div();
