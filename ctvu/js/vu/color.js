@@ -26,7 +26,7 @@ vu.color = {
 			scolor = (typeof bcolor == "string") ? bcolor : ("#" + bcolor.toString(16));
 		if (!prop)
 			prop = "light " + lnum;
-		var cnode = vu.color.picker(target.opts.key + " " + prop, scolor, function() {
+		var cnode = vu.color.picker((target.opts.key || target.name) + " " + prop, scolor, function() {
 			vu.color.set(target, cnode.value, prop, lnum, uplight);
 		});
 		return cnode;
