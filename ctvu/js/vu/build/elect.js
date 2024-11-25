@@ -71,11 +71,12 @@ vu.build.elect = {
 			return cont;
 		},
 		apps: function(cat) {
-			var r = zero.core.current.room, anames = Object.keys(r[cat] || {}),
+			var r = zero.core.current.room, anames = Object.keys(r[cat] || {}), athing,
 				_ = vu.build.elect._, cont = CT.dom.div(anames.map(a => _.app(r[a])));
 			return CT.dom.div([
 				CT.dom.button("add", function() {
-					CT.dom.addContent(cont, _.app(r.attach(r.elecPart(cat))));
+					athing = r.attach(r.elecPart(cat));
+					athing.onReady(() => CT.dom.addContent(cont, _.app(athing)));
 					r.elecBase(cat).parts.push({});
 					_.up();
 				}, "right"),
