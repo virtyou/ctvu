@@ -10,8 +10,8 @@ vu.color = {
 		zero.core.current.person.splash(vu.color._.primaries[color]);
 	},
 	set: function(target, color, prop, lnum, uplight) {
-		var copts = {}, rgb = zero.core.util.hex2rgb(color);
-		color = parseInt(color.slice(1), 16);
+		var copts = {}, zcu = zero.core.util, rgb = zcu.hex2rgb(color);
+		color = zcu.hex2int(color);
 		if (uplight) { // light
 			target.setColor(rgb);
 			uplight(color, lnum);
@@ -31,7 +31,19 @@ vu.color = {
 		});
 		return cnode;
 	},
+	modal: function(cb) {
+		var picker = vu.color.picker(), mod = CT.modal.modal([
+			"what color?",
+			picker,
+			CT.dom.button("this color", function() {
+				cb(zero.core.util.hex2int(picker.value));
+				mod.hide();
+			})
+		]);
+	},
 	picker: function(key, val, cb) {
+		key = key || "k" + CT.data.token();
+		val = val || "#FFFFFF";
 		var id = key.replace(/ /g, ""),
 			n = CT.dom.field(id, val, "block", null, null, {
 				color: "gray",
@@ -50,7 +62,7 @@ vu.color = {
 									-1).split(", ").map(s => parseInt(s)));
 							CT.log(n.value);
 						}
-						cb();
+						cb && cb();
 					}, 20); // so silly...
 				}
 			});
