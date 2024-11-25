@@ -44,10 +44,12 @@ vu.build.elect = {
 			}), "bordered");
 		},
 		app: function(app) {
-			var vb = vu.build, lec = vb.elect, _ = lec._, vbc = vb.core, saveUp = function(prop) {
+			var vb = vu.build, lec = vb.elect, _ = lec._, saveUp = function(prop) {
 				_.aopts(aoz.kind).parts[aoz.index][prop] = aoz[prop];
 				_.up();
-			}, aoz = app.opts, isbulb = aoz.kind == "bulb", rdim = isbulb ? "x" : "y", cont = [
+			}, vbc = vb.core, aoz = app.opts, k = aoz.kind, isbulb = k == "bulb",
+				isgate = k == "gate", rdim = isbulb ? "x" : "y", cont;
+			cont = [
 				CT.dom.br(),
 				vbc.name(app),
 				vbc.level(app, function(yval) {
@@ -57,16 +59,16 @@ vu.build.elect = {
 				vbc.rot(app, rdim, function(rval) {
 					aoz.rotation[isbulb ? 0 : 1] = rval;
 					saveUp("rotation");
-				}),
+				}, isgate),
 				vbc.circuit(app, function(circ) {
 					saveUp("circuit");
 					app.plug(circ);
 				})
 			];
 			// TODO : bulb color ; elevator targets[]
-			if (aoz.kind == "gate") // TODO: width/height ; door{}
+			if (isgate) // TODO: width/height ; door{}
 				cont.push(vbc.opener(app, () => saveUp("opener")));
-			else if (aoz.kind == "panel")
+			else if (k == "panel")
 				cont.push(lec.controls.panel(app, saveUp));
 			return cont;
 		},
