@@ -4,6 +4,12 @@ vu.build.struct = {
 		vu.build.core.getOpts()[variety] = d[variety] = ro[variety];
 		vu.storage.setOpts(ro.key, d);
 	},
+	posup: function(target) {
+		var opts = target.opts, kind = opts.kind,
+			fi = parseInt(target.name.slice(kind.length));
+		zero.core.current.room.opts[kind].parts[fi].position = opts.position;
+		vu.build.struct.strup(kind);
+	},
 	check: function(prop, fopts, variety) {
 		var vb = vu.build;
 		return vb.core.check(prop, fopts, () => vb.struct.strup(variety));
