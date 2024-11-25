@@ -80,6 +80,13 @@ vu.build.elect = {
 					app.setIntensity();
 					saveUp("intensity");
 				}, 0, 100, aoz.intensity * 100, 1));
+				cont.push(CT.dom.div([
+					"color",
+					vu.color.selector(app, "color", null, function(color) {
+						aoz.color = color;
+						saveUp("color");
+					})
+				], "topbordered margined padded"));
 			} else if (isgate) // TODO: width/height ; door{}
 				cont.push(vbc.opener(app, () => saveUp("opener")));
 			else if (k == "panel")
