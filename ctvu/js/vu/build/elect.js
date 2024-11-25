@@ -6,7 +6,7 @@ vu.build.elect = {
 		},
 		prup: function(tar, prop) {
 			var _ = vu.build.elect._, toz = tar.opts;
-			_.aopts(toz.kind).parts[toz.index][prop] = toz[prop];
+			_.eitem(toz.kind, toz.index)[prop] = toz[prop];
 			_.up();
 		},
 		opts: function(sub) {
@@ -20,6 +20,9 @@ vu.build.elect = {
 		aopts: function(sub) {
 			var opts = vu.build.elect._.eopts("appliances");
 			return sub ? opts[sub] : opts;
+		},
+		eitem: function(kind, index) {
+			return vu.build.elect._.aopts(kind).parts[index];
 		},
 		circ: function(circs, canRemove) {
 			var zc = zero.core, vb = vu.build, _ = vb.elect._, saveUp = function() {
@@ -81,7 +84,7 @@ vu.build.elect = {
 				_ = vu.build.elect._, cont = CT.dom.div(anames.map(a => _.app(r[a])));
 			return CT.dom.div([
 				CT.dom.button("add", function() {
-					athing = r.attach(r.elecPart(cat));
+					athing = r.addElec(cat);
 					athing.onReady(() => CT.dom.addContent(cont, _.app(athing)));
 					r.elecBase(cat).parts.push({});
 					_.up();
@@ -138,10 +141,11 @@ vu.build.elect = {
 			return vu.build.core.circuit(item, cb, true);
 		},
 		strip: function(pan, kind, cb) {
-			var cons = vu.build.elect.controls, cber = () => cb(kind), adder = function(item) {
+			var cber = () => cb(kind), adder = function(item) {
 				pan.opts[kind].push(item);
+				pan.refresh();
 				cber();
-			}, kinder = cons[kind] || cons.flipper,
+			}, cons = vu.build.elect.controls, kinder = cons[kind] || cons.flipper,
 				toggler = item => kinder(item, cber);
 			return CT.dom.div([
 				CT.dom.button("add", function() {
@@ -165,7 +169,6 @@ vu.build.elect = {
 		},
 		panel: function(pan, cb) {
 			var n = CT.dom.div(), fullCb = function(kind) {
-				// TODO: refresh pan itself!
 				n.refresh();
 				cb(kind);
 			}, strip = vu.build.elect.controls.strip;
