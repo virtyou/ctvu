@@ -59,6 +59,10 @@ vu.build.elect = {
 			cont = [
 				CT.dom.br(),
 				vbc.name(app),
+				vbc.circuit(app, function(circ) {
+					saveUp("circuit");
+					app.plug(circ);
+				}),
 				vbc.level(app, function(yval) {
 					aoz.position[1] = yval;
 					saveUp("position");
@@ -66,14 +70,17 @@ vu.build.elect = {
 				vbc.rot(app, rdim, function(rval) {
 					aoz.rotation[isbulb ? 0 : 1] = rval;
 					saveUp("rotation");
-				}, isgate),
-				vbc.circuit(app, function(circ) {
-					saveUp("circuit");
-					app.plug(circ);
-				})
+				}, isgate)
 			];
-			// TODO : bulb color ; elevator targets[]
-			if (isgate) // TODO: width/height ; door{}
+			// TODO : elevator targets[]
+			if (isbulb) { // TODO : color
+				cont.push(vu.core.ranger("intensity", function(intensity) {
+					intensity = parseInt(intensity) / 100;
+					aoz.intensity = intensity;
+					app.setIntensity();
+					saveUp("intensity");
+				}, 0, 100, aoz.intensity * 100, 1));
+			} else if (isgate) // TODO: width/height ; door{}
 				cont.push(vbc.opener(app, () => saveUp("opener")));
 			else if (k == "panel")
 				cont.push(lec.controls.panel(app, saveUp));
