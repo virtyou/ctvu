@@ -73,7 +73,7 @@ vu.build.elect = {
 				}, isgate)
 			];
 			// TODO : elevator targets[]
-			if (isbulb) { // TODO : color
+			if (isbulb) {
 				cont.push(vu.core.ranger("intensity", function(intensity) {
 					intensity = parseInt(intensity) / 100;
 					aoz.intensity = intensity;
@@ -120,17 +120,19 @@ vu.build.elect = {
 						prompt: "which one?",
 						data: Object.keys(r[akind]),
 						cb: function(aname) {
-							if (akind == "gate")
-								odata = ["swing", "slide", "squish"];
-							else if (akind == "elevator")
-								odata = r[aname].opts.targets;
-							else // TODO : bulb color!
-								return alert("sorry, unimplemented!");
-							CT.modal.choice({
-								prompt: "what's the order?",
-								data: odata,
-								cb: order => cb(aname, order)
-							});
+							if (akind == "bulb")
+								vu.color.modal(color => cb(aname, color));
+							else {
+								if (akind == "gate")
+									odata = ["swing", "slide", "squish"];
+								else if (akind == "elevator")
+									odata = r[aname].opts.targets;
+								CT.modal.choice({
+									prompt: "what's the order?",
+									data: odata,
+									cb: order => cb(aname, order)
+								});
+							}
 						}
 					});
 				}
@@ -144,7 +146,7 @@ vu.build.elect = {
 					swapper.refresh();
 					cb();
 				});
-			}, "centered block");
+			}, null, "block");
 			swapper.refresh = function() {
 				CT.dom.setContent(swapper, butt.appliance + " : " + butt.order);
 			};
