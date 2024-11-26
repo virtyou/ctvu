@@ -80,6 +80,16 @@ vu.build.elect = {
 					app.setIntensity();
 					saveUp("intensity");
 				}, 0, 100, aoz.intensity * 100, 1));
+				cont.push(vu.core.ranger("invariance", function(invariance) {
+					invariance = parseInt(invariance);
+					aoz.invariance = invariance;
+					saveUp("invariance");
+				}, 2, 20, aoz.invariance, 1));
+				cont.push(vu.core.ranger("flickRate", function(flickRate) {
+					flickRate = parseInt(flickRate);
+					aoz.flickRate = flickRate;
+					saveUp("flickRate");
+				}, 0, 10, aoz.flickRate, 1));
 				cont.push(CT.dom.div([
 					"color",
 					vu.color.selector(app, "color", null, function(color) {
