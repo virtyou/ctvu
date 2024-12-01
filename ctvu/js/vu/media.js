@@ -58,7 +58,7 @@ vu.media = {
 				"rock4.jpg", "rock5.jpg", "rock6.jpg", "room1.jpg", "rug1.jpg", "rug2.jpg",
 				"rug3.jpg", "rug4.jpg", "rug5.jpg", "shirt.jpg", "sky-day.jpg", "sky-night.png",
 				"stonestairs.png", "stonewall.jpg", "teeth256s.jpg", "vines1.png", "vines2.png",
-				"vines3.png", , "web1.png", "web2.png", "web3.png", "web4.png", "web5.png",
+				"vines3.png", "web1.png", "web2.png", "web3.png", "web4.png", "web5.png",
 				"web6.png", "web7.png", "web8.png", "white.jpg", "window.png", "yellowcloth.jpg"
 			].map(function(o) {
 				return {
