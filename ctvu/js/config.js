@@ -37,6 +37,7 @@
             "one.tombs",
             "one.forest",
             "one.beneath",
+            "one.basement",
             "one.apartment",
             "one.techno",
             "one.walls",
