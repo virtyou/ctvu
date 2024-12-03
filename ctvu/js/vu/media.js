@@ -49,17 +49,20 @@ vu.media = {
 				};
 			}),
 			image: [
-				"bg7.jpg", "bgBITZs4a.jpg", "bg_yan3.jpg", "bluefab.jpg", "bod.jpg",
-				"bunny_ears.jpg", "bunny_teeth.jpg", "cloth.jpg", "edoor.png",
-				"eye_brown_basic.jpg", "feathers.jpg", "graph_paper.jpg", "grid.png", "hair.png",
+				"bg7.jpg", "bgBITZs4a.jpg", "bg_yan3.jpg", "bluecloth.jpg", "bluefab.jpg",
+				"bod.jpg", "bunny_ears.jpg", "bunny_teeth.jpg", "chainlink1.png",
+				"chainlink2.png", "chainlink3.png", "chainlink4.png", "chainlink5.png",
+				"chainlink6.png", "cloth.jpg", "edoor.png", "eye_brown_basic.jpg",
+				"feathers.jpg", "graph_paper.jpg", "grid.png", "hair.png",
 				"hair_alphaGimp3_2SMALL.png", "hair_alphaGimp3a.png", "hairC5dHat.png",
 				"hairShrunk.png", "head.jpg", "head_UV2.jpg", "hole.png", "icon.jpg",
-				"leaves.jpg", "loop.jpg", "metaldoor.png", "rock.jpg", "rock2.jpg", "rock3.jpg",
-				"rock4.jpg", "rock5.jpg", "rock6.jpg", "room1.jpg", "rug1.jpg", "rug2.jpg",
-				"rug3.jpg", "rug4.jpg", "rug5.jpg", "rusty.jpg", "shirt.jpg", "sky-day.jpg",
-				"sky-night.png", "stonestairs.png", "stonewall.jpg", "teeth256s.jpg", "vines1.png",
-				"vines2.png", "vines3.png", "web1.png", "web2.png", "web3.png", "web4.png", "web5.png",
-				"web6.png", "web7.png", "web8.png", "white.jpg", "window.png", "yellowcloth.jpg"
+				"leaves.jpg", "loop.jpg", "metaldoor.png", "rock.jpg", "rock2.jpg",
+				"rock3.jpg", "rock4.jpg", "rock5.jpg", "rock6.jpg", "room1.jpg", "rug1.jpg",
+				"rug2.jpg", "rug3.jpg", "rug4.jpg", "rug5.jpg", "rusty.jpg", "shirt.jpg",
+				"sky-day.jpg", "sky-night.png", "stonestairs.png", "stonewall.jpg",
+				"teeth256s.jpg", "vines1.png", "vines2.png", "vines3.png", "web1.png",
+				"web2.png", "web3.png", "web4.png", "web5.png", "web6.png", "web7.png",
+				"web8.png", "white.jpg", "window.png", "yellowcloth.jpg"
 			].map(function(o) {
 				return {
 					name: "ctone: " + o.split(".")[0],
