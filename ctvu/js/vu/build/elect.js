@@ -97,10 +97,15 @@ vu.build.elect = {
 						saveUp("color");
 					})
 				], "topbordered margined padded"));
-			} else if (isgate) // TODO: width/height ; door{}
-				cont.push(vbc.opener(app, () => saveUp("opener")));
-			else if (k == "panel")
-				cont.push(lec.controls.panel(app, saveUp));
+			} else {
+				cont.push(vbc.vtemplate(app, () => saveUp("variety")));
+				if (isgate) // TODO: width/height ; door{}
+					cont.push(vbc.opener(app, () => saveUp("opener")));
+				else if (k == "panel")
+					cont.push(lec.controls.panel(app, saveUp));
+				else if (k == "computer") // TODO : programs{}????
+					cont.push(vbc.screensaver(app, () => saveUp("screenSaver")));
+			}
 			return cont;
 		},
 		apps: function(cat) {
@@ -121,7 +126,7 @@ vu.build.elect = {
 	controls: {
 		butter: function(cb) {
 			var r = zero.core.current.room, odata,
-				appkinds = ["bulb", "gate", "elevator"].filter(k=>r[k]);
+				appkinds = vu.build.elect.varieties.slice(1).filter(k=>r[k]);
 			CT.modal.choice({
 				prompt: "what kind of appliance?",
 				data: appkinds,
@@ -205,7 +210,7 @@ vu.build.elect = {
 			return n;
 		}
 	},
-	varieties: ["panel", "bulb", "gate", "elevator"],
+	varieties: ["panel", "bulb", "gate", "elevator", "computer"],
 	posup: function(target) {
 		vu.build.elect._.prup(target, "position");
 	},
