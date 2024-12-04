@@ -1,5 +1,6 @@
 vu.build.elect = {
 	_: {
+		nodes: {},
 		up: function() {
 			var ro = vu.build.elect._.opts();
 			vu.storage.setOpts(ro.key, { electrical: ro.electrical });
@@ -108,16 +109,26 @@ vu.build.elect = {
 			}
 			return cont;
 		},
+		doadd: function(cat, opts) {
+			var _ = vu.build.elect._, r = zero.core.current.room,
+				athing = r.addElec(cat, opts), cont = _.nodes[cat];
+			athing.onReady(() => CT.dom.addContent(cont, _.app(athing)));
+			r.elecBase(cat).parts.push(opts || {});
+			_.up();
+		},
+		adder: function(cat) {
+			var vb = vu.build, _ = vb.elect._, toa = templates.one.appliances;
+			if (!toa[cat]) // panel or bulb
+				return _.doadd(cat);
+			vb.core.sprompter("variety", Object.keys(toa[cat]),
+				sel => _.doadd(cat, { variety: sel }));
+		},
 		apps: function(cat) {
-			var r = zero.core.current.room, anames = Object.keys(r[cat] || {}), athing,
-				_ = vu.build.elect._, cont = CT.dom.div(anames.map(a => _.app(r[a])));
+			var _ = vu.build.elect._, r = zero.core.current.room,
+				anames = Object.keys(r[cat] || {}),
+				cont = _.nodes[cat] = CT.dom.div(anames.map(a => _.app(r[a])));
 			return CT.dom.div([
-				CT.dom.button("add", function() {
-					athing = r.addElec(cat);
-					athing.onReady(() => CT.dom.addContent(cont, _.app(athing)));
-					r.elecBase(cat).parts.push({});
-					_.up();
-				}, "right"),
+				CT.dom.button("add", () => _.adder(cat), "right"),
 				cat,
 				cont
 			], "topbordered pv10");
