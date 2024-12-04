@@ -290,6 +290,15 @@ vu.build.core = {
 		return vu.build.core.seller(app.opts, "opener",
 			() => ["swing", "slide", "squish"], cb);
 	},
+	screensaver: function(app, cb) {
+		return vu.build.core.seller(app.opts, "screenSaver",
+			() => Object.keys(templates.one.vstrip), cb);
+	},
+	vtemplate: function(app, cb) {
+		var aoz = app.opts;
+		return vu.build.core.seller(aoz, "variety",
+			() => Object.keys(templates.one.appliance[aoz.kind]), cb);
+	},
 	level: function(furn, cb) {
 		var rbz = zero.core.current.room.getBounds();
 		return vu.core.ranger("Level", function(val) {
