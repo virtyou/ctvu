@@ -264,16 +264,19 @@ vu.build.core = {
 			}
 		});
 	},
+	sprompter: function(prop, data, cb) {
+		CT.modal.choice({
+			prompt: "what " + prop + " should we use?",
+			data: data,
+			cb: cb
+		});
+	},
 	seller: function(opts, prop, opper, cb) {
 		var swapper = CT.dom.link(opts[prop], function() {
-			CT.modal.choice({
-				prompt: "what " + prop + " should we use?",
-				data: opper(),
-				cb: function(sel) {
-					CT.dom.setContent(swapper, sel);
-					opts[prop] = sel;
-					cb(sel);
-				}
+			vu.build.core.sprompter(prop, opper(), function(sel) {
+				CT.dom.setContent(swapper, sel);
+				opts[prop] = sel;
+				cb(sel);
 			});
 		});
 		return [
