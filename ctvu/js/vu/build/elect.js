@@ -53,8 +53,9 @@ vu.build.elect = {
 			}), "bordered");
 		},
 		app: function(app) {
-			var vb = vu.build, lec = vb.elect, _ = lec._, saveUp = function(prop) {
+			var vb = vu.build, lec = vb.elect, _ = lec._, saveUp = function(prop, refresher) {
 				_.prup(app, prop);
+				refresher && refresher();
 			}, vbc = vb.core, aoz = app.opts, k = aoz.kind, isbulb = k == "bulb",
 				isgate = k == "gate", rdim = isbulb ? "x" : "y", cont;
 			cont = [
@@ -105,7 +106,7 @@ vu.build.elect = {
 				else if (k == "panel")
 					cont.push(lec.controls.panel(app, saveUp));
 				else if (k == "computer") // TODO : programs{}????
-					cont.push(vbc.screensaver(app, () => saveUp("screenSaver")));
+					cont.push(vbc.screensaver(app, () => saveUp("screenSaver", app.start)));
 			}
 			return cont;
 		},
