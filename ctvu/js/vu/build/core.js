@@ -264,6 +264,22 @@ vu.build.core = {
 			}
 		});
 	},
+	comprog: function(cb) {
+		var vbc = vu.build.core, cbwrap;
+		vbc.sprompter("program", ["video", "vstrip", "message"], function(program) {
+			cbwrap = data => cb({ program: program, data: data });
+			if (program == "message") {
+				CT.modal.prompt({
+					prompt: "what's the message?",
+					cb: cbwrap
+				});
+			} else if (program == "vstrip")
+				vbc.sprompter("vstrip", Object.keys(templates.one.vstrip), cbwrap);
+			else { // TODO : video...
+				alert("unimplemented!");
+			}
+		});
+	},
 	sprompter: function(prop, data, cb) {
 		CT.modal.choice({
 			prompt: "what " + prop + " should we use?",

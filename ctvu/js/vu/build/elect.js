@@ -149,6 +149,8 @@ vu.build.elect = {
 						cb: function(aname) {
 							if (akind == "bulb")
 								vu.color.modal(color => cb(aname, color));
+							else if (akind == "computer")
+								vu.build.core.comprog(order => cb(aname, order));
 							else {
 								if (akind == "gate")
 									odata = ["swing", "slide", "squish"];
