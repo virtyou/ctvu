@@ -272,7 +272,7 @@ vu.build.core = {
 		});
 	},
 	seller: function(opts, prop, opper, cb) {
-		var swapper = CT.dom.link(opts[prop], function() {
+		var swapper = CT.dom.link(opts[prop] || "(none)", function() {
 			vu.build.core.sprompter(prop, opper(), function(sel) {
 				CT.dom.setContent(swapper, sel);
 				opts[prop] = sel;
