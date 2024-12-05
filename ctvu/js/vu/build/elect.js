@@ -74,7 +74,6 @@ vu.build.elect = {
 					saveUp("rotation");
 				}, isgate)
 			];
-			// TODO : elevator targets[]
 			if (isbulb) {
 				cont.push(vu.core.ranger("intensity", function(intensity) {
 					intensity = parseInt(intensity) / 100;
@@ -103,9 +102,10 @@ vu.build.elect = {
 				cont.push(lec.controls.panel(app, saveUp));
 			else {
 				cont.push(vbc.vtemplate(app, () => saveUp("variety")));
-				if (isgate) // TODO: width/height ; door{}
+				// TODO: elevator targets[]; gate width/height/door{}; computer programs{}?
+				if (isgate)
 					cont.push(vbc.opener(app, () => saveUp("opener")));
-				else if (k == "computer") // TODO : programs{}????
+				else if (k == "computer")
 					cont.push(vbc.screensaver(app, () => saveUp("screenSaver", app.start)));
 			}
 			return cont;
