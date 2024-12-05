@@ -101,7 +101,7 @@ vu.build.elect = {
 			} else if (k == "panel")
 				cont.push(lec.controls.panel(app, saveUp));
 			else {
-				cont.push(vbc.vtemplate(app, () => saveUp("variety")));
+				cont.push(vbc.vtemplate(app, () => saveUp("variety", app.rebuild)));
 				// TODO: elevator targets[]; gate width/height/door{}; computer programs{}?
 				if (isgate)
 					cont.push(vbc.opener(app, () => saveUp("opener")));
