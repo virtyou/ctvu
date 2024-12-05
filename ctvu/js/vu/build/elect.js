@@ -99,12 +99,12 @@ vu.build.elect = {
 						saveUp("color");
 					})
 				], "topbordered margined padded"));
-			} else {
+			} else if (k == panel)
+				cont.push(lec.controls.panel(app, saveUp));
+			else {
 				cont.push(vbc.vtemplate(app, () => saveUp("variety")));
 				if (isgate) // TODO: width/height ; door{}
 					cont.push(vbc.opener(app, () => saveUp("opener")));
-				else if (k == "panel")
-					cont.push(lec.controls.panel(app, saveUp));
 				else if (k == "computer") // TODO : programs{}????
 					cont.push(vbc.screensaver(app, () => saveUp("screenSaver", app.start)));
 			}
