@@ -98,7 +98,7 @@ vu.build.elect = {
 						saveUp("color");
 					})
 				], "topbordered margined padded"));
-			} else if (k == panel)
+			} else if (k == "panel")
 				cont.push(lec.controls.panel(app, saveUp));
 			else {
 				cont.push(vbc.vtemplate(app, () => saveUp("variety")));
