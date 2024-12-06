@@ -283,17 +283,21 @@ vu.build.core = {
 		var fpref = "fzn:";
 		CT.modal.choice({
 			prompt: "what kind of video program?",
-			data: ["video", "channel", "stream (down)", "stream (up)"],
+			data: ["channel", "stream (down)", "stream (up)"],
 			cb: function(sel) {
-				if (sel.startsWith("stream")) { // fzn stream
-					if (sel.includes("up"))
-						fpref += "up:";
-					CT.modal.prompt({
-						prompt: "ok, what's the name of the stream?",
-						cb: name => cb(fpref + name)
+				if (sel == "channel") { // tl channel
+					return CT.modal.choice({
+						prompt: "what channel?",
+						data: core.config.ctvu.loaders.tlchans,
+						cb: chan => cb("tlchan:" + chan)
 					});
-				} else // TODO : tl videos and channels
-					alert("unimplemented!");
+				} // fzn stream
+				if (sel.includes("up"))
+					fpref += "up:";
+				CT.modal.prompt({
+					prompt: "ok, what's the name of the stream?",
+					cb: name => cb(fpref + name)
+				});
 			}
 		});
 	},
