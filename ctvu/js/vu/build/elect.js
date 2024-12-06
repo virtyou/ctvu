@@ -177,7 +177,7 @@ vu.build.elect = {
 				});
 			}, null, "block");
 			swapper.refresh = function() {
-				CT.dom.setContent(swapper, butt.appliance + " : " + butt.order);
+				CT.dom.setContent(swapper, butt.appliance + " : " + JSON.stringify(butt.order));
 			};
 			swapper.refresh();
 			return swapper;
