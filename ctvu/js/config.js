@@ -47,7 +47,8 @@
             "one.scrolly",
             "one.kidroom"
         ],
-        "avatars": ["one.body.sassy", "one.body.kid"]
+        "avatars": ["one.body.sassy", "one.body.kid"],
+        "tlchans": ["surf"]
     },
     "volumes": {
         "fx": 0.8,
