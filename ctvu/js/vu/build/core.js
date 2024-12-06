@@ -275,8 +275,25 @@ vu.build.core = {
 				});
 			} else if (program == "vstrip")
 				vbc.sprompter("vstrip", Object.keys(templates.one.vstrip), cbwrap);
-			else { // TODO : video...
-				alert("unimplemented!");
+			else // video
+				vbc.vidsel(cbwrap);
+		});
+	},
+	vidsel: function(cb) {
+		var fpref = "fzn:";
+		CT.modal.choice({
+			prompt: "what kind of video program?",
+			data: ["video", "channel", "stream (down)", "stream (up)"],
+			cb: function(sel) {
+				if (sel.startsWith("stream")) { // fzn stream
+					if (sel.includes("up"))
+						fpref += "up:";
+					CT.modal.prompt({
+						prompt: "ok, what's the name of the stream?",
+						cb: name => cb(fpref + name)
+					});
+				} else // TODO : tl videos and channels
+					alert("unimplemented!");
 			}
 		});
 	},
