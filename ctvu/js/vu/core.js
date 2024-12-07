@@ -417,5 +417,49 @@ vu.core.options = {
 				zero.base.clothes.procedurals(kind, true, true));
 		}
 		return name ? ops[kind][name] : ops[kind];
+	},
+	prompt: function(prop, data, cb) {
+		CT.modal.choice({
+			prompt: "what " + prop + " should we use?",
+			data: data,
+			cb: cb
+		});
+	},
+	program: function(cb) {
+		var vco = vu.core.options, cbwrap;
+		vco.prompt("program", ["video", "vstrip", "message"], function(program) {
+			cbwrap = data => cb({ program: program, data: data });
+			if (program == "message") {
+				CT.modal.prompt({
+					prompt: "what's the message?",
+					cb: cbwrap
+				});
+			} else if (program == "vstrip")
+				vco.prompt("vstrip", Object.keys(templates.one.vstrip), cbwrap);
+			else // video
+				vco.vid(cbwrap);
+		});
+	},
+	vid: function(cb) {
+		var fpref = "fzn:";
+		CT.modal.choice({
+			prompt: "what kind of video program?",
+			data: ["channel", "stream (down)", "stream (up)"],
+			cb: function(sel) {
+				if (sel == "channel") { // tl channel
+					return CT.modal.choice({
+						prompt: "what channel?",
+						data: core.config.ctvu.loaders.tlchans,
+						cb: chan => cb("tlchan:" + chan)
+					});
+				} // fzn stream
+				if (sel.includes("up"))
+					fpref += "up:";
+				CT.modal.prompt({
+					prompt: "ok, what's the name of the stream?",
+					cb: name => cb(fpref + name)
+				});
+			}
+		});
 	}
 };

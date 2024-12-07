@@ -39,6 +39,9 @@ vu.clix = {
 		var gate = zcc.room.getGate();
 		if (gate)
 			return per.touch(gate, gate.open);
+		var comp = zcc.room.getComputer();
+		if (comp)
+			return per.touch(comp, () => vu.core.options.program(comp.do));
 		vu.portal.check();
 	},
 	room: function() {

@@ -121,7 +121,7 @@ vu.build.elect = {
 			var vb = vu.build, _ = vb.elect._, toa = templates.one.appliance;
 			if (!toa[cat]) // panel or bulb
 				return _.doadd(cat);
-			vb.core.sprompter("variety", Object.keys(toa[cat]),
+			vu.core.options.prompt("variety", Object.keys(toa[cat]),
 				sel => _.doadd(cat, { variety: sel }));
 		},
 		apps: function(cat) {
@@ -150,7 +150,7 @@ vu.build.elect = {
 							if (akind == "bulb")
 								vu.color.modal(color => cb(aname, color));
 							else if (akind == "computer")
-								vu.build.core.comprog(order => cb(aname, order));
+								vu.core.options.program(order => cb(aname, order));
 							else {
 								if (akind == "gate")
 									odata = ["swing", "slide", "squish"];

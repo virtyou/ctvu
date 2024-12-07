@@ -264,53 +264,9 @@ vu.build.core = {
 			}
 		});
 	},
-	comprog: function(cb) {
-		var vbc = vu.build.core, cbwrap;
-		vbc.sprompter("program", ["video", "vstrip", "message"], function(program) {
-			cbwrap = data => cb({ program: program, data: data });
-			if (program == "message") {
-				CT.modal.prompt({
-					prompt: "what's the message?",
-					cb: cbwrap
-				});
-			} else if (program == "vstrip")
-				vbc.sprompter("vstrip", Object.keys(templates.one.vstrip), cbwrap);
-			else // video
-				vbc.vidsel(cbwrap);
-		});
-	},
-	vidsel: function(cb) {
-		var fpref = "fzn:";
-		CT.modal.choice({
-			prompt: "what kind of video program?",
-			data: ["channel", "stream (down)", "stream (up)"],
-			cb: function(sel) {
-				if (sel == "channel") { // tl channel
-					return CT.modal.choice({
-						prompt: "what channel?",
-						data: core.config.ctvu.loaders.tlchans,
-						cb: chan => cb("tlchan:" + chan)
-					});
-				} // fzn stream
-				if (sel.includes("up"))
-					fpref += "up:";
-				CT.modal.prompt({
-					prompt: "ok, what's the name of the stream?",
-					cb: name => cb(fpref + name)
-				});
-			}
-		});
-	},
-	sprompter: function(prop, data, cb) {
-		CT.modal.choice({
-			prompt: "what " + prop + " should we use?",
-			data: data,
-			cb: cb
-		});
-	},
 	seller: function(opts, prop, opper, cb) {
 		var swapper = CT.dom.link(opts[prop] || "(none)", function() {
-			vu.build.core.sprompter(prop, opper(), function(sel) {
+			vu.core.options.prompt(prop, opper(), function(sel) {
 				CT.dom.setContent(swapper, sel);
 				opts[prop] = sel;
 				cb(sel);
