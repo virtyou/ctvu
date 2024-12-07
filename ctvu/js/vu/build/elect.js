@@ -137,7 +137,7 @@ vu.build.elect = {
 	},
 	controls: {
 		butter: function(cb) {
-			var r = zero.core.current.room, odata,
+			var zc = zero.core, r = zc.current.room, odata,
 				appkinds = vu.build.elect.varieties.slice(1).filter(k=>r[k]);
 			CT.modal.choice({
 				prompt: "what kind of appliance?",
@@ -150,7 +150,7 @@ vu.build.elect = {
 							if (akind == "bulb")
 								vu.color.modal(color => cb(aname, color));
 							else if (akind == "computer")
-								vu.core.options.program(order => cb(aname, order));
+								zc.Appliance.Computer.selectors.program(order => cb(aname, order));
 							else {
 								if (akind == "gate")
 									odata = ["swing", "slide", "squish"];
