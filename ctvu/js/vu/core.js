@@ -427,15 +427,15 @@ vu.core.options = {
 	},
 	program: function(cb) {
 		var vco = vu.core.options, cbwrap;
-		vco.prompt("program", ["video", "vstrip", "message"], function(program) {
+		vco.prompt("program", ["video", "screenSaver", "message"], function(program) {
 			cbwrap = data => cb({ program: program, data: data });
 			if (program == "message") {
 				CT.modal.prompt({
 					prompt: "what's the message?",
 					cb: cbwrap
 				});
-			} else if (program == "vstrip")
-				vco.prompt("vstrip", Object.keys(templates.one.vstrip), cbwrap);
+			} else if (program == "screenSaver")
+				vco.prompt("screenSaver", Object.keys(templates.one.vstrip), cbwrap);
 			else // video
 				vco.vid(cbwrap);
 		});
