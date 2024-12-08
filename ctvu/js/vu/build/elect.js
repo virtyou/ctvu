@@ -136,40 +136,9 @@ vu.build.elect = {
 		}
 	},
 	controls: {
-		butter: function(cb) {
-			var zc = zero.core, r = zc.current.room, odata,
-				appkinds = vu.build.elect.varieties.slice(1).filter(k=>r[k]);
-			CT.modal.choice({
-				prompt: "what kind of appliance?",
-				data: appkinds,
-				cb: function(akind) {
-					CT.modal.choice({
-						prompt: "which one?",
-						data: Object.keys(r[akind]),
-						cb: function(aname) {
-							if (akind == "bulb")
-								vu.color.modal(color => cb(aname, color));
-							else if (akind == "computer")
-								zc.Appliance.Computer.selectors.program(order => cb(aname, order));
-							else {
-								if (akind == "gate")
-									odata = ["swing", "slide", "squish"];
-								else if (akind == "elevator")
-									odata = r[aname].opts.targets;
-								CT.modal.choice({
-									prompt: "what's the order?",
-									data: odata,
-									cb: order => cb(aname, order)
-								});
-							}
-						}
-					});
-				}
-			});
-		},
 		button: function(butt, cb) { // [{appliance,order}]
 			var swapper = CT.dom.link(null, function() {
-				vu.build.elect.controls.butter(function(appliance, order) {
+				vu.build.core.appliance(function(appliance, order) {
 					butt.appliance = appliance;
 					butt.order = order;
 					swapper.refresh();
@@ -195,7 +164,7 @@ vu.build.elect = {
 			return CT.dom.div([
 				CT.dom.button("add", function() {
 					if (kind == "button") {
-						cons.butter(function(appliance, order) {
+						vu.build.core.appliance(function(appliance, order) {
 							adder({ appliance: appliance, order: order });
 						});
 					} else { // switch/lever
@@ -224,7 +193,6 @@ vu.build.elect = {
 			return n;
 		}
 	},
-	varieties: ["panel", "bulb", "gate", "elevator", "computer"],
 	posup: function(target) {
 		vu.build.elect._.prup(target, "position");
 	},
@@ -240,10 +208,10 @@ vu.build.elect = {
 		], "topbordered pv10");
 	},
 	appliances: function() {
-		var vb = vu.build, lec = vb.elect,
+		var vb = vu.build, lec = vb.elect, avz = zero.core.Appliance.varieties,
 			sel = vb.core.getSel().appliances = CT.dom.div();
 		sel.update = function() {
-			CT.dom.setContent(sel, lec.varieties.map(lec._.apps));
+			CT.dom.setContent(sel, avz.map(lec._.apps));
 		};
 		return CT.dom.div([
 			"appliances",

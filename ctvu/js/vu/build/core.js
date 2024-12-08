@@ -264,6 +264,37 @@ vu.build.core = {
 			}
 		});
 	},
+	appliance: function(cb) {
+		var zc = zero.core, r = zc.current.room, odata,
+			appkinds = zc.Appliance.varieties.slice(1).filter(k=>r[k]);
+		CT.modal.choice({
+			prompt: "what kind of appliance?",
+			data: appkinds,
+			cb: function(akind) {
+				CT.modal.choice({
+					prompt: "which one?",
+					data: Object.keys(r[akind]),
+					cb: function(aname) {
+						if (akind == "bulb")
+							vu.color.modal(color => cb(aname, color));
+						else if (akind == "computer")
+							zc.Appliance.Computer.selectors.program(order => cb(aname, order));
+						else {
+							if (akind == "gate")
+								odata = ["swing", "slide", "squish"];
+							else if (akind == "elevator")
+								odata = r[aname].opts.targets;
+							CT.modal.choice({
+								prompt: "what's the order?",
+								data: odata,
+								cb: order => cb(aname, order)
+							});
+						}
+					}
+				});
+			}
+		});
+	},
 	seller: function(opts, prop, opper, cb) {
 		var swapper = CT.dom.link(opts[prop] || "(none)", function() {
 			vu.core.options.prompt(prop, opper(), function(sel) {
