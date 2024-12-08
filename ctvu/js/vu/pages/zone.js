@@ -22,7 +22,6 @@ CT.require("vu.build");
 CT.require("vu.menu.Map");
 CT.require("vu.builders.core");
 CT.require("vu.builders.zone");
-CT.scriptImport("CT.lib.colorPicker");
 
 CT.onload(function() {
 	CT.initCore();
