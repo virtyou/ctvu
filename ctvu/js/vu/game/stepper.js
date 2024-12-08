@@ -141,6 +141,11 @@ vu.game.stepper = {
 			}
 		});
 	},
+	appliance: function(cb) {
+		vu.build.core.appliance(function(appliance, order) {
+			cb({ appliance: appliance, order: order });
+		});
+	},
 	action: function(cb) {
 		var zc = zero.core, zcc = zc.current, vgs = vu.game.stepper, data;
 		vgs._.actor(function(actor) {

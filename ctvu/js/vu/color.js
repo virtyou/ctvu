@@ -1,3 +1,5 @@
+CT.scriptImport("CT.lib.colorPicker");
+
 vu.color = {
 	_: {
 		primaries: {

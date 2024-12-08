@@ -264,16 +264,43 @@ vu.build.core = {
 			}
 		});
 	},
+	appliance: function(cb) {
+		var zc = zero.core, r = zc.current.room, odata,
+			appkinds = zc.Appliance.varieties.slice(1).filter(k=>r[k]);
+		CT.modal.choice({
+			prompt: "what kind of appliance?",
+			data: appkinds,
+			cb: function(akind) {
+				CT.modal.choice({
+					prompt: "which one?",
+					data: Object.keys(r[akind]),
+					cb: function(aname) {
+						if (akind == "bulb")
+							vu.color.modal(color => cb(aname, color));
+						else if (akind == "computer")
+							zc.Appliance.Computer.selectors.program(order => cb(aname, order));
+						else {
+							if (akind == "gate")
+								odata = ["swing", "slide", "squish"];
+							else if (akind == "elevator")
+								odata = r[aname].opts.targets;
+							CT.modal.choice({
+								prompt: "what's the order?",
+								data: odata,
+								cb: order => cb(aname, order)
+							});
+						}
+					}
+				});
+			}
+		});
+	},
 	seller: function(opts, prop, opper, cb) {
-		var swapper = CT.dom.link(opts[prop], function() {
-			CT.modal.choice({
-				prompt: "what " + prop + " should we use?",
-				data: opper(),
-				cb: function(sel) {
-					CT.dom.setContent(swapper, sel);
-					opts[prop] = sel;
-					cb(sel);
-				}
+		var swapper = CT.dom.link(opts[prop] || "(none)", function() {
+			vu.core.options.prompt(prop, opper(), function(sel) {
+				CT.dom.setContent(swapper, sel);
+				opts[prop] = sel;
+				cb(sel);
 			});
 		});
 		return [
@@ -289,6 +316,15 @@ vu.build.core = {
 	opener: function(app, cb) {
 		return vu.build.core.seller(app.opts, "opener",
 			() => ["swing", "slide", "squish"], cb);
+	},
+	screensaver: function(app, cb) {
+		return vu.build.core.seller(app.opts, "screenSaver",
+			() => Object.keys(templates.one.vstrip), cb);
+	},
+	vtemplate: function(app, cb) {
+		var aoz = app.opts;
+		return vu.build.core.seller(aoz, "variety",
+			() => Object.keys(templates.one.appliance[aoz.kind]), cb);
 	},
 	level: function(furn, cb) {
 		var rbz = zero.core.current.room.getBounds();

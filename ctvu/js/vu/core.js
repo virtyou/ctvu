@@ -417,5 +417,12 @@ vu.core.options = {
 				zero.base.clothes.procedurals(kind, true, true));
 		}
 		return name ? ops[kind][name] : ops[kind];
+	},
+	prompt: function(prop, data, cb) {
+		CT.modal.choice({
+			prompt: "what " + prop + " should we use?",
+			data: data,
+			cb: cb
+		});
 	}
 };

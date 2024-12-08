@@ -33,7 +33,6 @@ CT.require("vu.portal");
 CT.require("vu.menu.Map");
 CT.require("vu.builders.core");
 CT.require("vu.builders.play");
-CT.scriptImport("CT.lib.colorPicker");
 
 CT.onload(function() {
 	var camcfg = core.config.ctzero.camera,

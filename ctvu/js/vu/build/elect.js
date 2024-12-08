@@ -1,5 +1,6 @@
 vu.build.elect = {
 	_: {
+		nodes: {},
 		up: function() {
 			var ro = vu.build.elect._.opts();
 			vu.storage.setOpts(ro.key, { electrical: ro.electrical });
@@ -52,8 +53,9 @@ vu.build.elect = {
 			}), "bordered");
 		},
 		app: function(app) {
-			var vb = vu.build, lec = vb.elect, _ = lec._, saveUp = function(prop) {
+			var vb = vu.build, lec = vb.elect, _ = lec._, saveUp = function(prop, refresher) {
 				_.prup(app, prop);
+				refresher && refresher();
 			}, vbc = vb.core, aoz = app.opts, k = aoz.kind, isbulb = k == "bulb",
 				isgate = k == "gate", rdim = isbulb ? "x" : "y", cont;
 			cont = [
@@ -72,7 +74,6 @@ vu.build.elect = {
 					saveUp("rotation");
 				}, isgate)
 			];
-			// TODO : elevator targets[]
 			if (isbulb) {
 				cont.push(vu.core.ranger("intensity", function(intensity) {
 					intensity = parseInt(intensity) / 100;
@@ -97,60 +98,47 @@ vu.build.elect = {
 						saveUp("color");
 					})
 				], "topbordered margined padded"));
-			} else if (isgate) // TODO: width/height ; door{}
-				cont.push(vbc.opener(app, () => saveUp("opener")));
-			else if (k == "panel")
+			} else if (k == "panel")
 				cont.push(lec.controls.panel(app, saveUp));
+			else {
+				cont.push(vbc.vtemplate(app, () => saveUp("variety", app.rebuild)));
+				// TODO: elevator targets[]; gate width/height/door{}; computer programs{}?
+				if (isgate)
+					cont.push(vbc.opener(app, () => saveUp("opener")));
+				else if (k == "computer")
+					cont.push(vbc.screensaver(app, () => saveUp("screenSaver", app.start)));
+			}
 			return cont;
 		},
+		doadd: function(cat, opts) {
+			var _ = vu.build.elect._, r = zero.core.current.room,
+				athing = r.addElec(cat, opts), cont = _.nodes[cat];
+			athing.onReady(() => CT.dom.addContent(cont, _.app(athing)));
+			r.elecBase(cat).parts.push(opts || {});
+			_.up();
+		},
+		adder: function(cat) {
+			var vb = vu.build, _ = vb.elect._, toa = templates.one.appliance;
+			if (!toa[cat]) // panel or bulb
+				return _.doadd(cat);
+			vu.core.options.prompt("variety", Object.keys(toa[cat]),
+				sel => _.doadd(cat, { variety: sel }));
+		},
 		apps: function(cat) {
-			var r = zero.core.current.room, anames = Object.keys(r[cat] || {}), athing,
-				_ = vu.build.elect._, cont = CT.dom.div(anames.map(a => _.app(r[a])));
+			var _ = vu.build.elect._, r = zero.core.current.room,
+				anames = Object.keys(r[cat] || {}),
+				cont = _.nodes[cat] = CT.dom.div(anames.map(a => _.app(r[a])));
 			return CT.dom.div([
-				CT.dom.button("add", function() {
-					athing = r.addElec(cat);
-					athing.onReady(() => CT.dom.addContent(cont, _.app(athing)));
-					r.elecBase(cat).parts.push({});
-					_.up();
-				}, "right"),
+				CT.dom.button("add", () => _.adder(cat), "right"),
 				cat,
 				cont
 			], "topbordered pv10");
 		}
 	},
 	controls: {
-		butter: function(cb) {
-			var r = zero.core.current.room, odata,
-				appkinds = ["bulb", "gate", "elevator"].filter(k=>r[k]);
-			CT.modal.choice({
-				prompt: "what kind of appliance?",
-				data: appkinds,
-				cb: function(akind) {
-					CT.modal.choice({
-						prompt: "which one?",
-						data: Object.keys(r[akind]),
-						cb: function(aname) {
-							if (akind == "bulb")
-								vu.color.modal(color => cb(aname, color));
-							else {
-								if (akind == "gate")
-									odata = ["swing", "slide", "squish"];
-								else if (akind == "elevator")
-									odata = r[aname].opts.targets;
-								CT.modal.choice({
-									prompt: "what's the order?",
-									data: odata,
-									cb: order => cb(aname, order)
-								});
-							}
-						}
-					});
-				}
-			});
-		},
 		button: function(butt, cb) { // [{appliance,order}]
 			var swapper = CT.dom.link(null, function() {
-				vu.build.elect.controls.butter(function(appliance, order) {
+				vu.build.core.appliance(function(appliance, order) {
 					butt.appliance = appliance;
 					butt.order = order;
 					swapper.refresh();
@@ -158,7 +146,7 @@ vu.build.elect = {
 				});
 			}, null, "block");
 			swapper.refresh = function() {
-				CT.dom.setContent(swapper, butt.appliance + " : " + butt.order);
+				CT.dom.setContent(swapper, butt.appliance + " : " + JSON.stringify(butt.order));
 			};
 			swapper.refresh();
 			return swapper;
@@ -176,7 +164,7 @@ vu.build.elect = {
 			return CT.dom.div([
 				CT.dom.button("add", function() {
 					if (kind == "button") {
-						cons.butter(function(appliance, order) {
+						vu.build.core.appliance(function(appliance, order) {
 							adder({ appliance: appliance, order: order });
 						});
 					} else { // switch/lever
@@ -205,7 +193,6 @@ vu.build.elect = {
 			return n;
 		}
 	},
-	varieties: ["panel", "bulb", "gate", "elevator"],
 	posup: function(target) {
 		vu.build.elect._.prup(target, "position");
 	},
@@ -221,10 +208,10 @@ vu.build.elect = {
 		], "topbordered pv10");
 	},
 	appliances: function() {
-		var vb = vu.build, lec = vb.elect,
+		var vb = vu.build, lec = vb.elect, avz = zero.core.Appliance.varieties,
 			sel = vb.core.getSel().appliances = CT.dom.div();
 		sel.update = function() {
-			CT.dom.setContent(sel, lec.varieties.map(lec._.apps));
+			CT.dom.setContent(sel, avz.map(lec._.apps));
 		};
 		return CT.dom.div([
 			"appliances",
