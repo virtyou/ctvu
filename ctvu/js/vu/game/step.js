@@ -1,6 +1,6 @@
 vu.game.step = {
 	_: {
-		varieties: ["lights", "camera", "action",
+		varieties: ["lights", "camera", "action", "appliance",
 			"state", "scene", "script", "story", "text", "logic",
 			"pause", "fx", "music", "ambient"]
 	},

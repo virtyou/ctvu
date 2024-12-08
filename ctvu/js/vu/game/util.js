@@ -152,6 +152,8 @@ vu.game.util = {
 			cam.angle(step.camera, step.target);
 		if (step.prop)
 			r[step.prop][step.directive](step.direction);
+		if (step.appliance)
+			r[step.appliance].do(step.order);
 		for (k of ["fx", "music", "ambient"])
 			if (step[k])
 				audio.play(k, step[k]);
