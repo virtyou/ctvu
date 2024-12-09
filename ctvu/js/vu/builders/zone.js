@@ -30,7 +30,7 @@ vu.builders.zone = {
 		},
 		posup: function() {
 			var _ = vu.builders.zone._, target = _.controls.target,
-				zccr = zero.core.current.room, fi, pos, opts, kind;
+				zc = zero.core, zccr = zc.current.room, fi, pos, opts, kind;
 			if (!target.gesture) { // person (probs detect in a nicer way)
 				pos = target.position(), opts = {
 					position: [pos.x, pos.y, pos.z]
@@ -39,7 +39,7 @@ vu.builders.zone = {
 				target.opts.position = opts.position;
 				if (["floor", "obstacle", "wall", "ramp", "boulder", "stala"].includes(kind))
 					vu.build.struct.posup(target);
-				else if (vu.build.elect.varieties.includes(kind))
+				else if (zc.Appliance.varieties.includes(kind))
 					vu.build.elect.posup(target);
 				else {
 					if ("wall" in target.opts)
