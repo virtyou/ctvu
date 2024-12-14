@@ -111,6 +111,13 @@ vu.build.struct = {
 			vbc.level(item, function(yval) {
 				fopts.position[1] = yval;
 				bs.strup(variety);
+			}),
+			vbc.stepper(item, function(stepper) {
+				if (stepper == "default")
+					delete fopts[stepper];
+				else
+					fopts[stepper] = stepper;
+				bs.strup(variety);
 			})
 		], rot, ry, sta, newrx, sup = function(p, v) {
 			fopts[p] = item.opts[p] = parseInt(v);

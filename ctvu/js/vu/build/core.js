@@ -309,6 +309,10 @@ vu.build.core = {
 			swapper
 		];
 	},
+	stepper: function(surf, cb) {
+		return vu.build.core.seller(surf.opts, "stepper",
+			() => ["step", "rug", "hard", "wood"], cb);
+	},
 	circuit: function(app, cb, asopts) {
 		return vu.build.core.seller(asopts ? app : app.opts, "circuit",
 			() => Object.keys(zero.core.Appliance.circuitry), cb);
