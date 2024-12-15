@@ -55,7 +55,7 @@ vu.menu.Map = CT.Class({
 	},
 	place: function(obj, kind, pos) {
 		var _ = this._, n = CT.dom.div(null, 
-			kind, null, null, _.b2p(obj.bounds, pos));
+			kind, null, null, _.b2p(obj.getBounds(), pos));
 		CT.dom.addContent(_.frame, n);
 		if (kind == "object") {
 			if (obj.opts.key == zero.core.current.injector)
