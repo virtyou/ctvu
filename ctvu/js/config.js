@@ -38,6 +38,7 @@
             "one.forest",
             "one.beneath",
             "one.basement",
+            "one.backhalls",
             "one.apartment",
             "one.techno",
             "one.walls",
