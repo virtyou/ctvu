@@ -77,6 +77,7 @@ vu.build.struct = {
 			bs.structs("ramp"),
 			bs.structs("floor"),
 			bs.structs("stairs"),
+			bs.structs("curtain"),
 			bs.structs("obstacle"),
 			bs.structs("boulder"),
 			bs.structs("stala"),
@@ -88,6 +89,7 @@ vu.build.struct = {
 			selz.ramps.update();
 			selz.floors.update();
 			selz.stairs.update();
+			selz.curtains.update();
 			selz.obstacles.update();
 			selz.boulders.update();
 			selz.stalas.update();
@@ -104,22 +106,11 @@ vu.build.struct = {
 				bs.strup(variety);
 			}),
 			vbc.name(item),
-			vbc[s3 ? "scalers" : "scale"](item, function(scale) {
-				fopts.scale = s3 ? scale : [scale, scale, scale];
-				bs.strup(variety);
-			}, 1, 500, 1, variety == "wall" && ["x", "y"], "topbordered pv10"),
 			vbc.level(item, function(yval) {
 				fopts.position[1] = yval;
 				bs.strup(variety);
-			}),
-			vbc.stepper(item, function(stepper) {
-				if (stepper == "default")
-					delete fopts[stepper];
-				else
-					fopts[stepper] = stepper;
-				bs.strup(variety);
 			})
-		], rot, ry, sta, newrx, sup = function(p, v) {
+		], rot, sta, newrx, sup = function(p, v) {
 			fopts[p] = item.opts[p] = parseInt(v);
 			bs.strup(variety);
 			item.refresh();
@@ -131,6 +122,21 @@ vu.build.struct = {
 			fopts.rotation = [rot.x, ry, rot.z];
 			bs.strup(variety);
 		}, arot = () => srot("auto");
+		if (variety != "curtain") {
+			cont.push(vbc[s3 ? "scalers" : "scale"](item, function(scale) {
+				fopts.scale = s3 ? scale : [scale, scale, scale];
+				bs.strup(variety);
+			}, 1, 500, 1, variety == "wall" && ["x", "y"], "topbordered pv10"));
+			if (variety != "wall") {
+				cont.push(vbc.stepper(item, function(stepper) {
+					if (stepper == "default")
+						delete fopts[stepper];
+					else
+						fopts[stepper] = stepper;
+					bs.strup(variety);
+				}));
+			}
+		}
 		if (variety == "stairs") {
 			cont.push(vbc.rot(item, "y", srot));
 			cont.push(vu.core.ranger("width", v => sup("width", v),
@@ -141,6 +147,12 @@ vu.build.struct = {
 				10, 100, item.opts.depth, 5));
 			cont.push(vu.core.ranger("steps", v => sup("steps", v),
 				2, 20, item.opts.steps, 1));
+		} else if (variety == "curtain") {
+			cont.push(vbc.rot(item, "y", srot));
+			cont.push(vu.core.ranger("width", v => sup("width", v),
+				20, 200, item.opts.width, 20));
+			cont.push(vu.core.ranger("height", v => sup("height", v),
+				20, 200, item.opts.height, 20));
 		} else if (variety == "wall") {
 			cont.push(CT.dom.button("rotate", arot, "w1"));
 			cont.push(CT.dom.br());
@@ -225,6 +237,9 @@ vu.build.struct = {
 	},
 	stairs: function(fopts, i) {
 		return vu.build.struct.struct("stairs", fopts, i);
+	},
+	curtain: function(fopts, i) {
+		return vu.build.struct.struct("curtain", fopts, i);
 	},
 	obstacle: function(fopts, i) {
 		return vu.build.struct.struct("obstacle", fopts, i);
