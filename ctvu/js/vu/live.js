@@ -50,6 +50,9 @@ vu.live = {
 			},
 			dunk: function(person, livekey) {
 				vu.core.ischar(livekey) && vu.portal.port();
+			},
+			program: function(person, order) {
+				zero.core.current.room[order.name].setProgram(order.program, order.data);
 			}
 		},
 		events: {
@@ -234,6 +237,9 @@ vu.live = {
 	esync: function(data) {
 		vu.live.emit("environment", data);
 	},
+	psync: function(data) {
+		vu.live.emit("program", data);
+	},
 	emit: function(action, val, chan) {
 		CT.pubsub.publish(chan || vu.live._.channel || zero.core.current.room.opts.key, {
 			action: action,
@@ -319,17 +325,18 @@ vu.live = {
 		CT.pubsub.subscribe(channel);
 	},
 	init: function(cbs) {
-		var _ = vu.live._, zcc = zero.core.current;
+		var vl = vu.live, _ = vl._, zcc = zero.core.current;
 		cbs = _.cbs = cbs || {};
 		["subscribe", "join", "leave", "meta", "chmeta", "message"].forEach(function(ename) {
 			CT.pubsub.set_cb(ename, _.events[ename]);
 		});
 		CT.pubsub.connect(location.hostname, 8888, _.myKey());
 		if (cbs.find)
-			cbs.find(vu.live.channel);
+			cbs.find(vl.channel);
 		else if (zcc.room)
 			CT.pubsub.subscribe(zcc.room.opts.key);
 		CT.pubsub.subscribe("global");
 		user.core.get("admin") && CT.pubsub.subscribe("admin");
+		CT.event.subscribe("program", vl.psync);
 	}
 };
