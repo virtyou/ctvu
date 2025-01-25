@@ -13,15 +13,24 @@ vu.builders.arcraft = {
 					cb(t);
 				}, true);
 			},
+			program: function(t, cb) {
+				return CT.dom.link("select", function() {
+					zero.core.util.vidProg(function(v) {
+						t.name = v.split("/").pop();
+						t.video = v;
+						cb(t);
+					});
+				}, null, "block hoverglow");
+			},
 			craft: function(cb) {
 				var _ = vu.builders.arcraft._, vswarmz = templates.one.vswarm, options;
 				CT.modal.choice({
 					prompt: "what kind of augmentation?",
-					data: ["thing", "video", "voxel swarm"], // TODO: primitives [w/ material controls]
+					data: ["thing", "video", "program", "voxel swarm"], // TODO: primitives [w/ material controls]
 					cb: function(variety) {
-						if (variety == "video") {
+						if (variety == "video" || variety == "program") {
 							return cb({
-								kind: "video",
+								kind: variety,
 								autoplay: true,
 								planeGeometry: [2, 2],
 								rotation: [Math.PI / 2, 0, 0],
@@ -50,8 +59,8 @@ vu.builders.arcraft = {
 				var _ = vu.builders.arcraft._, nz = [
 					CT.dom.link(t.name || "unnamed", () => _.thingup(t))
 				];
-				if (t.kind == "video")
-					nz.push(_.augmentation.video(t, cb));
+				if (t.kind == "video" || t.kind == "program")
+					nz.push(_.augmentation[t.kind](t, cb));
 				return nz;
 			}
 		},
