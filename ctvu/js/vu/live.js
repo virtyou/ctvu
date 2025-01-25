@@ -52,7 +52,10 @@ vu.live = {
 				vu.core.ischar(livekey) && vu.portal.port();
 			},
 			program: function(person, order) {
-				zero.core.current.room[order.name].setProgram(order.program, order.data);
+				var zcc = zero.core.current;
+				if (person == zcc.person)
+					return person.log("discarding program order from player");
+				zcc.room[order.name].setProgram(order.program, order.data);
 			}
 		},
 		events: {
