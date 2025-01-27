@@ -17,11 +17,11 @@ zcar.init();
 
 CT.onload(function() {
 	CT.initCore();
-	var h = location.hash.slice(1);
+	var h = location.hash.slice(1), toar;
 	if (h)
 		CT.db.one(h, zcar.start);
 	else {
-		CT.require("templates.one.ar", true);
-		zcar.start(templates.one.ar);
+		toar = CT.require("templates.one.ar", true);
+		zcar.start(toar);
 	}
 });
