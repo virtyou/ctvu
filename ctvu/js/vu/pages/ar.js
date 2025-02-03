@@ -14,6 +14,7 @@ CT.require("user.core");
 CT.require("zero.core");
 CT.require("zero.core.ar");
 CT.require("templates.one.ar");
+CT.require("templates.one.audio");
 
 CT.onload(function() {
 	CT.initCore();
