@@ -373,14 +373,18 @@ vu.core = {
 		document.fullscreenElement ? document.exitFullscreen()
 			: document.body.requestFullscreen();
 	},
-	init: function() {
-		var cfg = core.config.ctvu.loaders, vc = vu.core;
+	load: function() {
+		var cfg = core.config.ctvu.loaders;
 		cfg.customs.forEach(function(cus) {
 			CT.require("custom." + cus, true);
 		});
 		cfg.templates.forEach(function(tmp) {
 			CT.require("templates." + tmp, true);
 		});
+	},
+	init: function() {
+		var vc = vu.core;
+		vc.load();
 		vc._fsbutt = CT.dom.img("/img/vu/fullscreen.png",
 			"abs ctl mosthigh hoverglow pointer", vc.toggleFS,
 			null, null, "fullscreen", null, "w40p h40p");
