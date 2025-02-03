@@ -13,10 +13,10 @@ CT.require("CT.cc");
 CT.require("user.core");
 CT.require("zero.core");
 CT.require("zero.core.ar");
-CT.require("templates.one.ar");
-CT.require("templates.one.audio");
+CT.require("vu.core");
 
 CT.onload(function() {
 	CT.initCore();
+	vu.core.load();
 	zero.core.ar.start(location.hash.slice(1));
 });
