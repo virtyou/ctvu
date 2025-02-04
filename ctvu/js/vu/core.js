@@ -268,13 +268,16 @@ vu.core = {
 		var oz = zero.core.current.room.opts.owners, k = user.core.get("key");
 		return oz && k && oz.includes(k);
 	},
+	all: function(mtype, cb, exporter, filts) {
+		CT.db.get(mtype, cb, null, null, null, filts, null, null, exporter);
+	},
 	my: function(mtype, cb, exporter) {
-		CT.db.get(mtype, cb, null, null, null, {
+		vu.core.all(mtype, cb, exporter, {
 			owners: {
 				comparator: "contains",
 				value: user.core.get("key")
 			}
-		}, null, null, exporter);
+		});
 	},
 	base: function() {
 		CT.require("vu.base", true);
