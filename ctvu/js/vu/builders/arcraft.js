@@ -71,17 +71,8 @@ vu.builders.arcraft = {
 				return nz;
 			}
 		},
-		marker: {
-			pattern: ["hiro", "kanji"],
-			barcode: [0, 1, 2, 3, 4, 5, 6, 7],
-			up: function() {
-				var _ = vu.builders.arcraft._;
-				vu.storage.edit({
-					key: _.aug.key,
-					markers: _.aug.markers
-				});
-			},
-			anchor: function(cb) {
+		modes: {
+			anchors: function(cb) {
 				var _ = vu.builders.arcraft._, m = _.marker;
 				CT.modal.choice({
 					prompt: "what kind of marker?",
@@ -95,37 +86,79 @@ vu.builders.arcraft = {
 					}
 				});
 			},
+			location: function(cb) {
+				navigator.geolocation.getCurrentPosition(pos => cb({
+					latitude: pos.coords.latitude,
+					longitude: pos.coords.longitude
+				}), () => alert("error geolocating :("));
+			}
+		},
+		marker: {
+			pattern: ["hiro", "kanji"],
+			barcode: [0, 1, 2, 3, 4, 5, 6, 7],
+			up: function() {
+				var _ = vu.builders.arcraft._, eobj = {
+					key: _.aug.key
+				};
+				eobj[_.isloc ? "things" : "markers"] = _.items;
+				vu.storage.edit(eobj);
+			},
+			anchor: function(cb) {
+				var _ = vu.builders.arcraft._;
+				_.modes[_.mode](cb);
+			},
 			craft: function() {
 				var _ = vu.builders.arcraft._;
 				_.marker.anchor(function(marker) {
 					_.augmentation.craft(function(aug) {
-						_.aug.markers[marker] = aug;
+						if (_.isloc) {
+							aug.longitude = marker.longitude;
+							aug.latitude = marker.latitude;
+							_.items.push(aug);
+						} else
+							_.items[marker] = aug;
 						_.marker.up();
 						_.selectors.markers.update();
 					});
 				});
 			},
-			list: function() {
-				var _ = vu.builders.arcraft._, t, i;
-				return Object.keys(_.aug.markers).map(function(m) {
-					t = _.aug.markers[m];
-					if (typeof t == "string")
-						t = _.thinkeys[t];
+			item: function(m) {
+				var _ = vu.builders.arcraft._, eopts = {
+					key: _.aug.key
+				}, t = _.items[m], cont = [], i;
+				if (typeof t == "string")
+					t = _.thinkeys[t];
+				cont.push(CT.dom.button("remove", function() {
+					if (_.isloc) {
+						_.items.splice(m, 1);
+						eopts.things = _.items;
+					} else {
+						delete _.items[m];
+						eopts.markers = _.items;
+					}
+					_.marker.up();
+					vu.storage.edit(eopts);
+					_.selectors.markers.update();
+				}, "right"));
+				if (_.isloc) {
+					cont.push([
+						"latitude: " + t.latitude,
+						"longitude: " + t.longitude
+					]);
+				}
+				else {
 					i = "/ardata/" + m + ".png";
-					return CT.dom.div([
-						CT.dom.button("remove", function() {
-							delete _.aug.markers[m];
-							vu.storage.edit({
-								key: _.aug.key,
-								markers: _.aug.markers
-							});
-							_.selectors.markers.update();
-						}, "right"),
+					cont.push([
 						CT.dom.link(m, null, i, "bold", null, null, true),
-						CT.dom.img(i, "block w100p"),
-						_.augmentation.controllers(t, _.marker.up)
-					], "bordered padded margined round");
-				});
+						CT.dom.img(i, "block w100p")
+					]);
+				}
+				cont.push(_.augmentation.controllers(t, _.marker.up));
+				return CT.dom.div(cont, "bordered padded margined round");
+			},
+			list: function() {
+				var _ = vu.builders.arcraft._;
+				return Object.keys(_.items).map(_.marker.item);
 			}
 		},
 		generators: {
@@ -198,6 +231,9 @@ vu.builders.arcraft = {
 		load: function(aug) {
 			var _ = vu.builders.arcraft._, selz = _.selectors;
 			_.aug = aug;
+			_.mode = aug.variety;
+			_.isloc = _.mode == "location";
+			_.items = aug[_.isloc ? "things" : "markers"];
 			_.sharer.update(aug);
 			CT.dom.setContent(_.curname, aug.name);
 			selz.loader.update();
