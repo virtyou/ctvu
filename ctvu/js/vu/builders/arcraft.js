@@ -67,8 +67,7 @@ vu.builders.arcraft = {
 				var _ = vu.builders.arcraft._, nz = [
 					CT.dom.link(t.name || t.person || "unnamed", () => _.thingup(t))
 				];
-				if (t.kind == "video" || t.kind == "program")
-					nz.push(_.augmentation[t.kind](t, cb));
+				_.viddy(t.kind) && nz.push(_.augmentation[t.kind](t, cb));
 				return nz;
 			}
 		},
