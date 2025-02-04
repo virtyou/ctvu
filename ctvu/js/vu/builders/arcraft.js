@@ -2,7 +2,7 @@ vu.builders.arcraft = {
 	_: {
 		selectors: {},
 		menus: {
-			basic: "topleft",
+			loader: "topleft",
 			markers: "topright",
 			lights: "bottomleft"
 		},
@@ -23,14 +23,14 @@ vu.builders.arcraft = {
 				}, null, "block hoverglow");
 			},
 			craft: function(cb) {
-				var _ = vu.builders.arcraft._, vswarmz = templates.one.vswarm, options;
+				var _ = vu.builders.arcraft._, vswarmz = templates.one.vswarm, options, isper;
 				CT.modal.choice({
-					prompt: "what kind of augmentation?",
-					data: ["thing", "video", "program", "voxel swarm"], // TODO: primitives [w/ material controls]
-					cb: function(variety) {
-						if (variety == "video" || variety == "program") {
+					prompt: "what kind of augmentation?", // TODO: primitives [w/ material controls]
+					data: ["person", "thing", "video", "program", "voxel swarm"],
+					cb: function(kind) {
+						if (_.viddy(kind)) {
 							return cb({
-								kind: variety,
+								kind: kind,
 								autoplay: true,
 								planeGeometry: [2, 2],
 								rotation: [Math.PI / 2, 0, 0],
@@ -39,11 +39,19 @@ vu.builders.arcraft = {
 								}
 							});
 						}
-						options = _[variety + "s"] || Object.keys(vswarmz);
+						isper = kind == "person";
+						options = _[kind + "s"] || Object.keys(vswarmz);
+						if (isper)
+							options = ["random"].concat(options);
 						CT.modal.choice({
 							prompt: "select something",
 							data: options,
 							cb: function(t) {
+								if (isper) {
+									return cb({
+										person: t.name || t
+									});
+								}
 								cb(t.key || {
 									name: t,
 									kind: "swarm",
@@ -57,7 +65,7 @@ vu.builders.arcraft = {
 			},
 			controllers: function(t, cb) {
 				var _ = vu.builders.arcraft._, nz = [
-					CT.dom.link(t.name || "unnamed", () => _.thingup(t))
+					CT.dom.link(t.name || t.person || "unnamed", () => _.thingup(t))
 				];
 				if (t.kind == "video" || t.kind == "program")
 					nz.push(_.augmentation[t.kind](t, cb));
@@ -122,10 +130,10 @@ vu.builders.arcraft = {
 			}
 		},
 		generators: {
-			basic: function() {
+			loader: function() {
 				var alink, qn, n = CT.dom.div(), _ = vu.builders.arcraft._;
 				n.update = function() {
-					alink = "/vu/ar.html#" + _.aug.key;
+					alink = location.protocol + "//" + location.host + "/vu/ar.html#" + _.aug.key;
 					qn = CT.dom.div();
 					new QRCode(qn, alink);
 					CT.dom.setContent(n, [ qn, CT.dom.link(_.aug.name, null, alink) ]);
@@ -151,6 +159,10 @@ vu.builders.arcraft = {
 				};
 				return n;
 			}
+		},
+		vidsies: ["video", "program"],
+		viddy: function(variety) {
+			return vu.builders.arcraft._.vidsies.includes(variety);
 		},
 		thingup: function(t) {
 			var _ = vu.builders.arcraft._, r = zero.core.current.room;
@@ -189,7 +201,7 @@ vu.builders.arcraft = {
 			_.aug = aug;
 			_.sharer.update(aug);
 			CT.dom.setContent(_.curname, aug.name);
-			selz.basic.update();
+			selz.loader.update();
 			selz.markers.update();
 			selz.lights.update();
 		},
@@ -207,23 +219,30 @@ vu.builders.arcraft = {
 		},
 		craft: function() {
 			var _ = vu.builders.arcraft._;
-			CT.modal.prompt({
-				prompt: "what's the new augmentation's name?",
-				cb: function(name) {
-					vu.core.v({
-						action: "augmentation",
-						owners: [user.core.get("key")],
-						name: name
-					}, function(item) {
-						_.augs.push(item);
-						_.load(item);
+			CT.modal.choice({
+				prompt: "anchor based or location based?",
+				data: ["anchors", "location"],
+				cb: function(variety) {
+					CT.modal.prompt({
+						prompt: "what's the new augmentation's name?",
+						cb: function(name) {
+							vu.core.v({
+								action: "augmentation",
+								owners: [user.core.get("key")],
+								name: name,
+								variety: variety
+							}, function(item) {
+								_.augs.push(item);
+								_.load(item);
+							});
+						}
 					});
 				}
 			});
 		},
 		start: function() {
 			var _ = vu.builders.arcraft._;
-			if (!_.augs || !_.things) return; // wait for other thing to load...
+			if (!_.augs || !_.things || !_.persons) return; // wait for other thing to load...
 			if (_.augs.length)
 				zero.core.current.room.onReady(() => _.load(_.augs[0]));
 			else
@@ -231,32 +250,35 @@ vu.builders.arcraft = {
 		},
 		getAugmentations: function() {
 			var _ = vu.builders.arcraft._;
-			CT.db.get("augmentation", function(augs) {
+			vu.core.my("augmentation", function(augs) {
 				_.augs = augs;
 				_.start();
-			}, 1000, null, null, {
-				owners: {
-					comparator: "contains",
-					value: user.core.get("key")
-				}
-			}, null, null, "json");
+			}, "json");
 		},
 		getThings: function() {
 			var _ = vu.builders.arcraft._;
-			CT.db.get("thing", function(things) {
+			vu.core.all("thing", function(things) {
 				_.things = things;
 				_.thinkeys = {};
 				things.forEach(function(t) {
 					_.thinkeys[t.key] = t;
 				});
 				_.start();
-			}, 1000, null, null, null, null, null, "json");
+			}, "json");
+		},
+		getPersons: function() {
+			var _ = vu.builders.arcraft._;
+			vu.core.all("person", function(pers) {
+				_.persons = pers;
+				_.start();
+			}, "json");
 		},
 		linx: function() {
 			var _ = vu.builders.arcraft._;
 			_.sharer = vu.core.sharer();
 			_.curname = CT.dom.span(null, "bold");
 			_.getAugmentations();
+			_.getPersons();
 			_.getThings();
 			return CT.dom.div([
 				[
