@@ -12,16 +12,11 @@ CT.require("core");
 CT.require("CT.cc");
 CT.require("user.core");
 CT.require("zero.core");
-var zcar = zero.core.ar;
-zcar.init();
+CT.require("zero.core.ar");
+CT.require("vu.core");
 
 CT.onload(function() {
 	CT.initCore();
-	var h = location.hash.slice(1), toar;
-	if (h)
-		CT.db.one(h, zcar.start);
-	else {
-		toar = CT.require("templates.one.ar", true);
-		zcar.start(toar);
-	}
+	vu.core.load();
+	zero.core.ar.start(location.hash.slice(1));
 });
