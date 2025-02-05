@@ -322,7 +322,7 @@ img.right.h30p.up5 {
 	max-height: 50%;
 }
 .gmenu.markers {
-	max-width: 310px;
+	width: 310px;
 	min-width: 120px;
 }
 .gmenu.actors {
