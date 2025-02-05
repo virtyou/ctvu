@@ -85,10 +85,17 @@ vu.builders.arcraft = {
 				});
 			},
 			location: function(cb) {
-				navigator.geolocation.getCurrentPosition(pos => cb({
+				confirm("press OK to set location") && navigator.geolocation.getCurrentPosition(pos => cb({
 					latitude: pos.coords.latitude,
 					longitude: pos.coords.longitude
 				}), () => alert("error geolocating :("));
+			},
+			relocation: function(cb) {
+				var _ = vu.builders.arcraft._, rel = _.aug.relative;
+				_.modes.location(latlng => cb({
+					latitude: latlng.latitude - rel.latitude,
+					longitude: latlng.longitude - rel.longitude
+				}));
 			}
 		},
 		marker: {
@@ -230,8 +237,11 @@ vu.builders.arcraft = {
 			var _ = vu.builders.arcraft._, selz = _.selectors;
 			_.aug = aug;
 			_.mode = aug.variety;
-			_.isloc = _.mode == "location";
+			_.isloc = _.mode.endsWith("location");
 			_.items = aug[_.isloc ? "things" : "markers"];
+			(_.mode == "relocation") && _.modes.location(function(latlng) {
+				_.aug.relative = latlng;
+			});
 			_.sharer.update(aug);
 			CT.dom.setContent(_.curname, aug.name);
 			selz.loader.update();
@@ -253,8 +263,8 @@ vu.builders.arcraft = {
 		craft: function() {
 			var _ = vu.builders.arcraft._;
 			CT.modal.choice({
-				prompt: "anchor based or location based?",
-				data: ["anchors", "location"],
+				prompt: "anchor or location or relative location based?",
+				data: ["anchors", "location", "relocation"],
 				cb: function(variety) {
 					CT.modal.prompt({
 						prompt: "what's the new augmentation's name?",
