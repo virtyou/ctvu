@@ -32,11 +32,7 @@ vu.builders.arcraft = {
 							return cb({
 								kind: kind,
 								autoplay: "tap",
-								planeGeometry: [2, 2],
-								rotation: [Math.PI / 2, 0, 0],
-								thringopts: {
-									rotation: [-Math.PI / 2, 0, 0]
-								}
+								planeGeometry: [3, 3]
 							});
 						}
 						isper = kind == "person";
