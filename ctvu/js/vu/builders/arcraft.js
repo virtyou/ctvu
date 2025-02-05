@@ -31,7 +31,7 @@ vu.builders.arcraft = {
 						if (_.viddy(kind)) {
 							return cb({
 								kind: kind,
-								autoplay: true,
+								autoplay: "tap",
 								planeGeometry: [2, 2],
 								rotation: [Math.PI / 2, 0, 0],
 								thringopts: {
@@ -49,6 +49,7 @@ vu.builders.arcraft = {
 							cb: function(t) {
 								if (isper) {
 									return cb({
+										kind: "person",
 										person: t.name || t
 									});
 								}
@@ -65,7 +66,8 @@ vu.builders.arcraft = {
 			},
 			controllers: function(t, cb) {
 				var _ = vu.builders.arcraft._, nz = [
-					CT.dom.link(t.name || t.person || "unnamed", () => _.thingup(t))
+					CT.dom.link(t.kind + ": " + (t.name || t.person || "unnamed"),
+						() => _.thingup(t)) // TODO : something sensible...
 				];
 				_.viddy(t.kind) && nz.push(_.augmentation[t.kind](t, cb));
 				return nz;
