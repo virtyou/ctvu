@@ -7,6 +7,7 @@ CT.require("CT.layout");
 CT.require("CT.modal");
 CT.require("CT.parse");
 CT.require("CT.storage");
+CT.require("CT.stream");
 CT.require("CT.trans");
 CT.require("core");
 CT.require("user.core");
