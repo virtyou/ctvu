@@ -12,6 +12,7 @@ CT.require("CT.trans");
 CT.require("core");
 CT.require("user.core");
 CT.require("zero.core");
+CT.require("zero.core.ar");
 CT.require("vu.core");
 CT.require("vu.color");
 CT.require("vu.media");
