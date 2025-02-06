@@ -91,11 +91,14 @@ vu.builders.arcraft = {
 				}), () => alert("error geolocating :("));
 			},
 			relocation: function(cb) {
-				var _ = vu.builders.arcraft._, rel = _.aug.relative;
-				_.modes.location(latlng => cb({
-					latitude: latlng.latitude - rel.latitude,
-					longitude: latlng.longitude - rel.longitude
-				}));
+				var _ = vu.builders.arcraft._, rel = _.aug.relative, lat, lng;
+				_.modes.location(function(latlng) {
+					lat = latlng.latitude - rel.latitude;
+					lng = latlng.longitude - rel.longitude;
+					if (lat || lng)
+						return cb({ latitude: lat, longitude: lng });
+					_.reloc(cb);
+				});
 			}
 		},
 		marker: {
@@ -111,6 +114,24 @@ vu.builders.arcraft = {
 			anchor: function(cb) {
 				var _ = vu.builders.arcraft._;
 				_.modes[_.mode](cb);
+			},
+			locater: function(t) {
+				var _ = vu.builders.arcraft._, n = CT.dom.link(null, function() {
+					_.reloc(function(latlng) {
+						t.latitude = latlng.latitude;
+						t.longitude = latlng.longitude;
+						_.marker.up();
+						n.update();
+					});
+				});
+				n.update = function() {
+					CT.dom.setContent(n, [
+						"latitude: " + t.latitude,
+						"longitude: " + t.longitude
+					]);
+				};
+				n.update();
+				return n;
 			},
 			craft: function() {
 				var _ = vu.builders.arcraft._;
@@ -128,29 +149,19 @@ vu.builders.arcraft = {
 				});
 			},
 			item: function(m) {
-				var _ = vu.builders.arcraft._, eopts = {
-					key: _.aug.key
-				}, t = _.items[m], cont = [], i;
+				var _ = vu.builders.arcraft._, t = _.items[m], cont = [], i;
 				if (typeof t == "string")
 					t = _.thinkeys[t];
 				cont.push(CT.dom.button("remove", function() {
-					if (_.isloc) {
+					if (_.isloc)
 						_.items.splice(m, 1);
-						eopts.things = _.items;
-					} else {
+					else
 						delete _.items[m];
-						eopts.markers = _.items;
-					}
 					_.marker.up();
-					vu.storage.edit(eopts);
 					_.selectors.markers.update();
 				}, "right"));
-				if (_.isloc) {
-					cont.push([
-						"latitude: " + t.latitude,
-						"longitude: " + t.longitude
-					]);
-				}
+				if (_.isloc)
+					cont.push(_.marker.locater(t));
 				else {
 					i = "/ardata/" + m + ".png";
 					cont.push([
@@ -200,6 +211,27 @@ vu.builders.arcraft = {
 		vidsies: ["video", "program"],
 		viddy: function(variety) {
 			return vu.builders.arcraft._.vidsies.includes(variety);
+		},
+		offset: function(name, cb) {
+			var unit = 0.00004, max = unit * 10;
+			CT.modal.prompt({
+				prompt: name + " offset",
+				classname: "w400p",
+				style: "number",
+				initial: unit,
+				step: unit,
+				min: -max,
+				max: max,
+				cb: cb
+			})
+		},
+		reloc: function(cb) {
+			var _ = vu.builders.arcraft._;
+			_.offset("latitude", function(lat) {
+				_.offset("longitude", function(lng) {
+					cb({ latitude: lat, longitude: lng });
+				});
+			});
 		},
 		thingup: function(t) {
 			var _ = vu.builders.arcraft._, r = zero.core.current.room;
