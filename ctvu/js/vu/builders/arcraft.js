@@ -23,39 +23,20 @@ vu.builders.arcraft = {
 				}, null, "block hoverglow");
 			},
 			craft: function(cb) {
-				var _ = vu.builders.arcraft._, vswarmz = templates.one.vswarm, options, isper;
+				var _ = vu.builders.arcraft._, zcar = zero.core.ar, options;
 				CT.modal.choice({
 					prompt: "what kind of augmentation?", // TODO: primitives [w/ material controls]
-					data: ["person", "thing", "video", "program", "voxel swarm"],
+					data: ["person", "thing", "video", "program", "swarm"],
 					cb: function(kind) {
-						if (_.viddy(kind)) {
-							return cb({
-								kind: kind,
-								autoplay: "tap",
-								planeGeometry: [3, 3]
-							});
-						}
-						isper = kind == "person";
-						options = _[kind + "s"] || Object.keys(vswarmz);
-						if (isper)
+						if (zero.core.ar.viddy(kind))
+							return zcar.item(kind);
+						options = _[kind + "s"] || Object.keys(templates.one.vswarm);
+						if (kind == "person")
 							options = ["random"].concat(options);
 						CT.modal.choice({
 							prompt: "select something",
 							data: options,
-							cb: function(t) {
-								if (isper) {
-									return cb({
-										kind: "person",
-										person: t.name || t
-									});
-								}
-								cb(t.key || {
-									name: t,
-									kind: "swarm",
-									thing: "Swarm",
-									frames: vswarmz[t]
-								});
-							}
+							cb: cb(zcar.item(kind, t))
 						});
 					}
 				});
@@ -65,7 +46,7 @@ vu.builders.arcraft = {
 					CT.dom.link(t.kind + ": " + (t.name || t.person || "unnamed"),
 						() => _.thingup(t)) // TODO : something sensible...
 				];
-				_.viddy(t.kind) && nz.push(_.augmentation[t.kind](t, cb));
+				zero.core.ar.viddy(t.kind) && nz.push(_.augmentation[t.kind](t, cb));
 				return nz;
 			}
 		},
@@ -152,6 +133,8 @@ vu.builders.arcraft = {
 				var _ = vu.builders.arcraft._, t = _.items[m], cont = [], i;
 				if (typeof t == "string")
 					t = _.thinkeys[t];
+				else if (t.justkey)
+					t = CT.merge(t, _.thinkeys[t.justkey]);
 				cont.push(CT.dom.button("remove", function() {
 					if (_.isloc)
 						_.items.splice(m, 1);
@@ -208,12 +191,8 @@ vu.builders.arcraft = {
 				return n;
 			}
 		},
-		vidsies: ["video", "program"],
-		viddy: function(variety) {
-			return vu.builders.arcraft._.vidsies.includes(variety);
-		},
 		offset: function(name, cb) {
-			var unit = 0.00004, max = unit * 10;
+			var unit = zero.core.ar.unit, max = unit * 10;
 			CT.modal.prompt({
 				prompt: name + " offset",
 				classname: "w400p",
