@@ -36,7 +36,7 @@ vu.builders.arcraft = {
 						CT.modal.choice({
 							prompt: "select something",
 							data: options,
-							cb: cb(zcar.item(kind, t))
+							cb: t => cb(zcar.item(kind, t))
 						});
 					}
 				});
