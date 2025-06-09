@@ -150,9 +150,9 @@ iframe {
 	overflow-y: auto;
 }
 
-.basicpopup:not(.notBig), .basicpopup:not(.notBig) button {
+/*.basicpopup:not(.notBig), .basicpopup:not(.notBig) button {
 	font-size: 160%;
-}
+}*/
 
 .gmenu {
 	margin: -5px;
