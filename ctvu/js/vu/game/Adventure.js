@@ -184,7 +184,7 @@ vu.game.Adventure = CT.Class({
 		this.menus = new vu.menu.Game({
 			state: this.state
 		});
-		this.controls = zcc.controls = new zero.core.Controls({
+		this.controls = new zero.core.Controls({
 			moveCb: vu.live.meta
 		});
 	}

@@ -25,7 +25,7 @@ vu.builders.play = {
 				vu.controls.initCamera(_.selectors.cameras);
 				vu.controls.setTriggers(_.selectors.triggers, vu.live.meta);
 				vu.controls.setGestures(_.selectors.gestures, vu.live.meta);
-				cur.controls = _.controls = new zc.Controls({
+				_.controls = new zc.Controls({
 					cams: true,
 					cb: vu.clix.action,
 					target: person,
