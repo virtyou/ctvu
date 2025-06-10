@@ -7,7 +7,17 @@ vu.clix = {
 			_.roomclix.length = 0;
 		},
 		ctlbtn: function() {
-			var cnode = CT.dom.div([
+			var cnode = CT.dom.div(CT.info.mobile ? [
+				"tap people/things to interact",
+				"tap bottom to move legs",
+				"tap top to move arms",
+				"drag bottom to move body",
+				"drag top to move cam",
+				"pinch to zoom",
+				"swipe up to jump",
+				"swipe down to crawl",
+				"swipe left/right to cycle items"
+			] : [
 				"move around with WASDZC",
 				"move cam w/ ARROWS or QERFPB",
 				"zoom w/ PERIOD/T & COMMA/G",
