@@ -98,6 +98,12 @@ vu.clix = {
 		}, butt = CT.dom.button("ride", toggle);
 		return butt;
 	},
+	eport: function(thing) {
+		return () => zero.core.current.person.approach(thing, vu.clix.action);
+	},
+	epobutt: function(thing) {
+		return CT.dom.button("enter", vu.clix.eport(thing));
+	},
 	register: function(thing) {
 		var zc = zero.core, vc = vu.clix, _ = vc._, other = [
 			"SHIFT + click to approach"
@@ -119,7 +125,7 @@ vu.clix = {
 			thing.openable() && other.push(thing.openbutt());
 			other.push(CT.dom.button("sit", () => zcc.person.sit(thing)));
 		} else if (thing.opts.kind == "portal")
-			other.push(CT.dom.button("enter", () => zcc.person.approach(thing, vc.action)));
+			other.push(vc.epobutt(thing));
 		else if (thing.opts.name == "bed") { // meh
 			other.push(CT.dom.button("sit", () => zcc.person.sit(thing)));
 			other.push(CT.dom.button("lie", () => zcc.person.lie(thing)));
