@@ -5,23 +5,38 @@ vu.clix = {
 			var _ = vu.clix._;
 			_.roomclix.forEach(zero.core.click.unregister);
 			_.roomclix.length = 0;
+		},
+		ctlbtn: function() {
+			var cnode = CT.dom.div([
+				"move around with WASDZC",
+				"move cam w/ ARROWS or QERFPB",
+				"zoom w/ PERIOD/T & COMMA/G",
+				"SPACE = jump, SHIFT = run",
+				"ENTER or X to enter portal",
+				"SEMICOLON/QUOTE move legs",
+				"[] move arms, -=_+ swap items",
+				"1-9 for gestures",
+				"1-9 + SHIFT for dances",
+				"0 to ungesture",
+				"0 + SHIFT to undance"
+			], "hidden"), cbutt = CT.dom.button("show controls", function() {
+				cbutt._showing = !cbutt._showing;
+				if (cbutt._showing) {
+					CT.dom.show(cnode);
+					CT.dom.setContent(cbutt, "hide controls");
+				} else {
+					CT.dom.hide(cnode);
+					CT.dom.setContent(cbutt, "show controls");
+				}
+			});
+			return [cbutt, cnode];
 		}
 	},
 	yinfo: function() {
-		var oz = vu.clix.opts;
+		var vc = vu.clix, oz = vc.opts;
 		return [
 			CT.dom.div("(you)", "up20 right"),
-			"move around with WASDZC",
-			"move cam w/ ARROWS or QERFPB",
-			"zoom w/ PERIOD/T & COMMA/G",
-			"SPACE = jump, SHIFT = run",
-			"ENTER or X to enter portal",
-			"SEMICOLON/QUOTE move legs",
-			"[] move arms, -=_+ swap items",
-			"1-9 for gestures",
-			"1-9 + SHIFT for dances",
-			"0 to ungesture",
-			"0 + SHIFT to undance",
+			vc._.ctlbtn(),
 			oz.streamer && oz.streamer()
 		];
 	},
