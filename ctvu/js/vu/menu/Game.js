@@ -262,7 +262,10 @@ vu.menu.Game = CT.Class({
 	portal: function(portal) {
 		var scene = zero.core.current.scene.name,
 			portals = this.state.scenes[scene].portals;
-		this.info(portal.name, portals[portal.name].description, portal);
+		this.info(portal.name, [
+			portals[portal.name].description,
+			vu.clix.epobutt(portal)
+		], portal);
 	},
 	prop: function(prop) {
 		var props = zero.core.current.scene.opts.props;
