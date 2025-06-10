@@ -455,4 +455,7 @@ img.right.h30p.up5 {
 		font-size: 100%;
 		margin: -10px 0;
 	}
+	#ctheader.hamburgize.slidin #ctll {
+		font-size: 275%;
+	}
 }
