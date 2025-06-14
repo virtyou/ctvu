@@ -297,7 +297,7 @@ img.right.h30p.up5 {
 }
 
 .gmenu.run_home, .gmenu.ran_drop {
-	margin-left: 250px;
+	right: 25%!important;
 }
 
 /*.gmenu.mods {
@@ -308,7 +308,7 @@ img.right.h30p.up5 {
 	width: 348px;
 }
 #adventurepage .gmenu.score {
-	width: 310px;
+	width: 300px;
 }
 .gmenu.main {
 	max-height: 50%;
@@ -340,7 +340,7 @@ img.right.h30p.up5 {
 }
 
 .gmenu.story {
-	max-width: 30%;
+	max-width: 40%;
 	max-height: 50%;
 	min-width: 155px;
 	white-space: normal;
@@ -457,5 +457,49 @@ img.right.h30p.up5 {
 	}
 	#ctheader.hamburgize.slidin #ctll {
 		font-size: 275%;
+	}
+	.gmenu button {
+		padding: 0;
+		font-size: 130%;
+		max-width: 110px;
+	}
+	.gmenu.info {
+		max-width: 117px;
+	}
+	.gmenu.cameras {
+		min-width: 180px;
+		margin-left: initial;
+		left: 112px!important;
+	}
+	.gmenu.camera {
+		max-width: 21%;
+	}
+	.gmenu.camera button {
+		display: block;
+	}
+	.gmenu.chat button {
+		font-size: 105%;
+		margin: 5px 2px 0px 0px;
+	}
+
+	#adventurepage .gmenu.score {
+		max-width: 40%;
+	}
+	#adventurepage .gmenu.chat {
+		right: 17.5%;
+		width: initial;
+		max-width: initial;
+		left: 35%!important;
+	}
+	.playpage .gmenu.chat {
+	    right: 100px;
+	    width: initial;
+	    max-width: initial;
+	    left: 100px!important;
+	}
+}
+@media (max-width: 400px) {
+	.gmenu.run_home, .gmenu.ran_drop {
+		margin-top: 35px;
 	}
 }
