@@ -10,8 +10,8 @@ vu.builders.play = {
 			audio: "topleft",
 			lights: "topright",
 			minimap: "topright",
-			run_home: "topleft",
-			ran_drop: "topleft",
+			run_home: "topright",
+			ran_drop: "topright",
 			triggers: "bottomleft",
 			gestures: "bottomright"
 		},
