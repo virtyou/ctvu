@@ -29,7 +29,7 @@ vu.clix = {
 				"1-9 + SHIFT for dances",
 				"0 to ungesture",
 				"0 + SHIFT to undance"
-			], "hidden"), cbutt = CT.dom.button("show controls", function() {
+			], "hidden"), cbutt = CT.dom.button("show controls", function(e) {
 				cbutt._showing = !cbutt._showing;
 				if (cbutt._showing) {
 					CT.dom.show(cnode);
@@ -38,6 +38,7 @@ vu.clix = {
 					CT.dom.hide(cnode);
 					CT.dom.setContent(cbutt, "show controls");
 				}
+				e.stopPropagation();
 			});
 			return [cbutt, cnode];
 		}
