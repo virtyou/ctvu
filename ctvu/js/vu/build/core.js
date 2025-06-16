@@ -313,6 +313,10 @@ vu.build.core = {
 		return vu.build.core.seller(surf.opts, "stepper",
 			() => ["step", "rug", "hard", "wood"], cb);
 	},
+	ammogeo: function(item, cb) {
+		return vu.build.core.seller(item.opts, "geotype",
+			() => ["box", "cone", "sphere", "random"], cb);
+	},
 	circuit: function(app, cb, asopts) {
 		return vu.build.core.seller(asopts ? app : app.opts, "circuit",
 			() => Object.keys(zero.core.Appliance.circuitry), cb);
