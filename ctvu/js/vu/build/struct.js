@@ -53,7 +53,16 @@ vu.build.struct = {
 							flo.geoThetaLength = Math.PI; // 0.1-2PI
 						} else if (variety == "obstacle")
 							flo.scale = [10, 10, 10];
-						else {
+						else if (variety == "clutter") {
+							flo.size = 50;
+							flo.mass = 1;
+							flo.rows = 2;
+							flo.cols = 3;
+							flo.layers = 2;
+							flo.friction = 0;
+							flo.ransize = false;
+							flo.geotype = "box"; // |cone|sphere|random
+						} else {
 							flo.planeGeometry = true;
 							flo.scale = [80, 80, 1];
 						}
@@ -81,6 +90,7 @@ vu.build.struct = {
 			bs.structs("obstacle"),
 			bs.structs("boulder"),
 			bs.structs("stala"),
+			bs.structs("clutter"),
 			vb.core.getSel("electrical")
 		]), selz = vb.core.getSel();
 		selz.structural = sel;
@@ -93,6 +103,7 @@ vu.build.struct = {
 			selz.obstacles.update();
 			selz.boulders.update();
 			selz.stalas.update();
+			selz.clutters.update();
 			selz.electrical.update();
 		};
 	},
@@ -122,7 +133,7 @@ vu.build.struct = {
 			fopts.rotation = [rot.x, ry, rot.z];
 			bs.strup(variety);
 		}, arot = () => srot("auto");
-		if (variety != "curtain") {
+		if (variety != "curtain" && variety != "clutter") {
 			cont.push(vbc[s3 ? "scalers" : "scale"](item, function(scale) {
 				fopts.scale = s3 ? scale : [scale, scale, scale];
 				bs.strup(variety);
@@ -137,7 +148,25 @@ vu.build.struct = {
 				}));
 			}
 		}
-		if (variety == "stairs") {
+		if (variety == "clutter") {
+			cont.push(vu.core.ranger("size", v => sup("size", v),
+				10, 100, item.opts.size, 10));
+			cont.push(vu.core.ranger("mass", v => sup("mass", v),
+				1, 10, item.opts.mass, 1));
+			cont.push(vu.core.ranger("friction", v => sup("friction", v),
+				0, 10, item.opts.friction, 1));
+			cont.push(vu.core.ranger("rows", v => sup("rows", v),
+				1, 5, item.opts.rows, 1));
+			cont.push(vu.core.ranger("cols", v => sup("cols", v),
+				1, 5, item.opts.cols, 1));
+			cont.push(vu.core.ranger("layers", v => sup("layers", v),
+				1, 5, item.opts.layers, 1));
+			cont.push(vu.build.core.ammogeo(item, function(gtype) {
+				fopts.geotype = gtype;
+				bs.strup(variety);
+			}));
+			cont.push(bs.check("ransize", fopts, "clutter"));
+		} else if (variety == "stairs") {
 			cont.push(vbc.rot(item, "y", srot));
 			cont.push(vu.core.ranger("width", v => sup("width", v),
 				80, 800, item.opts.width, 80));
@@ -249,5 +278,8 @@ vu.build.struct = {
 	},
 	stala: function(fopts, i) {
 		return vu.build.struct.struct("stala", fopts, i);
+	},
+	clutter: function(fopts, i) {
+		return vu.build.struct.struct("clutter", fopts, i);
 	}
 };
