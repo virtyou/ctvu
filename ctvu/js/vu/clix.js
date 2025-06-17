@@ -68,6 +68,10 @@ vu.clix = {
 		var gate = zcc.room.getGate();
 		if (gate)
 			return per.touch(gate, gate.open);
+		var tog = zcc.room.getTogglable();
+		pan = tog && tog.controls;
+		if (pan)
+			return per.touch(pan, pan.toggle, null, null, null, null, true);
 		vu.portal.check();
 	},
 	room: function() {
