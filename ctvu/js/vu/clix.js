@@ -68,6 +68,10 @@ vu.clix = {
 		var gate = zcc.room.getGate();
 		if (gate)
 			return per.touch(gate, gate.open);
+		var tog = zcc.room.getTogglable();
+		pan = tog && tog.controls;
+		if (pan)
+			return per.touch(pan, pan.toggle, null, null, null, null, true);
 		vu.portal.check();
 	},
 	room: function() {
@@ -76,6 +80,10 @@ vu.clix = {
 		room.automatons.forEach(a => a.onperson(vc.auto));
 		room.perMenagerie(men => men.perMount(vc.register));
 		room.objects.forEach(o => o.onReady(() => vc.register(o)));
+		room.perControllable(tog => tog.onReady(() => vc.register(tog)));
+		room.perOpenable(tog => tog.onReady(() => vc.register(tog)));
+		room.perUsable(tog => tog.onReady(() => vc.register(tog)));
+		room.perPanel(tog => tog.onReady(() => vc.register(tog)));
 	},
 	auto: function(p) {
 		vu.help.triggerize(p.brain, vu.clix.opts.auto, vu.squad.emit);
@@ -115,6 +123,10 @@ vu.clix = {
 	epobutt: function(thing) {
 		return CT.dom.button("enter", vu.clix.eport(thing));
 	},
+	touchbutt: function(thing, kind, globo, name) {
+		return CT.dom.button(name || kind, () => zero.core.current.person.touch(thing,
+			thing[kind], null, null, null, null, globo));
+	},
 	register: function(thing) {
 		var zc = zero.core, vc = vu.clix, _ = vc._, other = [
 			"SHIFT + click to approach"
@@ -142,6 +154,15 @@ vu.clix = {
 			other.push(CT.dom.button("lie", () => zcc.person.lie(thing)));
 		} else if (thing.opts.kind == "horse")
 			other.push(vc.ridebutt(thing));
+		else {
+			var messer, messers = ["open", "use"], ispan = thing.opts.kind == "panel";
+			for (messer of messers)
+				if (thing[messer])
+					other.push(vc.touchbutt(thing, messer));
+			if (thing.controls || ispan)
+				other.push(vc.touchbutt(thing.controls || thing,
+					"toggle", !ispan, "operate"));
+		}
 		zc.click.register(target, function() {
 			vc.info(thing.name, isYou ? vc.yinfo() : other);
 			cam.follow(target.looker || target);

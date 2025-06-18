@@ -349,7 +349,7 @@ vu.build.furn = {
 						cb: bf.selfurn
 					});
 				}, "up20 right"),
-				zero.core.current.room.objects.map(bf.furn)
+				zero.core.current.room.getObjects().map(bf.furn)
 			]);
 		};
 	}
