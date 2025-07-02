@@ -2,11 +2,18 @@ vu.lang = {
 	_: { // derived from https://cloud.google.com/translate/docs/languages
 		langs: ["Afrikaans", "Albanian", "Amharic", "Arabic", "Armenian", "Azerbaijani", "Basque", "Belarusian", "Bengali", "Bosnian", "Bulgarian", "Catalan", "Cebuano", "Chinese (Simplified)", "Chinese (Traditional)", "Corsican", "Croatian", "Czech", "Danish", "Dutch", "English", "Esperanto", "Estonian", "Finnish", "French", "Frisian", "Galician", "Georgian", "German", "Greek", "Gujarati", "Haitian Creole", "Hausa", "Hawaiian", "Hebrew", "Hindi", "Hmong", "Hungarian", "Icelandic", "Igbo", "Indonesian", "Irish", "Italian", "Japanese", "Javanese", "Kannada", "Kazakh", "Khmer", "Kinyarwanda", "Korean", "Kurdish", "Kyrgyz", "Lao", "Latvian", "Lithuanian", "Luxembourgish", "Macedonian", "Malagasy", "Malay", "Malayalam", "Maltese", "Maori", "Marathi", "Mongolian", "Myanmar (Burmese)", "Nepali", "Norwegian", "Nyanja (Chichewa)", "Odia (Oriya)", "Pashto", "Persian", "Polish", "Portuguese", "Punjabi", "Romanian", "Russian", "Samoan", "Scots Gaelic", "Serbian", "Sesotho", "Shona", "Sindhi", "Sinhala (Sinhalese)", "Slovak", "Slovenian", "Somali", "Spanish", "Sundanese", "Swahili", "Swedish", "Tagalog (Filipino)", "Tajik", "Tamil", "Tatar", "Telugu", "Thai", "Turkish", "Turkmen", "Ukrainian", "Urdu", "Uyghur", "Uzbek", "Vietnamese", "Welsh", "Xhosa", "Yiddish", "Yoruba", "Zulu"],
 		codes: ["af", "sq", "am", "ar", "hy", "az", "eu", "be", "bn", "bs", "bg", "ca", "ceb", "zh-CN", "zh-TW", "co", "hr", "cs", "da", "nl", "en", "eo", "et", "fi", "fr", "fy", "gl", "ka", "de", "el", "gu", "ht", "ha", "haw", "he", "hi", "hmn", "hu", "is", "ig", "id", "ga", "it", "ja", "jv", "kn", "kk", "km", "rw", "ko", "ku", "ky", "lo", "lv", "lt", "lb", "mk", "mg", "ms", "ml", "mt", "mi", "mr", "mn", "my", "ne", "no", "ny", "or", "ps", "fa", "pl", "pt", "pa", "ro", "ru", "sm", "gd", "sr", "st", "sn", "sd", "si", "sk", "sl", "so", "es", "su", "sw", "sv", "tl", "tg", "ta", "tt", "te", "th", "tr", "tk", "uk", "ur", "ug", "uz", "vi", "cy", "xh", "yi", "yo", "zu"],
-		voices: {
+		voices: { // mostly polly - kokoro preferred!
+			'kokoro': [
+				"af_heart", "af_bella", "af_nicole", "af_aoede", "af_kore", "af_sarah", "af_nova",
+				"af_sky", "af_alloy", "af_jessica", "af_river", "am_michael", "am_fenrir", "am_puck",
+				"am_echo", "am_eric", "am_liam", "am_onyx", "am_santa", "am_adam", "bf_emma",
+				"bf_isabella", "bf_alice", "bf_lily", "bm_george", "bm_fable", "bm_lewis", "bm_daniel"
+			],
 			'Russian (ru-RU)': ['Tatyana', 'Maxim'],
 			'English (US) (en-US)': [
 				'Ivy', 'Joanna', 'Kendra', 'Kimberly', 'Salli', 'Joey', 'Justin', 'Matthew'
-			], 'Korean (ko-KR)': ['Seoyeon'],
+			],
+			'Korean (ko-KR)': ['Seoyeon'],
 			'Turkish (tr-TR)': ['Filiz'],
 			'Dutch (nl-NL)': ['Lotte', 'Ruben'],
 			'Portuguese (European) (pt-PT)': ['Ines', 'Cristiano'],
@@ -49,14 +56,16 @@ vu.lang = {
 		}
 	},
 	langs: function() {
-		var _ = vu.lang._;
+		var _ = vu.lang._, vz;
 		_.init();
-		return Object.keys(_.voices).sort();
+		vz = Object.keys(_.voices);
+		CT.data.remove(vz, "kokoro");
+		return ["kokoro"].concat(vz.sort());
 	},
 	voices: function(lang) {
 		var _ = vu.lang._;
 		_.init();
-		return _.voices[lang || "All"];
+		return _.voices[lang || "kokoro"];
 	},
 	set: function(lang) {
 		lang = lang || "English";
