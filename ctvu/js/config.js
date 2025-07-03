@@ -102,7 +102,7 @@
             "mood": {},
             "colors": {},
             "responses": {},
-            "voice": "Joanna",
+            "voice": "am_santa",
             "body": {
                 "template": "templates.one.body.basic"
             }
