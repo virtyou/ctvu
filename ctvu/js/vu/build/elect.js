@@ -118,7 +118,7 @@ vu.build.elect = {
 			_.up();
 		},
 		adder: function(cat) {
-			var vb = vu.build, _ = vb.elect._, toa = templates.one.appliance;
+			var vb = vu.build, _ = vb.elect._, toa = CT.module("templates.one.appliance");
 			if (!toa[cat]) // panel or bulb
 				return _.doadd(cat);
 			vu.core.options.prompt("variety", Object.keys(toa[cat]),
