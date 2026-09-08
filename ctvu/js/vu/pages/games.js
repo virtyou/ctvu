@@ -21,10 +21,11 @@ CT.onload(function() {
 					g.description
 				], null, "/vu/adventure.html#" + g.key, nclass);
 			})
-		], bclass = nclass + " big", cfg = core.config.ctvu.builders.games;
-		if (cfg.demos.length) {
+		], bclass = nclass + " big", gcfg = core.config.ctvu.builders.games,
+			dcfg = gcfg && gcfg.demos;
+		if (dcfg && dcfg.length) {
 			cont.push(CT.dom.div("demos", "biggest centered"));
-			cont.push(CT.dom.div(cfg.demos.map(d => CT.dom.link(d.name,
+			cont.push(CT.dom.div(dcfg.map(d => CT.dom.link(d.name,
 				null, d.link, bclass)), "centered"));
 		}
 		CT.dom.setMain(cont);
